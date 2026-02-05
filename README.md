@@ -1,6 +1,3 @@
-# ASSU_FE_RN
-프론트 레포지토리 입니다.(리액트 네이티브)
-
 # A:SSU Frontend (React Native + Expo)
 
 ![Expo](https://img.shields.io/badge/Expo-54.0-000?logo=expo) 
