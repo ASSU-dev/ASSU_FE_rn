@@ -24,10 +24,10 @@
 ```
 src/
   app/        # 엔트리, 전역 프로바이더
-  entities/   # 도메인 모델
-  features/   # 유스케이스 단위 기능
-  widgets/    # 화면 조립용 UI 블록
   pages/      # 화면 단위
+  widgets/    # 화면에서 공용으로 사용하는 독립적인 UI 컴포넌트
+  features/   # 특정 기능의 로직, UI, API 호출
+  entities/   # 도메인 모델과 관련된 데이터 처리
   shared/     # 공용 lib/api/ui/config
 ```
 - 의존 방향: shared → entities → features → widgets → pages → app.
