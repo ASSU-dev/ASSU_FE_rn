@@ -30,7 +30,6 @@ src/
   entities/   # 도메인 모델과 관련된 데이터 처리
   shared/     # 공용 lib/api/ui/config
 ```
-- 의존 방향: shared → entities → features → widgets → pages → app.
 
 ## 스크립트 (yarn)
 - `yarn start` / `yarn android` / `yarn ios` / `yarn web`
