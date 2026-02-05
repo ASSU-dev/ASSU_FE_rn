@@ -11,8 +11,8 @@
 ![React Query](https://img.shields.io/badge/React%20Query-5.x-FF4154?logo=reactquery) 
 ![Zustand](https://img.shields.io/badge/Zustand-5.x-444444)
 
-## 기술 스택 & 선택 이유
-- **앱 런타임**: Expo SDK 54 / React Native 0.81 — 크로스플랫폼 빌드 & OTA.
+## 기술 스택
+- **앱 런타임**: Expo SDK 54 / React Native 0.81
 - **언어**: TypeScript 5.9 
 - **상태 관리**: Zustand 5 
 - **서버 상태**: @tanstack/react-query 5 
