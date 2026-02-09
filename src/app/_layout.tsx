@@ -1,12 +1,19 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "../shared/styles/global.css";
+import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
+import "@/shared/styles/global.styles.css";
 
 export const unstable_settings = {
 	anchor: "(tabs)",
 };
 
 export default function RootLayout() {
+	const fontsLoaded = useLoadFonts();
+
+	if (!fontsLoaded) {
+		return null;
+	}
+
 	return (
 		<>
 			<Stack>
