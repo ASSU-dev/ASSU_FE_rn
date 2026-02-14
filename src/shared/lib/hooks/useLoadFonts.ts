@@ -7,10 +7,10 @@ SplashScreen.preventAutoHideAsync();
 
 export function useLoadFonts() {
 	const [fontsLoaded] = useFonts({
-		"Pretendard-Regular": require("../assets/fonts/Pretendard-Regular.otf"),
-		"Pretendard-Medium": require("../assets/fonts/Pretendard-Medium.otf"),
-		"Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.otf"),
-		"Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.otf"),
+		"Pretendard-Regular": require("@/shared/assets/fonts/Pretendard-Regular.otf"),
+		"Pretendard-Medium": require("@/shared/assets/fonts/Pretendard-Medium.otf"),
+		"Pretendard-SemiBold": require("@/shared/assets/fonts/Pretendard-SemiBold.otf"),
+		"Pretendard-Bold": require("@/shared/assets/fonts/Pretendard-Bold.otf"),
 	});
 
 	useEffect(() => {

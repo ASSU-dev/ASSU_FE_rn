@@ -133,7 +133,7 @@ export default function HomeScreen() {
 					폰트 굵기 (Pretendard)
 				</Text>
 				<View className="bg-neutral-variant rounded-lg p-4 space-y-3">
-					<Text className="text-base font-normal text-content-primary">
+					<Text className="text-base font-regular text-content-primary">
 						Regular (400) - 기본 굵기
 					</Text>
 					<Text className="text-base font-medium text-content-primary">
@@ -154,13 +154,13 @@ export default function HomeScreen() {
 					폰트 크기별 예시
 				</Text>
 				<View className="bg-neutral-variant rounded-lg p-4 space-y-2">
-					<Text className="text-xs font-normal text-content-secondary">
+					<Text className="text-xs font-regular text-content-secondary">
 						text-xs (12px) - Regular
 					</Text>
-					<Text className="text-sm font-normal text-content-secondary">
+					<Text className="text-sm font-regular text-content-secondary">
 						text-sm (14px) - Regular
 					</Text>
-					<Text className="text-base font-normal text-content-primary">
+					<Text className="text-base font-regular text-content-primary">
 						text-base (16px) - Regular
 					</Text>
 					<Text className="text-lg font-medium text-content-primary">

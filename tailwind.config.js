@@ -34,14 +34,23 @@ module.exports = {
 			fontFamily: {
 				sans: [
 					"Pretendard-Regular",
-					"Pretendard-Medium",
-					"Pretendard-SemiBold",
-					"Pretendard-Bold",
 				],
 			},
 		},
 	},
 	corePlugins: {
 		opacity: true,
+		// Tailwind 기본 fontWeight 유틸(font-bold 등)과 충돌 방지
+		fontWeight: false,
 	},
+	plugins: [
+		({ addUtilities }) => {
+			addUtilities({
+				".font-regular": { fontFamily: "Pretendard-Regular" },
+				".font-medium": { fontFamily: "Pretendard-Medium" },
+				".font-semibold": { fontFamily: "Pretendard-SemiBold" },
+				".font-bold": { fontFamily: "Pretendard-Bold" },
+			});
+		},
+	],
 };
