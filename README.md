@@ -37,13 +37,13 @@ src/
 ## 스크립트 (yarn)
 - `yarn start` — Expo 개발 서버 실행
 - `yarn typecheck` — TypeScript 타입체크 (`tsc --noEmit`)
-- `yarn biome` — Biome lint (`./src`)
-- `yarn biome-format` — Biome formatter (`./src`, write)
-- `yarn biome-fix` — Biome check + 자동 수정 (`./src`, write)
+- `yarn biome:lint` — Biome lint (`./src`)
+- `yarn biome:format` — Biome formatter (`./src`, write)
+- `yarn biome:fix` — Biome check + 자동 수정 (`./src`, write)
 
 
 ## 빠른 시작
 1) 의존성: `yarn install --frozen-lockfile`
 2) 실행: `yarn start` 후 a/i/w 선택
-3) 품질 체크(권장): `yarn biome-format && yarn biome && yarn typecheck`
+3) 품질 체크(권장): `yarn biome:format && yarn biome:lint && yarn typecheck`
 
