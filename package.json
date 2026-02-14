@@ -4,12 +4,12 @@
 	"version": "1.0.0",
 	"scripts": {
 		"start": "expo start",
-		"reset-project": "node ./scripts/reset-project.js",
 		"android": "expo start --android",
 		"ios": "expo start --ios",
 		"web": "expo start --web",
-    "biome": "biome lint ./src",
-    "biome-fix": "biome check --write ./src",
+		"typecheck": "tsc --noEmit",
+		"biome": "biome lint ./src",
+		"biome-fix": "biome check --write ./src",
 		"biome-format": "biome format ./src --write"
 	},
 	"dependencies": {

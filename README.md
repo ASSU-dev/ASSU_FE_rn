@@ -1,50 +1,49 @@
-# Welcome to your Expo app 👋
+# A:SSU Frontend (React Native + Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![Expo](https://img.shields.io/badge/Expo-54.0.33-000?logo=expo) 
+![React Native](https://img.shields.io/badge/React%20Native-0.81.5-61DAFB?logo=react) 
+![React](https://img.shields.io/badge/React-19.1-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?logo=typescript) 
+![Tailwind%20CSS](https://img.shields.io/badge/Tailwind-3.4.17-38B2AC?logo=tailwindcss)
+![NativeWind](https://img.shields.io/badge/NativeWind-4.2.1-06B6D4) 
+![Reanimated](https://img.shields.io/badge/Reanimated-4.1.1-FF6F61)
+![Biome](https://img.shields.io/badge/Biome-2.3.14-2D2E83) 
+![React Query](https://img.shields.io/badge/React%20Query-5.90-FF4154?logo=reactquery) 
+![Zustand](https://img.shields.io/badge/Zustand-5.0-444444)
 
-## Get started
+## 기술 스택
+- **앱 런타임**: Expo SDK 54 / React Native 0.81.5 / React 19.1
+- **라우팅**: Expo Router (`typedRoutes: true`)
+- **언어**: TypeScript 5.9.3
+- **상태 관리**: Zustand 5
+- **서버 상태**: @tanstack/react-query 5
+- **스타일링**: Tailwind 3.4.17 + NativeWind 4.2.1
+  - 전역 토큰: `src/shared/styles/global.styles.css`
+  - Tailwind 설정: `tailwind.config.js`
+- **애니메이션**: react-native-reanimated 4 + react-native-worklets
+- **품질 도구**: Biome 2.3.14
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+## 아키텍처 (FSD)
+```
+src/
+  app/        # 엔트리, 전역 프로바이더
+  pages/      # 화면 단위
+  widgets/    # 화면에서 공용으로 사용하는 독립적인 UI 컴포넌트
+  features/   # 특정 기능의 로직, UI, API 호출
+  entities/   # 도메인 모델과 관련된 데이터 처리
+  shared/     # 공용 assets/hooks/styles/utils 등
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 스크립트 (yarn)
+- `yarn start` — Expo 개발 서버 실행
+- `yarn typecheck` — TypeScript 타입체크 (`tsc --noEmit`)
+- `yarn biome` — Biome lint (`./src`)
+- `yarn biome-format` — Biome formatter (`./src`, write)
+- `yarn biome-fix` — Biome check + 자동 수정 (`./src`, write)
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+## 빠른 시작
+1) 의존성: `yarn install --frozen-lockfile`
+2) 실행: `yarn start` 후 a/i/w 선택
+3) 품질 체크(권장): `yarn biome-format && yarn biome && yarn typecheck`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
