@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 라이트 모드(기본 색상) 설정 */
+:root {
+	/* Primitive Colors - 원시값 (지정된 색상만) */
+
+	/* 파란색 계열 */
+	--blue-100: #e5f6fe;
+	--blue-50: #f4f6fe;
+	--blue-500: #0068fe;
+
+	/* 회색 계열 */
+	--gray-100: #f4f4f5;
+	--gray-300: #dbdde1;
+	--gray-500: #8e9398;
+
+	/* 흰색 */
+	--white: #fefffe;
+
+	/* 검은색 */
+	--black: #040404;
+
+	/* 빨간색 */
+	--red-500: #ff6562;
+
+	/* Shadow Colors - Primitive */
+	--blue-shadow-rgb: 102 164 254;
+	--gray-shadow-rgb: 142 147 152;
+
+	/* Brand Colors - Primitive 참조 */
+	--color-primary: var(--blue-500);
+	--color-primary-tint: var(--blue-100);
+
+	/* Neutral Colors - Primitive 참조 */
+	--color-neutral: var(--gray-100);
+	--color-neutral-variant: var(--gray-300);
+
+	/* Background Colors - Primitive 참조 */
+	--color-canvas: var(--white);
+
+	/* State Colors - Primitive 참조 */
+	--color-danger: var(--red-500);
+
+	/* Text Colors - Primitive 참조 */
+	--color-content-primary: var(--black);
+	--color-content-secondary: var(--gray-500);
+	--color-content-inverse: var(--blue-50);
+
+	/* Layout Spacing */
+	--layout-margin: 24px; /* 화면 좌우 전체 여백 */
+	--layout-gutter: 10px; /* 그리드/리스트 요소 사이의 간격 */
+
+	/* Shadow (X Y Blur Spread Color) */
+	--shadow-primary: 0px 0px 6px 0px rgba(var(--blue-shadow-rgb), 0.4); /* blue-shadow의 40% 투명도 */
+	--shadow-neutral: 0px 5px 10px 0px rgba(var(--gray-shadow-rgb), 0.15); /* gray-shadow의 15% 투명도 */
+}
+
+/* 다크모드 색상 설정 */
+.dark {
+	/* Primitive Colors - 원시값 (지정된 색상만) - 현재는 root와 동일 */
+
+	/* 파란색 계열 */
+	--blue-100: #e5f6fe;
+	--blue-50: #f4f6fe;
+	--blue-500: #0068fe;
+
+	/* 회색 계열 */
+	--gray-100: #f4f4f5;
+	--gray-300: #dbdde1;
+	--gray-500: #8e9398;
+
+	/* 흰색 */
+	--white: #fefffe;
+
+	/* 검은색 */
+	--black: #040404;
+
+	/* 빨간색 */
+	--red-500: #ff6562;
+
+	/* Shadow Colors - Primitive */
+	--blue-shadow-rgb: 102 164 254;
+	--gray-shadow-rgb: 142 147 152;
+
+	/* Brand Colors - Primitive 참조 */
+	--color-primary: var(--blue-500);
+	--color-primary-tint: var(--blue-100);
+
+	/* Neutral Colors - Primitive 참조 */
+	--color-neutral: var(--gray-100);
+	--color-neutral-variant: var(--gray-300);
+
+	/* Background Colors - Primitive 참조 */
+	--color-canvas: var(--white);
+
+	/* State Colors - Primitive 참조 */
+	--color-danger: var(--red-500);
+
+	/* Text Colors - Primitive 참조 */
+	--color-content-primary: var(--black);
+	--color-content-secondary: var(--gray-500);
+	--color-content-inverse: var(--blue-50);
+
+	/* Layout Spacing */
+	--layout-margin: 24px; /* 화면 좌우 전체 여백 */
+	--layout-gutter: 10px; /* 그리드/리스트 요소 사이의 간격 */
+
+	/* Shadow (X Y Blur Spread Color) */
+	--shadow-primary: 0px 0px 6px 0px rgba(var(--blue-shadow-rgb), 0.4); /* blue-shadow의 40% 투명도 */
+	--shadow-neutral: 0px 5px 10px 0px rgba(var(--gray-shadow-rgb), 0.15); /* gray-shadow의 15% 투명도 */
+}
