@@ -10,13 +10,6 @@ export default function TabLayout() {
 					tabBarIcon: () => null,
 				}}
 			/>
-			<Tabs.Screen
-				name="playground"
-				options={{
-					title: "playground",
-					tabBarIcon: () => null,
-				}}
-			/>
 		</Tabs>
 	);
 }
