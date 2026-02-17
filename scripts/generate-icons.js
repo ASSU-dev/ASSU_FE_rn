@@ -29,10 +29,3 @@ function generateIndex() {
 }
 
 generateIndex();
-
-fs.watch(iconsDir, (_, filename) => {
-	if (!filename) return;
-	if (path.extname(filename) !== ".svg") return;
-
-	generateIndex();
-});
