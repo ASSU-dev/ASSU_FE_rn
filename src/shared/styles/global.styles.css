@@ -14,6 +14,7 @@
 	/* 회색 계열 */
 	--gray-100: #f4f4f5;
 	--gray-300: #dbdde1;
+	--gray-400: #b4b4b4;
 	--gray-500: #8e9398;
 
 	/* 흰색 */
@@ -46,6 +47,7 @@
 	/* Text Colors - Primitive 참조 */
 	--color-content-primary: var(--black);
 	--color-content-secondary: var(--gray-500);
+	--color-content-tertiary: var(--gray-400);
 	--color-content-inverse: var(--blue-50);
 
 	/* Layout Spacing */
@@ -69,6 +71,7 @@
 	/* 회색 계열 */
 	--gray-100: #f4f4f5;
 	--gray-300: #dbdde1;
+	--gray-400: #b4b4b4;
 	--gray-500: #8e9398;
 
 	/* 흰색 */
@@ -101,6 +104,7 @@
 	/* Text Colors - Primitive 참조 */
 	--color-content-primary: var(--black);
 	--color-content-secondary: var(--gray-500);
+	--color-content-tertiary: var(--gray-400);
 	--color-content-inverse: var(--blue-50);
 
 	/* Layout Spacing */
