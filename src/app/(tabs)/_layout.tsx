@@ -20,10 +20,7 @@ function TabBarAdapter({ state, navigation }: BottomTabBarProps) {
 
 export default function TabLayout() {
 	return (
-		<Tabs
-			tabBar={(props) => <TabBarAdapter {...props} />}
-			screenOptions={{ headerShown: false }}
-		>
+		<Tabs tabBar={TabBarAdapter} screenOptions={{ headerShown: false }}>
 			<Tabs.Screen name="index" />
 			<Tabs.Screen name="nearby" />
 			<Tabs.Screen name="coupons" />

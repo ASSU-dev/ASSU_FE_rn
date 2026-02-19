@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { UserType } from "@/entities/user/model/types";
 import { shadows } from "@/shared/styles/shadows";
+import { colorTokens } from "@/shared/styles/tokens";
 import { TAB_CONFIG } from "../model/tabConfig";
 import { BottomTabItem } from "./BottomTabItem";
 
@@ -26,7 +27,7 @@ export function BottomTabBar({
 				shadows.primary,
 				{
 					borderTopWidth: StyleSheet.hairlineWidth,
-					borderTopColor: "rgba(142, 147, 152, 0.3)",
+					borderTopColor: colorTokens.contentSecondaryAlpha30,
 					paddingTop: 5,
 					paddingHorizontal: 10,
 					paddingBottom: insets.bottom + 7,
