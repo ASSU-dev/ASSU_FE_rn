@@ -1,7 +1,7 @@
-import type { colorTokens } from "@/shared/styles/token";
 import type { ReactNode } from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import type { TextInputProps } from "react-native";
+import type { colorTokens } from "@/shared/styles/tokens";
 
 export type ColorTokenKey = keyof typeof colorTokens;
 
@@ -11,37 +11,37 @@ export type ColorTokenKey = keyof typeof colorTokens;
 export type FormFieldAppearance = "filled" | "outlined";
 
 export type FormFieldProps<T extends FieldValues> = TextInputProps & {
-  control: Control<T>;
-  name: Path<T>;
+	control: Control<T>;
+	name: Path<T>;
 
-  label?: string;
-  helperText?: string;
+	label?: string;
+	helperText?: string;
 
-  appearance?: FormFieldAppearance;
+	appearance?: FormFieldAppearance;
 
-  labelColor?: ColorTokenKey;
+	labelColor?: ColorTokenKey;
 
-  rightElement?: ReactNode;
+	rightElement?: ReactNode;
 
-  // 커스텀 스타일 오버라이드
-  inputBackgroundColor?: ColorTokenKey;
-  inputBorderColor?: ColorTokenKey;
-  inputTextColor?: ColorTokenKey;
+	// 커스텀 스타일 오버라이드
+	inputBackgroundColor?: ColorTokenKey;
+	inputBorderColor?: ColorTokenKey;
+	inputTextColor?: ColorTokenKey;
 };
 
 // Input Props
 export type FormFieldInputProps = TextInputProps & {
-  appearance: FormFieldAppearance;
+	appearance: FormFieldAppearance;
 
-  fontSize?: number;
-  rightElement?: ReactNode;
+	fontSize?: number;
+	rightElement?: ReactNode;
 
-  hasError?: boolean;
+	hasError?: boolean;
 
-  // 커스텀 스타일 오버라이드
-  inputBackgroundColor?: ColorTokenKey;
-  inputBorderColor?: ColorTokenKey;
-  inputTextColor?: ColorTokenKey;
+	// 커스텀 스타일 오버라이드
+	inputBackgroundColor?: ColorTokenKey;
+	inputBorderColor?: ColorTokenKey;
+	inputTextColor?: ColorTokenKey;
 
-  inputStyle?: TextInputProps["style"];
+	inputStyle?: TextInputProps["style"];
 };
