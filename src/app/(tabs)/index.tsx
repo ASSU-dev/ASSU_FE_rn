@@ -1,7 +1,7 @@
 import { shadows } from "@/shared/styles/shadows";
-import { LargeButton } from "@/shared/ui/buttons/large_button";
-import { MediumButton } from "@/shared/ui/buttons/medium_button";
-import { SmallButton } from "@/shared/ui/buttons/small_button";
+import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
+import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
+import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
@@ -181,11 +181,23 @@ export default function HomeScreen() {
 				</View>
 			</View>
 
-			{/* LargeButton 예시 */}
-			<View className="items-center mb-4">
-				<LargeButton
-					title="IT대학 학생회"
-					description="IT대학 학생인증 시, 10% 할인"
+			{/* BenefitSelectionGroup 예시 */}
+			<View className="mb-4">
+				<BenefitSelectionGroup
+					options={[
+						{
+							title: "컴퓨터학부 학생회",
+							description: "4인이상 식사시, 캔 음료 제공",
+						},
+						{
+							title: "IT대학 학생회",
+							description: "4인이상 식사시, 캔 음료 제공",
+						},
+						{
+							title: "IT대학 학생회",
+							description: "15,000원 이상 주문시 파인애플 샤베트 제공",
+						},
+					]}
 				/>
 			</View>
 
