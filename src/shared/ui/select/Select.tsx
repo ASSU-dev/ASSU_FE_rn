@@ -1,11 +1,10 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "react-native-element-dropdown";
-
-import type { SelectItem, SelectProps } from "./types";
-import { colorTokens } from "@/shared/styles/tokens";
 import { shadows } from "@/shared/styles/shadows";
+import { colorTokens } from "@/shared/styles/tokens";
+import type { SelectItem, SelectProps } from "./types";
 
 const SIZES = {
 	sm: {
@@ -118,9 +117,7 @@ export function Select({
 					const isSelected = item.value === value;
 
 					return (
-						<View
-							className="flex-row items-center justify-between"
-						>
+						<View className="flex-row items-center justify-between">
 							<Text
 								style={{
 									fontFamily: "Pretendard-Regular",
@@ -155,4 +152,3 @@ export function Select({
 		</View>
 	);
 }
-
