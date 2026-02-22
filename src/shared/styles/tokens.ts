@@ -31,4 +31,3 @@ export const colorTokens = {
 	/** global.styles.css: --color-content-inverse (blue-50) */
 	contentInverse: "#F4F6FE",
 } as const;
-

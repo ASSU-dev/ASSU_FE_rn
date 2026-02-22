@@ -32,9 +32,7 @@ module.exports = {
 				gutter: "var(--layout-gutter)",
 			},
 			fontFamily: {
-				sans: [
-					"Pretendard-Regular",
-				],
+				sans: ["Pretendard-Regular"],
 			},
 		},
 	},
