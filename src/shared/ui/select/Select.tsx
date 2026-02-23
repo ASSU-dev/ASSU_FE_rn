@@ -43,7 +43,7 @@ export function Select({
 	return (
 		<View testID={testID}>
 			{!!label && (
-				<Text className="mb-2 font-regular text-content-primary color-content-secondary">
+				<Text className="mb-2 font-regular text-content-secondary">
 					{label}
 				</Text>
 			)}
@@ -119,13 +119,10 @@ export function Select({
 					return (
 						<View className="flex-row items-center justify-between">
 							<Text
-								style={{
-									fontFamily: "Pretendard-Regular",
-									fontSize: sizeToken.fontSize,
-									color: isSelected
-										? colorTokens.primary
-										: colorTokens.contentPrimary,
-								}}
+								className={`font-regular ${
+									isSelected ? "text-primary" : "text-content-primary"
+								}`}
+								style={{ fontSize: sizeToken.fontSize }}
 							>
 								{item.label}
 							</Text>
