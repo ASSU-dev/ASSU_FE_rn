@@ -18,7 +18,7 @@ yarn add react-native-element-dropdown
 ```
 
 ## import 방법 
-- `import { Select } from "@/shared/ui";`
+- `import { Select } from "@/shared/ui/select";`
 
 
 
@@ -29,7 +29,7 @@ yarn add react-native-element-dropdown
 ```tsx
 import { useMemo, useState } from "react";
 import { View, Text } from "react-native";
-import { Select } from "@/shared/ui";
+import { Select } from "@/shared/ui/select";
 
 export default function Example() {
   const items = useMemo(
@@ -113,7 +113,11 @@ const setValue = useLoginStore((s) => s.setCouncilType);
 
 `items`의 `disabled: true` 항목은:
 - 리스트에서 opacity가 낮게 보이고
+- 잠금 아이콘이 표시됩니다
 - 선택이 무시됩니다(선택값이 바뀌지 않음)
+
+> NOTE: `react-native-element-dropdown`는 item 단위 disabled를 공식 지원하지 않아,
+> disabled 항목 탭 시 내부 선택 표시가 바뀔 수 있습니다. `Select`는 이 경우 표시값이 남지 않도록 내부적으로 강제 리마운트로 원복합니다.
 
 ```tsx
 const items = [
