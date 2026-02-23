@@ -1,7 +1,7 @@
 import { shadows } from "@/shared/styles/shadows";
+import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
