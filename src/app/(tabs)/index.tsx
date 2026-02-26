@@ -1,5 +1,9 @@
 import { ScrollView, Text, View } from "react-native";
-import { shadows } from "../../shared/styles/shadows";
+import { CheckIcon } from "@/shared/assets/icons";
+import { shadows } from "@/shared/styles/shadows";
+import { SmallButton } from "@/shared/ui/buttons/ActionButton";
+import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
+import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 export default function HomeScreen() {
 	return (
@@ -23,7 +27,7 @@ export default function HomeScreen() {
 					Primary 버튼 (Primary Shadow)
 				</Text>
 			</View>
-
+			<CheckIcon width={40} height={40} />
 			{/* 카드 with Neutral Shadow */}
 			<View className="bg-neutral rounded-lg p-4 mb-4" style={shadows.neutral}>
 				<Text className="text-lg font-bold text-content-primary mb-2">
@@ -176,6 +180,36 @@ export default function HomeScreen() {
 						text-[32px] - Bold
 					</Text>
 				</View>
+			</View>
+
+			{/* BenefitSelectionGroup 예시 */}
+			<View className="mb-4">
+				<BenefitSelectionGroup
+					options={[
+						{
+							title: "컴퓨터학부 학생회",
+							description: "4인이상 식사시, 캔 음료 제공",
+						},
+						{
+							title: "IT대학 학생회",
+							description: "4인이상 식사시, 캔 음료 제공",
+						},
+						{
+							title: "IT대학 학생회",
+							description: "15,000원 이상 주문시 파인애플 샤베트 제공",
+						},
+					]}
+				/>
+			</View>
+
+			{/* SmallButton 예시 */}
+			<View className="items-center mb-4">
+				<SmallButton>제휴 리뷰 작성하기</SmallButton>
+			</View>
+
+			{/* MediumButton 예시 */}
+			<View className="items-center mb-12">
+				<MediumButton onPress={() => {}}>인증완료</MediumButton>
 			</View>
 		</ScrollView>
 	);
