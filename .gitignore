@@ -45,3 +45,5 @@ app-example
 # claude
 CLAUDE.md
 .claude/
+.claudeignore
+CONVENTION.md

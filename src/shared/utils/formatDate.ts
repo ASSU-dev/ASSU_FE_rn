@@ -11,7 +11,7 @@ export function formatDate(
 	options?: {
 		locale?: string;
 		separator?: "." | "-" | "/";
-	}
+	},
 ): string {
 	const date = toDate(input);
 	if (!date) return "";
@@ -32,7 +32,7 @@ export function formatDateTime(
 	input: DateInput,
 	options?: {
 		separator?: "." | "-" | "/";
-	}
+	},
 ): string {
 	const date = toDate(input);
 	if (!date) return "";
