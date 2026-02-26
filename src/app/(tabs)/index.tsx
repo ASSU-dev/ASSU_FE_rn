@@ -1,8 +1,9 @@
+import { ScrollView, Text, View } from "react-native";
+import { CheckIcon } from "@/shared/assets/icons";
 import { shadows } from "@/shared/styles/shadows";
+import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { SmallButton } from "@/shared/ui/buttons/ActionButton";
-import { ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
 	return (
@@ -26,7 +27,7 @@ export default function HomeScreen() {
 					Primary 버튼 (Primary Shadow)
 				</Text>
 			</View>
-
+			<CheckIcon width={40} height={40} />
 			{/* 카드 with Neutral Shadow */}
 			<View className="bg-neutral rounded-lg p-4 mb-4" style={shadows.neutral}>
 				<Text className="text-lg font-bold text-content-primary mb-2">
