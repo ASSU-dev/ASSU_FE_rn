@@ -44,6 +44,8 @@ module.exports = {
 	plugins: [
 		({ addUtilities }) => {
 			addUtilities({
+				".font-extralight": { fontFamily: "Pretendard-ExtraLight" },
+				".font-light": { fontFamily: "Pretendard-Light" },
 				".font-regular": { fontFamily: "Pretendard-Regular" },
 				".font-medium": { fontFamily: "Pretendard-Medium" },
 				".font-semibold": { fontFamily: "Pretendard-SemiBold" },

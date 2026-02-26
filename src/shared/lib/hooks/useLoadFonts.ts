@@ -7,6 +7,8 @@ SplashScreen.preventAutoHideAsync();
 
 export function useLoadFonts() {
 	const [fontsLoaded] = useFonts({
+		"Pretendard-ExtraLight": require("@/shared/assets/fonts/Pretendard-ExtraLight.otf"),
+		"Pretendard-Light": require("@/shared/assets/fonts/Pretendard-Light.otf"),
 		"Pretendard-Regular": require("@/shared/assets/fonts/Pretendard-Regular.otf"),
 		"Pretendard-Medium": require("@/shared/assets/fonts/Pretendard-Medium.otf"),
 		"Pretendard-SemiBold": require("@/shared/assets/fonts/Pretendard-SemiBold.otf"),
