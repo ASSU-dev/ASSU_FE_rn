@@ -22,6 +22,7 @@ module.exports = {
 				// 글자 색상
 				"content-primary": "var(--color-content-primary)",
 				"content-secondary": "var(--color-content-secondary)",
+				"content-tertiary": "var(--color-content-tertiary)",
 				"content-inverse": "var(--color-content-inverse)",
 			},
 			opacity: {
