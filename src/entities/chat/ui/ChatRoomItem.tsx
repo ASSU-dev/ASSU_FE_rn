@@ -18,9 +18,7 @@ export function ChatRoomItem({
 
 				{/* Text area */}
 				<View className="shrink">
-					<Text
-className="font-bold text-[16px] leading-[22px] text-content-primary"
-					>
+					<Text className="font-bold text-[16px] leading-[22px] text-content-primary">
 						{roomName}
 					</Text>
 					<Text
