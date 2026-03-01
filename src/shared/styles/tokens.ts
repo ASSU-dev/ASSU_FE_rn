@@ -28,6 +28,10 @@ export const colorTokens = {
 	contentPrimary: "#040404",
 	/** global.styles.css: --color-content-secondary (gray-500) */
 	contentSecondary: "#8E9398",
+	/** contentSecondary at opacity 0.3 — RN은 hex + opacity 조합 불가하므로 별도 정의 */
+	contentSecondaryAlpha30: "rgba(142, 147, 152, 0.3)",
+	/** global.styles.css: --color-content-tertiary (gray-400) */
+	contentTertiary: "#B4B4B4",
 	/** global.styles.css: --color-content-inverse (blue-50) */
 	contentInverse: "#F4F6FE",
 } as const;
