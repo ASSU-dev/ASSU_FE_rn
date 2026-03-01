@@ -4,7 +4,7 @@ import { shadows } from "@/shared/styles/shadows";
 import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { Divider } from "@/shared/ui/divider";
+import { DividerDemo } from "@/shared/ui/divider";
 
 export default function HomeScreen() {
 	return (
@@ -214,9 +214,7 @@ export default function HomeScreen() {
 			</View>
 
 			{/* Divider 예시 */}
-			<View className="mb-12">
-				<Divider />
-			</View>
+			<DividerDemo />
 		</ScrollView>
 	);
 }
