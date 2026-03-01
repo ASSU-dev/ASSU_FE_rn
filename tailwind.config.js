@@ -12,6 +12,8 @@ module.exports = {
 				// 회색 계열 색상
 				neutral: "var(--color-neutral)",
 				"neutral-variant": "var(--color-neutral-variant)",
+				"gray-400": "var(--gray-400)",
+				"gray-500": "var(--gray-500)",
 
 				// 배경 색상
 				canvas: "var(--color-canvas)",
@@ -25,12 +27,36 @@ module.exports = {
 				"content-tertiary": "var(--color-content-tertiary)",
 				"content-inverse": "var(--color-content-inverse)",
 			},
+			// 폰트 크기
+			fontSize: {
+				sm: "var(--font-size-sm)",
+				md: "var(--font-size-md)",
+				lg: "var(--font-size-lg)",
+				xl: "var(--font-size-xl)",
+			},
+			// 라인 높이
+			lineHeight: {
+				body: "var(--typography-body-line-height)",
+				caption: "var(--typography-caption-line-height)",
+			},
+			// 글자 간격
+			letterSpacing: {
+				body: "var(--typography-body-letter-spacing)",
+				caption: "var(--typography-caption-letter-spacing)",
+			},
 			opacity: {
 				disabled: "0.3",
 			},
 			spacing: {
 				"screen-m": "var(--layout-margin)",
 				gutter: "var(--layout-gutter)",
+				"card-p": "var(--spacing-card-padding)",
+				"card-gap": "var(--spacing-card-gap)",
+			},
+			borderRadius: {
+				sm: "var(--radius-sm)",
+				md: "var(--radius-md)",
+				card: "var(--radius-card)",
 			},
 			fontFamily: {
 				sans: ["Pretendard-Regular"],
