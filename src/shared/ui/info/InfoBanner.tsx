@@ -14,7 +14,7 @@ export function InfoBanner({ message }: InfoBannerProps) {
     >
       <InfoFillIcon width={10} height={10} />
       <Text
-        className="text-[11px]"
+        className="text-[11px] flex-shrink"
         style={{ color: colorTokens.contentSecondary }}
       >
         {message}
