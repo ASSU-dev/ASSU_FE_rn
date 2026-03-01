@@ -7,9 +7,10 @@ export type CheckboxProps = {
   onPress?: () => void;
 };
 
-export type CheckboxFieldProps<T extends FieldValues> = {
+export type CheckboxFieldProps<T extends FieldValues> = Omit<
+  CheckboxProps,
+  "checked" | "onPress"
+> & {
   control: Control<T>;
   name: Path<T>;
-  label: string;
-  showDivider?: boolean;
 };
