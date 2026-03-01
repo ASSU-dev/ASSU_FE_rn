@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { ProfileAvatar } from "@/shared/ui";
+import { ProfileAvatar } from "@/shared/ui/profile";
 
 import type { MessageItemProps } from "../model/types";
 import { MessageBubble } from "./MessageBubble";
