@@ -75,21 +75,21 @@ import { RankItem } from "@/shared/ui/rank";
 const RANK_COLOR_THRESHOLD = 3; // 1~3위는 파란색, 4위~ 회색
 
 const items = [
-  { rank: 1, name: "역전할머니맥주" },
-  { rank: 2, name: "취향" },
-  { rank: 3, name: "Bread & co" },
-  { rank: 4, name: "인생맥주" },
-  { rank: 5, name: "역전할머니맥주" },
-  { rank: 6, name: "취향" },
-  { rank: 7, name: "Bread & co" },
-  { rank: 8, name: "인생맥주" },
+  { id: "1", rank: 1, name: "역전할머니맥주" },
+  { id: "2", rank: 2, name: "취향" },
+  { id: "3", rank: 3, name: "Bread & co" },
+  { id: "4", rank: 4, name: "인생맥주" },
+  { id: "5", rank: 5, name: "역전할머니맥주" },
+  { id: "6", rank: 6, name: "취향" },
+  { id: "7", rank: 7, name: "Bread & co" },
+  { id: "8", rank: 8, name: "인생맥주" },
 ];
 
 export function RankList() {
   return (
     <FlatList
       data={items}
-      keyExtractor={(item) => String(item.rank)}
+      keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <RankItem
           rank={item.rank}
