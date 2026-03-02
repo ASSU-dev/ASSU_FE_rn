@@ -1,5 +1,5 @@
 import { colorTokens } from "@/shared/styles/tokens";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable } from "react-native";
 import Animated, {
 	interpolate,
@@ -43,10 +43,12 @@ export function Toggle({
 	const thumbTranslateOn = width - thumbSize - padding * 2;
 
 	const progress = useSharedValue(value ? 1 : 0);
+	const durationRef = useRef(duration);
+	durationRef.current = duration;
 
 	useEffect(() => {
-		progress.value = withTiming(value ? 1 : 0, { duration });
-	}, [value, duration, progress]);
+		progress.value = withTiming(value ? 1 : 0, { duration: durationRef.current });
+	}, [value]);
 
 	const trackStyle = useAnimatedStyle(() => ({
 		backgroundColor: interpolateColor(
