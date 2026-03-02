@@ -32,13 +32,11 @@ export function HomeHeader() {
 
   return (
     <SafeAreaView edges={["top"]} className="bg-canvas">
-      <View className="px-screen-m py-4">
-        <SearchBar
-          mode="default"
-          placeholder="찾으시는 제휴 가게가 없나요?"
-          onPress={() => router.push("/search")}
-        />
-      </View>
+      <SearchBar
+        mode="default"
+        placeholder="찾으시는 제휴 가게가 없나요?"
+        onPress={() => router.push("/search")}
+      />
     </SafeAreaView>
   );
 }
@@ -61,16 +59,14 @@ export function SearchPage() {
 
   return (
     <SafeAreaView edges={["top"]} className="bg-canvas">
-      <View className="px-screen-m py-4">
-        <SearchBar
-          mode="active"
-          placeholder="찾으시는 제휴 가게가 없나요?"
-          value={query}
-          onChangeText={setQuery}
-          onBack={() => router.back()}
-          autoFocus
-        />
-      </View>
+      <SearchBar
+        mode="active"
+        placeholder="찾으시는 제휴 가게가 없나요?"
+        value={query}
+        onChangeText={setQuery}
+        onBack={() => router.back()}
+        autoFocus
+      />
     </SafeAreaView>
   );
 }
