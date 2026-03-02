@@ -17,7 +17,7 @@ import type { SearchBarProps } from "./types";
  * 아이콘 파일:
  *   src/shared/assets/icons/search-icon.svg  → SearchIcon
  *   src/shared/assets/icons/close-icon.svg   → CloseIcon
- *   src/shared/assets/icons/back-icon.svg    → BackIcon
+ *   src/shared/assets/icons/back-arrow-icon.svg → BackArrowIcon
  */
 export function SearchBar(props: SearchBarProps) {
 	if (props.mode === "default") {
