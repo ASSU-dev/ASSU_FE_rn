@@ -1,5 +1,5 @@
-import { Image } from "expo-image";
 import type { ImageSource } from "expo-image";
+import { Image } from "expo-image";
 import { View } from "react-native";
 
 const DEFAULT_PROFILE = require("@/shared/assets/images/default-profile.png");

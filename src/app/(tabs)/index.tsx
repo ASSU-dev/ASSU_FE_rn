@@ -3,6 +3,7 @@ import { shadows } from "@/shared/styles/shadows";
 import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
+import { DividerDemo } from "@/shared/ui/divider";
 import { ScrollView, Text, View } from "react-native";
 
 export default function HomeScreen() {
@@ -211,6 +212,9 @@ export default function HomeScreen() {
 			<View className="items-center mb-12">
 				<MediumButton onPress={() => {}}>인증완료</MediumButton>
 			</View>
+
+			{/* Divider 예시 */}
+			<DividerDemo />
 		</ScrollView>
 	);
 }
