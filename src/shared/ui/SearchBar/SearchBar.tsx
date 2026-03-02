@@ -71,8 +71,8 @@ export function SearchBar(props: SearchBarProps) {
 					onChangeText={props.onChangeText}
 					placeholder={props.placeholder ?? "찾으시는 제휴 가게가 없나요?"}
 					placeholderTextColor={colorTokens.contentTertiary}
-					returnKeyType="search" 
-          clearButtonMode="never"
+					returnKeyType="search"
+					clearButtonMode="never"
 					autoFocus={props.autoFocus}
 				/>
 				{props.value.length > 0 && (
