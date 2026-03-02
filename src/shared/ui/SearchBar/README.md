@@ -101,11 +101,21 @@ export function SearchPage() {
 
 ## 동작 방식
 
-| 상태                     | 뒤로가기 | 입력창      | X 버튼        |
-| ------------------------ | -------- | ----------- | ------------- |
-| default                  | ❌       | Pressable   | ❌            |
-| active (빈 입력)         | ✅       | TextInput   | ❌            |
-| active (텍스트 입력 중)  | ✅       | TextInput   | ✅ (전체 삭제) |
+| 상태                     | 뒤로가기 | 입력창      | X 버튼         | 터치 피드백                  |
+| ------------------------ | -------- | ----------- | -------------- | ---------------------------- |
+| default                  | ❌       | Pressable   | ❌             | 배경색 → `neutralVariant`    |
+| active (빈 입력)         | ✅       | TextInput   | ❌             | -                            |
+| active (텍스트 입력 중)  | ✅       | TextInput   | ✅ (전체 삭제) | -                            |
+
+---
+
+## TextInput 내부 설정 (active 모드)
+
+| prop | 값 | 이유 |
+|------|----|------|
+| `returnKeyType` | `"search"` | 키보드 우하단 리턴 버튼을 "검색"으로 표시 |
+| `clearButtonMode` | `"never"` | iOS 기본 내장 X 버튼 비활성화 — 커스텀 CloseIcon과 중복 방지 |
+| `paddingVertical` | `0` (style) | Android TextInput 기본 내부 패딩 제거 — default 모드와 높이 일치 |
 
 ---
 
