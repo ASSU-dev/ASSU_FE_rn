@@ -114,5 +114,5 @@ export function RankList() {
 | Height | 18 (Hug) |
 | Gap | 8px |
 | Alignment | 수직 중앙 정렬 |
-| 순위 폰트 | 14px / Bold |
-| 이름 폰트 | 14px / Medium |
+| 순위 폰트 | 14px / Regular |
+| 이름 폰트 | 14px / Regular |
