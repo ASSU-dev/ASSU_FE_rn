@@ -10,7 +10,7 @@ interface RankItemProps {
 export function RankItem({ rank, name, rankColor }: RankItemProps) {
 	return (
 		<View className="flex-row items-center gap-2">
-			<View style={{ minWidth: 17, height: 18, justifyContent: "center" }}>
+			<View className="min-w-[17px] h-[18px] justify-center">
 				<Text
 					className="text-[14px] leading-[18px] font-regular"
 					style={{ color: rankColor ?? colorTokens.primary }}
