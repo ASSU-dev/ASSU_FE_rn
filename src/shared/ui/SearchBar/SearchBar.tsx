@@ -22,21 +22,29 @@ import type { SearchBarProps } from "./types";
 export function SearchBar(props: SearchBarProps) {
 	if (props.mode === "default") {
 		return (
-			<Pressable
-				onPress={props.onPress}
-				className="flex-row items-center bg-neutral rounded-lg mx-4 my-3 px-2.5 py-3"
-			> 
-				<SearchIcon
-					width={20}
-					height={20}
-					color={colorTokens.contentSecondary}
-				/>
-				<Text
-					className="flex-1 ml-2.5 font-regular text-sm leading-[21px] text-content-tertiary"
-					numberOfLines={1}
-				>
-					{props.placeholder ?? "찾으시는 제휴 가게가 없나요?"}
-				</Text>
+			<Pressable onPress={props.onPress}>
+				{({ pressed }) => (
+					<View
+						className="flex-row items-center rounded-lg mx-4 my-3 px-2.5 py-3"
+						style={{
+							backgroundColor: pressed
+								? colorTokens.neutralVariant
+								: colorTokens.neutral,
+						}}
+					>
+						<SearchIcon
+							width={20}
+							height={20}
+							color={colorTokens.contentSecondary}
+						/>
+						<Text
+							className="flex-1 ml-2.5 font-regular text-sm leading-[21px] text-content-tertiary"
+							numberOfLines={1}
+						>
+							{props.placeholder ?? "찾으시는 제휴 가게가 없나요?"}
+						</Text>
+					</View>
+				)}
 			</Pressable>
 		);
 	}
@@ -63,6 +71,8 @@ export function SearchBar(props: SearchBarProps) {
 					onChangeText={props.onChangeText}
 					placeholder={props.placeholder ?? "찾으시는 제휴 가게가 없나요?"}
 					placeholderTextColor={colorTokens.contentTertiary}
+					returnKeyType="search" 
+          clearButtonMode="never"
 					autoFocus={props.autoFocus}
 				/>
 				{props.value.length > 0 && (
