@@ -22,6 +22,7 @@ module.exports = {
 				// 글자 색상
 				"content-primary": "var(--color-content-primary)",
 				"content-secondary": "var(--color-content-secondary)",
+				"content-tertiary": "var(--color-content-tertiary)",
 				"content-inverse": "var(--color-content-inverse)",
 			},
 			opacity: {
@@ -44,6 +45,8 @@ module.exports = {
 	plugins: [
 		({ addUtilities }) => {
 			addUtilities({
+				".font-extralight": { fontFamily: "Pretendard-ExtraLight" },
+				".font-light": { fontFamily: "Pretendard-Light" },
 				".font-regular": { fontFamily: "Pretendard-Regular" },
 				".font-medium": { fontFamily: "Pretendard-Medium" },
 				".font-semibold": { fontFamily: "Pretendard-SemiBold" },
