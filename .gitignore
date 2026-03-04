@@ -43,6 +43,7 @@ app-example
 /android
 
 # claude
+.claude/
 .claudeignore
 CLAUDE.md
 CONVENTION.md
