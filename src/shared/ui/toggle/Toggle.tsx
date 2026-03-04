@@ -48,7 +48,7 @@ export function Toggle({
 
 	useEffect(() => {
 		progress.value = withTiming(value ? 1 : 0, { duration: durationRef.current });
-	}, [value]);
+	}, [value, duration, progress]);
 
 	const trackStyle = useAnimatedStyle(() => ({
 		backgroundColor: interpolateColor(
