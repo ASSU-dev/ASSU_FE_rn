@@ -3,6 +3,7 @@ import { shadows } from "@/shared/styles/shadows";
 import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { BenefitSelectionGroup } from "@/shared/ui/buttons/BenefitSelectionGroup";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
+import { CommentTest } from "@/shared/ui/comment/CommentTest";
 import { DividerDemo } from "@/shared/ui/divider";
 import { ScrollView, Text, View } from "react-native";
 
@@ -209,10 +210,13 @@ export default function HomeScreen() {
 			</View>
 
 			{/* MediumButton 예시 */}
-			<View className="items-center mb-12">
+			<View className="items-center mb-4">
 				<MediumButton onPress={() => {}}>인증완료</MediumButton>
 			</View>
 
+			<View className="mb-12">
+				<CommentTest />
+			</View>
 			{/* Divider 예시 */}
 			<DividerDemo />
 		</ScrollView>

@@ -2,9 +2,7 @@
 
 댓글 UI 컴포넌트 모음입니다. `CommentCard`를 통해 전체 댓글을 렌더링할 수 있습니다.
 
-### 가장 중요한 점: index.tsx에서
-
-## 사용 방법
+## 📌 사용 방법
 
 ### 기본 사용법
 
@@ -28,6 +26,12 @@ function MyComponent() {
 
 ## Props
 
+| Props | 타입 | 필수 | 설명 |
+|-------|------|------|------|
+| `comment` | object | ✅ | `author`, `rating`, `content`, `createdAt`, `images?` |
+| `onDelete` | function | ✅ | 삭제 클릭 시 실행 함수 |
+
+**comment 객체:**
 | Props      | 타입     | 필수 | 설명                                                  |
 | ---------- | -------- | ---- | ----------------------------------------------------- |
 | `comment`  | object   | ✅   | `author`, `rating`, `content`, `createdAt`, `images?` |
