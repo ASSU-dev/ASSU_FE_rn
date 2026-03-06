@@ -4,20 +4,20 @@ interface CommentImagesProps {
 	images: string[];
 }
 
-export const CommentImages = ({ images }: CommentImagesProps) => {
+export function CommentImages({ images }: CommentImagesProps) {
 	if (!images || images.length === 0) {
 		return null;
 	}
 
 	return (
 		<View className="flex-row gap-gutter">
-			{images.map((imageUri, index) => (
+			{images.filter(Boolean).map((imageUri) => (
 				<Image
-					key={imageUri || index}
+					key={imageUri}
 					source={{ uri: imageUri }}
 					className="w-[95px] h-[95px] rounded-md bg-gray-400"
 				/>
 			))}
 		</View>
 	);
-};
+}
