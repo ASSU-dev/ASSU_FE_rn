@@ -20,10 +20,7 @@ export function BottomSnackbar({
 			pointerEvents={visible ? "auto" : "none"}
 			style={animatedStyle}
 		>
-			<View
-				className="bg-canvas rounded-2xl px-5 py-4"
-				style={shadows.neutral}
-			>
+			<View className="bg-canvas rounded-2xl px-5 py-4" style={shadows.neutral}>
 				<Text className="text-lg font-bold text-content-primary">{title}</Text>
 				{!!subtitle && (
 					<Text className="mt-1 text-sm font-regular text-content-secondary">
@@ -36,4 +33,3 @@ export function BottomSnackbar({
 		</Animated.View>
 	);
 }
-
