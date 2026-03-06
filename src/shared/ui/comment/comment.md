@@ -32,6 +32,13 @@ function MyComponent() {
 | `onDelete` | function | ✅ | 삭제 클릭 시 실행 함수 |
 
 **comment 객체:**
+| Props      | 타입     | 필수 | 설명                                                  |
+| ---------- | -------- | ---- | ----------------------------------------------------- |
+| `comment`  | object   | ✅   | `author`, `rating`, `content`, `createdAt`, `images?` |
+| `onDelete` | function | ✅   | 삭제 클릭 시 실행 함수                                |
+
+**comment 객체:**
+
 - `author.department` (string) - 학과/직책
 - `rating` (number) - 평점 1~5
 - `content` (string) - 댓글 텍스트

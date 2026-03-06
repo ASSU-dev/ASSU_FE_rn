@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 
-import { ProfileAvatar } from "@/shared/ui";
+import { ProfileAvatar } from "@/shared/ui/profile";
 
 import type { ChatRoomItemProps } from "../model/types";
 
