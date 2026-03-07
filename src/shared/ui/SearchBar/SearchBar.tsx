@@ -5,6 +5,7 @@ import { colorTokens } from "@/shared/styles/tokens";
 
 import type { SearchBarProps } from "./types";
 
+const DEFAULT_PLACEHOLDER = "찾으시는 제휴 가게가 없나요?";
 /**
  * 서치바 공통 컴포넌트
  *
@@ -41,7 +42,7 @@ export function SearchBar(props: SearchBarProps) {
 							className="flex-1 ml-2.5 font-regular text-sm leading-[21px] text-content-tertiary"
 							numberOfLines={1}
 						>
-							{props.placeholder ?? "찾으시는 제휴 가게가 없나요?"}
+							{props.placeholder ?? DEFAULT_PLACEHOLDER}
 						</Text>
 					</View>
 				)}
@@ -69,7 +70,7 @@ export function SearchBar(props: SearchBarProps) {
 					style={{ paddingVertical: 0 }}
 					value={props.value}
 					onChangeText={props.onChangeText}
-					placeholder={props.placeholder ?? "찾으시는 제휴 가게가 없나요?"}
+					placeholder={props.placeholder ?? DEFAULT_PLACEHOLDER}
 					placeholderTextColor={colorTokens.contentTertiary}
 					returnKeyType="search" 
           clearButtonMode="never"
