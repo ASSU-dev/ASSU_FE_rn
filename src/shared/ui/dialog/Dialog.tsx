@@ -34,7 +34,7 @@ export function Dialog({ visible, onDismiss, children }: DialogProps) {
 							className="absolute top-3 right-3 z-50 w-11 h-11 items-center justify-center"
 							onPress={onDismiss}
 						>
-							<CloseIcon width={24} height={24} pointerEvents="none" />
+							<CloseIcon width={24} height={24} pointerEvents="none" fill={colorTokens.contentSecondary} />
 						</Pressable>
 					)}
 					{children}
