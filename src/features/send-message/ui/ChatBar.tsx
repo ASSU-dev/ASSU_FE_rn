@@ -9,10 +9,7 @@ interface ChatBarProps {
 	onAttach?: () => void;
 }
 
-export function ChatBar({
-	onSend,
-	onAttach,
-}: ChatBarProps) {
+export function ChatBar({ onSend, onAttach }: ChatBarProps) {
 	const [text, setText] = useState("");
 
 	const canSend = text.trim().length > 0;

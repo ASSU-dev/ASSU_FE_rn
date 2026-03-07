@@ -1,3 +1,6 @@
+export { default as BackArrowIcon } from "./back-arrow-icon.svg";
 export { default as CheckFillIcon } from "./check-fill-icon.svg";
 export { default as CheckIcon } from "./check-icon.svg";
 export { default as CheckNoneIcon } from "./check-none-icon.svg";
+export { default as CloseIcon } from "./close-icon.svg";
+export { default as SearchIcon } from "./search-icon.svg";

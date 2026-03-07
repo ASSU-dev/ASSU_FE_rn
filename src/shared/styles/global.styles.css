@@ -50,9 +50,40 @@
 	--color-content-tertiary: var(--gray-400);
 	--color-content-inverse: var(--blue-50);
 
+	/* Font Sizes */
+	--font-size-sm: 13px;
+	--font-size-md: 16px;
+	--font-size-lg: 17px;
+	--font-size-xl: 18px;
+
+	/* Typography - Primitive */
+	--size-line-20: 20px;
+	--size-letter-025: 0.25px;
+	--size-line-21: 21px;
+	--size-letter-minus-032: -0.32px;
+
+	/* Typography - Semantic */
+	--typography-body-line-height: var(--size-line-20);
+	--typography-body-letter-spacing: var(--size-letter-025);
+	--typography-caption-line-height: var(--size-line-21);
+	--typography-caption-letter-spacing: var(--size-letter-minus-032);
+
 	/* Layout Spacing */
 	--layout-margin: 24px; /* 화면 좌우 전체 여백 */
 	--layout-gutter: 10px; /* 그리드/리스트 요소 사이의 간격 */
+
+	/* Spacing - Primitive */
+	--size-spacing-15: 15px;
+	--size-spacing-20: 20px;
+
+	/* Border Radius - Primitive */
+	--radius-sm: 4px;
+	--radius-md: 5px;
+
+	/* Card - Semantic */
+	--spacing-card-padding: var(--size-spacing-15);
+	--spacing-card-gap: var(--size-spacing-20);
+	--radius-card: var(--radius-sm);
 
 	/* Shadow (X Y Blur Spread Color) */
 	--shadow-primary: 0px 0px 6px 0px rgba(var(--blue-shadow-rgb), 0.4); /* blue-shadow의 40% 투명도 */
@@ -107,9 +138,40 @@
 	--color-content-tertiary: var(--gray-400);
 	--color-content-inverse: var(--blue-50);
 
+	/* Font Sizes */
+	--font-size-sm: 13px;
+	--font-size-md: 16px;
+	--font-size-lg: 17px;
+	--font-size-xl: 18px;
+
+	/* Typography - Primitive */
+	--size-line-20: 20px;
+	--size-letter-025: 0.25px;
+	--size-line-21: 21px;
+	--size-letter-minus-032: -0.32px;
+
+	/* Typography - Semantic */
+	--typography-body-line-height: var(--size-line-20);
+	--typography-body-letter-spacing: var(--size-letter-025);
+	--typography-caption-line-height: var(--size-line-21);
+	--typography-caption-letter-spacing: var(--size-letter-minus-032);
+
 	/* Layout Spacing */
 	--layout-margin: 24px; /* 화면 좌우 전체 여백 */
 	--layout-gutter: 10px; /* 그리드/리스트 요소 사이의 간격 */
+
+	/* Spacing - Primitive */
+	--size-spacing-15: 15px;
+	--size-spacing-20: 20px;
+
+	/* Border Radius - Primitive */
+	--radius-sm: 4px;
+	--radius-md: 5px;
+
+	/* Card - Semantic */
+	--spacing-card-padding: var(--size-spacing-15);
+	--spacing-card-gap: var(--size-spacing-20);
+	--radius-card: var(--radius-sm);
 
 	/* Shadow (X Y Blur Spread Color) */
 	--shadow-primary: 0px 0px 6px 0px rgba(var(--blue-shadow-rgb), 0.4); /* blue-shadow의 40% 투명도 */

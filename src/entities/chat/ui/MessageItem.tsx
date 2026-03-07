@@ -6,7 +6,11 @@ import type { MessageItemProps } from "../model/types";
 import { MessageBubble } from "./MessageBubble";
 import { MessageTime } from "./MessageTime";
 
-export function MessageItem({ message, isMine, profileImage }: MessageItemProps) {
+export function MessageItem({
+	message,
+	isMine,
+	profileImage,
+}: MessageItemProps) {
 	const variant = isMine ? "sent" : "received";
 
 	if (isMine) {
