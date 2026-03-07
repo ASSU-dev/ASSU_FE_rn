@@ -4,7 +4,10 @@ import type { TabBarTab } from "./types";
 
 const ANIMATION_DURATION_MS = 200;
 
-export function useTabBarUnderlineAnimation(tabs: TabBarTab[], activeTab: string) {
+export function useTabBarUnderlineAnimation(
+	tabs: TabBarTab[],
+	activeTab: string,
+) {
 	const [containerWidth, setContainerWidth] = useState(0);
 	const translateX = useRef(new Animated.Value(0)).current;
 	const isInitialMount = useRef(true);
