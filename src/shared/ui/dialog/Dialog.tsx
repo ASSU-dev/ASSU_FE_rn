@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Modal, Platform, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { colorTokens } from "@/shared/styles/tokens";
 import { CloseIcon } from "@/shared/assets/icons";
 
 interface DialogProps {
