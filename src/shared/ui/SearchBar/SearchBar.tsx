@@ -72,8 +72,8 @@ export function SearchBar(props: SearchBarProps) {
 					onChangeText={props.onChangeText}
 					placeholder={props.placeholder ?? DEFAULT_PLACEHOLDER}
 					placeholderTextColor={colorTokens.contentTertiary}
-					returnKeyType="search" 
-          clearButtonMode="never"
+					returnKeyType="search"
+					clearButtonMode="never"
 					autoFocus={props.autoFocus}
 				/>
 				{props.value.length > 0 && (
