@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import { StudentMapPage } from "@/pages/student";
 
 export default function StudentMapScreen() {
-	return (
-		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="text-content-primary font-medium">학생 맵</Text>
-		</View>
-	);
+	return <StudentMapPage />;
 }

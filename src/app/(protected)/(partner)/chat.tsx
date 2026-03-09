@@ -1,9 +1,5 @@
-import { Text, View } from "react-native";
+import { PartnerChatPage } from "@/pages/partner";
 
 export default function PartnerChatScreen() {
-	return (
-		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="text-content-primary font-medium">업체 채팅</Text>
-		</View>
-	);
+	return <PartnerChatPage />;
 }
