@@ -16,42 +16,42 @@ export interface TabItem {
 }
 
 export const TAB_CONFIG: Record<UserType, TabItem[]> = {
-	customer: [
+	student: [
 		{
-			route: "index",
+			route: "home",
 			label: "홈",
 			activeIconName: "home",
 			inactiveIconName: "home-outline",
 		},
 		{
-			route: "nearby",
-			label: "내 주변",
+			route: "map",
+			label: "맵",
 			activeIconName: "location",
 			inactiveIconName: "location-outline",
 		},
 		{
-			route: "coupons",
-			label: "제휴권의함",
+			route: "suggestion",
+			label: "제휴건의함",
 			activeIconName: "pricetag",
 			inactiveIconName: "pricetag-outline",
 		},
 		{
-			route: "account",
-			label: "계정관리",
+			route: "profile",
+			label: "프로필",
 			activeIconName: "person",
 			inactiveIconName: "person-outline",
 		},
 	],
-	manager: [
+	admin: [
 		{
-			route: "index",
+			route: "home",
 			label: "홈",
 			activeIconName: "home",
 			inactiveIconName: "home-outline",
 		},
 		{
-			route: "nearby",
-			label: "주변 매장",
+			route: "map",
+			label: "맵",
 			activeIconName: "location",
 			inactiveIconName: "location-outline",
 		},
@@ -68,22 +68,22 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 			inactiveIconName: "chatbubble-outline",
 		},
 		{
-			route: "account",
-			label: "계정관리",
+			route: "profile",
+			label: "프로필",
 			activeIconName: "person",
 			inactiveIconName: "person-outline",
 		},
 	],
-	company: [
+	partner: [
 		{
-			route: "index",
+			route: "home",
 			label: "홈",
 			activeIconName: "home",
 			inactiveIconName: "home-outline",
 		},
 		{
-			route: "nearby",
-			label: "주변 업체",
+			route: "map",
+			label: "맵",
 			activeIconName: "location",
 			inactiveIconName: "location-outline",
 		},
@@ -100,8 +100,8 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 			inactiveIconName: "chatbubble-outline",
 		},
 		{
-			route: "account",
-			label: "계정관리",
+			route: "profile",
+			label: "프로필",
 			activeIconName: "person",
 			inactiveIconName: "person-outline",
 		},
