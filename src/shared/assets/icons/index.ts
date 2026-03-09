@@ -3,4 +3,6 @@ export { default as CheckFillIcon } from "./check-fill-icon.svg";
 export { default as CheckIcon } from "./check-icon.svg";
 export { default as CheckNoneIcon } from "./check-none-icon.svg";
 export { default as CloseIcon } from "./close-icon.svg";
+export { default as InfoFillIcon } from "./info-fill-icon.svg";
+export { default as InfoIcon } from "./info-icon.svg";
 export { default as SearchIcon } from "./search-icon.svg";
