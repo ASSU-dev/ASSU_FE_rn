@@ -1,26 +1,14 @@
 import { Tabs } from "expo-router";
-import { BottomTabBar } from "@/widgets/bottom-tab-bar/ui/BottomTabBar";
+import { RoleBasedTabLayout } from "@/widgets/bottom-tab-bar/ui/RoleBasedTabLayout";
 
 export default function AdminTabLayout() {
 	return (
-		<Tabs
-			screenOptions={{ headerShown: false }}
-			tabBar={({ state, navigation }) => {
-				const activeRouteName = state.routes[state.index]?.name ?? "home";
-				return (
-					<BottomTabBar
-						userType="ADMIN"
-						activeRouteName={activeRouteName}
-						onTabPress={(routeName) => navigation.navigate(routeName)}
-					/>
-				);
-			}}
-		>
+		<RoleBasedTabLayout userType="ADMIN">
 			<Tabs.Screen name="home" />
 			<Tabs.Screen name="map" />
 			<Tabs.Screen name="dashboard" />
 			<Tabs.Screen name="chat" />
 			<Tabs.Screen name="profile" />
-		</Tabs>
+		</RoleBasedTabLayout>
 	);
 }

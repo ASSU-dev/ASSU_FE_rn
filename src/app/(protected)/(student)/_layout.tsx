@@ -1,25 +1,13 @@
 import { Tabs } from "expo-router";
-import { BottomTabBar } from "@/widgets/bottom-tab-bar/ui/BottomTabBar";
+import { RoleBasedTabLayout } from "@/widgets/bottom-tab-bar/ui/RoleBasedTabLayout";
 
 export default function StudentTabLayout() {
 	return (
-		<Tabs
-			screenOptions={{ headerShown: false }}
-			tabBar={({ state, navigation }) => {
-				const activeRouteName = state.routes[state.index]?.name ?? "home";
-				return (
-					<BottomTabBar
-						userType="STUDENT"
-						activeRouteName={activeRouteName}
-						onTabPress={(routeName) => navigation.navigate(routeName)}
-					/>
-				);
-			}}
-		>
+		<RoleBasedTabLayout userType="STUDENT">
 			<Tabs.Screen name="home" />
 			<Tabs.Screen name="map" />
 			<Tabs.Screen name="suggestion" />
 			<Tabs.Screen name="profile" />
-		</Tabs>
+		</RoleBasedTabLayout>
 	);
 }
