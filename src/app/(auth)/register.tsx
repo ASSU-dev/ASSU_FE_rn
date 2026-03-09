@@ -1,9 +1,16 @@
-import { Text, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 
 export default function RegisterScreen() {
 	return (
 		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="text-content-primary font-medium">회원가입</Text>
+			<Text className="mb-4 text-content-primary font-medium">회원가입</Text>
+			<Pressable
+				className="rounded-lg bg-primary px-4 py-3"
+				onPress={() => router.push("/")}
+			>
+				<Text className="text-sm font-semibold text-white">허브로 돌아가기</Text>
+			</Pressable>
 		</View>
 	);
 }
