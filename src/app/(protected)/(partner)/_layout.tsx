@@ -9,7 +9,7 @@ export default function PartnerTabLayout() {
 				const activeRouteName = state.routes[state.index]?.name ?? "home";
 				return (
 					<BottomTabBar
-						userType="partner"
+						userType="PARTNER"
 						activeRouteName={activeRouteName}
 						onTabPress={(routeName) => navigation.navigate(routeName)}
 					/>

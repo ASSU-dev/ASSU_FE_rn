@@ -9,7 +9,7 @@ export default function StudentTabLayout() {
 				const activeRouteName = state.routes[state.index]?.name ?? "home";
 				return (
 					<BottomTabBar
-						userType="student"
+						userType="STUDENT"
 						activeRouteName={activeRouteName}
 						onTabPress={(routeName) => navigation.navigate(routeName)}
 					/>

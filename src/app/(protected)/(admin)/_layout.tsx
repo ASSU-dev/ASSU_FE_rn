@@ -9,7 +9,7 @@ export default function AdminTabLayout() {
 				const activeRouteName = state.routes[state.index]?.name ?? "home";
 				return (
 					<BottomTabBar
-						userType="admin"
+						userType="ADMIN"
 						activeRouteName={activeRouteName}
 						onTabPress={(routeName) => navigation.navigate(routeName)}
 					/>

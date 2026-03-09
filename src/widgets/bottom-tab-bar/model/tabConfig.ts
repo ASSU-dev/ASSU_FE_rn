@@ -16,7 +16,7 @@ export interface TabItem {
 }
 
 export const TAB_CONFIG: Record<UserType, TabItem[]> = {
-	student: [
+	STUDENT: [
 		{
 			route: "home",
 			label: "홈",
@@ -42,7 +42,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 			inactiveIconName: "person-outline",
 		},
 	],
-	admin: [
+	ADMIN: [
 		{
 			route: "home",
 			label: "홈",
@@ -74,7 +74,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 			inactiveIconName: "person-outline",
 		},
 	],
-	partner: [
+	PARTNER: [
 		{
 			route: "home",
 			label: "홈",
