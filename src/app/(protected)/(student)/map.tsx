@@ -1,4 +1,4 @@
-import { StudentMapPage } from "@/pages/student";
+import { StudentMapPage } from "@/pages/student/map";
 
 export default function StudentMapScreen() {
 	return <StudentMapPage />;

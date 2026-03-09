@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
-export function IndexPage() {
+export function DevHubPage() {
 	return (
 		<View className="flex-1 justify-center bg-canvas px-6">
 			<Text className="mb-2 text-2xl font-bold text-content-primary">

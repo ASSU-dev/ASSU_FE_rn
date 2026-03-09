@@ -1,4 +1,4 @@
-import { AdminMapPage } from "@/pages/admin";
+import { AdminMapPage } from "@/pages/admin/map";
 
 export default function AdminMapScreen() {
 	return <AdminMapPage />;

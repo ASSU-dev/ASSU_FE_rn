@@ -1,4 +1,4 @@
-import { PartnerChatPage } from "@/pages/partner";
+import { PartnerChatPage } from "@/pages/partner/chat";
 
 export default function PartnerChatScreen() {
 	return <PartnerChatPage />;

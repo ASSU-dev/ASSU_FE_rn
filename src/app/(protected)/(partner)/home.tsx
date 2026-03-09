@@ -1,4 +1,4 @@
-import { PartnerHomePage } from "@/pages/partner";
+import { PartnerHomePage } from "@/pages/partner/home";
 
 export default function PartnerHomeScreen() {
 	return <PartnerHomePage />;

@@ -1,5 +1,5 @@
-import { IndexPage } from "@/pages";
+import { DevHubPage } from "@/pages/dev-hub";
 
 export default function Index() {
-	return <IndexPage />;
+	return <DevHubPage />;
 }

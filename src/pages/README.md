@@ -19,10 +19,10 @@
 
 ```text
 pages/
-├── index/
+├── dev-hub/
 │   ├── index.ts
 │   └── ui/
-│       └── IndexPage.tsx
+│       └── DevHubPage.tsx
 ├── auth/
 │   ├── login/
 │   │   ├── index.ts
@@ -58,14 +58,15 @@ pages/
 ## 네이밍 규칙
 
 - 폴더명은 **라우트와 최대한 동일하게** 맞춥니다.
-  - `app/index.tsx` ↔ `pages/index/ui/IndexPage.tsx`
+  - `app/index.tsx` ↔ `pages/dev-hub/ui/DevHubPage.tsx`
   - `app/(protected)/(student)/home.tsx` ↔ `pages/student/home/ui/StudentHomePage.tsx`
   - `app/(auth)/login.tsx` ↔ `pages/auth/login/ui/LoginPage.tsx`
 - 컴포넌트명은 역할과 화면 의미가 드러나도록 명명합니다.
   - `StudentHomePage`
   - `AdminDashboardPage`
   - `PartnerChatPage`
-- 각 폴더는 `index.ts`로 public API를 노출합니다.
+- 각 **페이지 슬라이스 폴더**는 `index.ts`로 public API를 노출합니다.
+- `pages/student`, `pages/admin`, `pages/partner`, `pages/auth` 같은 그룹 폴더에는 별도 `index.ts`를 두지 않습니다.
 
 ## 사용 가이드
 
@@ -74,7 +75,7 @@ pages/
 `app` 라우트 파일은 직접 화면을 구현하지 않고, 대응하는 `pages` 컴포넌트를 import해서 반환합니다.
 
 ```tsx
-import { StudentHomePage } from "@/pages/student";
+import { StudentHomePage } from "@/pages/student/home";
 
 export default function StudentHomeScreen() {
 	return <StudentHomePage />;
@@ -110,8 +111,7 @@ export function StudentHomePage() {
 
 1. `pages/<group>/<route>/ui/<Page>.tsx` 생성
 2. `pages/<group>/<route>/index.ts`에서 re-export
-3. 필요하면 `pages/<group>/index.ts`에도 export 추가
-4. `app/.../<route>.tsx`에서 해당 페이지를 연결
+3. `app/.../<route>.tsx`에서 해당 페이지를 연결
 
 ## 역할별 페이지 정책
 
@@ -173,7 +173,7 @@ app/
 
 이 파일들은 라우트를 정의하고, 실제 화면은 `pages`에서 가져와 연결합니다.
 
-현재 `/` 개발 허브 화면도 `pages/index/ui/IndexPage.tsx`에서 관리하고, `app/index.tsx`는 연결만 담당합니다.
+현재 `/` 개발 허브 화면도 `pages/dev-hub/ui/DevHubPage.tsx`에서 관리하고, `app/index.tsx`는 연결만 담당합니다.
 
 ## 참고
 
