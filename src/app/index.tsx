@@ -1,5 +1,5 @@
-import { Redirect } from "expo-router";
+import { DevHubPage } from "@/pages/dev-hub";
 
 export default function Index() {
-	return <Redirect href="/(tabs)" />;
+	return <DevHubPage />;
 }

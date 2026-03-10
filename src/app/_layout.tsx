@@ -4,7 +4,7 @@ import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
 import "@/shared/styles/global.styles.css";
 
 export const unstable_settings = {
-	anchor: "(tabs)",
+	anchor: "(protected)",
 };
 
 export default function RootLayout() {
@@ -17,7 +17,9 @@ export default function RootLayout() {
 	return (
 		<>
 			<Stack>
-				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+				<Stack.Screen name="index" options={{ headerShown: false }} />
+				<Stack.Screen name="(auth)" options={{ headerShown: false }} />
+				<Stack.Screen name="(protected)" options={{ headerShown: false }} />
 			</Stack>
 			<StatusBar style="auto" />
 		</>
