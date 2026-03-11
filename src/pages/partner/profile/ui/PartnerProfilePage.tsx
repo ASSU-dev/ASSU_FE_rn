@@ -8,13 +8,13 @@ import {
 } from "@/widgets/account-management";
 
 const myAccountItems: AccountMenuItemProps[] = [
-	{ label: "알림설정", iconName: "notifications-outline" },
-	{ label: "계정관리", iconName: "person-outline" },
+	{ label: "알림설정", iconName: "bell" },
+	{ label: "계정관리", iconName: "user" },
 ];
 
 const customerServiceItems: AccountMenuItemProps[] = [
-	{ label: "이용약관", iconName: "document-outline" },
-	{ label: "고객센터", iconName: "headset-outline" },
+	{ label: "이용약관", iconName: "folder" },
+	{ label: "고객센터", iconName: "headphone" },
 ];
 
 export function PartnerProfilePage() {
