@@ -1,9 +1,35 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
+import { PageLayout } from "@/shared/ui/layout";
+import {
+	AccountMenuSection,
+	AccountProfileHeader,
+	type AccountMenuItemProps,
+} from "@/widgets/account-management";
+
+const myAccountItems: AccountMenuItemProps[] = [
+	{ label: "알림설정", iconName: "notifications-outline" },
+	{ label: "계정관리", iconName: "person-outline" },
+	{ label: "대기중인 제휴 계약서", iconName: "document-text-outline" },
+];
+
+const customerServiceItems: AccountMenuItemProps[] = [
+	{ label: "이용약관", iconName: "document-outline" },
+	{ label: "고객센터", iconName: "headset-outline" },
+];
 
 export function AdminProfilePage() {
 	return (
-		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="text-content-primary font-medium">관리자 프로필</Text>
-		</View>
+		<PageLayout
+			scrollable
+			contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 120 }}
+		>
+			<View className="gap-8">
+				<AccountProfileHeader name="숭실대학교 총학생회" subtitle="사업 수정" />
+
+				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
+				<AccountMenuSection title="고객센터" items={customerServiceItems} />
+			</View>
+		</PageLayout>
 	);
 }
