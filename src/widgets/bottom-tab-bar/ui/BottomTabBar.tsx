@@ -24,7 +24,7 @@ export function BottomTabBar({
 		<View
 			className="flex-row bg-canvas"
 			style={[
-				shadows.primary,
+				shadows.neutral,
 				{
 					borderTopWidth: StyleSheet.hairlineWidth,
 					borderTopColor: colorTokens.contentSecondaryAlpha30,
