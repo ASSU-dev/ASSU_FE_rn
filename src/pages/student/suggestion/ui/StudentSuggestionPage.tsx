@@ -1,35 +1,82 @@
+import { router } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { useBenefitsStore } from "../model/useBenefitsStore";
 import { BenefitEmptyState } from "./BenefitEmptyState";
+import { BenefitList } from "./BenefitList";
 import { BenefitSummary } from "./BenefitSummary";
 import { MonthNavigator } from "./MonthNavigator";
+import { MOCK_BENEFITS } from "./mockBenefits";
 import { SuggestionSection } from "./SuggestionSection";
+
+const COLLAPSED_LIMIT = 3;
 
 export function StudentSuggestionPage() {
 	const [month, setMonth] = useState(new Date().getMonth() + 1);
-	const count = 0; // TODO: API 연결
+	const { benefits, addBenefit } = useBenefitsStore();
+
+	const benefitsForMonth = benefits.filter((b) => {
+		const benefitMonth = parseInt(b.date.split("-")[1], 10);
+		return benefitMonth === month;
+	});
+	const count = benefitsForMonth.length;
+	const displayBenefits = benefitsForMonth.slice(0, COLLAPSED_LIMIT);
 
 	const handlePrev = () => setMonth((m) => (m === 1 ? 12 : m - 1));
 	const handleNext = () => setMonth((m) => (m === 12 ? 1 : m + 1));
 
+	const handleAddRandom = () => {
+		const random =
+			MOCK_BENEFITS[Math.floor(Math.random() * MOCK_BENEFITS.length)];
+		const dateStr = `${new Date().getFullYear()}-${month}-15`;
+		addBenefit({ ...random, id: `${random.id}-${Date.now()}`, date: dateStr });
+	};
+
 	return (
 		<PageLayout contentContainerClassName="flex-1">
-			<View className="flex-1">
+			<ScrollView className="flex-1" contentContainerClassName="flex-grow">
 				<View className="px-screen-m gap-6 pt-10">
-					<MonthNavigator
-						month={month}
-						onPrev={handlePrev}
-						onNext={handleNext}
-					/>
-					<BenefitSummary month={month} count={count} />
+					<View className="flex-row items-center justify-between">
+						<MonthNavigator
+							month={month}
+							onPrev={handlePrev}
+							onNext={handleNext}
+						/>
+						<Pressable
+							className="bg-neutral px-3 py-1.5 rounded-[8px]"
+							onPress={handleAddRandom}
+						>
+							<Text className="font-medium text-sm text-content-secondary">
+								+ 가게 추가
+							</Text>
+						</Pressable>
+					</View>
+					<View className="flex-row items-end justify-between">
+						<BenefitSummary month={month} count={count} />
+						{count > COLLAPSED_LIMIT && (
+							<Pressable
+								onPress={() =>
+									router.push(
+										`/(protected)/(student)/benefit-all?month=${month}`,
+									)
+								}
+							>
+								<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">
+									전체보기
+								</Text>
+							</Pressable>
+						)}
+					</View>
 				</View>
-				{count === 0 && (
+				{count === 0 ? (
 					<View className="flex-1 items-center justify-center">
 						<BenefitEmptyState />
 					</View>
+				) : (
+					<BenefitList benefits={displayBenefits} />
 				)}
-			</View>
+			</ScrollView>
 			<SuggestionSection />
 		</PageLayout>
 	);
