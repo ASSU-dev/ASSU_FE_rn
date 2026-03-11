@@ -7,7 +7,7 @@ export function BenefitEmptyState() {
 			<Text className="font-medium text-md text-content-primary leading-caption tracking-caption text-center">
 				아직 받은 혜택이 없어요!
 			</Text>
-			<Text className="font-regular text-[14px] text-content-secondary text-center">
+      <Text className="font-regular text-sm text-content-secondary text-center">
 				받을 수 있는 제휴 혜택을 확인해보세요
 			</Text>
 		</View>
