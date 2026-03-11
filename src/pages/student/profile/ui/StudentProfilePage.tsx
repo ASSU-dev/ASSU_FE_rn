@@ -1,9 +1,38 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+
+import { PageLayout } from "@/shared/ui/layout";
+import {
+	AccountMenuSection,
+	AccountProfileHeader,
+	type AccountMenuItemProps,
+} from "@/widgets/account-management";
+
+const myAccountItems: AccountMenuItemProps[] = [
+	{ label: "내가 작성한 리뷰", iconName: "writing" },
+	{ label: "로그아웃", iconName: "exitRight" },
+];
+
+const customerServiceItems: AccountMenuItemProps[] = [
+	{ label: "개인정보 처리방침 안내", iconName: "folder" },
+	{ label: "자주 묻는 질문", iconName: "speechBubble" },
+	{ label: "고객센터", iconName: "headphone" },
+];
 
 export function StudentProfilePage() {
 	return (
-		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="text-content-primary font-medium">학생 프로필</Text>
-		</View>
+		<PageLayout
+			scrollable
+			contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 120 }}
+		>
+			<View className="gap-8">
+				<AccountProfileHeader
+					name="김승실"
+					subtitle="숭실대학교 IT대학 글로벌미디어학부"
+				/>
+
+				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
+				<AccountMenuSection title="고객센터" items={customerServiceItems} />
+			</View>
+		</PageLayout>
 	);
 }
