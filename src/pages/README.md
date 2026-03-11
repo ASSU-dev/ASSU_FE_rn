@@ -59,7 +59,7 @@ pages/
 
 - 폴더명은 **라우트와 최대한 동일하게** 맞춥니다.
   - `app/index.tsx` ↔ `pages/dev-hub/ui/DevHubPage.tsx`
-  - `app/(protected)/(student)/home.tsx` ↔ `pages/student/home/ui/StudentHomePage.tsx`
+  - `app/(protected)/(student)/(tabs)/home.tsx` ↔ `pages/student/home/ui/StudentHomePage.tsx`
   - `app/(auth)/login.tsx` ↔ `pages/auth/login/ui/LoginPage.tsx`
 - 컴포넌트명은 역할과 화면 의미가 드러나도록 명명합니다.
   - `StudentHomePage`
@@ -153,22 +153,25 @@ app/
 │   └── register.tsx
 └── (protected)/
     ├── (student)/
-    │   ├── home.tsx
-    │   ├── map.tsx
-    │   ├── suggestion.tsx
-    │   └── profile.tsx
+    │   └── (tabs)/
+    │       ├── home.tsx
+    │       ├── map.tsx
+    │       ├── suggestion.tsx
+    │       └── profile.tsx
     ├── (admin)/
-    │   ├── home.tsx
-    │   ├── map.tsx
-    │   ├── dashboard.tsx
-    │   ├── chat.tsx
-    │   └── profile.tsx
+    │   └── (tabs)/
+    │       ├── home.tsx
+    │       ├── map.tsx
+    │       ├── dashboard.tsx
+    │       ├── chat.tsx
+    │       └── profile.tsx
     └── (partner)/
-        ├── home.tsx
-        ├── map.tsx
-        ├── dashboard.tsx
-        ├── chat.tsx
-        └── profile.tsx
+        └── (tabs)/
+            ├── home.tsx
+            ├── map.tsx
+            ├── dashboard.tsx
+            ├── chat.tsx
+            └── profile.tsx
 ```
 
 이 파일들은 라우트를 정의하고, 실제 화면은 `pages`에서 가져와 연결합니다.
