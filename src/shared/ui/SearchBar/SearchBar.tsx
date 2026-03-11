@@ -77,10 +77,7 @@ export function SearchBar(props: SearchBarProps) {
 					autoFocus={props.autoFocus}
 				/>
 				{props.value.length > 0 && (
-					<Pressable
-						onPress={() => props.onChangeText("")}
-						hitSlop={8}
-					>
+					<Pressable onPress={() => props.onChangeText("")} hitSlop={8}>
 						<CloseIcon
 							width={16}
 							height={16}

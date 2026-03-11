@@ -1,14 +1,6 @@
 import type { ReactNode } from "react";
-import {
-	ScrollView,
-	type StyleProp,
-	View,
-	type ViewStyle,
-} from "react-native";
-import {
-	SafeAreaView,
-	type Edge,
-} from "react-native-safe-area-context";
+import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
+import { type Edge, SafeAreaView } from "react-native-safe-area-context";
 
 interface PageLayoutProps {
 	children: ReactNode;
@@ -55,10 +47,7 @@ export function PageLayout({
 
 	return (
 		<SafeAreaView edges={edges} className={className}>
-			<View
-				className={contentContainerClassName}
-				style={contentContainerStyle}
-			>
+			<View className={contentContainerClassName} style={contentContainerStyle}>
 				{children}
 			</View>
 		</SafeAreaView>

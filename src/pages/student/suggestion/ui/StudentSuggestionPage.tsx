@@ -17,7 +17,11 @@ export function StudentSuggestionPage() {
 		<PageLayout contentContainerClassName="flex-1">
 			<View className="flex-1">
 				<View className="px-screen-m gap-6 pt-10">
-					<MonthNavigator month={month} onPrev={handlePrev} onNext={handleNext} />
+					<MonthNavigator
+						month={month}
+						onPrev={handlePrev}
+						onNext={handleNext}
+					/>
 					<BenefitSummary month={month} count={count} />
 				</View>
 				{count === 0 && (
