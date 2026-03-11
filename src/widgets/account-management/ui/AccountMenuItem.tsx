@@ -12,10 +12,7 @@ import {
 	WritingIcon,
 } from "@/shared/assets/icons";
 
-import type {
-	AccountMenuIconName,
-	AccountMenuItemProps,
-} from "../model/types";
+import type { AccountMenuIconName, AccountMenuItemProps } from "../model/types";
 
 type AccountIconComponent = ComponentType<{
 	width?: number;

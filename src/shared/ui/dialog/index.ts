@@ -21,4 +21,7 @@ export const Dialog = Object.assign(DialogRoot, {
 	RadioItem: DialogRadioItem,
 });
 
-export type { DialogRadioContextValue, DialogSelectContextValue } from "./types";
+export type {
+	DialogRadioContextValue,
+	DialogSelectContextValue,
+} from "./types";

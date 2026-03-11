@@ -14,7 +14,9 @@ export function DialogCancelButton({
 			{...props}
 			className="flex-1 py-4 rounded-lg bg-primary-tint items-center justify-center"
 		>
-			<Text className="text-primary font-semibold text-sm leading-5">{children}</Text>
+			<Text className="text-primary font-semibold text-sm leading-5">
+				{children}
+			</Text>
 		</Pressable>
 	);
 }

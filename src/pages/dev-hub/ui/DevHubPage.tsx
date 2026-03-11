@@ -15,28 +15,36 @@ export function DevHubPage() {
 				className="mb-3 items-center rounded-lg bg-primary py-4"
 				onPress={() => router.push("/(protected)/(student)/home")}
 			>
-				<Text className="text-sm font-semibold text-white">학생 홈으로 이동</Text>
+				<Text className="text-sm font-semibold text-white">
+					학생 홈으로 이동
+				</Text>
 			</Pressable>
 
 			<Pressable
 				className="mb-3 items-center rounded-lg bg-primary py-4"
 				onPress={() => router.push("/(protected)/(admin)/home")}
 			>
-				<Text className="text-sm font-semibold text-white">관리자 홈으로 이동</Text>
+				<Text className="text-sm font-semibold text-white">
+					관리자 홈으로 이동
+				</Text>
 			</Pressable>
 
 			<Pressable
 				className="mb-6 items-center rounded-lg bg-primary py-4"
 				onPress={() => router.push("/(protected)/(partner)/home")}
 			>
-				<Text className="text-sm font-semibold text-white">제휴업체 홈으로 이동</Text>
+				<Text className="text-sm font-semibold text-white">
+					제휴업체 홈으로 이동
+				</Text>
 			</Pressable>
 
 			<Pressable
 				className="mb-3 items-center rounded-lg bg-primary-tint py-4"
 				onPress={() => router.push("/(auth)/login")}
 			>
-				<Text className="text-sm font-semibold text-primary">로그인 페이지 이동</Text>
+				<Text className="text-sm font-semibold text-primary">
+					로그인 페이지 이동
+				</Text>
 			</Pressable>
 
 			<Pressable
