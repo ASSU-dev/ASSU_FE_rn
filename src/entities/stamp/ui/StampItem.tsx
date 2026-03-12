@@ -7,7 +7,7 @@ interface StampItemProps {
 
 export const StampItem = ({ isAchieved }: StampItemProps) => {
   return (
-    <View className="w-[18%] aspect-square items-center justify-center mb-3">
+    <View className="flex aspect-square items-center justify-center mb-3">
       {isAchieved ? (
         <StampActive width={48} height={48} fill="#FFD700" />
       ) : (

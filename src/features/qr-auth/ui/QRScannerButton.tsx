@@ -1,4 +1,4 @@
-import QRIcon from "@/shared/assets/icons/qr-icon.svg";
+import { QRIcon } from "@/shared/assets/icons";
 import { Pressable, Text, View } from "react-native";
 
 export const QRScannerButton = () => {
