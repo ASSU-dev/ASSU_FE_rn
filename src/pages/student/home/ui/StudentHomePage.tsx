@@ -1,16 +1,23 @@
-import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
+import { PartnerRankingList } from "@/widgets/partner-ranking/ui/PartnerRankingList";
+import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
+import React from "react";
+import { ScrollView, Text } from "react-native";
 
 export function StudentHomePage() {
-	return (
-		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="mb-4 text-content-primary font-medium">학생 홈</Text>
-			<Pressable
-				className="rounded-lg bg-primary px-4 py-3"
-				onPress={() => router.push("/")}
-			>
-				<Text className="text-sm font-semibold text-white">허브로 돌아가기</Text>
-			</Pressable>
-		</View>
-	);
+  const userStampCount = 4;
+  const userName = "김숭실";
+  return (
+    <ScrollView className="flex-1 bg-gray-50 px-5 pt-10">
+      <Text className="text-2xl font-bold mb-6">안녕하세요, {userName}님!</Text>
+      <Text className="text-2xl font-bold mb-6">
+        오늘은 어떤 할인을 받을까요?
+      </Text>
+
+      <QRScannerButton />
+      <StampBoard currentCount={userStampCount} />
+
+      <PartnerRankingList />
+    </ScrollView>
+  );
 }
