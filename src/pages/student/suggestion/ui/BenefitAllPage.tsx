@@ -6,10 +6,11 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colorTokens } from "@/shared/styles/tokens";
+import type { Benefit } from "../model/types";
+import { getMonthFromDateStr } from "../model/types";
 import { BenefitList } from "./BenefitList";
 import { BenefitSummary } from "./BenefitSummary";
 import { MonthNavigator } from "./MonthNavigator";
-import type { Benefit } from "./mockBenefits";
 
 interface BenefitAllPageProps {
 	initialMonth: number;
@@ -24,10 +25,9 @@ export function BenefitAllPage({
 	const handlePrev = () => setMonth((m) => (m === 1 ? 12 : m - 1));
 	const handleNext = () => setMonth((m) => (m === 12 ? 1 : m + 1));
 
-	const benefitsForMonth = benefits.filter((b) => {
-		const benefitMonth = parseInt(b.date.split("-")[1], 10);
-		return benefitMonth === month;
-	});
+	const benefitsForMonth = benefits.filter(
+		(b) => getMonthFromDateStr(b.date) === month,
+	);
 
 	return (
 		<SafeAreaView edges={["top"]} className="flex-1 bg-content-inverse">

@@ -1,6 +1,6 @@
 // 개별 혜택 카드 — 가게명, 혜택 설명, 날짜, 리뷰 작성 버튼을 표시한다
 import { Pressable, Text, View } from "react-native";
-import type { Benefit } from "./mockBenefits";
+import type { Benefit } from "../model/types";
 
 interface BenefitCardProps extends Benefit {
 	onReviewPress?: () => void;

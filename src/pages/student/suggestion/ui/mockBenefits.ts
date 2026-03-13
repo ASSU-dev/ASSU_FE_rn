@@ -1,11 +1,6 @@
 // [TEST] 목 데이터 — API 연동 전 UI 테스트용
-export interface Benefit {
-	id: string;
-	storeName: string;
-	date: string;
-	time: string;
-	description: string;
-}
+import type { Benefit } from "../model/types";
+export type { Benefit };
 
 export const MOCK_BENEFITS: Benefit[] = [
 	{

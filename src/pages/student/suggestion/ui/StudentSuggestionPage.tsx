@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { getMonthFromDateStr } from "../model/types";
 import { useBenefitsStore } from "../model/useBenefitsStore";
 import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
@@ -16,10 +17,9 @@ export function StudentSuggestionPage() {
 	const [month, setMonth] = useState(new Date().getMonth() + 1);
 	const { benefits, addBenefit } = useBenefitsStore();
 
-	const benefitsForMonth = benefits.filter((b) => {
-		const benefitMonth = parseInt(b.date.split("-")[1], 10);
-		return benefitMonth === month;
-	});
+	const benefitsForMonth = benefits.filter(
+		(b) => getMonthFromDateStr(b.date) === month,
+	);
 	const count = benefitsForMonth.length;
 	const displayBenefits = benefitsForMonth.slice(0, COLLAPSED_LIMIT);
 
@@ -29,7 +29,7 @@ export function StudentSuggestionPage() {
 	const handleAddRandom = () => {
 		const random =
 			MOCK_BENEFITS[Math.floor(Math.random() * MOCK_BENEFITS.length)];
-		const dateStr = `${new Date().getFullYear()}-${month}-15`;
+		const dateStr = new Date().toISOString().split("T")[0];
 		addBenefit({ ...random, id: `${random.id}-${Date.now()}`, date: dateStr });
 	};
 

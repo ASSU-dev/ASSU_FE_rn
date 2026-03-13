@@ -1,7 +1,7 @@
 // 혜택 목록 영역 — BenefitCard 목록을 렌더링한다
 import { View } from "react-native";
+import type { Benefit } from "../model/types";
 import { BenefitCard } from "./BenefitCard";
-import type { Benefit } from "./mockBenefits";
 
 interface BenefitListProps {
 	benefits: Benefit[];

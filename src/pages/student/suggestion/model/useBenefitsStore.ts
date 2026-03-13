@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Benefit } from "../ui/mockBenefits";
+import type { Benefit } from "./types";
 
 interface BenefitsStore {
 	benefits: Benefit[];
