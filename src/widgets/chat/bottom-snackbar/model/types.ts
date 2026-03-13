@@ -19,4 +19,3 @@ export type BottomSnackbarProps = {
 	/** 테스트용 id */
 	testID?: string;
 };
-

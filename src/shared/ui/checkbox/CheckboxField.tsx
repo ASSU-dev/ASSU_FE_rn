@@ -3,27 +3,27 @@ import { Checkbox } from "./Checkbox";
 import type { CheckboxFieldProps } from "./types";
 
 export function CheckboxField<T extends FieldValues>({
-  control,
-  name,
-  label,
-  showDivider = false,
+	control,
+	name,
+	label,
+	showDivider = false,
 }: CheckboxFieldProps<T>) {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field }) => {
-        const isChecked = Boolean(field.value);
+	return (
+		<Controller
+			control={control}
+			name={name}
+			render={({ field }) => {
+				const isChecked = Boolean(field.value);
 
-        return (
-          <Checkbox
-            checked={isChecked}
-            label={label}
-            showDivider={showDivider}
-            onPress={() => field.onChange(!isChecked)}
-          />
-        );
-      }}
-    />
-  );
+				return (
+					<Checkbox
+						checked={isChecked}
+						label={label}
+						showDivider={showDivider}
+						onPress={() => field.onChange(!isChecked)}
+					/>
+				);
+			}}
+		/>
+	);
 }

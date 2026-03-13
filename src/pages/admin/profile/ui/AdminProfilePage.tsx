@@ -2,9 +2,9 @@ import { View } from "react-native";
 
 import { PageLayout } from "@/shared/ui/layout";
 import {
+	type AccountMenuItemProps,
 	AccountMenuSection,
 	AccountProfileHeader,
-	type AccountMenuItemProps,
 } from "@/widgets/account-management";
 
 const myAccountItems: AccountMenuItemProps[] = [
@@ -22,7 +22,11 @@ export function AdminProfilePage() {
 	return (
 		<PageLayout
 			scrollable
-			contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 120 }}
+			contentContainerStyle={{
+				paddingHorizontal: 24,
+				paddingTop: 28,
+				paddingBottom: 120,
+			}}
 		>
 			<View className="gap-8">
 				<AccountProfileHeader name="숭실대학교 총학생회" subtitle="사업 수정" />

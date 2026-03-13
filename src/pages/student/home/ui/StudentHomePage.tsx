@@ -9,7 +9,9 @@ export function StudentHomePage() {
 				className="rounded-lg bg-primary px-4 py-3"
 				onPress={() => router.push("/")}
 			>
-				<Text className="text-sm font-semibold text-white">허브로 돌아가기</Text>
+				<Text className="text-sm font-semibold text-white">
+					허브로 돌아가기
+				</Text>
 			</Pressable>
 		</View>
 	);

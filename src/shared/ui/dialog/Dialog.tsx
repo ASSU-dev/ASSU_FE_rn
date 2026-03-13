@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { Modal, Platform, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colorTokens } from "@/shared/styles/tokens";
 import { CloseIcon } from "@/shared/assets/icons";
+import { colorTokens } from "@/shared/styles/tokens";
 
 interface DialogProps {
 	visible: boolean;
@@ -35,7 +35,12 @@ export function Dialog({ visible, onDismiss, children }: DialogProps) {
 							className="absolute top-3 right-3 z-50 w-11 h-11 items-center justify-center"
 							onPress={onDismiss}
 						>
-							<CloseIcon width={24} height={24} pointerEvents="none" fill={colorTokens.contentSecondary} />
+							<CloseIcon
+								width={24}
+								height={24}
+								pointerEvents="none"
+								fill={colorTokens.contentSecondary}
+							/>
 						</Pressable>
 					)}
 					{children}
