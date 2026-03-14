@@ -1,6 +1,5 @@
 // [TEST] 목 데이터 — API 연동 전 UI 테스트용
-import type { Benefit } from "../model/types";
-export type { Benefit };
+import type { Benefit } from "./types";
 
 export const MOCK_BENEFITS: Benefit[] = [
 	{

@@ -1,4 +1,4 @@
-// 혜택 목록 영역 — BenefitCard 목록을 렌더링한다
+// 혜택 목록 영역 — BenefitCard 목록을 렌더링
 import { View } from "react-native";
 import type { Benefit } from "../model/types";
 import { BenefitCard } from "./BenefitCard";

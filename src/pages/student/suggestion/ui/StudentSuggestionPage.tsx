@@ -1,20 +1,22 @@
 import { router } from "expo-router";
-import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { MOCK_BENEFITS } from "../model/mockBenefits";
 import { getMonthFromDateStr } from "../model/types";
 import { useBenefitsStore } from "../model/useBenefitsStore";
+import { useMonthNavigator } from "../model/useMonthNavigator";
 import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
 import { BenefitSummary } from "./BenefitSummary";
 import { MonthNavigator } from "./MonthNavigator";
-import { MOCK_BENEFITS } from "./mockBenefits";
 import { SuggestionSection } from "./SuggestionSection";
 
 const COLLAPSED_LIMIT = 3;
 
 export function StudentSuggestionPage() {
-	const [month, setMonth] = useState(new Date().getMonth() + 1);
+	const { month, handlePrev, handleNext } = useMonthNavigator(
+		new Date().getMonth() + 1,
+	);
 	const { benefits, addBenefit } = useBenefitsStore();
 
 	const benefitsForMonth = benefits.filter(
@@ -22,9 +24,6 @@ export function StudentSuggestionPage() {
 	);
 	const count = benefitsForMonth.length;
 	const displayBenefits = benefitsForMonth.slice(0, COLLAPSED_LIMIT);
-
-	const handlePrev = () => setMonth((m) => (m === 1 ? 12 : m - 1));
-	const handleNext = () => setMonth((m) => (m === 12 ? 1 : m + 1));
 
 	const handleAddRandom = () => {
 		const random =
