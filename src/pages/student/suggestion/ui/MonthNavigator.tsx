@@ -1,4 +1,5 @@
-// 월 이동 네비게이터 — < n월 > 좌우 화살표로 조회 월을 변경한다
+// 월 이동 네비게이터 — < n월 > 좌우 화살표로 조회 월을 변경
+
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
