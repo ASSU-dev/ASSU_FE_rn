@@ -1,4 +1,4 @@
-// 제휴 건의 섹션 — "받고싶은 제휴혜택이 없나요?" 배너와 제휴 건의하기 버튼을 포함한다
+// 제휴 건의 섹션 — "받고싶은 제휴혜택이 없나요?" 배너와 제휴 건의하기 버튼을 포함
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
