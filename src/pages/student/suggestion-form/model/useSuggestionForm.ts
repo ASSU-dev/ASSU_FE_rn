@@ -21,7 +21,8 @@ export function useSuggestionForm() {
 
 	const { mutate } = useMutation({
 		mutationFn: postSuggestion,
-		onSuccess: () => router.back(),
+		onSuccess: () =>
+			router.replace("/(protected)/(student)/suggestion-complete"),
 		// TODO: API 연동 시 에러 핸들링 추가 (예: 토스트 메시지)
 	});
 
