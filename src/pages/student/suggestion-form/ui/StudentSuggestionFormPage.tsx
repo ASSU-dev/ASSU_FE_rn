@@ -2,9 +2,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
-import { SuggestionForm } from "@/features/suggestion-form";
 import { colorTokens } from "@/shared/styles/tokens";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { SuggestionForm } from "./SuggestionForm";
 
 export function StudentSuggestionFormPage() {
 	return (
