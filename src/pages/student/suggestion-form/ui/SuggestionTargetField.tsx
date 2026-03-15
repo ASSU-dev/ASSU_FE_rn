@@ -13,6 +13,9 @@ type Props = {
 	errorText?: string;
 };
 
+const LABEL_ROW_CLASS = "flex-row items-center gap-[50px]";
+const LABEL_VIEW_CLASS = "w-[54px] justify-center";
+
 const dropdownTextStyle = {
 	fontFamily: "Pretendard-Medium",
 	fontSize: 17,
@@ -28,8 +31,8 @@ export function SuggestionTargetField({
 
 	return (
 		<View className="mb-3">
-			<View className="flex-row items-center gap-[50px]">
-				<View className="w-[54px] justify-center">
+			<View className={LABEL_ROW_CLASS}>
+				<View className={LABEL_VIEW_CLASS}>
 					<Text className="text-[13px] font-regular leading-caption tracking-caption text-content-secondary">
 						건의대상
 					</Text>
