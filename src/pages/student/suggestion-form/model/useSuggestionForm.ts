@@ -10,19 +10,14 @@ export type SuggestionFormValues = {
 };
 
 export function useSuggestionForm() {
-	const { control, handleSubmit, watch } = useForm<SuggestionFormValues>({
+	const {
+		control,
+		handleSubmit,
+		formState: { isValid },
+	} = useForm<SuggestionFormValues>({
 		defaultValues: { target: "", storeName: "", desiredBenefit: "" },
+		mode: "onChange",
 	});
-
-	const [target, storeName, desiredBenefit] = watch([
-		"target",
-		"storeName",
-		"desiredBenefit",
-	]);
-	const isValid =
-		Boolean(target) &&
-		Boolean(storeName.trim()) &&
-		Boolean(desiredBenefit.trim());
 
 	const { mutate } = useMutation({
 		mutationFn: postSuggestion,

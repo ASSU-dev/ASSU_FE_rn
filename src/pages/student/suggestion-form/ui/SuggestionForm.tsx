@@ -1,13 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Controller } from "react-hook-form";
 import { Text, View } from "react-native";
+
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import {
-	FormField,
-	FormFieldInput,
-	FormFieldLabel,
-} from "@/shared/ui/FormField";
+import { FormField } from "@/shared/ui/FormField";
 import { SUGGESTION_TARGET_ITEMS } from "../model/suggestionTargetItems";
 import { useSuggestionForm } from "../model/useSuggestionForm";
 import { SuggestionTargetField } from "./SuggestionTargetField";
@@ -22,6 +19,7 @@ export function SuggestionForm() {
 				<Controller
 					control={control}
 					name="target"
+					rules={{ required: "건의 대상을 선택해주세요." }}
 					render={({ field, fieldState }) => (
 						<SuggestionTargetField
 							items={SUGGESTION_TARGET_ITEMS}
@@ -38,34 +36,33 @@ export function SuggestionForm() {
 					name="storeName"
 					label="제휴 희망 가게"
 					placeholder="가게 이름을 입력해주세요"
+					rules={{
+						required: "가게 이름을 입력해주세요.",
+						validate: (value: string) =>
+							!!value.trim() || "공백만으로는 입력할 수 없습니다.",
+					}}
 				/>
 
 				{/* 희망 혜택 */}
-				<Controller
+				<FormField
 					control={control}
 					name="desiredBenefit"
-					render={({ field, fieldState }) => (
-						<View className="mb-3">
-							<FormFieldLabel>희망 혜택</FormFieldLabel>
-							<FormFieldInput
-								appearance="filled"
-								multiline
-								placeholder="ex ) 식사시 음료제공을 원해요!"
-								value={field.value}
-								onChangeText={field.onChange}
-								onBlur={field.onBlur}
-								hasError={Boolean(fieldState.error)}
-								fontSize={14}
-								inputStyle={{
-									minHeight: 134,
-									paddingTop: 15,
-									paddingBottom: 15,
-									lineHeight: 20,
-									letterSpacing: 0.25,
-								}}
-							/>
-						</View>
-					)}
+					label="희망 혜택"
+					placeholder="ex ) 식사시 음료제공을 원해요!"
+					rules={{
+						required: "희망 혜택을 입력해주세요.",
+						validate: (value: string) =>
+							!!value.trim() || "공백만으로는 입력할 수 없습니다.",
+					}}
+					multiline
+					fontSize={14}
+					inputStyle={{
+						minHeight: 134,
+						paddingTop: 15,
+						paddingBottom: 15,
+						lineHeight: 20,
+						letterSpacing: 0.25,
+					}}
 				/>
 
 				{/* 안내 문구 */}

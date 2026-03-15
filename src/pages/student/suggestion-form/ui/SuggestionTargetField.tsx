@@ -13,6 +13,11 @@ type Props = {
 	errorText?: string;
 };
 
+const dropdownTextStyle = {
+	fontFamily: "Pretendard-Medium",
+	fontSize: 17,
+} as const;
+
 export function SuggestionTargetField({
 	items,
 	value,
@@ -64,13 +69,11 @@ export function SuggestionTargetField({
 							/>
 						)}
 						placeholderStyle={{
-							fontFamily: "Pretendard-Medium",
-							fontSize: 17,
+							...dropdownTextStyle,
 							color: colorTokens.contentSecondary,
 						}}
 						selectedTextStyle={{
-							fontFamily: "Pretendard-Medium",
-							fontSize: 17,
+							...dropdownTextStyle,
 							color: colorTokens.contentPrimary,
 						}}
 						renderItem={(item: SelectItem) => {
