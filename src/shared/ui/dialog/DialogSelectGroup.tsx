@@ -1,13 +1,17 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, type ReactNode, useContext } from "react";
 import { View } from "react-native";
 import type { DialogSelectContextValue } from "./types";
 
-const DialogSelectContext = createContext<DialogSelectContextValue | null>(null);
+const DialogSelectContext = createContext<DialogSelectContextValue | null>(
+	null,
+);
 
 export function useDialogSelectContext(): DialogSelectContextValue {
 	const ctx = useContext(DialogSelectContext);
 	if (!ctx) {
-		throw new Error("Dialog.SelectButton must be used inside Dialog.SelectGroup");
+		throw new Error(
+			"Dialog.SelectButton must be used inside Dialog.SelectGroup",
+		);
 	}
 	return ctx;
 }

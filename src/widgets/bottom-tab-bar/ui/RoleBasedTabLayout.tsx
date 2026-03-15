@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { Tabs } from "expo-router";
+import type { ReactNode } from "react";
 import type { UserType } from "@/entities/user/model/types";
 import { BottomTabBar } from "./BottomTabBar";
 
