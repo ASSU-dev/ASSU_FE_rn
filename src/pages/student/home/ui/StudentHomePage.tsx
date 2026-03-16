@@ -1,4 +1,4 @@
-import { router } from ".expo/types/router";
+import { router } from "expo-router";
 import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
 import { PartnerRankingList } from "@/widgets/partner-ranking/ui/PartnerRankingList";
 import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
