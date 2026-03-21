@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Text, View } from "react-native";
 import type { Partnership } from "../model/types";
 
@@ -6,7 +7,7 @@ const BADGE_LABEL_PERIOD = "제휴기간";
 
 interface PartnershipCardProps extends Partnership {}
 
-export const PartnershipCard = ({
+export const PartnershipCard = memo(({
 	storeName,
 	benefitContent,
 	startDate,
@@ -52,4 +53,4 @@ export const PartnershipCard = ({
 			</View>
 		</View>
 	);
-};
+});

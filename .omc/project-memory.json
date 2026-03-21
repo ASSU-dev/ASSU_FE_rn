@@ -136,8 +136,14 @@
   "hotPaths": [
     {
       "path": "src\\pages\\admin\\home\\ui\\AdminHomePage.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1774080905864,
+      "accessCount": 24,
+      "lastAccessed": 1774083165507,
+      "type": "file"
+    },
+    {
+      "path": "src\\shared\\ui\\summary-card\\SummaryCard.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1774083515000,
       "type": "file"
     },
     {
@@ -145,6 +151,30 @@
       "accessCount": 4,
       "lastAccessed": 1774080582058,
       "type": "directory"
+    },
+    {
+      "path": "src\\entities\\partnership\\ui\\PartnershipCard.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1774081387261,
+      "type": "file"
+    },
+    {
+      "path": "src\\widgets\\partnership-list\\ui\\PartnershipListWidget.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1774081402527,
+      "type": "file"
+    },
+    {
+      "path": "src\\entities\\partnership\\index.ts",
+      "accessCount": 3,
+      "lastAccessed": 1774081958850,
+      "type": "file"
+    },
+    {
+      "path": "src\\entities\\partnership\\model\\mockAffiliationSummaries.ts",
+      "accessCount": 3,
+      "lastAccessed": 1774083159598,
+      "type": "file"
     },
     {
       "path": "src",
@@ -171,33 +201,9 @@
       "type": "file"
     },
     {
-      "path": "src\\entities\\partnership\\ui\\PartnershipCard.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1774079881901,
-      "type": "file"
-    },
-    {
-      "path": "src\\entities\\partnership\\index.ts",
-      "accessCount": 1,
-      "lastAccessed": 1774079882667,
-      "type": "file"
-    },
-    {
-      "path": "src\\shared\\ui\\summary-card\\SummaryCard.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1774079889081,
-      "type": "file"
-    },
-    {
       "path": "src\\shared\\ui\\summary-card\\index.ts",
       "accessCount": 1,
       "lastAccessed": 1774079889783,
-      "type": "file"
-    },
-    {
-      "path": "src\\widgets\\partnership-list\\ui\\PartnershipListWidget.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1774079890950,
       "type": "file"
     },
     {

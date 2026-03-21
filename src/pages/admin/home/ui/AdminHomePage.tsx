@@ -1,43 +1,44 @@
 import { Pressable, Text, View } from "react-native";
 import { BellFill, Logo } from "@/shared/assets/icons";
-import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
+import {
+	MOCK_AFFILIATION_SUMMARIES,
+	MOCK_PARTNERSHIPS,
+} from "@/entities/partnership";
 import { SummaryCard } from "@/shared/ui/summary-card";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
 
-// Mock data for summary card
-const MOCK_SUMMARY = {
-	imageUrl:
-		"https://www.figma.com/api/mcp/asset/b1ea7819-7170-4e36-84f4-70c0e9189d17",
-	title: "역전할머니맥주 숭실대점",
-	address: "서울 동작구 사당로 36-1 서정캐슬",
-};
+// No-op for stable callback reference
+const noop = () => {};
 
-// Header section component
-function AdminHeaderSection() {
+// Admin header section component
+function AdminHeaderSection({ onNotificationPress }: { onNotificationPress: () => void }) {
 	return (
 		<View className="flex-row items-center justify-between">
 			<Logo width={40} height={40} />
-			<BellFill width={24} height={24} />
+			<Pressable onPress={onNotificationPress}>
+				<BellFill width={24} height={24} />
+			</Pressable>
 		</View>
 	);
 }
 
 // Recommendation section component
 function RecommendationSection() {
+	const mockSummary = MOCK_AFFILIATION_SUMMARIES[0];
 	return (
 		<View className="gap-2">
 			<Text className="text-base font-medium text-content-primary">
 				🔍 제휴업체 추천
 			</Text>
 			<SummaryCard
-				imageUrl={MOCK_SUMMARY.imageUrl}
-				title={MOCK_SUMMARY.title}
-				subtitle={MOCK_SUMMARY.address}
-				actionLabel="문의하기"
-				onActionPress={() => {
-					// TODO: Handle contact action
-				}}
+				imageUrl={mockSummary?.imageUrl}
+				title={mockSummary?.title || ""}
+				subtitle={mockSummary?.address || ""}
+				status={mockSummary?.status}
+				dateRange={mockSummary?.dateRange}
+				actionLabel={mockSummary?.status === "제휴중" ? "제휴 계약서 보기" : "문의하기"}
+				onActionPress={noop}
 			/>
 		</View>
 	);
@@ -47,9 +48,7 @@ function RecommendationSection() {
 function ManualRegistrationButton() {
 	return (
 		<Pressable
-			onPress={() => {
-				// TODO: Handle registration action
-			}}
+			onPress={noop}
 			className="rounded-lg bg-neutral-variant px-5 py-3.5"
 		>
 			<Text className="text-center text-xs font-regular text-content-primary">
@@ -69,7 +68,7 @@ export function AdminHomePage() {
 			contentContainerClassName="gap-8 px-6 pb-6"
 		>
 			{/* Header */}
-			<AdminHeaderSection />
+			<AdminHeaderSection onNotificationPress={noop} />
 
 			{/* Title */}
 			<Text className="text-2xl font-semibold text-content-primary">
@@ -81,9 +80,7 @@ export function AdminHomePage() {
 				{/* Partnership list widget */}
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
-					onViewAll={() => {
-						// TODO: Navigate to full partnership list
-					}}
+					onViewAll={noop}
 				/>
 
 				{/* Recommendation section */}

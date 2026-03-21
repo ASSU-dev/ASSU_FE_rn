@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { PartnershipCard, type Partnership } from "@/entities/partnership";
 
@@ -6,7 +7,7 @@ interface PartnershipListWidgetProps {
 	onViewAll?: () => void;
 }
 
-export const PartnershipListWidget = ({
+export const PartnershipListWidget = memo(({
 	partnerships,
 	onViewAll,
 }: PartnershipListWidgetProps) => {
@@ -32,4 +33,4 @@ export const PartnershipListWidget = ({
 			</View>
 		</View>
 	);
-};
+});
