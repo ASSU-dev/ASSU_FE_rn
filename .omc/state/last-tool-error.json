@@ -1,7 +1,0 @@
-{
-  "tool_name": "Read",
-  "tool_input_preview": "{\"file_path\":\"C:\\\\Users\\\\uesr\\\\Desktop\\\\ASSU\\\\ASSU_FE_RN\\\\src\\\\shared\\\\ui\\\\summary-card\"}",
-  "error": "EISDIR: illegal operation on a directory, read 'C:\\Users\\uesr\\Desktop\\ASSU\\ASSU_FE_RN\\src\\shared\\ui\\summary-card'",
-  "timestamp": "2026-03-21T08:52:02.046Z",
-  "retry_count": 1
-}

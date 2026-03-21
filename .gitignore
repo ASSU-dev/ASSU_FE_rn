@@ -47,3 +47,5 @@ app-example
 .claudeignore
 CLAUDE.md
 CONVENTION.md
+
+.omc/
