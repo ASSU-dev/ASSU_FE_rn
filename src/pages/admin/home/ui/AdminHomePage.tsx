@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { BellFill, Logo } from "@/shared/assets/icons";
 import {
 	MOCK_AFFILIATION_SUMMARIES,
@@ -59,6 +60,8 @@ function ManualRegistrationButton() {
 }
 
 export function AdminHomePage() {
+	const router = useRouter();
+
 	return (
 		<PageLayout
 			scrollable={true}
@@ -80,7 +83,7 @@ export function AdminHomePage() {
 				{/* Partnership list widget */}
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
-					onViewAll={noop}
+					onViewAll={() => router.push("/(protected)/(admin)/partner-list")}
 				/>
 
 				{/* Recommendation section */}

@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Text, View } from "react-native";
+import { formatDate } from "@/shared/utils";
 import type { Partnership } from "../model/types";
 
 const BADGE_LABEL_CONTENT = "제휴내용";
@@ -43,14 +44,16 @@ export const PartnershipCard = memo(({
 				</View>
 				<View className="flex-row items-center gap-1">
 					<Text className="text-xs font-regular text-content-secondary">
-						{startDate}
+						{formatDate(startDate)}
 					</Text>
 					<Text className="text-xs font-regular text-content-secondary">~</Text>
 					<Text className="text-xs font-regular text-content-secondary">
-						{endDate}
+						{formatDate(endDate)}
 					</Text>
 				</View>
 			</View>
 		</View>
 	);
 });
+
+PartnershipCard.displayName = "PartnershipCard";
