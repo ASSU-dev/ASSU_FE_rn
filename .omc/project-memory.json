@@ -1,0 +1,223 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774074882612,
+  "projectRoot": "C:\\Users\\uesr\\Desktop\\ASSU\\ASSU_FE_RN",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.1.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.1.0",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "yarn",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "yarn start",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "typecheck": "tsc --noEmit",
+      "biome:lint": "biome lint .",
+      "biome:fix": "biome check --write .",
+      "biome:format": "biome format . --write",
+      "icons": "node scripts/generate-icons.js"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "feature-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "scripts",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "develop",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 5,
+      "lastAccessed": 1774074882497,
+      "keyFiles": [
+        "+not-found.html",
+        "favicon.ico",
+        "index.html",
+        "metadata.json",
+        "_sitemap.html"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 1,
+      "lastAccessed": 1774074882516,
+      "keyFiles": [
+        "generate-icons.js"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1774074882520,
+      "keyFiles": []
+    },
+    "dist\\assets": {
+      "path": "dist\\assets",
+      "purpose": "Static assets",
+      "fileCount": 35,
+      "lastAccessed": 1774074882524,
+      "keyFiles": [
+        "017bc6ba3fc25503e5eb5e53826d48a8",
+        "02bc1fa7c0313217bde2d65ccbff40c9",
+        "069d99eb1fa6712c0b9034a58c6b57dd"
+      ]
+    },
+    "src\\app": {
+      "path": "src\\app",
+      "purpose": "Application code",
+      "fileCount": 2,
+      "lastAccessed": 1774074882527,
+      "keyFiles": [
+        "index.tsx",
+        "_layout.tsx"
+      ]
+    },
+    "src\\pages": {
+      "path": "src\\pages",
+      "purpose": "Page components",
+      "fileCount": 1,
+      "lastAccessed": 1774074882530,
+      "keyFiles": [
+        "README.md"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src\\pages\\admin\\home\\ui\\AdminHomePage.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1774080905864,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 4,
+      "lastAccessed": 1774080582058,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 2,
+      "lastAccessed": 1774080612793,
+      "type": "directory"
+    },
+    {
+      "path": "src\\shared\\styles\\tokens.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774077944998,
+      "type": "file"
+    },
+    {
+      "path": "src\\entities\\partnership\\model\\types.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774079875853,
+      "type": "file"
+    },
+    {
+      "path": "src\\entities\\partnership\\model\\mockPartnerships.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774079878272,
+      "type": "file"
+    },
+    {
+      "path": "src\\entities\\partnership\\ui\\PartnershipCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1774079881901,
+      "type": "file"
+    },
+    {
+      "path": "src\\entities\\partnership\\index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774079882667,
+      "type": "file"
+    },
+    {
+      "path": "src\\shared\\ui\\summary-card\\SummaryCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1774079889081,
+      "type": "file"
+    },
+    {
+      "path": "src\\shared\\ui\\summary-card\\index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774079889783,
+      "type": "file"
+    },
+    {
+      "path": "src\\widgets\\partnership-list\\ui\\PartnershipListWidget.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1774079890950,
+      "type": "file"
+    },
+    {
+      "path": "src\\widgets\\partnership-list\\index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774079891696,
+      "type": "file"
+    },
+    {
+      "path": "src\\shared\\assets\\icons\\index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1774080605690,
+      "type": "file"
+    },
+    {
+      "path": "src\\shared\\ui\\info\\InfoBanner.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1774080617278,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

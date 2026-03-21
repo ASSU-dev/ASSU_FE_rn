@@ -1,4 +1,5 @@
 export { default as BackArrowIcon } from "./back-arrow-icon.svg";
+export { default as BellFill } from "./bell-fill.svg";
 export { default as BellIcon } from "./bell-icon.svg";
 export { default as CheckFillIcon } from "./check-fill-icon.svg";
 export { default as CheckIcon } from "./check-icon.svg";
@@ -10,6 +11,7 @@ export { default as HeadphoneIcon } from "./headphone-icon.svg";
 export { default as InfoFillIcon } from "./info-fill-icon.svg";
 export { default as InfoIcon } from "./info-icon.svg";
 export { default as ListIcon } from "./list-icon.svg";
+export { default as Logo } from "./logo.svg";
 export { default as SearchIcon } from "./search-icon.svg";
 export { default as SpeechBubbleIcon } from "./speech-bubble-icon.svg";
 export { default as UserIcon } from "./user-icon.svg";

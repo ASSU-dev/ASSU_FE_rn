@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"mcp remove github && echo \\\"✓ GitHub 서버 제거 완료\\\"\",\"description\":\"Remove existing github MCP server\"}",
+  "error": "Exit code 127\n/usr/bin/bash: line 1: mcp: command not found",
+  "timestamp": "2026-03-21T06:49:50.586Z",
+  "retry_count": 1
+}
