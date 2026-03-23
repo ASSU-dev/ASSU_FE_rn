@@ -1,4 +1,4 @@
-import { NotiProfile } from "@/shared/assets/icons";
+import { NotiProfileIcon } from "@/shared/assets/icons";
 import { Text, View } from "react-native";
 
 import type { Notification } from "../model/types";
@@ -28,7 +28,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 			}`}
 		>
 			<View className="h-[50px] w-[50px] items-center justify-center " >
-				<NotiProfile height={30} width={30}/>
+				<NotiProfileIcon height={30} width={30} />
 			</View>
 			<View className="flex-1 gap-1">
 				<View className="flex-row items-center justify-between">
