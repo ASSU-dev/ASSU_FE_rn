@@ -1,4 +1,4 @@
-import { SpeechBubbleIcon } from "@/shared/assets/icons";
+import { NotiProfile } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { Text, View } from "react-native";
 
@@ -24,29 +24,24 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 
 	return (
 		<View
-			className={`flex-row items-start gap-3 px-screen-m py-4 ${
+			className={`flex-row items-center gap-1 px-screen-m py-gutter ${
 				isRead ? "bg-canvas" : "bg-primary-tint"
 			}`}
 		>
-			<View className="h-10 w-10 items-center justify-center rounded-full bg-primary">
-				<SpeechBubbleIcon
-					width={20}
-					height={20}
-					color={colorTokens.canvas}
-				/>
+			<View className="h-[50px] w-[50px] items-center justify-center " >
+				<NotiProfile height={30} width={30}/>
 			</View>
 			<View className="flex-1 gap-1">
 				<View className="flex-row items-center justify-between">
 					<Text className="text-sm font-regular text-content-secondary">
 						{category}
 					</Text>
-					<Text className="text-sm font-regular text-content-secondary">
+					<Text className="text-sm font-semibold text-content-secondary">
 						{formatTimeAgo(createdAt)}
 					</Text>
 				</View>
 				<Text
-					className="text-sm font-medium text-content-primary"
-					numberOfLines={2}
+					className="text-5 font-medium text-content-primary"
 				>
 					{message}
 				</Text>
