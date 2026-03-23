@@ -1,5 +1,4 @@
 import { NotiProfile } from "@/shared/assets/icons";
-import { colorTokens } from "@/shared/styles/tokens";
 import { Text, View } from "react-native";
 
 import type { Notification } from "../model/types";
