@@ -22,6 +22,9 @@ export type SelectProps = {
 	/** 비활성화 */
 	disabled?: boolean;
 
+	/** 값은 보이되 드롭다운은 열지 않음 */
+	readOnly?: boolean;
+
 	/** (옵션) 상단 라벨 */
 	label?: string;
 
