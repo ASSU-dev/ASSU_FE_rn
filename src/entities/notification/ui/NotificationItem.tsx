@@ -13,6 +13,7 @@ function formatTimeAgo(date: Date): string {
 	const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 	const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
+	if (diffMinutes < 1) return "방금 전";
 	if (diffMinutes < 60) return `${diffMinutes}분 전`;
 	if (diffHours < 24) return `${diffHours}시간 전`;
 	return `${diffDays}일 전`;
@@ -27,7 +28,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 				isRead ? "bg-canvas" : "bg-primary-tint"
 			}`}
 		>
-			<View className="h-[50px] w-[50px] items-center justify-center " >
+			<View className="h-[50px] w-[50px] items-center justify-center" >
 				<NotiProfileIcon height={30} width={30} />
 			</View>
 			<View className="flex-1 gap-1">
