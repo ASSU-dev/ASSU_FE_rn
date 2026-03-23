@@ -1,0 +1,36 @@
+import { View } from "react-native";
+import { SCHOOL_SELECT_OPTIONS } from "@/entities/signup";
+import { Select } from "@/shared/ui/select";
+import { SignupStepTitle } from "../SignupStepTitle";
+
+type SchoolStepSectionProps = {
+	school: string | null;
+	onSelectSchool: (school: "숭실대학교") => void;
+};
+
+export function SchoolStepSection({
+	school,
+	onSelectSchool,
+}: SchoolStepSectionProps) {
+	return (
+		<View className="mt-[46px] gap-[56px]">
+			<SignupStepTitle
+				firstLine="재학중이신 학교를"
+				secondLine="선택해주세요!"
+			/>
+			<View className="gap-[8px]">
+				<Select
+					label="학교선택"
+					items={SCHOOL_SELECT_OPTIONS}
+					value={school}
+					onChange={(value) => {
+						if (value === "숭실대학교") {
+							onSelectSchool("숭실대학교");
+						}
+					}}
+					placeholder="학교를 선택해주세요"
+				/>
+			</View>
+		</View>
+	);
+}
