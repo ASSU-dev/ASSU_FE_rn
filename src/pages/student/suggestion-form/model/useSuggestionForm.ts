@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useForm } from "react-hook-form";
-import { postSuggestion } from "../api/postSuggestion";
+import { postSuggestion } from "../api";
 
 export type SuggestionFormValues = {
 	target: string;

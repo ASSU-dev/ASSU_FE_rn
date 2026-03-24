@@ -5,28 +5,37 @@ import { Text, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { FormField } from "@/shared/ui/FormField";
-import { SUGGESTION_TARGET_ITEMS } from "../model/suggestionTargetItems";
-import { useSuggestionForm } from "../model/useSuggestionForm";
-import { SuggestionTargetField } from "./SuggestionTargetField";
+import { Select } from "@/shared/ui/select";
+import { SUGGESTION_TARGET_ITEMS, useSuggestionForm } from "../model";
 
 export function SuggestionForm() {
 	const { control, onSubmit, isValid } = useSuggestionForm();
 
 	return (
 		<View className="flex-1 justify-between">
-			<View className="px-screen-m pt-9">
+			<View className="px-screen-m pt-8">
 				{/* 건의대상 */}
 				<Controller
 					control={control}
 					name="target"
 					rules={{ required: "건의 대상을 선택해주세요." }}
 					render={({ field, fieldState }) => (
-						<SuggestionTargetField
-							items={SUGGESTION_TARGET_ITEMS}
-							value={field.value || null}
-							onChange={(val) => field.onChange(val ?? "")}
-							errorText={fieldState.error?.message}
-						/>
+						<View className="flex-row items-center gap-[50px] mb-4">
+							<View className="w-[54px] justify-center">
+								<Text className="text-sm font-regular leading-caption tracking-caption text-content-secondary">
+									건의대상
+								</Text>
+							</View>
+							<View className="flex-1">
+								<Select
+									items={SUGGESTION_TARGET_ITEMS}
+									value={field.value || null}
+									onChange={(val) => field.onChange(val ?? "")}
+									placeholder="건의대상 선택"
+									errorText={fieldState.error?.message}
+								/>
+							</View>
+						</View>
 					)}
 				/>
 

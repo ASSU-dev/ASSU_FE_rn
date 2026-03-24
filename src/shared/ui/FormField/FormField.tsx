@@ -27,7 +27,7 @@ export function FormField<T extends FieldValues>({
 				const message = helperText;
 
 				return (
-					<View className="mb-[10px]">
+					<View className="mb-[20px]">
 						{label && (
 							<FormFieldLabel color={labelColor}>{label}</FormFieldLabel>
 						)}
