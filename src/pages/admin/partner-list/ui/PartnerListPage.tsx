@@ -1,8 +1,9 @@
 import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
-import { MOCK_PARTNERSHIPS, PartnershipCard } from "@/entities/partnership";
+import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { PartnershipListContent } from "./PartnershipListContent";
 
 function Header({ onBack }: { onBack: () => void }) {
 	return (
@@ -19,7 +20,7 @@ function Header({ onBack }: { onBack: () => void }) {
 
 function InfoBox() {
 	return (
-		<View className="flex-row items-center gap-2 rounded-lg bg-primary-tint px-4 py-3">
+		<View className="flex-row items-center gap-2 rounded-lg bg-neutral px-4 py-3">
 			<InfoFillIcon width={16} height={16} />
 			<Text className="flex-1 text-xs font-regular text-content-secondary">
 				숭실대학교 총학생회와 제휴를 체결한 업체 목록이에요
@@ -45,17 +46,13 @@ export function PartnerListPage() {
 			scrollable={true}
 			withTopInset={true}
 			withBottomInset={false}
-			className="flex-1 bg-neutral"
+			className="flex-1 bg-canvas"
 			contentContainerClassName="gap-5 px-6 pb-6 pt-4"
 		>
 			<Header onBack={() => router.back()} />
 			<InfoBox />
 			<CountSection count={MOCK_PARTNERSHIPS.length} />
-			<View className="gap-3">
-				{MOCK_PARTNERSHIPS.map((partnership) => (
-					<PartnershipCard key={partnership.id} {...partnership} />
-				))}
-			</View>
+			<PartnershipListContent data={MOCK_PARTNERSHIPS} />
 		</PageLayout>
 	);
 }
