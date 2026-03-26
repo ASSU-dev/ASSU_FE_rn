@@ -23,6 +23,7 @@ export function SchoolStepSection({
 					label="학교선택"
 					items={SCHOOL_SELECT_OPTIONS}
 					value={school}
+					presentation="inline"
 					onChange={(value) => {
 						if (value === "숭실대학교") {
 							onSelectSchool("숭실대학교");
