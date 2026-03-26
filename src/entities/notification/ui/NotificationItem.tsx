@@ -1,22 +1,11 @@
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
 
+import { formatTimeAgo } from "../lib/formatTimeAgo";
 import type { Notification } from "../model/types";
 
 interface NotificationItemProps {
 	notification: Notification;
-}
-
-function formatTimeAgo(date: Date): string {
-	const diffMs = Date.now() - date.getTime();
-	const diffMinutes = Math.floor(diffMs / (1000 * 60));
-	const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-	const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-	if (diffMinutes < 1) return "방금 전";
-	if (diffMinutes < 60) return `${diffMinutes}분 전`;
-	if (diffHours < 24) return `${diffHours}시간 전`;
-	return `${diffDays}일 전`;
 }
 
 export function NotificationItem({ notification }: NotificationItemProps) {
@@ -30,7 +19,6 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 		>
 			<View className="h-[50px] w-[50px] items-center justify-center">
 				<Image
-					// eslint-disable-next-line @typescript-eslint/no-require-imports
 					source={require("@/shared/assets/images/noti_profile.jpg")}
 					style={{ width: 30, height: 30, borderRadius: 15 }}
 					contentFit="cover"

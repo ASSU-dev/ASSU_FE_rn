@@ -1,13 +1,6 @@
-import { router } from "expo-router";
-import { useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
-
 import type { Notification } from "@/entities/notification/model/types";
-import { NotificationItem } from "@/entities/notification/ui/NotificationItem";
-import { BackArrowIcon } from "@/shared/assets/icons";
-import { colorTokens } from "@/shared/styles/tokens";
 import { PageLayout } from "@/shared/ui/layout";
-import { TabBar } from "@/shared/ui/TabBar";
+import { AlarmCenterHeader, AlarmCenterSection } from "@/widgets/alarm-center";
 
 // TODO: features/view-notifications 구현 후 실제 API 데이터로 교체
 const MOCK_NOTIFICATIONS: Notification[] = [
@@ -41,43 +34,11 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 	},
 ];
 
-const TABS = [
-	{ id: "all", label: "전체" },
-	{ id: "unread", label: "안읽음" },
-];
-
 export function AdminAlarmCenterPage() {
-	const [activeTab, setActiveTab] = useState("all");
-
-	const filteredNotifications =
-		activeTab === "unread"
-			? MOCK_NOTIFICATIONS.filter((n) => !n.isRead)
-			: MOCK_NOTIFICATIONS;
-
 	return (
 		<PageLayout contentContainerClassName="flex-1">
-			<View className="flex-row items-center gap-2 px-screen-m py-4">
-				<Pressable hitSlop={8} onPress={() => router.back()}>
-					<BackArrowIcon
-						width={24}
-						height={24}
-						color={colorTokens.contentPrimary}
-					/>
-				</Pressable>
-				<Text className="text-lg font-semibold text-content-primary">
-					알림
-				</Text>
-			</View>
-			<TabBar
-				tabs={TABS}
-				activeTab={activeTab}
-				onTabChange={setActiveTab}
-			/>
-			<FlatList
-				data={filteredNotifications}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => <NotificationItem notification={item} />}
-			/>
+			<AlarmCenterHeader />
+			<AlarmCenterSection notifications={MOCK_NOTIFICATIONS} />
 		</PageLayout>
 	);
 }
