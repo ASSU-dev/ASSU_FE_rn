@@ -10,10 +10,10 @@ import {
 	LoginFormScreen,
 	LoginIntroScreen,
 	SignupProgressBar,
+	SignupStepContent,
 } from "@/features/signup-user-flow/ui";
 import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { SignupStepContent } from "./SignupStepContent";
 
 const BUTTON_LABEL_BY_STEP = {
 	identity: "인증완료",

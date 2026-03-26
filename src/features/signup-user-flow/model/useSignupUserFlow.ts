@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import type { SignupSchool } from "@/entities/signup";
 import type { UserType } from "@/entities/user/model/types";
+import { useCountdownTimer } from "../hooks/useCountdownTimer";
 import { VERIFICATION_SUCCESS_CODE } from "./constants";
 import { DEFAULT_SIGNUP_FORM_STATE } from "./mock/signupUserFlow.mock";
 import type { SignupFormState, SignupStep } from "./types";
-import { useCountdownTimer } from "./useCountdownTimer";
 
 const STEP_ORDER: SignupStep[] = [
 	"login1",
@@ -82,7 +82,7 @@ export function useSignupUserFlow() {
 			return;
 		}
 
-		if (!isCurrentStepValid && step !== "studentInput2") {
+		if (!isCurrentStepValid) {
 			return;
 		}
 

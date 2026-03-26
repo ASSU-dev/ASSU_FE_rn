@@ -2,14 +2,12 @@ import type {
 	SignupFormState,
 	SignupStep,
 } from "@/features/signup-user-flow/model/types";
-import {
-	CompleteStepSection,
-	IdentityStepSection,
-	RoleStepSection,
-	SchoolStepSection,
-	StudentAgreementStepSection,
-	StudentVerificationStepSection,
-} from "@/features/signup-user-flow/ui";
+import { CompleteStepSection } from "./sections/CompleteStepSection";
+import { IdentityStepSection } from "./sections/IdentityStepSection";
+import { RoleStepSection } from "./sections/RoleStepSection";
+import { SchoolStepSection } from "./sections/SchoolStepSection";
+import { StudentAgreementStepSection } from "./sections/StudentAgreementStepSection";
+import { StudentVerificationStepSection } from "./sections/StudentVerificationStepSection";
 
 type SignupStepContentProps = {
 	step: SignupStep;
