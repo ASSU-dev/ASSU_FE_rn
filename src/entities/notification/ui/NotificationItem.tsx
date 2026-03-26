@@ -1,4 +1,4 @@
-import { NotiProfileIcon } from "@/shared/assets/icons";
+import { Image } from "expo-image";
 import { Text, View } from "react-native";
 
 import type { Notification } from "../model/types";
@@ -28,8 +28,13 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 				isRead ? "bg-canvas" : "bg-primary-tint"
 			}`}
 		>
-			<View className="h-[50px] w-[50px] items-center justify-center" >
-				<NotiProfileIcon height={30} width={30} />
+			<View className="h-[50px] w-[50px] items-center justify-center">
+				<Image
+					// eslint-disable-next-line @typescript-eslint/no-require-imports
+					source={require("@/shared/assets/images/noti_profile.jpg")}
+					style={{ width: 30, height: 30, borderRadius: 15 }}
+					contentFit="cover"
+				/>
 			</View>
 			<View className="flex-1 gap-1">
 				<View className="flex-row items-center justify-between">
