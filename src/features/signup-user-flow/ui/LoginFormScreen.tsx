@@ -6,26 +6,43 @@ import { LoginUnderlineInput } from "@/shared/ui/input";
 type LoginFormScreenProps = {
 	email: string;
 	password: string;
+	onChangeEmail: (value: string) => void;
+	onChangePassword: (value: string) => void;
+	onPressLogin: () => void;
 	onPressSignup: () => void;
 };
 
 export function LoginFormScreen({
 	email,
 	password,
+	onChangeEmail,
+	onChangePassword,
+	onPressLogin,
 	onPressSignup,
 }: LoginFormScreenProps) {
 	return (
 		<View className="flex-1 bg-canvas px-screen-m pt-[72px]">
 			<View className="mt-[81px] items-center">
-				<AssuLogoIcon width={89} height={24} />
+				<AssuLogoIcon width={122} height={40} />
 			</View>
 
 			<View className="mt-[73px] gap-[40px]">
 				<View className="gap-[35px]">
-					<LoginUnderlineInput label="Email" value={email} />
-					<LoginUnderlineInput label="Password" value={password} />
+					<LoginUnderlineInput
+						label="Email"
+						value={email}
+						placeholder="email@example.com"
+						onChangeText={onChangeEmail}
+					/>
+					<LoginUnderlineInput
+						label="Password"
+						value={password}
+						placeholder="yourpassword"
+						onChangeText={onChangePassword}
+						secureTextEntry
+					/>
 				</View>
-				<MediumButton onPress={() => {}}>Login</MediumButton>
+				<MediumButton onPress={onPressLogin}>Login</MediumButton>
 			</View>
 
 			<View className="mt-[35px] gap-[25px]">
@@ -46,8 +63,6 @@ export function LoginFormScreen({
 					</Pressable>
 				</View>
 			</View>
-
-			<View className="mt-auto mb-[8px] self-center h-[5px] w-[134px] rounded-full bg-content-primary" />
 		</View>
 	);
 }

@@ -36,7 +36,7 @@ export function LoginIntroScreen({
 			) : null}
 
 			<View className="flex-1 items-center justify-center">
-				<AssuLogoIcon width={89} height={24} />
+				<AssuLogoIcon width={122} height={40} />
 			</View>
 
 			{showHomeIndicator ? (

@@ -54,7 +54,6 @@ export function useSignupUserFlow() {
 			case "school":
 				return Boolean(form.school);
 			case "studentInput2":
-				return form.agreePrivacy;
 			case "studentInput3":
 				return form.agreePrivacy;
 			default:
@@ -94,6 +93,14 @@ export function useSignupUserFlow() {
 		setForm((prev) => ({ ...prev, phone }));
 	};
 
+	const setEmail = (email: string) => {
+		setForm((prev) => ({ ...prev, email }));
+	};
+
+	const setPassword = (password: string) => {
+		setForm((prev) => ({ ...prev, password }));
+	};
+
 	const setVerificationCode = (verificationCode: string) => {
 		setForm((prev) => ({
 			...prev,
@@ -119,9 +126,12 @@ export function useSignupUserFlow() {
 		setForm((prev) => ({ ...prev, school }));
 	};
 
-	const setAgreePrivacy = (checked: boolean) => {
+	const setAgreementState = (
+		updater: (prev: SignupFormState) => Partial<SignupFormState>,
+	) => {
 		setForm((prev) => {
-			const next = { ...prev, agreePrivacy: checked };
+			const partial = updater(prev);
+			const next = { ...prev, ...partial };
 			return {
 				...next,
 				agreeAll: next.agreePrivacy && next.agreeMarketing,
@@ -129,14 +139,12 @@ export function useSignupUserFlow() {
 		});
 	};
 
+	const setAgreePrivacy = (checked: boolean) => {
+		setAgreementState(() => ({ agreePrivacy: checked }));
+	};
+
 	const setAgreeMarketing = (checked: boolean) => {
-		setForm((prev) => {
-			const next = { ...prev, agreeMarketing: checked };
-			return {
-				...next,
-				agreeAll: next.agreePrivacy && next.agreeMarketing,
-			};
-		});
+		setAgreementState(() => ({ agreeMarketing: checked }));
 	};
 
 	const setAgreeAll = (checked: boolean) => {
@@ -161,6 +169,8 @@ export function useSignupUserFlow() {
 		isCountdownExpired: form.isCodeSent && timer.secondsLeft === 0,
 		goTo,
 		goNext,
+		setEmail,
+		setPassword,
 		setPhone,
 		setVerificationCode,
 		sendVerificationCode,

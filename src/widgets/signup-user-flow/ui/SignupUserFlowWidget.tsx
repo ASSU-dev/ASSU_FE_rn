@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import {
 	SIGNUP_PROGRESS_STEPS,
@@ -7,17 +7,13 @@ import {
 } from "@/features/signup-user-flow/model/constants";
 import { useSignupUserFlow } from "@/features/signup-user-flow/model/useSignupUserFlow";
 import {
-	CompleteStepSection,
-	IdentityStepSection,
 	LoginFormScreen,
 	LoginIntroScreen,
-	RoleStepSection,
-	SchoolStepSection,
 	SignupProgressBar,
-	StudentAgreementStepSection,
-	StudentVerificationStepSection,
 } from "@/features/signup-user-flow/ui";
+import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
+import { SignupStepContent } from "./SignupStepContent";
 
 const BUTTON_LABEL_BY_STEP = {
 	identity: "인증완료",
@@ -29,6 +25,7 @@ const BUTTON_LABEL_BY_STEP = {
 } as const;
 
 export function SignupUserFlowWidget() {
+	const [isResendSheetVisible, setResendSheetVisible] = useState(false);
 	const {
 		step,
 		form,
@@ -37,6 +34,8 @@ export function SignupUserFlowWidget() {
 		countdown,
 		goTo,
 		goNext,
+		setEmail,
+		setPassword,
 		setPhone,
 		setVerificationCode,
 		sendVerificationCode,
@@ -75,6 +74,11 @@ export function SignupUserFlowWidget() {
 			<LoginFormScreen
 				email={form.email}
 				password={form.password}
+				onChangeEmail={setEmail}
+				onChangePassword={setPassword}
+				onPressLogin={() => {
+					console.log("로그인 성공");
+				}}
 				onPressSignup={() => goTo("identity")}
 			/>
 		);
@@ -92,6 +96,30 @@ export function SignupUserFlowWidget() {
 		form.verificationCode !== VERIFICATION_SUCCESS_CODE;
 	const buttonLabel =
 		BUTTON_LABEL_BY_STEP[step as keyof typeof BUTTON_LABEL_BY_STEP] ?? "완료";
+	const toggleAgreementAndActivate = (
+		current: boolean,
+		setter: (checked: boolean) => void,
+		shouldActivate: (next: boolean) => boolean = (next) => next,
+	) => {
+		const next = !current;
+		setter(next);
+		if (shouldActivate(next)) {
+			activateStudentInput3();
+		}
+	};
+	const handleToggleAgreeAll = () => {
+		toggleAgreementAndActivate(form.agreeAll, setAgreeAll);
+	};
+	const handleToggleAgreePrivacy = () => {
+		toggleAgreementAndActivate(form.agreePrivacy, setAgreePrivacy);
+	};
+	const handleToggleAgreeMarketing = () => {
+		toggleAgreementAndActivate(
+			form.agreeMarketing,
+			setAgreeMarketing,
+			(next) => next && form.agreePrivacy,
+		);
+	};
 
 	return (
 		<View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
@@ -114,66 +142,22 @@ export function SignupUserFlowWidget() {
 					step === "complete" ? "flex-1 items-center justify-center" : "flex-1"
 				}
 			>
-				{step === "identity" ? (
-					<IdentityStepSection
-						phone={form.phone}
-						verificationCode={form.verificationCode}
-						isCodeSent={form.isCodeSent}
-						countdown={countdown}
-						isVerificationError={isVerificationError}
-						onChangePhone={setPhone}
-						onChangeVerificationCode={setVerificationCode}
-						onSendCode={sendVerificationCode}
-					/>
-				) : null}
-
-				{step === "role" ? (
-					<RoleStepSection selectedRole={form.role} onSelectRole={setRole} />
-				) : null}
-
-				{step === "school" ? (
-					<SchoolStepSection school={form.school} onSelectSchool={setSchool} />
-				) : null}
-
-				{step === "studentInput1" ? (
-					<StudentVerificationStepSection
-						school={form.school ?? "숭실대학교"}
-						onPressVerify={() => goTo("studentInput2")}
-					/>
-				) : null}
-
-				{step === "studentInput2" || step === "studentInput3" ? (
-					<StudentAgreementStepSection
-						major={form.major}
-						studentId={form.studentId}
-						agreeAll={form.agreeAll}
-						agreePrivacy={form.agreePrivacy}
-						agreeMarketing={form.agreeMarketing}
-						onToggleAll={() => {
-							const next = !form.agreeAll;
-							setAgreeAll(next);
-							if (next) {
-								activateStudentInput3();
-							}
-						}}
-						onTogglePrivacy={() => {
-							const nextPrivacy = !form.agreePrivacy;
-							setAgreePrivacy(nextPrivacy);
-							if (nextPrivacy) {
-								activateStudentInput3();
-							}
-						}}
-						onToggleMarketing={() => {
-							const nextMarketing = !form.agreeMarketing;
-							setAgreeMarketing(nextMarketing);
-							if (nextMarketing && form.agreePrivacy) {
-								activateStudentInput3();
-							}
-						}}
-					/>
-				) : null}
-
-				{step === "complete" ? <CompleteStepSection name={form.name} /> : null}
+				<SignupStepContent
+					step={step}
+					form={form}
+					countdown={countdown}
+					isVerificationError={isVerificationError}
+					onChangePhone={setPhone}
+					onChangeVerificationCode={setVerificationCode}
+					onSendCode={sendVerificationCode}
+					onPressInfoLink={() => setResendSheetVisible(true)}
+					onSelectRole={setRole}
+					onSelectSchool={setSchool}
+					onPressStudentVerify={() => goTo("studentInput2")}
+					onToggleAgreeAll={handleToggleAgreeAll}
+					onToggleAgreePrivacy={handleToggleAgreePrivacy}
+					onToggleAgreeMarketing={handleToggleAgreeMarketing}
+				/>
 			</View>
 
 			{showBottomButton ? (
@@ -192,6 +176,18 @@ export function SignupUserFlowWidget() {
 					</View>
 				</View>
 			) : null}
+
+			<BottomActionSheet
+				visible={isResendSheetVisible}
+				title="인증번호를 받지 못하셨나요?"
+				description="입력하신 번호가 맞는지 확인해주세요"
+				actionLabel="재전송하기"
+				onClose={() => setResendSheetVisible(false)}
+				onAction={() => {
+					sendVerificationCode();
+					setResendSheetVisible(false);
+				}}
+			/>
 		</View>
 	);
 }

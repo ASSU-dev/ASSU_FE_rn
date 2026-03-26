@@ -13,6 +13,7 @@ type IdentityStepSectionProps = {
 	onChangePhone: (value: string) => void;
 	onChangeVerificationCode: (value: string) => void;
 	onSendCode: () => void;
+	onPressInfoLink: () => void;
 };
 
 export function IdentityStepSection({
@@ -24,6 +25,7 @@ export function IdentityStepSection({
 	onChangePhone,
 	onChangeVerificationCode,
 	onSendCode,
+	onPressInfoLink,
 }: IdentityStepSectionProps) {
 	return (
 		<View className="mt-[46px] gap-[56px]">
@@ -76,7 +78,10 @@ export function IdentityStepSection({
 							}
 						/>
 						<View className="items-end">
-							<InfoLinkText message="인증번호가 오지 않았나요?" />
+							<InfoLinkText
+								message="인증번호가 오지 않았나요?"
+								onPress={onPressInfoLink}
+							/>
 						</View>
 					</View>
 				) : null}

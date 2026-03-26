@@ -1,8 +1,8 @@
 import type { SignupFormState } from "../types";
 
 export const DEFAULT_SIGNUP_FORM_STATE: SignupFormState = {
-	email: "email@example.com",
-	password: "yourpassword",
+	email: "",
+	password: "",
 	phone: "",
 	verificationCode: "",
 	isCodeSent: false,
