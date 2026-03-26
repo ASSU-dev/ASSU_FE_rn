@@ -18,7 +18,7 @@ export const PartnerRankingList = () => {
 
   return (
     <View className="bg-white p-4 rounded-2xl mb-6">
-      <Text className="text-lg font-bold mb-1">Today 제휴 인기 매장</Text>
+      <Text className="text-lg font-bold mb-1">🔥 Today 제휴 인기 매장</Text>
       <Text className="text-xs text-gray-400 mb-3">오늘 12:00 기준</Text>
 
       <View className="flex-row">
@@ -28,7 +28,7 @@ export const PartnerRankingList = () => {
           ))}
         </View>
 
-        <View className="w-px bg-gray-100 mx-2" />
+        <View className="w-px border-l border-black mx-2" />
 
         <View className="flex-1">
           {right.map((item, i) => (

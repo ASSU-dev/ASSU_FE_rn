@@ -9,7 +9,7 @@ export function StudentHomePage() {
   const userStampCount = 4;
   const userName = "김숭실";
   return (
-    <ScrollView className="flex-1 bg-gray-50 px-5 pt-10">
+    <ScrollView className="flex-1 bg-white px-5 pt-10">
       <Pressable
 				className="rounded-lg bg-primary px-4 py-3"
 				onPress={() => router.push("/")}
@@ -18,7 +18,7 @@ export function StudentHomePage() {
 					허브로 돌아가기
 				</Text>
 			</Pressable>
-      <Text className="text-2xl font-bold mb-6">안녕하세요, {userName}님!</Text>
+      <Text className="text-2xl font-bold mb-3">안녕하세요, {userName}님!</Text>
       <Text className="text-2xl font-bold mb-6">
         오늘은 어떤 할인을 받을까요?
       </Text>

@@ -11,7 +11,6 @@ export const PartnerItem = ({ rank, name }: PartnerItemProps) => {
         {rank}
       </Text>
       
-      {/* 매장명 line 제한 */}
       <Text 
         className="text-slate-800 text-base font-medium flex-1"
         numberOfLines={1}
