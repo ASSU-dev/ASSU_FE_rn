@@ -1,4 +1,4 @@
-// 제휴 이용현황 섹션 — 섹션 타이틀 + 바 차트 + 인사이트 카드
+// 제휴 이용현황 섹션: 섹션 타이틀 + 바 차트 + 인사이트 카드
 
 import type { ReactNode } from "react";
 import { Text, View } from "react-native";

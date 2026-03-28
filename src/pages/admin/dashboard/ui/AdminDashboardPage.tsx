@@ -1,4 +1,6 @@
 // 관리자 대시보드 페이지 — 제휴 사용자 현황 전체 레이아웃
+
+import { router } from "expo-router";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
@@ -47,7 +49,7 @@ export function AdminDashboardPage() {
 				activeOpacity={0.8}
 				className="bg-primary items-center justify-center rounded-[8px] h-[41px]"
 				onPress={() => {
-					// TODO: 제휴건의함 라우트 연결
+					router.push("/(protected)/(admin)/partner-ship-suggestion-box");
 				}}
 			>
 				<Text className="text-[11px] font-semibold text-content-inverse leading-caption tracking-caption">
