@@ -61,12 +61,14 @@
 	--size-letter-025: 0.25px;
 	--size-line-21: 21px;
 	--size-letter-minus-032: -0.32px;
+	--size-line-28: 28px;
 
 	/* Typography - Semantic */
 	--typography-body-line-height: var(--size-line-20);
 	--typography-body-letter-spacing: var(--size-letter-025);
 	--typography-caption-line-height: var(--size-line-21);
 	--typography-caption-letter-spacing: var(--size-letter-minus-032);
+	--typography-heading-line-height: var(--size-line-28);
 
 	/* Layout Spacing */
 	--layout-margin: 24px; /* 화면 좌우 전체 여백 */
@@ -149,12 +151,14 @@
 	--size-letter-025: 0.25px;
 	--size-line-21: 21px;
 	--size-letter-minus-032: -0.32px;
+	--size-line-28: 28px;
 
 	/* Typography - Semantic */
 	--typography-body-line-height: var(--size-line-20);
 	--typography-body-letter-spacing: var(--size-letter-025);
 	--typography-caption-line-height: var(--size-line-21);
 	--typography-caption-letter-spacing: var(--size-letter-minus-032);
+	--typography-heading-line-height: var(--size-line-28);
 
 	/* Layout Spacing */
 	--layout-margin: 24px; /* 화면 좌우 전체 여백 */

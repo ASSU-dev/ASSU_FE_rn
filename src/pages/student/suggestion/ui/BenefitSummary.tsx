@@ -8,23 +8,23 @@ interface BenefitSummaryProps {
 
 export function BenefitSummary({ month, count }: BenefitSummaryProps) {
 	return (
-		<View className="gap-[13px]">
+		<View className="gap-gutter">
 			<View className="flex-row items-start gap-1">
-				<Text className="font-semibold text-[25px] text-primary leading-caption tracking-caption">
+				<Text className="font-semibold text-[25px] text-primary leading-heading tracking-caption">
 					{month}
 				</Text>
-				<Text className="font-semibold text-[25px] text-primary leading-caption tracking-caption">
+				<Text className="font-semibold text-[25px] text-primary leading-heading tracking-caption">
 					월의 혜택
 				</Text>
 			</View>
 			<View className="flex-row items-start gap-1">
-				<Text className="font-semibold text-[25px] text-content-primary leading-caption tracking-caption">
+				<Text className="font-semibold text-[25px] text-content-primary leading-heading tracking-caption">
 					서비스
 				</Text>
-				<Text className="font-semibold text-[25px] text-primary leading-caption tracking-caption">
+				<Text className="font-semibold text-[25px] text-primary leading-heading tracking-caption">
 					{count}
 				</Text>
-				<Text className="font-semibold text-[25px] text-content-primary leading-caption tracking-caption">
+				<Text className="font-semibold text-[25px] text-content-primary leading-heading tracking-caption">
 					건을 받았어요!
 				</Text>
 			</View>

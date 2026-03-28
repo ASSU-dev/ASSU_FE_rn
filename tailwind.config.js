@@ -38,6 +38,7 @@ module.exports = {
 			lineHeight: {
 				body: "var(--typography-body-line-height)",
 				caption: "var(--typography-caption-line-height)",
+				heading: "var(--typography-heading-line-height)",
 			},
 			// 글자 간격
 			letterSpacing: {
