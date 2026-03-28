@@ -1,7 +1,6 @@
-// 별점 요약 섹션 — 별 5개(인터랙티브) + 평균 점수 + n개의 평가
+// 별점 요약 섹션 — 별 5개(표시용) + 평균 점수 + n개의 평가
 
-import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { colorTokens } from "@/shared/styles/tokens";
 
@@ -24,20 +23,18 @@ const StarIcon = ({ filled }: { filled: boolean }) => (
 );
 
 export function ReviewSummary({ averageRating, totalCount }: Props) {
-	const [rating, setRating] = useState(Math.round(averageRating));
+	const rounded = Math.round(averageRating);
 
 	return (
 		<View className="items-center gap-[16px]">
 			<View className="flex-row items-center gap-[12px]">
 				<View className="flex-row gap-[6px]">
 					{[1, 2, 3, 4, 5].map((star) => (
-						<Pressable key={star} onPress={() => setRating(star)} hitSlop={4}>
-							<StarIcon filled={star <= rating} />
-						</Pressable>
+						<StarIcon key={star} filled={star <= rounded} />
 					))}
 				</View>
 				<Text className="text-[20px] font-semibold text-content-primary">
-					{rating}.0
+					{averageRating.toFixed(1)}
 				</Text>
 			</View>
 			<Text className="text-sm text-content-secondary">
