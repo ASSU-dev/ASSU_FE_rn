@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { useRouter } from "expo-router";
 import {
 	MOCK_PARTNER_AFFILIATION_SUMMARIES,
 	MOCK_PARTNERSHIPS,
@@ -14,6 +15,8 @@ import { MOCK_PARTNER_PAGE_INFO } from "../model/mockPartnerPageInfo";
 const noop = () => {};
 
 export function PartnerHomePage() {
+	const router = useRouter();
+
 	return (
 		<PageLayout
 			scrollable={true}
@@ -34,7 +37,7 @@ export function PartnerHomePage() {
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
 					title="제휴단체 목록"
-					onViewAll={noop}
+					onViewAll={() => router.push("/(protected)/(partner)/partnership-list")}
 				/>
 
 				{/* Recommendation widget with 2 cards */}
