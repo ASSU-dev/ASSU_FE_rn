@@ -20,7 +20,7 @@ function Header({ onBack }: { onBack: () => void }) {
 
 function InfoBox() {
 	return (
-		<View className="flex-row items-center gap-2 rounded-lg bg-neutral px-4 py-3">
+		<View className="flex-row items-center gap-2 rounded-lg bg-neutral px-4 py-3 mt-6">
 			<InfoFillIcon width={16} height={16} />
 			<Text className="flex-1 text-xs font-regular text-content-secondary">
 				숭실대학교 총학생회와 제휴를 체결한 업체 목록이에요

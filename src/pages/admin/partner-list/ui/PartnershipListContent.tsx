@@ -17,7 +17,7 @@ export function PartnershipListContent({ data }: PartnershipListContentProps) {
 	}
 
 	return (
-		<View className="gap-3">
+		<View className="gap-5">
 			{data.map((partnership) => (
 				<PartnershipCard key={partnership.id} {...partnership} variant="gray" />
 			))}

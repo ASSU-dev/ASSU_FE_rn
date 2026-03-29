@@ -29,13 +29,13 @@ export const PartnershipCard = memo(
 
 				{/* Benefit content row */}
 				<View className="mb-1 flex-row items-center gap-2">
-					<View className="flex-shrink-0 rounded-full bg-sub px-2.5 py-2">
-						<Text className="text-xs font-regular text-content-inverse">
+					<View className="flex-shrink-0 rounded-full bg-sub px-2.5 py-1">
+						<Text className="text-sm font-regular text-content-inverse">
 							{BADGE_LABEL_CONTENT}
 						</Text>
 					</View>
 					<View className="flex-1 justify-center">
-						<Text className="text-xs font-regular text-content-secondary">
+						<Text className="text-sm font-regular text-content-secondary">
 							{benefitContent}
 						</Text>
 					</View>
@@ -43,19 +43,19 @@ export const PartnershipCard = memo(
 
 				{/* Partnership period row */}
 				<View className="flex-row items-center gap-2">
-					<View className="flex-shrink-0 rounded-full bg-sub px-2.5 py-2">
-						<Text className="text-xs font-regular text-content-inverse">
+					<View className="flex-shrink-0 rounded-full bg-sub px-2.5 py-1">
+						<Text className="text-sm font-regular text-content-inverse">
 							{BADGE_LABEL_PERIOD}
 						</Text>
 					</View>
 					<View className="flex-row items-center gap-1">
-						<Text className="text-xs font-regular text-content-secondary">
+						<Text className="text-sm font-regular text-content-secondary">
 							{formatDate(startDate)}
 						</Text>
-						<Text className="text-xs font-regular text-content-secondary">
+						<Text className="text-sm font-regular text-content-secondary">
 							~
 						</Text>
-						<Text className="text-xs font-regular text-content-secondary">
+						<Text className="text-sm font-regular text-content-secondary">
 							{formatDate(endDate)}
 						</Text>
 					</View>
