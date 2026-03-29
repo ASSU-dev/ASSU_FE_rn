@@ -5,6 +5,7 @@ export type SelectItem = {
 };
 
 export type SelectSize = "sm" | "md";
+export type SelectPresentation = "modal" | "inline";
 
 export type SelectProps = {
 	/** 옵션 목록 */
@@ -21,6 +22,12 @@ export type SelectProps = {
 
 	/** 비활성화 */
 	disabled?: boolean;
+
+	/** 값은 보이되 드롭다운은 열지 않음 */
+	readOnly?: boolean;
+
+	/** 드롭다운 표시 방식 */
+	presentation?: SelectPresentation;
 
 	/** (옵션) 상단 라벨 */
 	label?: string;

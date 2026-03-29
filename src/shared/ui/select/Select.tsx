@@ -73,13 +73,14 @@ export function Select({
 								borderTopRightRadius: 12,
 								borderBottomLeftRadius: 0,
 								borderBottomRightRadius: 0,
-								borderBottomWidth: 2,
 								borderBottomColor: colorTokens.neutralVariant,
 							}
 						: {
 								borderRadius: 12,
+								borderBottomColor: "transparent",
 							}),
-					backgroundColor: colorTokens.neutral,
+					borderBottomWidth: 2,
+					backgroundColor: colorTokens.canvas,
 					paddingHorizontal: sizeToken.fieldPx,
 					paddingVertical: sizeToken.fieldPy,
 					opacity: disabled ? 0.3 : 1,
@@ -89,7 +90,7 @@ export function Select({
 					borderBottomLeftRadius: 12,
 					borderBottomRightRadius: 12,
 					overflow: "hidden",
-					backgroundColor: colorTokens.neutral,
+					backgroundColor: colorTokens.canvas,
 					...shadows.neutral,
 				}}
 				itemContainerStyle={{
