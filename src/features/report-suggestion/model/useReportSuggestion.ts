@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { ReportStep, ReportTarget } from "./types";
 
 interface UseReportSuggestionReturn {
 	step: ReportStep;
 	target: ReportTarget;
 	reason: string | null;
-	setTarget: (value: string | null) => void;
+	setTarget: (value: ReportTarget) => void;
 	setReason: (value: string | null) => void;
 	open: () => void;
 	close: () => void;
@@ -16,32 +16,39 @@ interface UseReportSuggestionReturn {
 export function useReportSuggestion(): UseReportSuggestionReturn {
 	const [step, setStep] = useState<ReportStep>(null);
 	const [target, setTargetState] = useState<ReportTarget>(null);
-	const [reason, setReason] = useState<string | null>(null);
+	const [reason, setReasonState] = useState<string | null>(null);
 
-	function open() {
+	const resetAll = useCallback(() => {
+		setTargetState(null);
+		setReasonState(null);
+	}, []);
+
+	const open = useCallback(() => {
 		setStep("select-target");
-		setTargetState(null);
-		setReason(null);
-	}
+		resetAll();
+	}, [resetAll]);
 
-	function close() {
+	const close = useCallback(() => {
 		setStep(null);
-		setTargetState(null);
-		setReason(null);
-	}
+		resetAll();
+	}, [resetAll]);
 
-	function setTarget(value: string | null) {
-		setTargetState(value === "user" || value === "post" ? value : null);
-	}
+	const setTarget = useCallback((value: ReportTarget) => {
+		setTargetState(value);
+	}, []);
 
-	function goToReason() {
-		setReason(null);
+	const setReason = useCallback((value: string | null) => {
+		setReasonState(value);
+	}, []);
+
+	const goToReason = useCallback(() => {
+		setReasonState(null);
 		setStep("select-reason");
-	}
+	}, []);
 
-	function goToDone() {
+	const goToDone = useCallback(() => {
 		setStep("done");
-	}
+	}, []);
 
 	return {
 		step,

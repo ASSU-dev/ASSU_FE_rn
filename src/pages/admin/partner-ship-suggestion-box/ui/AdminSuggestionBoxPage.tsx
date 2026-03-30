@@ -1,8 +1,5 @@
 // 관리자 제휴 건의함 페이지 — 건의 건수 + 건의 카드 목록
 
-import { router } from "expo-router";
-import { useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
 import {
 	ReportSuggestionDialog,
 	useReportSuggestion,
@@ -11,6 +8,9 @@ import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { router } from "expo-router";
+import { useCallback, useState } from "react";
+import { FlatList, Pressable, Text, View } from "react-native";
 import {
 	mockEmptySuggestions,
 	mockSuggestions,
@@ -32,7 +32,14 @@ export function AdminSuggestionBoxPage() {
 	const [isEmpty, setIsEmpty] = useState(false);
 	const suggestions = isEmpty ? mockEmptySuggestions : mockSuggestions;
 	const count = suggestions.length;
+
 	const reportState = useReportSuggestion();
+	const renderItem = useCallback(
+		({ item }: { item: (typeof suggestions)[number] }) => (
+			<SuggestionCard {...item} onReport={reportState.open} />
+		),
+		[reportState.open],
+	); // reportState.open이 변경될 때만 렌더링 함수 재생성
 
 	return (
 		<>
@@ -78,12 +85,7 @@ export function AdminSuggestionBoxPage() {
 				<FlatList
 					data={suggestions}
 					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => (
-						<SuggestionCard
-							{...item}
-							onReport={reportState.open}
-						/>
-					)}
+					renderItem={renderItem}
 					contentContainerStyle={listContentStyle}
 				/>
 			)}

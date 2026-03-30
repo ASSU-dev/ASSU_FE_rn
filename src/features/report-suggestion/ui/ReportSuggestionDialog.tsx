@@ -1,6 +1,7 @@
 import { Text } from "react-native";
 import { Dialog } from "@/shared/ui/dialog";
 import { REPORT_REASONS } from "../model/constants";
+import type { ReportTarget } from "../model/types";
 import type { useReportSuggestion } from "../model/useReportSuggestion";
 
 type ReportSuggestionState = ReturnType<typeof useReportSuggestion>;
@@ -36,7 +37,7 @@ export function ReportSuggestionDialog({ state }: ReportSuggestionDialogProps) {
 					<Text className="font-regular text-sm text-content-secondary">
 						사용자를 신고할 경우 해당 사용자가 작성한 모든 건의글이 삭제됩니다
 					</Text>
-					<Dialog.SelectGroup value={target} onChange={setTarget}>
+					<Dialog.SelectGroup value={target} onChange={(v) => setTarget(v as ReportTarget)}>
 						<Dialog.SelectButton value="user">제휴 건의 사용자</Dialog.SelectButton>
 						<Dialog.SelectButton value="post">제휴 건의 글</Dialog.SelectButton>
 					</Dialog.SelectGroup>
