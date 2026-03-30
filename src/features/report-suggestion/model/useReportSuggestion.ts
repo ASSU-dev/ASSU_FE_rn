@@ -25,11 +25,14 @@ export function useReportSuggestion(): UseReportSuggestionReturn {
 		setReasonState(null);
 	}, []);
 
-	const open = useCallback((id: string) => {
-		setSuggestionId(id);
-		setStep("select-target");
-		resetAll();
-	}, [resetAll]);
+	const open = useCallback(
+		(id: string) => {
+			setSuggestionId(id);
+			setStep("select-target");
+			resetAll();
+		},
+		[resetAll],
+	);
 
 	const close = useCallback(() => {
 		setSuggestionId(null);

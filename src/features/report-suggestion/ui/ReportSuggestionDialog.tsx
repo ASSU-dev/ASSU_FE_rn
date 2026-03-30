@@ -11,7 +11,16 @@ interface ReportSuggestionDialogProps {
 }
 
 export function ReportSuggestionDialog({ state }: ReportSuggestionDialogProps) {
-	const { step, target, reason, setTarget, setReason, close, goToReason, goToDone } = state;
+	const {
+		step,
+		target,
+		reason,
+		setTarget,
+		setReason,
+		close,
+		goToReason,
+		goToDone,
+	} = state;
 
 	const reasonTitle =
 		target === "user"
@@ -37,8 +46,13 @@ export function ReportSuggestionDialog({ state }: ReportSuggestionDialogProps) {
 					<Text className="font-regular text-sm text-content-secondary">
 						사용자를 신고할 경우 해당 사용자가 작성한 모든 건의글이 삭제됩니다
 					</Text>
-					<Dialog.SelectGroup value={target} onChange={(v) => setTarget(v as ReportTarget)}>
-						<Dialog.SelectButton value="user">제휴 건의 사용자</Dialog.SelectButton>
+					<Dialog.SelectGroup
+						value={target}
+						onChange={(v) => setTarget(v as ReportTarget)}
+					>
+						<Dialog.SelectButton value="user">
+							제휴 건의 사용자
+						</Dialog.SelectButton>
 						<Dialog.SelectButton value="post">제휴 건의 글</Dialog.SelectButton>
 					</Dialog.SelectGroup>
 				</Dialog.Content>
@@ -74,7 +88,9 @@ export function ReportSuggestionDialog({ state }: ReportSuggestionDialogProps) {
 			<Dialog visible={step === "done"}>
 				<Dialog.Title>{doneTitle}</Dialog.Title>
 				<Dialog.Content>
-					<Text className="font-regular text-sm text-content-secondary">{doneBody}</Text>
+					<Text className="font-regular text-sm text-content-secondary">
+						{doneBody}
+					</Text>
 				</Dialog.Content>
 				<Dialog.Actions>
 					<Dialog.ConfirmButton onPress={close}>확인</Dialog.ConfirmButton>
