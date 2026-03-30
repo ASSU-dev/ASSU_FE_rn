@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 
 import { PageLayout } from "@/shared/ui/layout";
@@ -7,18 +8,24 @@ import {
 	AccountProfileHeader,
 } from "@/widgets/account-management";
 
-const myAccountItems: AccountMenuItemProps[] = [
-	{ label: "알림설정", iconName: "bell" },
-	{ label: "계정관리", iconName: "user" },
-	{ label: "대기중인 제휴 계약서", iconName: "list" },
-];
-
-const customerServiceItems: AccountMenuItemProps[] = [
-	{ label: "이용약관", iconName: "folder" },
-	{ label: "고객센터", iconName: "headphone" },
-];
-
 export function AdminProfilePage() {
+	const router = useRouter();
+
+	const myAccountItems: AccountMenuItemProps[] = [
+		{ label: "알림설정", iconName: "bell" },
+		{ label: "계정관리", iconName: "user" },
+		{ label: "대기중인 제휴 계약서", iconName: "list" },
+	];
+
+	const customerServiceItems: AccountMenuItemProps[] = [
+		{ label: "이용약관", iconName: "folder" },
+		{
+			label: "고객센터",
+			iconName: "headphone",
+			onPress: () => router.push("../customer-service"),
+		},
+	];
+
 	return (
 		<PageLayout
 			scrollable
