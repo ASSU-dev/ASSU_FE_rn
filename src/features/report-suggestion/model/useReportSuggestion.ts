@@ -3,11 +3,12 @@ import type { ReportStep, ReportTarget } from "./types";
 
 interface UseReportSuggestionReturn {
 	step: ReportStep;
+	suggestionId: string | null;
 	target: ReportTarget;
 	reason: string | null;
 	setTarget: (value: ReportTarget) => void;
 	setReason: (value: string | null) => void;
-	open: () => void;
+	open: (id: string) => void;
 	close: () => void;
 	goToReason: () => void;
 	goToDone: () => void;
@@ -15,18 +16,22 @@ interface UseReportSuggestionReturn {
 
 export function useReportSuggestion(): UseReportSuggestionReturn {
 	const [step, setStep] = useState<ReportStep>(null);
+	const [suggestionId, setSuggestionId] = useState<string | null>(null);
 	const [target, setTargetState] = useState<ReportTarget>(null);
 	const [reason, setReasonState] = useState<string | null>(null);
 
 	const resetAll = useCallback(() => {
+		setSuggestionId(null);
 		setTargetState(null);
 		setReasonState(null);
 	}, []);
 
-	const open = useCallback(() => {
+	const open = useCallback((id: string) => {
 		setStep("select-target");
-		resetAll();
-	}, [resetAll]);
+		setSuggestionId(id);
+		setTargetState(null);
+		setReasonState(null);
+	}, []);
 
 	const close = useCallback(() => {
 		setStep(null);
@@ -52,6 +57,7 @@ export function useReportSuggestion(): UseReportSuggestionReturn {
 
 	return {
 		step,
+		suggestionId,
 		target,
 		reason,
 		setTarget,

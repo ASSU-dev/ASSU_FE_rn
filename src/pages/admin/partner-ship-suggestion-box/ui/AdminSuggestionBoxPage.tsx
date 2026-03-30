@@ -36,7 +36,7 @@ export function AdminSuggestionBoxPage() {
 	const reportState = useReportSuggestion();
 	const renderItem = useCallback(
 		({ item }: { item: (typeof suggestions)[number] }) => (
-			<SuggestionCard {...item} onReport={reportState.open} />
+			<SuggestionCard {...item} onReport={() => reportState.open(item.id)} />
 		),
 		[reportState.open],
 	); // reportState.open이 변경될 때만 렌더링 함수 재생성
