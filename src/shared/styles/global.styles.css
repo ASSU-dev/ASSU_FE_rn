@@ -9,6 +9,7 @@
 	/* 파란색 계열 */
 	--blue-100: #e5f6fe;
 	--blue-50: #f4f6fe;
+	--blue-400: #66a4fe;
 	--blue-500: #0068fe;
 
 	/* 회색 계열 */
@@ -33,6 +34,7 @@
 	/* Brand Colors - Primitive 참조 */
 	--color-primary: var(--blue-500);
 	--color-primary-tint: var(--blue-100);
+	--color-sub: var(--blue-400);
 
 	/* Neutral Colors - Primitive 참조 */
 	--color-neutral: var(--gray-100);
@@ -97,6 +99,7 @@
 	/* 파란색 계열 */
 	--blue-100: #e5f6fe;
 	--blue-50: #f4f6fe;
+	--blue-400: #66a4fe;
 	--blue-500: #0068fe;
 
 	/* 회색 계열 */
@@ -121,6 +124,7 @@
 	/* Brand Colors - Primitive 참조 */
 	--color-primary: var(--blue-500);
 	--color-primary-tint: var(--blue-100);
+	--color-sub: var(--blue-400);
 
 	/* Neutral Colors - Primitive 참조 */
 	--color-neutral: var(--gray-100);
