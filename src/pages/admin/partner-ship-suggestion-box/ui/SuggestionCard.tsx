@@ -1,6 +1,7 @@
 // 제휴 건의 카드 — 가게명, 작성자(학과·재학상태), 건의 내용, 작성일을 표시하는 카드
 
 import { format } from "date-fns";
+import { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import type { Suggestion } from "../model/types";
 
@@ -8,7 +9,7 @@ interface SuggestionCardProps extends Suggestion {
 	onReport: () => void;
 }
 
-export function SuggestionCard({
+export const SuggestionCard = memo(function SuggestionCard({
 	storeName,
 	department,
 	studentStatus,
@@ -50,4 +51,4 @@ export function SuggestionCard({
 			</View>
 		</View>
 	);
-}
+});
