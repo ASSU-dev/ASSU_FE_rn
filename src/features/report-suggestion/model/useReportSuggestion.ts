@@ -17,12 +17,12 @@ interface UseReportSuggestionReturn {
 export function useReportSuggestion(): UseReportSuggestionReturn {
 	const [step, setStep] = useState<ReportStep>(null);
 	const [suggestionId, setSuggestionId] = useState<string | null>(null);
-	const [target, setTargetState] = useState<ReportTarget>(null);
-	const [reason, setReasonState] = useState<string | null>(null);
+	const [target, setTarget] = useState<ReportTarget>(null);
+	const [reason, setReason] = useState<string | null>(null);
 
 	const resetAll = useCallback(() => {
-		setTargetState(null);
-		setReasonState(null);
+		setTarget(null);
+		setReason(null);
 	}, []);
 
 	const open = useCallback(
@@ -40,16 +40,8 @@ export function useReportSuggestion(): UseReportSuggestionReturn {
 		resetAll();
 	}, [resetAll]);
 
-	const setTarget = useCallback((value: ReportTarget) => {
-		setTargetState(value);
-	}, []);
-
-	const setReason = useCallback((value: string | null) => {
-		setReasonState(value);
-	}, []);
-
 	const goToReason = useCallback(() => {
-		setReasonState(null);
+		setReason(null);
 		setStep("select-reason");
 	}, []);
 
