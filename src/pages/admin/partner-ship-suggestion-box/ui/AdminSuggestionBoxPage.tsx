@@ -3,6 +3,10 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
+import {
+	ReportSuggestionDialog,
+	useReportSuggestion,
+} from "@/features/report-suggestion"; // 제휴 건의 신고 기능
 import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
@@ -28,8 +32,10 @@ export function AdminSuggestionBoxPage() {
 	const [isEmpty, setIsEmpty] = useState(false);
 	const suggestions = isEmpty ? mockEmptySuggestions : mockSuggestions;
 	const count = suggestions.length;
+	const reportState = useReportSuggestion();
 
 	return (
+		<>
 		<PageLayout
 			className="flex-1 bg-canvas"
 			contentContainerClassName="flex-1"
@@ -75,14 +81,15 @@ export function AdminSuggestionBoxPage() {
 					renderItem={({ item }) => (
 						<SuggestionCard
 							{...item}
-							onReport={() => {
-								// TODO: 신고 처리
-							}}
+							onReport={reportState.open}
 						/>
 					)}
 					contentContainerStyle={listContentStyle}
 				/>
 			)}
 		</PageLayout>
+
+		<ReportSuggestionDialog state={reportState} />
+		</>
 	);
 }
