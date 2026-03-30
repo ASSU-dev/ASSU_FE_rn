@@ -6,10 +6,11 @@ import { Pressable, Text, View } from "react-native";
 import type { Suggestion } from "../model/types";
 
 interface SuggestionCardProps extends Suggestion {
-	onReport: () => void;
+	onReport: (id: string) => void;
 }
 
 export const SuggestionCard = memo(function SuggestionCard({
+	id,
 	storeName,
 	department,
 	studentStatus,
@@ -23,7 +24,7 @@ export const SuggestionCard = memo(function SuggestionCard({
 				<Text className="text-lg font-medium text-content-primary leading-body tracking-body">
 					{storeName}
 				</Text>
-				<Pressable onPress={onReport} hitSlop={8}>
+				<Pressable onPress={() => onReport(id)} hitSlop={8}>
 					<Text className="text-sm font-regular text-content-secondary leading-caption tracking-caption">
 						신고하기
 					</Text>

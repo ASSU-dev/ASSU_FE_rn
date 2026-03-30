@@ -37,7 +37,7 @@ export function AdminSuggestionBoxPage() {
 	const { open } = reportState;
 	const renderItem = useCallback(
 		({ item }: { item: (typeof suggestions)[number] }) => (
-			<SuggestionCard {...item} onReport={() => open(item.id)} />
+			<SuggestionCard {...item} onReport={open} />
 		),
 		[open],
 	);
