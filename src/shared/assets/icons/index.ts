@@ -17,6 +17,7 @@ export { default as LoginCheckIcon } from "./login-check-icon.svg";
 export { default as LoginNoIcon } from "./login-no-icon.svg";
 export { default as SearchIcon } from "./search-icon.svg";
 export { default as SpeechBubbleIcon } from "./speech-bubble-icon.svg";
+export { StarIcon } from "./star-icon";
 export { default as UserIcon } from "./user-icon.svg";
 export { default as WritingIcon } from "./writing-icon.svg";
 export { default as QRIcon } from "./qr-icon.svg";
