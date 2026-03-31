@@ -3,13 +3,13 @@
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
+import { ReviewCard } from "@/entities/review";
 import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { mockReviews } from "../model/mockReviews";
 import type { Review } from "../model/types";
-import { ReviewCard } from "./ReviewCard";
 import { ReviewListHeader, type SortType } from "./ReviewListHeader";
 import { ReviewSummary } from "./ReviewSummary";
 
@@ -84,7 +84,10 @@ export function PartnerReviewPage() {
 				data={sortedReviews}
 				keyExtractor={(item) => item.id}
 				renderItem={({ item }) => (
-					<ReviewCard review={item} onReport={() => {}} />
+					<ReviewCard
+						review={item}
+						action={{ label: "신고하기", onPress: () => {} }}
+					/>
 				)}
 				contentContainerStyle={listContentStyle}
 			/>

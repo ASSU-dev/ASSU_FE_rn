@@ -12,5 +12,6 @@ export { default as InfoIcon } from "./info-icon.svg";
 export { default as ListIcon } from "./list-icon.svg";
 export { default as SearchIcon } from "./search-icon.svg";
 export { default as SpeechBubbleIcon } from "./speech-bubble-icon.svg";
+export { StarIcon } from "./star-icon";
 export { default as UserIcon } from "./user-icon.svg";
 export { default as WritingIcon } from "./writing-icon.svg";
