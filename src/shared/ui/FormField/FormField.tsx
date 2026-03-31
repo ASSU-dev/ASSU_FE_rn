@@ -8,6 +8,7 @@ import type { FormFieldProps } from "./types";
 export function FormField<T extends FieldValues>({
 	control,
 	name,
+	rules,
 	label,
 	appearance = "filled",
 	rightElement,
@@ -19,13 +20,14 @@ export function FormField<T extends FieldValues>({
 		<Controller
 			control={control}
 			name={name}
+			rules={rules}
 			render={({ field, fieldState }) => {
 				//todo: 일단 에러메세지 추출만 함
 				const errorMessage = fieldState.error?.message;
 				const message = helperText;
 
 				return (
-					<View className="mb-[10px]">
+					<View className="mb-[20px]">
 						{label && (
 							<FormFieldLabel color={labelColor}>{label}</FormFieldLabel>
 						)}

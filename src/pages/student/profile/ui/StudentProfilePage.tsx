@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 
 import { PageLayout } from "@/shared/ui/layout";
@@ -7,18 +8,24 @@ import {
 	AccountProfileHeader,
 } from "@/widgets/account-management";
 
-const myAccountItems: AccountMenuItemProps[] = [
-	{ label: "내가 작성한 리뷰", iconName: "writing" },
-	{ label: "로그아웃", iconName: "exitRight" },
-];
-
-const customerServiceItems: AccountMenuItemProps[] = [
-	{ label: "개인정보 처리방침 안내", iconName: "folder" },
-	{ label: "자주 묻는 질문", iconName: "speechBubble" },
-	{ label: "고객센터", iconName: "headphone" },
-];
-
 export function StudentProfilePage() {
+	const router = useRouter();
+
+	const myAccountItems: AccountMenuItemProps[] = [
+		{ label: "내가 작성한 리뷰", iconName: "writing" },
+		{ label: "로그아웃", iconName: "exitRight" },
+	];
+
+	const customerServiceItems: AccountMenuItemProps[] = [
+		{ label: "개인정보 처리방침 안내", iconName: "folder" },
+		{ label: "자주 묻는 질문", iconName: "speechBubble" },
+		{
+			label: "고객센터",
+			iconName: "headphone",
+			onPress: () => router.push("../customer-service"),
+		},
+	];
+
 	return (
 		<PageLayout
 			scrollable

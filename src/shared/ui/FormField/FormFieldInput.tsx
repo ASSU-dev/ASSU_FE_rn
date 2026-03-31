@@ -58,6 +58,7 @@ export function FormFieldInput({
 				borderColor: inputBorderColor
 					? colorTokens[inputBorderColor]
 					: borderColor,
+				borderWidth: 0.5,
 				minHeight: 50,
 				height: multiline ? undefined : 50,
 			}}
