@@ -15,7 +15,7 @@ export function SuggestionSection() {
 			</View>
 			<View className="mx-screen-m bg-canvas px-gutter py-[18px] gap-card-p">
 				<View className="gap-card-p">
-					<Text className="font-semibold text-[25px] text-content-primary leading-caption tracking-caption">
+					<Text className="font-semibold text-[25px] text-content-primary leading-heading tracking-caption">
 						제휴 건의함
 					</Text>
 					<View>
