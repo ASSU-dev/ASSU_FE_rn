@@ -12,7 +12,7 @@ interface PartnershipListWidgetProps {
 export const PartnershipListWidget = memo(
 	({
 		partnerships,
-		title = "제휴업체 목록",
+		title = "제휴단체 목록",
 		variant = "white",
 		onViewAll,
 	}: PartnershipListWidgetProps) => {
