@@ -37,7 +37,7 @@ export function PartnerHomePage() {
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
 					title="제휴단체 목록"
-					onViewAll={() => router.push("/(protected)/(partner)/partnership-list")}
+					onViewAll={() => router.push("/(protected)/(partner)/partner-partnership-list")}
 				/>
 
 				{/* Recommendation widget with 2 cards */}

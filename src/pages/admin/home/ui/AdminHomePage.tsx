@@ -82,7 +82,7 @@ export function AdminHomePage() {
 				{/* Partnership list widget */}
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
-					onViewAll={() => router.push("/(protected)/(admin)/partnership-list")}
+					onViewAll={() => router.push("/(protected)/(admin)/admin-partnership-list")}
 				/>
 
 				{/* Recommendation section */}

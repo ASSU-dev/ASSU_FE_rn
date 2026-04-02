@@ -19,9 +19,8 @@ export const PartnershipCard = memo(
 		variant = "white",
 	}: PartnershipCardProps) => {
 		const bgClass = variant === "gray" ? "bg-neutral" : "bg-canvas";
-	const badgeBgClass = variant === "gray" ? "bg-sub" : "bg-primary-tint";
-	const badgeTextClass = variant === "gray" ? "text-content-inverse" : "text-primary";
-
+		const badgeBgClass = variant === "gray" ? "bg-sub" : "bg-primary-tint";
+		const badgeTextClass = variant === "gray" ? "text-content-inverse" : "text-primary";
 		return (
 			<View className={`flex-1 rounded-lg ${bgClass} px-4 py-5`}>
 				{/* Store name */}
