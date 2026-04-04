@@ -1,5 +1,6 @@
+import { BackArrowIcon } from "@/shared/assets/icons";
 import { InquiryForm } from "@/features/inquiry-form";
-import { InquiryList } from "@/features/inquiry-list";
+import { InquiryList } from "./InquiryList";
 import { PageLayout } from "@/shared/ui/layout";
 import { TabBar } from "@/shared/ui/TabBar";
 import { colorTokens } from "@/shared/styles/tokens";
@@ -37,7 +38,7 @@ export function CustomerServicePage() {
 			{/* Header */}
 			<View className="flex-row items-center gap-[12px] px-[24px] py-[24px]">
 				<Pressable onPress={() => router.back()} className="w-6 h-6">
-					<Text className="text-xl">←</Text>
+					<BackArrowIcon width={24} height={24} />
 				</Pressable>
 				<View className="flex-1 items-center">
 					<Text className="text-xl font-semibold text-content-primary">
