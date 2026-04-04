@@ -1,13 +1,13 @@
-import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { BellFill, Logo } from "@/shared/assets/icons";
+import { Pressable, Text, View } from "react-native";
 import {
 	MOCK_ADMIN_AFFILIATION_SUMMARY,
 	MOCK_PARTNERSHIPS,
 } from "@/entities/partnership";
-import { SummaryCard } from "@/shared/ui/summary-card";
+import { BellFill, Logo } from "@/shared/assets/icons";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PageTitle } from "@/shared/ui/page-title";
+import { SummaryCard } from "@/shared/ui/summary-card";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
 import { MOCK_ADMIN_PAGE_INFO } from "../model/mockAdminPageInfo";
 
@@ -15,7 +15,11 @@ import { MOCK_ADMIN_PAGE_INFO } from "../model/mockAdminPageInfo";
 const noop = () => {};
 
 // Admin header section component
-function AdminHeaderSection({ onNotificationPress }: { onNotificationPress: () => void }) {
+function AdminHeaderSection({
+	onNotificationPress,
+}: {
+	onNotificationPress: () => void;
+}) {
 	return (
 		<View className="flex-row items-center justify-between">
 			<Logo width={40} height={40} />
@@ -39,7 +43,11 @@ function RecommendationSection() {
 				subtitle={MOCK_ADMIN_AFFILIATION_SUMMARY?.address || ""}
 				status={MOCK_ADMIN_AFFILIATION_SUMMARY?.status}
 				dateRange={MOCK_ADMIN_AFFILIATION_SUMMARY?.dateRange}
-				actionLabel={MOCK_ADMIN_AFFILIATION_SUMMARY?.status === "제휴중" ? "제휴 계약서 보기" : "문의하기"}
+				actionLabel={
+					MOCK_ADMIN_AFFILIATION_SUMMARY?.status === "제휴중"
+						? "제휴 계약서 보기"
+						: "문의하기"
+				}
 				onActionPress={noop}
 			/>
 		</View>
@@ -82,7 +90,9 @@ export function AdminHomePage() {
 				{/* Partnership list widget */}
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
-					onViewAll={() => router.push("/(protected)/(admin)/admin-partnership-list")}
+					onViewAll={() =>
+						router.push("/(protected)/(admin)/admin-partnership-list")
+					}
 				/>
 
 				{/* Recommendation section */}

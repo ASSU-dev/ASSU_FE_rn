@@ -1,11 +1,17 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+	ActivityIndicator,
+	Pressable,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
+import { z } from "zod";
+import { colorTokens } from "@/shared/styles/tokens";
 import { useSubmitInquiry } from "../api/useSubmitInquiry";
 import type { InquiryFormData } from "../model/types";
-import { colorTokens } from "@/shared/styles/tokens";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Pressable, Text, TextInput, View, ActivityIndicator } from "react-native";
-import { useState } from "react";
 
 const schema = z.object({
 	title: z.string().min(1, "제목을 작성해주세요"),
@@ -23,7 +29,12 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 	const [successMessage, setSuccessMessage] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 
-	const { control, handleSubmit, reset, formState: { errors } } = useForm<InquiryFormData>({
+	const {
+		control,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<InquiryFormData>({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			title: "",
@@ -52,7 +63,9 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 	}
 
 	const getInputBorderColor = (fieldName: string) => {
-		return focusedField === fieldName ? colorTokens.contentPrimary : colorTokens.neutralVariant;
+		return focusedField === fieldName
+			? colorTokens.contentPrimary
+			: colorTokens.neutralVariant;
 	};
 
 	return (
@@ -151,7 +164,6 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 					문의사항 등록 시 개인정보 수집 및 이용에 동의하는 것으로 간주됩니다.
 				</Text>
 			</View>
-
 
 			{/* Success Message */}
 			{successMessage && (
