@@ -6,7 +6,9 @@ import type { useReportSteps } from "./useReportSteps";
 interface ReportModalConfig {
 	targets: readonly { value: string; label: string }[];
 	targetWarning: string;
-	reasons: readonly { value: string; label: string }[];
+	reasons: (
+		target: ReportTarget,
+	) => readonly { value: string; label: string }[];
 	reasonTitle: (target: ReportTarget) => string;
 	doneTitle: (target: ReportTarget) => string;
 	doneBody: (target: ReportTarget) => string;
@@ -62,7 +64,7 @@ export function ReportModal({ state, config }: ReportModalProps) {
 				<Dialog.Title>{config.reasonTitle(target)}</Dialog.Title>
 				<Dialog.Content>
 					<Dialog.RadioGroup value={reason} onChange={setReason}>
-						{config.reasons.map(({ value, label }) => (
+						{config.reasons(target).map(({ value, label }) => (
 							<Dialog.RadioItem key={value} value={value}>
 								{label}
 							</Dialog.RadioItem>

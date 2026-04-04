@@ -10,7 +10,7 @@ const SUGGESTION_REPORT_CONFIG = {
 	],
 	targetWarning:
 		"사용자를 신고할 경우 해당 사용자가 작성한 모든 건의글이 삭제됩니다",
-	reasons: REPORT_REASONS,
+	reasons: () => REPORT_REASONS,
 	reasonTitle: (target: ReportTarget) =>
 		target === "user"
 			? "사용자를 신고하는 사유를 선택해주세요"
