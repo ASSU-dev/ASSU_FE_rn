@@ -44,10 +44,10 @@ export function InquiryDetailPage() {
 
 			{data && (
 				<ScrollView
-					contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
+					contentContainerClassName="px-6 pt-7 pb-10"
 				>
 					{/* 제목 + 날짜 */}
-					<View className="items-center gap-[2px] mb-[15px]">
+					<View className="items-center gap-0.5 mb-6">
 						<Text className="text-[18px] font-semibold text-content-primary tracking-[0.25px] text-center">
 							{data.title}
 						</Text>
@@ -57,21 +57,21 @@ export function InquiryDetailPage() {
 					</View>
 
 					{/* 구분선 */}
-					<View className="border-b border-gray-200 mb-[15px]" />
+					<View className="border-b border-gray-200 mb-6" />
 
 					{/* 본문 */}
-					<Text className="text-[15px] text-content-primary tracking-[0.25px] leading-[20px] mb-[60px]">
+					<Text className="text-[15px] text-content-primary tracking-[0.25px] leading-5 mb-16">
 						{data.content}
 					</Text>
 
 					{/* 답변 섹션 */}
-					<View className="gap-[9px]">
-						<View className="px-[15px]">
-							<Text className="text-[15px] font-medium text-primary tracking-[0.25px] leading-[20px]">
+					<View className="gap-2.5">
+						<View className="px-4">
+							<Text className="text-[15px] font-medium text-primary tracking-[0.25px] leading-5">
 								Answer
 							</Text>
 						</View>
-						<View className="bg-box rounded-lg p-[15px]">
+						<View className="bg-gray-100 rounded-lg p-4">
 							{data.answer ? (
 								<Text className="text-[11px] font-medium text-content-primary tracking-[0.25px] leading-[20px]">
 									{data.answer}
