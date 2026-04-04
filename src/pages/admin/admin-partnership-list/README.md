@@ -1,6 +1,6 @@
-# partner-list
+# partnership-list
 
-관리자용 제휴업체 목록 페이지.
+관리자용 제휴단체 목록 페이지.
 
 ## 구성
 

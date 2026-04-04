@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
 import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
-import { PartnershipListContent } from "./PartnershipListContent";
+import { PartnershipListContent } from "@/widgets/partnership-list";
 
 function Header({ onBack }: { onBack: () => void }) {
 	return (
@@ -12,7 +12,7 @@ function Header({ onBack }: { onBack: () => void }) {
 				<BackArrowIcon width={24} height={24} />
 			</Pressable>
 			<Text className="text-lg font-semibold text-content-primary">
-				제휴업체 목록
+				제휴단체 목록
 			</Text>
 		</View>
 	);
@@ -23,7 +23,7 @@ function InfoBox() {
 		<View className="flex-row items-center gap-2 rounded-lg bg-neutral px-4 py-3 mt-6">
 			<InfoFillIcon width={16} height={16} />
 			<Text className="flex-1 text-xs font-regular text-content-secondary">
-				숭실대학교 총학생회와 제휴를 체결한 업체 목록이에요
+				총학생회와 제휴를 체결한 단체 목록이에요
 			</Text>
 		</View>
 	);
@@ -38,7 +38,7 @@ function CountSection({ count }: { count: number }) {
 	);
 }
 
-export function PartnerListPage() {
+export function PartnershipListPage() {
 	const router = useRouter();
 
 	return (

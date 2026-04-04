@@ -2,12 +2,14 @@ import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { BellFill, Logo } from "@/shared/assets/icons";
 import {
-	MOCK_AFFILIATION_SUMMARIES,
+	MOCK_ADMIN_AFFILIATION_SUMMARY,
 	MOCK_PARTNERSHIPS,
 } from "@/entities/partnership";
 import { SummaryCard } from "@/shared/ui/summary-card";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { PageTitle } from "@/shared/ui/page-title";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
+import { MOCK_ADMIN_PAGE_INFO } from "../model/mockAdminPageInfo";
 
 // No-op for stable callback reference
 const noop = () => {};
@@ -26,19 +28,18 @@ function AdminHeaderSection({ onNotificationPress }: { onNotificationPress: () =
 
 // Recommendation section component
 function RecommendationSection() {
-	const mockSummary = MOCK_AFFILIATION_SUMMARIES[0];
 	return (
 		<View className="gap-2">
-			<Text className="text-base font-medium text-content-primary">
+			<Text className="text-lg font-medium text-content-primary">
 				🔍 제휴업체 추천
 			</Text>
 			<SummaryCard
-				imageUrl={mockSummary?.imageUrl}
-				title={mockSummary?.title || ""}
-				subtitle={mockSummary?.address || ""}
-				status={mockSummary?.status}
-				dateRange={mockSummary?.dateRange}
-				actionLabel={mockSummary?.status === "제휴중" ? "제휴 계약서 보기" : "문의하기"}
+				imageUrl={MOCK_ADMIN_AFFILIATION_SUMMARY?.imageUrl}
+				title={MOCK_ADMIN_AFFILIATION_SUMMARY?.title || ""}
+				subtitle={MOCK_ADMIN_AFFILIATION_SUMMARY?.address || ""}
+				status={MOCK_ADMIN_AFFILIATION_SUMMARY?.status}
+				dateRange={MOCK_ADMIN_AFFILIATION_SUMMARY?.dateRange}
+				actionLabel={MOCK_ADMIN_AFFILIATION_SUMMARY?.status === "제휴중" ? "제휴 계약서 보기" : "문의하기"}
 				onActionPress={noop}
 			/>
 		</View>
@@ -68,22 +69,20 @@ export function AdminHomePage() {
 			withTopInset={true}
 			withBottomInset={false}
 			className="flex-1 bg-neutral"
-			contentContainerClassName="gap-8 px-6 pb-6"
+			contentContainerClassName="px-6 pb-6"
 		>
 			{/* Header */}
 			<AdminHeaderSection onNotificationPress={noop} />
 
 			{/* Title */}
-			<Text className="text-2xl font-semibold text-content-primary">
-				숭실대학교 총학생회
-			</Text>
+			<PageTitle title={MOCK_ADMIN_PAGE_INFO.title} />
 
 			{/* Content container */}
 			<View className="gap-5">
 				{/* Partnership list widget */}
 				<PartnershipListWidget
 					partnerships={MOCK_PARTNERSHIPS}
-					onViewAll={() => router.push("/(protected)/(admin)/partner-list")}
+					onViewAll={() => router.push("/(protected)/(admin)/admin-partnership-list")}
 				/>
 
 				{/* Recommendation section */}

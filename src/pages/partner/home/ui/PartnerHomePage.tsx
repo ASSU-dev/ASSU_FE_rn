@@ -1,18 +1,51 @@
-import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { View } from "react-native";
+import { useRouter } from "expo-router";
+import {
+	MOCK_PARTNER_AFFILIATION_SUMMARIES,
+	MOCK_PARTNERSHIPS,
+} from "@/entities/partnership";
+import { AppHeader } from "@/shared/ui/app-header";
+import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { PageTitle } from "@/shared/ui/page-title";
+import { PartnershipListWidget } from "@/widgets/partnership-list";
+import { PartnershipRecommendationWidget } from "@/widgets/partnership-recommendation";
+import { MOCK_PARTNER_PAGE_INFO } from "../model/mockPartnerPageInfo";
+
+// No-op for stable callback reference
+const noop = () => {};
 
 export function PartnerHomePage() {
+	const router = useRouter();
+
 	return (
-		<View className="flex-1 items-center justify-center bg-canvas">
-			<Text className="mb-4 text-content-primary font-medium">제휴업체 홈</Text>
-			<Pressable
-				className="rounded-lg bg-primary px-4 py-3"
-				onPress={() => router.push("/")}
-			>
-				<Text className="text-sm font-semibold text-white">
-					허브로 돌아가기
-				</Text>
-			</Pressable>
-		</View>
+		<PageLayout
+			scrollable={true}
+			withTopInset={true}
+			withBottomInset={false}
+			className="flex-1 bg-neutral"
+			contentContainerClassName="px-6 pb-6"
+		>
+			{/* Header */}
+			<AppHeader onNotificationPress={noop} />
+
+			{/* Store name title */}
+			<PageTitle title={MOCK_PARTNER_PAGE_INFO.title} />
+
+			{/* Content sections */}
+			<View className="gap-5">
+				{/* Partnership list widget with gray variant */}
+				<PartnershipListWidget
+					partnerships={MOCK_PARTNERSHIPS}
+					title="제휴단체 목록"
+					onViewAll={() => router.push("/(protected)/(partner)/partner-partnership-list")}
+				/>
+
+				{/* Recommendation widget with 2 cards */}
+				<PartnershipRecommendationWidget
+					summaries={MOCK_PARTNER_AFFILIATION_SUMMARIES}
+					onContactPress={noop}
+				/>
+			</View>
+		</PageLayout>
 	);
 }
