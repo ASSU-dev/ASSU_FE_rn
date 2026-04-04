@@ -8,6 +8,7 @@ module.exports = {
 				// 브랜드 컬러
 				primary: "var(--color-primary)",
 				"primary-tint": "var(--color-primary-tint)",
+				sub: "var(--color-sub)",
 
 				// 회색 계열 색상
 				neutral: "var(--color-neutral)",

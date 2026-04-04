@@ -23,7 +23,6 @@ const INFO_MESSAGE = "제휴 혜택을 받을 숭실대 학생들이 제휴 건�
 const listContentStyle = {
 	gap: 20, // card-gap (20px) — 카드 간 간격
 	paddingHorizontal: 24, // screen-m (24px)
-	paddingTop: 24, // screen-m (24px) — n건 있어요 ↔ 첫 카드
 	paddingBottom: 20,
 } as const;
 
