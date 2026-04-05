@@ -49,7 +49,6 @@ export type SignupPartnerFormState = {
 	password: string;
 	companyName: string;
 	officeAddressId: string | null;
-	officeAddress: string;
 	officeAddressDetail: string;
 	businessRegistrationFileName: string;
 };
@@ -59,11 +58,8 @@ export type SignupAdminFormState = {
 	password: string;
 	organizationType: SignupAdminOrganizationType | null;
 	collegeId: string | null;
-	collegeName: string;
 	departmentId: string | null;
-	departmentName: string;
 	officeAddressId: string | null;
-	officeAddress: string;
 	officeAddressDetail: string;
 	sealFileName: string;
 };

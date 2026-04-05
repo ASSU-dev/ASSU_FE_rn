@@ -45,7 +45,10 @@ export function IdentityStepSection({
 								</Text>
 							</View>
 						) : (
-							<Pressable onPress={onSendCode} disabled={phone.length === 0}>
+							<Pressable
+								onPress={onSendCode}
+								disabled={phone.length === 0}
+							>
 								<Text className="text-[13px] font-medium text-primary">
 									인증번호 받기
 								</Text>

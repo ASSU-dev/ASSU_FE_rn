@@ -1,4 +1,8 @@
+import {
+	findAddressOption,
+} from "@/features/signup-user-flow/model/admin";
 import type { SignupFormState, SignupStep } from "@/features/signup-user-flow/model/types";
+import { useFormContext } from "react-hook-form";
 import { AdminCredentialsStepSection } from "./sections/AdminCredentialsStepSection";
 import { AdminOrganizationInfoStepSection } from "./sections/AdminOrganizationInfoStepSection";
 import { AdminOrganizationTypeStepSection } from "./sections/AdminOrganizationTypeStepSection";
@@ -56,7 +60,6 @@ type AgreementActions = {
 
 type SignupStepContentProps = {
 	step: SignupStep;
-	form: SignupFormState;
 	countdown: string;
 	completeDisplayName: string;
 	isVerificationError: boolean;
@@ -71,12 +74,14 @@ type SignupStepContentProps = {
 
 export function SignupStepContent({
 	step,
-	form,
 	countdown,
 	completeDisplayName,
 	isVerificationError,
 	actions,
 }: SignupStepContentProps) {
+	const { watch } = useFormContext<SignupFormState>();
+	const form = watch();
+
 	switch (step) {
 		case "login1":
 		case "loginForm":
@@ -161,7 +166,9 @@ export function SignupStepContent({
 					organizationType={form.admin.organizationType}
 					collegeId={form.admin.collegeId}
 					departmentId={form.admin.departmentId}
-					officeAddress={form.admin.officeAddress}
+					officeAddress={
+						findAddressOption(form.admin.officeAddressId)?.label ?? ""
+					}
 					officeAddressDetail={form.admin.officeAddressDetail}
 					onChangeOrganizationType={actions.admin.onChangeAdminOrganizationType}
 					onChangeCollege={actions.admin.onChangeAdminCollege}
@@ -189,7 +196,9 @@ export function SignupStepContent({
 			return (
 				<PartnerCompanyInfoStepSection
 					partnerCompanyName={form.partner.companyName}
-					partnerOfficeAddress={form.partner.officeAddress}
+					partnerOfficeAddress={
+						findAddressOption(form.partner.officeAddressId)?.label ?? ""
+					}
 					partnerOfficeAddressDetail={form.partner.officeAddressDetail}
 					onChangePartnerCompanyName={actions.partner.onChangePartnerCompanyName}
 					onChangePartnerOfficeAddressDetail={
