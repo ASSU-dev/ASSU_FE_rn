@@ -2,64 +2,41 @@ import { useMemo, useState } from "react";
 import type { SignupSchool } from "@/entities/signup";
 import type { UserType } from "@/entities/user/model/types";
 import { useCountdownTimer } from "../hooks/useCountdownTimer";
-import { VERIFICATION_SUCCESS_CODE } from "./constants";
+import { getNextAgreementState } from "./agreements";
+import {
+	findAdminCollegeOption,
+	findAdminDepartmentOption,
+} from "./admin";
+import {
+	getSignupFlowConfig,
+	getSignupFlowVariant,
+	VERIFICATION_SUCCESS_CODE,
+} from "./flowConfig";
 import { DEFAULT_SIGNUP_FORM_STATE } from "./mock/signupUserFlow.mock";
-import type { SignupFormState, SignupStep } from "./types";
-
-const STEP_ORDER: SignupStep[] = [
-	"login1",
-	"loginForm",
-	"identity",
-	"role",
-	"school",
-	"studentInput1",
-	"studentInput2",
-	"studentInput3",
-	"complete",
-];
+import { isSignupStepValid } from "./validation";
+import type {
+	SignupAdminOrganizationType,
+	SignupFormState,
+	SignupStep,
+} from "./types";
 
 export function useSignupUserFlow() {
 	const [step, setStep] = useState<SignupStep>("login1");
 	const [form, setForm] = useState<SignupFormState>(DEFAULT_SIGNUP_FORM_STATE);
 	const timer = useCountdownTimer({ initialSeconds: 300 });
 
-	const progress = useMemo(() => {
-		switch (step) {
-			case "identity":
-				return 16.67;
-			case "role":
-				return 50;
-			case "school":
-				return 66.67;
-			case "studentInput1":
-			case "studentInput2":
-			case "studentInput3":
-				return 83.33;
-			default:
-				return 0;
-		}
-	}, [step]);
+	const flowVariant = useMemo(() => getSignupFlowVariant(form.role), [form.role]);
+	const flowConfig = useMemo(() => getSignupFlowConfig(flowVariant), [flowVariant]);
 
-	const isCurrentStepValid = useMemo(() => {
-		switch (step) {
-			case "identity":
-				return (
-					form.phone.length > 0 &&
-					form.verificationCode.length > 0 &&
-					form.isCodeSent &&
-					timer.secondsLeft > 0
-				);
-			case "role":
-				return Boolean(form.role);
-			case "school":
-				return Boolean(form.school);
-			case "studentInput2":
-			case "studentInput3":
-				return form.agreePrivacy;
-			default:
-				return true;
-		}
-	}, [form, step, timer.secondsLeft]);
+	const progress = useMemo(
+		() => flowConfig.progressByStep[step] ?? 0,
+		[flowConfig.progressByStep, step],
+	);
+
+	const isCurrentStepValid = useMemo(
+		() => isSignupStepValid({ step, form, secondsLeft: timer.secondsLeft }),
+		[form, step, timer.secondsLeft],
+	);
 
 	const goTo = (nextStep: SignupStep) => {
 		setStep(nextStep);
@@ -70,50 +47,61 @@ export function useSignupUserFlow() {
 			if (!isCurrentStepValid) {
 				return;
 			}
-			if (form.verificationCode !== VERIFICATION_SUCCESS_CODE) {
-				setForm((prev) => ({ ...prev, verificationAttempted: true }));
+			if (form.identity.verificationCode !== VERIFICATION_SUCCESS_CODE) {
+				setForm((prev) => ({
+					...prev,
+					identity: {
+						...prev.identity,
+						verificationAttempted: true,
+					},
+				}));
 				return;
 			}
 		}
 
-		const currentIndex = STEP_ORDER.indexOf(step);
-		const nextStep = STEP_ORDER[currentIndex + 1];
-		if (!nextStep) {
-			return;
-		}
-
-		if (!isCurrentStepValid) {
+		const currentIndex = flowConfig.stepOrder.indexOf(step);
+		const nextStep = flowConfig.stepOrder[currentIndex + 1];
+		if (!nextStep || !isCurrentStepValid) {
 			return;
 		}
 
 		setStep(nextStep);
 	};
 
+	const setAuthEmail = (email: string) => {
+		setForm((prev) => ({ ...prev, auth: { ...prev.auth, email } }));
+	};
+
+	const setAuthPassword = (password: string) => {
+		setForm((prev) => ({ ...prev, auth: { ...prev.auth, password } }));
+	};
+
 	const setPhone = (phone: string) => {
-		setForm((prev) => ({ ...prev, phone }));
-	};
-
-	const setEmail = (email: string) => {
-		setForm((prev) => ({ ...prev, email }));
-	};
-
-	const setPassword = (password: string) => {
-		setForm((prev) => ({ ...prev, password }));
+		setForm((prev) => ({
+			...prev,
+			identity: { ...prev.identity, phone },
+		}));
 	};
 
 	const setVerificationCode = (verificationCode: string) => {
 		setForm((prev) => ({
 			...prev,
-			verificationCode,
-			verificationAttempted: false,
+			identity: {
+				...prev.identity,
+				verificationCode,
+				verificationAttempted: false,
+			},
 		}));
 	};
 
 	const sendVerificationCode = () => {
 		setForm((prev) => ({
 			...prev,
-			isCodeSent: true,
-			verificationAttempted: false,
+			identity: {
+				...prev.identity,
+				isCodeSent: true,
+				verificationAttempted: false,
+			},
 		}));
 		timer.start();
 	};
@@ -123,36 +111,189 @@ export function useSignupUserFlow() {
 	};
 
 	const setSchool = (school: SignupSchool) => {
-		setForm((prev) => ({ ...prev, school }));
+		setForm((prev) => ({
+			...prev,
+			student: { ...prev.student, school },
+		}));
 	};
 
-	const setAgreementState = (
-		updater: (prev: SignupFormState) => Partial<SignupFormState>,
+	const setPartnerEmail = (email: string) => {
+		setForm((prev) => ({
+			...prev,
+			partner: { ...prev.partner, email },
+		}));
+	};
+
+	const setPartnerPassword = (password: string) => {
+		setForm((prev) => ({
+			...prev,
+			partner: { ...prev.partner, password },
+		}));
+	};
+
+	const setAdminEmail = (email: string) => {
+		setForm((prev) => ({
+			...prev,
+			admin: { ...prev.admin, email },
+		}));
+	};
+
+	const setAdminPassword = (password: string) => {
+		setForm((prev) => ({
+			...prev,
+			admin: { ...prev.admin, password },
+		}));
+	};
+
+	const setAdminOrganizationType = (
+		organizationType: SignupAdminOrganizationType | null,
 	) => {
-		setForm((prev) => {
-			const partial = updater(prev);
-			const next = { ...prev, ...partial };
-			return {
-				...next,
-				agreeAll: next.agreePrivacy && next.agreeMarketing,
-			};
-		});
+		setForm((prev) => ({
+			...prev,
+			admin: {
+				...prev.admin,
+				organizationType,
+				collegeId: null,
+				collegeName: "",
+				departmentId: null,
+				departmentName: "",
+				officeAddressId: null,
+				officeAddress: "",
+				officeAddressDetail: "",
+				sealFileName: "",
+			},
+		}));
+	};
+
+	const setAdminCollege = (value: string | null) => {
+		const selectedCollege = findAdminCollegeOption(value);
+
+		setForm((prev) => ({
+			...prev,
+			admin: {
+				...prev.admin,
+				collegeId: selectedCollege?.value ?? null,
+				collegeName: selectedCollege?.label ?? "",
+				departmentId: null,
+				departmentName: "",
+			},
+		}));
+	};
+
+	const setAdminDepartment = (value: string | null) => {
+		const selectedDepartment = findAdminDepartmentOption(value);
+
+		setForm((prev) => ({
+			...prev,
+			admin: {
+				...prev.admin,
+				departmentId: selectedDepartment?.value ?? null,
+				departmentName: selectedDepartment?.label ?? "",
+			},
+		}));
+	};
+
+	const setAdminOfficeAddress = ({
+		id,
+		label,
+	}: {
+		id: string;
+		label: string;
+	}) => {
+		setForm((prev) => ({
+			...prev,
+			admin: {
+				...prev.admin,
+				officeAddressId: id,
+				officeAddress: label,
+			},
+		}));
+	};
+
+	const setAdminOfficeAddressDetail = (officeAddressDetail: string) => {
+		setForm((prev) => ({
+			...prev,
+			admin: { ...prev.admin, officeAddressDetail },
+		}));
+	};
+
+	const selectAdminSealMock = () => {
+		setForm((prev) => ({
+			...prev,
+			admin: {
+				...prev.admin,
+				sealFileName: "IMG.127",
+			},
+		}));
+	};
+
+	const setPartnerCompanyName = (companyName: string) => {
+		setForm((prev) => ({
+			...prev,
+			partner: { ...prev.partner, companyName },
+		}));
+	};
+
+	const setPartnerOfficeAddress = ({
+		id,
+		label,
+	}: {
+		id: string;
+		label: string;
+	}) => {
+		setForm((prev) => ({
+			...prev,
+			partner: {
+				...prev.partner,
+				officeAddressId: id,
+				officeAddress: label,
+			},
+		}));
+	};
+
+	const setPartnerOfficeAddressDetail = (officeAddressDetail: string) => {
+		setForm((prev) => ({
+			...prev,
+			partner: { ...prev.partner, officeAddressDetail },
+		}));
+	};
+
+	const selectPartnerBusinessRegistrationMock = () => {
+		setForm((prev) => ({
+			...prev,
+			partner: {
+				...prev.partner,
+				businessRegistrationFileName: "사업자등록증.jpg",
+			},
+		}));
 	};
 
 	const setAgreePrivacy = (checked: boolean) => {
-		setAgreementState(() => ({ agreePrivacy: checked }));
+		setForm((prev) => ({
+			...prev,
+			agreements: getNextAgreementState(prev.agreements, {
+				agreePrivacy: checked,
+			}),
+		}));
 	};
 
 	const setAgreeMarketing = (checked: boolean) => {
-		setAgreementState(() => ({ agreeMarketing: checked }));
+		setForm((prev) => ({
+			...prev,
+			agreements: getNextAgreementState(prev.agreements, {
+				agreeMarketing: checked,
+			}),
+		}));
 	};
 
 	const setAgreeAll = (checked: boolean) => {
 		setForm((prev) => ({
 			...prev,
-			agreeAll: checked,
-			agreePrivacy: checked,
-			agreeMarketing: checked,
+			agreements: {
+				agreeAll: checked,
+				agreePrivacy: checked,
+				agreeMarketing: checked,
+			},
 		}));
 	};
 
@@ -163,19 +304,35 @@ export function useSignupUserFlow() {
 	return {
 		step,
 		form,
+		flowVariant,
+		flowConfig,
 		progress,
 		isCurrentStepValid,
 		countdown: timer.mmss,
-		isCountdownExpired: form.isCodeSent && timer.secondsLeft === 0,
+		isCountdownExpired: form.identity.isCodeSent && timer.secondsLeft === 0,
 		goTo,
 		goNext,
-		setEmail,
-		setPassword,
+		setAuthEmail,
+		setAuthPassword,
 		setPhone,
 		setVerificationCode,
 		sendVerificationCode,
 		setRole,
 		setSchool,
+		setPartnerEmail,
+		setPartnerPassword,
+		setAdminEmail,
+		setAdminPassword,
+		setAdminOrganizationType,
+		setAdminCollege,
+		setAdminDepartment,
+		setAdminOfficeAddress,
+		setAdminOfficeAddressDetail,
+		selectAdminSealMock,
+		setPartnerCompanyName,
+		setPartnerOfficeAddress,
+		setPartnerOfficeAddressDetail,
+		selectPartnerBusinessRegistrationMock,
 		setAgreePrivacy,
 		setAgreeMarketing,
 		setAgreeAll,

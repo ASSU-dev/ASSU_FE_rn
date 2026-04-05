@@ -1,193 +1,250 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { PARTNER_ADDRESS_OPTIONS } from "@/features/signup-user-flow/model/data/partnerAddressOptions";
+import type { SignupAdminOrganizationType } from "@/features/signup-user-flow/model/types";
+import { useSignupFlowPresentation } from "@/features/signup-user-flow/model/useSignupFlowPresentation";
 import {
-	SIGNUP_PROGRESS_STEPS,
-	VERIFICATION_SUCCESS_CODE,
-} from "@/features/signup-user-flow/model/constants";
-import { useSignupUserFlow } from "@/features/signup-user-flow/model/useSignupUserFlow";
-import {
-	LoginFormScreen,
-	LoginIntroScreen,
-	SignupProgressBar,
-	SignupStepContent,
+  LoginFormScreen,
+  LoginIntroScreen,
+  SignupProgressBar,
+  SignupStepContent,
 } from "@/features/signup-user-flow/ui";
+import { AddressSearchDialog } from "@/shared/ui/address-search";
 import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-
-const BUTTON_LABEL_BY_STEP = {
-	identity: "인증완료",
-	role: "확인",
-	school: "완료",
-	studentInput2: "완료",
-	studentInput3: "완료",
-	complete: "가입완료",
-} as const;
+import { router } from "expo-router";
+import { useMemo, useState } from "react";
+import { ScrollView, View } from "react-native";
 
 export function SignupUserFlowWidget() {
-	const [isResendSheetVisible, setResendSheetVisible] = useState(false);
-	const {
-		step,
-		form,
-		progress,
-		isCurrentStepValid,
-		countdown,
-		goTo,
-		goNext,
-		setEmail,
-		setPassword,
-		setPhone,
-		setVerificationCode,
-		sendVerificationCode,
-		setRole,
-		setSchool,
-		setAgreePrivacy,
-		setAgreeMarketing,
-		setAgreeAll,
-		activateStudentInput3,
-	} = useSignupUserFlow();
+  const [isResendSheetVisible, setResendSheetVisible] = useState(false);
+  const [isAddressSearchVisible, setAddressSearchVisible] = useState(false);
+  const [addressSearchTarget, setAddressSearchTarget] = useState<
+    "partner" | "admin" | null
+  >(null);
+  const {
+    step,
+    form,
+    progress,
+    countdown,
+    goTo,
+    goNext,
+    setAuthEmail,
+    setAuthPassword,
+    setPhone,
+    setVerificationCode,
+    sendVerificationCode,
+    setRole,
+    setSchool,
+    setPartnerEmail,
+    setPartnerPassword,
+    setAdminEmail,
+    setAdminPassword,
+    setAdminOrganizationType,
+    setAdminCollege,
+    setAdminDepartment,
+    setAdminOfficeAddress,
+    setAdminOfficeAddressDetail,
+    selectAdminSealMock,
+    setPartnerCompanyName,
+    setPartnerOfficeAddress,
+    setPartnerOfficeAddressDetail,
+    selectPartnerBusinessRegistrationMock,
+    progressSteps,
+    currentProgressIndex,
+    showProgress,
+    showBottomButton,
+    isBottomDisabled,
+    isVerificationError,
+    buttonLabel,
+    completeDisplayName,
+    agreementHandlers,
+  } = useSignupFlowPresentation();
 
-	useEffect(() => {
-		if (step !== "login1") {
-			return;
-		}
+  const stepContentActions = useMemo(
+    () => ({
+      identity: {
+        onChangePhone: setPhone,
+        onChangeVerificationCode: setVerificationCode,
+        onSendCode: sendVerificationCode,
+        onPressInfoLink: () => setResendSheetVisible(true),
+      },
+      student: {
+        onSelectRole: setRole,
+        onSelectSchool: setSchool,
+        onPressStudentVerify: () => goTo("studentInput2"),
+      },
+      partner: {
+        onChangePartnerEmail: setPartnerEmail,
+        onChangePartnerPassword: setPartnerPassword,
+        onChangePartnerCompanyName: setPartnerCompanyName,
+        onChangePartnerOfficeAddressDetail: setPartnerOfficeAddressDetail,
+        onPressPartnerOfficeAddress: () => {
+          setAddressSearchTarget("partner");
+          setAddressSearchVisible(true);
+        },
+        onPressPartnerBusinessRegistrationUpload:
+          selectPartnerBusinessRegistrationMock,
+      },
+      admin: {
+        onChangeAdminEmail: setAdminEmail,
+        onChangeAdminPassword: setAdminPassword,
+        onChangeAdminOrganizationType: (
+          value: SignupAdminOrganizationType | null,
+        ) => {
+          setAdminOrganizationType(value);
+          if (step === "adminOrganizationType" && value) {
+            goTo("adminOrganizationInfo");
+          }
+        },
+        onChangeAdminCollege: setAdminCollege,
+        onChangeAdminDepartment: setAdminDepartment,
+        onChangeAdminOfficeAddressDetail: setAdminOfficeAddressDetail,
+        onPressAdminOfficeAddress: () => {
+          setAddressSearchTarget("admin");
+          setAddressSearchVisible(true);
+        },
+        onPressAdminSealUpload: selectAdminSealMock,
+      },
+      agreements: agreementHandlers,
+    }),
+    [
+      agreementHandlers,
+      goTo,
+      selectAdminSealMock,
+      selectPartnerBusinessRegistrationMock,
+      sendVerificationCode,
+      setAdminEmail,
+      setAdminCollege,
+      setAdminDepartment,
+      setAdminOfficeAddressDetail,
+      setAdminOrganizationType,
+      setAdminPassword,
+      setPartnerCompanyName,
+      setPartnerEmail,
+      setPartnerOfficeAddressDetail,
+      setPartnerPassword,
+      setPhone,
+      setRole,
+      setSchool,
+      setVerificationCode,
+      step,
+    ],
+  );
 
-		const timer = setTimeout(() => {
-			goTo("loginForm");
-		}, 2000);
-		return () => clearTimeout(timer);
-	}, [goTo, step]);
+  if (step === "login1") {
+    return (
+      <LoginIntroScreen
+        showStatusBar
+        showHomeIndicator
+        onPress={() => {}}
+        disabled
+      />
+    );
+  }
 
-	if (step === "login1") {
-		return (
-			<LoginIntroScreen
-				showStatusBar
-				showHomeIndicator
-				onPress={() => {}}
-				disabled
-			/>
-		);
-	}
+  if (step === "loginForm") {
+    return (
+      <LoginFormScreen
+        email={form.auth.email}
+        password={form.auth.password}
+        onChangeEmail={setAuthEmail}
+        onChangePassword={setAuthPassword}
+        onPressLogin={() => {}}
+        onPressSignup={() => goTo("identity")}
+      />
+    );
+  }
 
-	if (step === "loginForm") {
-		return (
-			<LoginFormScreen
-				email={form.email}
-				password={form.password}
-				onChangeEmail={setEmail}
-				onChangePassword={setPassword}
-				onPressLogin={() => {
-					console.log("로그인 성공");
-				}}
-				onPressSignup={() => goTo("identity")}
-			/>
-		);
-	}
+  return (
+    <View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {showProgress ? (
+          <SignupProgressBar
+            progress={progress}
+            segmentCount={progressSteps.length}
+            currentSegment={currentProgressIndex}
+            onSegmentPress={(segmentIndex) => {
+              if (segmentIndex >= currentProgressIndex) {
+                return;
+              }
+              goTo(progressSteps[segmentIndex]);
+            }}
+          />
+        ) : null}
 
-	const currentProgressIndex = SIGNUP_PROGRESS_STEPS.indexOf(step);
-	const showProgress = step !== "complete";
-	const showBottomButton = step !== "studentInput1";
-	const isBottomDisabled =
-		step === "studentInput2"
-			? true
-			: !isCurrentStepValid && step !== "complete";
-	const isVerificationError =
-		form.verificationAttempted &&
-		form.verificationCode !== VERIFICATION_SUCCESS_CODE;
-	const buttonLabel =
-		BUTTON_LABEL_BY_STEP[step as keyof typeof BUTTON_LABEL_BY_STEP] ?? "완료";
-	const toggleAgreementAndActivate = (
-		current: boolean,
-		setter: (checked: boolean) => void,
-		shouldActivate: (next: boolean) => boolean = (next) => next,
-	) => {
-		const next = !current;
-		setter(next);
-		if (shouldActivate(next)) {
-			activateStudentInput3();
-		}
-	};
-	const handleToggleAgreeAll = () => {
-		toggleAgreementAndActivate(form.agreeAll, setAgreeAll);
-	};
-	const handleToggleAgreePrivacy = () => {
-		toggleAgreementAndActivate(form.agreePrivacy, setAgreePrivacy);
-	};
-	const handleToggleAgreeMarketing = () => {
-		toggleAgreementAndActivate(
-			form.agreeMarketing,
-			setAgreeMarketing,
-			(next) => next && form.agreePrivacy,
-		);
-	};
+        <View
+          className={
+            step === "complete"
+              ? "flex-1 items-center justify-center"
+              : "flex-1"
+          }
+        >
+          <SignupStepContent
+            step={step}
+            form={form}
+            countdown={countdown}
+            completeDisplayName={completeDisplayName}
+            isVerificationError={isVerificationError}
+            actions={stepContentActions}
+          />
+        </View>
+      </ScrollView>
 
-	return (
-		<View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
-			{showProgress ? (
-				<SignupProgressBar
-					progress={progress}
-					segmentCount={SIGNUP_PROGRESS_STEPS.length}
-					currentSegment={currentProgressIndex}
-					onSegmentPress={(segmentIndex) => {
-						if (segmentIndex >= currentProgressIndex) {
-							return;
-						}
-						goTo(SIGNUP_PROGRESS_STEPS[segmentIndex]);
-					}}
-				/>
-			) : null}
+      {showBottomButton ? (
+        <View className="items-center pb-[33px] mt-[10px]">
+          <View className={isBottomDisabled ? "opacity-disabled" : undefined}>
+            <MediumButton
+              onPress={
+                step === "complete"
+                  ? () => router.replace("/(protected)/(student)/(tabs)/home")
+                  : goNext
+              }
+              disabled={isBottomDisabled}
+            >
+              {buttonLabel}
+            </MediumButton>
+          </View>
+        </View>
+      ) : null}
 
-			<View
-				className={
-					step === "complete" ? "flex-1 items-center justify-center" : "flex-1"
-				}
-			>
-				<SignupStepContent
-					step={step}
-					form={form}
-					countdown={countdown}
-					isVerificationError={isVerificationError}
-					onChangePhone={setPhone}
-					onChangeVerificationCode={setVerificationCode}
-					onSendCode={sendVerificationCode}
-					onPressInfoLink={() => setResendSheetVisible(true)}
-					onSelectRole={setRole}
-					onSelectSchool={setSchool}
-					onPressStudentVerify={() => goTo("studentInput2")}
-					onToggleAgreeAll={handleToggleAgreeAll}
-					onToggleAgreePrivacy={handleToggleAgreePrivacy}
-					onToggleAgreeMarketing={handleToggleAgreeMarketing}
-				/>
-			</View>
+      <BottomActionSheet
+        visible={isResendSheetVisible}
+        title="인증번호를 받지 못하셨나요?"
+        description="입력하신 번호가 맞는지 확인해주세요"
+        actionLabel="재전송하기"
+        onClose={() => setResendSheetVisible(false)}
+        onAction={() => {
+          sendVerificationCode();
+          setResendSheetVisible(false);
+        }}
+      />
 
-			{showBottomButton ? (
-				<View className="items-center pb-[33px]">
-					<View className={isBottomDisabled ? "opacity-disabled" : undefined}>
-						<MediumButton
-							onPress={
-								step === "complete"
-									? () => router.replace("/(protected)/(student)/(tabs)/home")
-									: goNext
-							}
-							disabled={isBottomDisabled}
-						>
-							{buttonLabel}
-						</MediumButton>
-					</View>
-				</View>
-			) : null}
-
-			<BottomActionSheet
-				visible={isResendSheetVisible}
-				title="인증번호를 받지 못하셨나요?"
-				description="입력하신 번호가 맞는지 확인해주세요"
-				actionLabel="재전송하기"
-				onClose={() => setResendSheetVisible(false)}
-				onAction={() => {
-					sendVerificationCode();
-					setResendSheetVisible(false);
-				}}
-			/>
-		</View>
-	);
+      <AddressSearchDialog
+        visible={isAddressSearchVisible}
+        items={PARTNER_ADDRESS_OPTIONS}
+        selectedItemId={
+          addressSearchTarget === "admin"
+            ? form.admin.officeAddressId
+            : form.partner.officeAddressId
+        }
+        onClose={() => {
+          setAddressSearchVisible(false);
+          setAddressSearchTarget(null);
+        }}
+        onSelectItem={(item) => {
+          if (addressSearchTarget === "admin") {
+            setAdminOfficeAddress(item);
+          } else {
+            setPartnerOfficeAddress(item);
+          }
+          setAddressSearchVisible(false);
+          setAddressSearchTarget(null);
+        }}
+      />
+    </View>
+  );
 }
