@@ -4,4 +4,5 @@ export type {
 	SelectPresentation,
 	SelectProps,
 	SelectSize,
+	SelectTextTone,
 } from "./types";

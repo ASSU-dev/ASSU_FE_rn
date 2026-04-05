@@ -1,3 +1,4 @@
+export * from "./address-search";
 export * from "./bottom-sheet";
 export * from "./checkbox";
 export * from "./comment";
