@@ -1,14 +1,16 @@
 // 제휴 건의 카드 — 가게명, 작성자(학과·재학상태), 건의 내용, 작성일을 표시하는 카드
 
 import { format } from "date-fns";
+import { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import type { Suggestion } from "../model/types";
 
 interface SuggestionCardProps extends Suggestion {
-	onReport: () => void;
+	onReport: (id: string) => void;
 }
 
-export function SuggestionCard({
+export const SuggestionCard = memo(function SuggestionCard({
+	id,
 	storeName,
 	department,
 	studentStatus,
@@ -22,7 +24,7 @@ export function SuggestionCard({
 				<Text className="text-lg font-medium text-content-primary leading-body tracking-body">
 					{storeName}
 				</Text>
-				<Pressable onPress={onReport} hitSlop={8}>
+				<Pressable onPress={() => onReport(id)} hitSlop={8}>
 					<Text className="text-sm font-regular text-content-secondary leading-caption tracking-caption">
 						신고하기
 					</Text>
@@ -50,4 +52,4 @@ export function SuggestionCard({
 			</View>
 		</View>
 	);
-}
+});
