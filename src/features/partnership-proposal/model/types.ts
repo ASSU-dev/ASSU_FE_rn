@@ -3,17 +3,21 @@ export type BenefitCriteria = "금액" | "인원수";
 export type BenefitItem = {
 	id: string;
 	serviceType: string;
-	criteria: BenefitCriteria[];
+	criteria: BenefitCriteria;
 	amount: string;
+	minCount: string;
+	categories: string[];
 	items: string[];
+	discountRate: string;
+	content: string;
 };
 
-export type ProposalStep1Form = {
+export type ProposalInfoForm = {
 	companyName: string;
 	proposerName: string;
 };
 
-export type ProposalStep2Form = {
+export type ProposalContractForm = {
 	startDate: string | null;
 	endDate: string | null;
 	contractFile: { uri: string; name: string } | null;

@@ -1,16 +1,14 @@
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colorTokens } from "@/shared/styles/tokens";
-import { PageLayout } from "@/shared/ui/layout";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { useProposalStore } from "@/features/partnership-proposal-flow";
+import { useProposalStore } from "@/features/partnership-proposal";
 
 type Props = {
-	onBack: () => void;
 	onComplete: () => void;
 };
 
-export function Step2View({ onBack, onComplete }: Props) {
+export function ContractUploadStep({ onComplete }: Props) {
 	const { step2, setStep2 } = useProposalStore();
 	const isValid = !!step2.startDate && !!step2.endDate && !!step2.contractFile;
 
@@ -38,18 +36,8 @@ export function Step2View({ onBack, onComplete }: Props) {
 	const formatDate = (d: string | null) => (d ? d.replace(/-/g, " - ") : "YYYY - MM - DD");
 
 	return (
-		<PageLayout withTopInset withBottomInset contentContainerClassName="flex-1">
-			<View className="flex-row items-center px-[15px] pt-[10px] pb-[16px]">
-				<Pressable onPress={onBack} hitSlop={8} className="mr-2">
-					<Ionicons name="arrow-back" size={24} color={colorTokens.contentPrimary} />
-				</Pressable>
-				<View className="flex-1 items-center">
-					<Text className="text-[17px] font-semibold text-content-primary">제휴 계약서</Text>
-				</View>
-				<View style={{ width: 24 }} />
-			</View>
-
-			<View className="px-[15px] gap-[10px]">
+		<View className="flex-1">
+			<ScrollView className="flex-1" contentContainerClassName="px-[24px] gap-[10px]">
 				<Text className="text-[13px] text-content-secondary">제휴 기간 선택</Text>
 				<View className="flex-row items-center gap-[8px]">
 					<Pressable
@@ -70,10 +58,8 @@ export function Step2View({ onBack, onComplete }: Props) {
 						<Ionicons name="calendar-outline" size={20} color={colorTokens.contentSecondary} />
 					</Pressable>
 				</View>
-			</View>
 
-			<View className="px-[15px] gap-[10px] mt-[24px]">
-				<Text className="text-[13px] text-content-secondary">제휴 계약서 등록</Text>
+				<Text className="text-[13px] text-content-secondary mt-[14px]">제휴 계약서 등록</Text>
 				<Pressable
 					className="bg-[#f4f4f5] rounded-lg p-[15px] flex-row justify-between items-center"
 					onPress={pickFile}
@@ -87,9 +73,7 @@ export function Step2View({ onBack, onComplete }: Props) {
 						<Ionicons name="cloud-upload-outline" size={24} color={colorTokens.primary} />
 					)}
 				</Pressable>
-			</View>
-
-			<View className="flex-1" />
+			</ScrollView>
 
 			<View className="items-center pb-[16px]">
 				<MediumButton
@@ -100,6 +84,6 @@ export function Step2View({ onBack, onComplete }: Props) {
 					계약서 등록하기
 				</MediumButton>
 			</View>
-		</PageLayout>
+		</View>
 	);
 }

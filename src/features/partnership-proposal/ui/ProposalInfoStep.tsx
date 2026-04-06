@@ -1,30 +1,18 @@
-import { router } from "expo-router";
-import { Pressable, Text, TextInput, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { ScrollView, Text, TextInput, View, Pressable } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
-import { PageLayout } from "@/shared/ui/layout";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { useProposalStore } from "@/features/partnership-proposal-flow";
+import { useProposalStore } from "@/features/partnership-proposal";
 import { BenefitCard } from "./BenefitCard";
 
 type Props = { onNext: () => void };
 
-export function Step1View({ onNext }: Props) {
+export function ProposalInfoStep({ onNext }: Props) {
 	const { step1, benefits, setStep1, addBenefit, removeBenefit, updateBenefit } = useProposalStore();
 	const isValid = step1.companyName.trim().length > 0 && step1.proposerName.trim().length > 0;
 
 	return (
-		<PageLayout scrollable withBottomInset contentContainerClassName="flex-1">
-			<View className="flex-row items-center px-[10px] py-[13px]">
-				<Pressable onPress={() => router.back()} hitSlop={8}>
-					<Ionicons name="chevron-back" size={24} color={colorTokens.contentPrimary} />
-				</Pressable>
-				<View className="flex-1 items-center pr-[24px]">
-					<Text className="text-xl font-semibold text-content-primary">제휴 제안서</Text>
-				</View>
-			</View>
-
-			<View className="flex-1 px-[24px] gap-[25px]">
+		<View className="flex-1">
+			<ScrollView className="flex-1" contentContainerClassName="px-[24px] gap-[25px] pb-4">
 				<UnderlineField
 					label="제휴 제안업체"
 					value={step1.companyName}
@@ -51,7 +39,7 @@ export function Step1View({ onNext }: Props) {
 						onUpdate={(data) => updateBenefit(b.id, data)}
 					/>
 				))}
-			</View>
+			</ScrollView>
 
 			<View className="items-center pb-4 px-[24px]">
 				<MediumButton
@@ -62,7 +50,7 @@ export function Step1View({ onNext }: Props) {
 					다음
 				</MediumButton>
 			</View>
-		</PageLayout>
+		</View>
 	);
 }
 

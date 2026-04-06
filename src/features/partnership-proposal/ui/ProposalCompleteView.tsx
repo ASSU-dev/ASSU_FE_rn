@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { PageLayout } from "@/shared/ui/layout";
 
-export function CompleteView() {
+export function ProposalCompleteView() {
 	return (
 		<PageLayout withTopInset contentContainerClassName="flex-1">
 			<View className="px-6 pt-2">

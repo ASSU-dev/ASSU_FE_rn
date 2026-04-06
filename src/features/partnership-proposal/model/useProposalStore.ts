@@ -1,18 +1,18 @@
 import { create } from "zustand";
-import type { BenefitItem, ProposalStep1Form, ProposalStep2Form } from "./types";
+import type { BenefitItem, ProposalInfoForm, ProposalContractForm } from "./types";
 
 type State = {
-	step1: ProposalStep1Form;
+	step1: ProposalInfoForm;
 	benefits: BenefitItem[];
-	step2: ProposalStep2Form;
+	step2: ProposalContractForm;
 };
 
 type Actions = {
-	setStep1: (data: Partial<ProposalStep1Form>) => void;
+	setStep1: (data: Partial<ProposalInfoForm>) => void;
 	addBenefit: () => void;
 	removeBenefit: (id: string) => void;
 	updateBenefit: (id: string, data: Partial<BenefitItem>) => void;
-	setStep2: (data: Partial<ProposalStep2Form>) => void;
+	setStep2: (data: Partial<ProposalContractForm>) => void;
 	reset: () => void;
 };
 
@@ -33,9 +33,13 @@ export const useProposalStore = create<State & Actions>((set) => ({
 				{
 					id: Date.now().toString(),
 					serviceType: "서비스 제공",
-					criteria: ["금액"],
+					criteria: "금액",
 					amount: "",
+					minCount: "",
+					categories: [],
 					items: [],
+					discountRate: "",
+					content: "",
 				},
 			],
 		})),
