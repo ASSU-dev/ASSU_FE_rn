@@ -21,6 +21,9 @@ const SORT_ITEMS: { label: string; value: SortType }[] = [
 	{ label: "별점순", value: "rating" },
 ];
 
+const averageRating =
+	mockReviews.reduce((sum, r) => sum + r.rating, 0) / mockReviews.length;
+
 const listContentStyle = {
 	gap: 20,
 	paddingHorizontal: 24,
@@ -78,10 +81,7 @@ export function PartnerReviewPage() {
 
 				<View className="mt-screen-m items-center">
 					<ReviewSummary
-						averageRating={
-							mockReviews.reduce((sum, r) => sum + r.rating, 0) /
-							mockReviews.length
-						}
+						averageRating={averageRating}
 						totalCount={mockReviews.length}
 					/>
 				</View>
