@@ -1,6 +1,9 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { useProposalStore, ProposalInfoStep, ContractUploadStep, ProposalCompleteView } from "@/features/partnership-proposal";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProposalInfoStep, ContractUploadStep, ProposalCompleteView } from "@/features/partnership-proposal";
+import { proposalSchema, type ProposalFormData } from "@/features/partnership-proposal";
 import { PageLayout } from "@/shared/ui/layout";
 import { TopBar } from "@/shared/ui/top-bar";
 
@@ -8,8 +11,20 @@ type Step = "step1" | "step2" | "complete";
 
 export function PartnershipProposalPage() {
 	const [step, setStep] = useState<Step>("step1");
-	const reset = useProposalStore((s) => s.reset);
 
+	const methods = useForm<ProposalFormData>({
+		defaultValues: {
+			companyName: "",
+			proposerName: "",
+			benefits: [],
+			startDate: null,
+			endDate: null,
+			contractFile: null,
+		},
+		resolver: zodResolver(proposalSchema),
+	});
+
+	// 완료 화면은 자체 레이아웃(PageLayout + X버튼)을 가지므로 별도 렌더
 	if (step === "complete") return <ProposalCompleteView />;
 
 	const handleBack = () => {
@@ -18,17 +33,18 @@ export function PartnershipProposalPage() {
 	};
 
 	return (
-		<PageLayout withTopInset withBottomInset={false} contentContainerClassName="flex-1">
-			<TopBar title="제휴 제안서" onBack={handleBack} />
-			{step === "step1" && <ProposalInfoStep onNext={() => setStep("step2")} />}
-			{step === "step2" && (
-				<ContractUploadStep
-					onComplete={() => {
-						reset();
-						setStep("complete");
-					}}
-				/>
-			)}
-		</PageLayout>
+		<FormProvider {...methods}>
+			<PageLayout withTopInset withBottomInset={false} contentContainerClassName="flex-1">
+				<TopBar title="제휴 제안서" onBack={handleBack} />
+				{step === "step1" && (
+					<ProposalInfoStep onNext={() => setStep("step2")} />
+				)}
+				{step === "step2" && (
+					<ContractUploadStep
+						onComplete={methods.handleSubmit(() => setStep("complete"))}
+					/>
+				)}
+			</PageLayout>
+		</FormProvider>
 	);
 }

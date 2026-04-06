@@ -1,3 +1,3 @@
-export { useProposalStore } from "./model";
-export type { BenefitItem, BenefitCriteria, ProposalInfoForm, ProposalContractForm } from "./model";
+export type { BenefitItem, BenefitCriteria, ProposalFormData } from "./model";
+export { proposalSchema } from "./model";
 export { ProposalInfoStep, ContractUploadStep, ProposalCompleteView } from "./ui";

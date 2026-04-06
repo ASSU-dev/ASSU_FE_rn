@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Alert, Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CheckIcon, CheckGrayIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
-import type { BenefitCriteria, BenefitItem } from "@/features/partnership-proposal";
+import type { BenefitCriteria, BenefitItem } from "../model";
 
 interface Props {
 	benefit: BenefitItem;
@@ -11,25 +11,35 @@ interface Props {
 	onUpdate: (data: Partial<BenefitItem>) => void;
 }
 
+const SERVICE_TYPES = ["서비스 제공", "할인 혜택", "기타 혜택"] as const;
+
 export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 	const [showItemInput, setShowItemInput] = useState(false);
 	const [itemInput, setItemInput] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const [showServiceTypeMenu, setShowServiceTypeMenu] = useState(false);
 
 	const borderColor = (field: string) =>
 		focusedField === field ? colorTokens.primary : "#e0e0e0";
 
-	const selectServiceType = () => {
-		Alert.alert("서비스 종류 선택", "", [
-			{ text: "서비스 제공", onPress: () => onUpdate({ serviceType: "서비스 제공" }) },
-			{ text: "할인 혜택", onPress: () => onUpdate({ serviceType: "할인 혜택" }) },
-			{ text: "기타 혜택", onPress: () => onUpdate({ serviceType: "기타 혜택" }) },
-			{ text: "취소", style: "cancel" },
-		]);
+	const selectServiceType = (type: string) => {
+		// 서비스 타입 변경 시 관련 값 전부 초기화
+		onUpdate({
+			serviceType: type,
+			criteria: "금액",
+			amount: "",
+			minCount: "",
+			categories: [],
+			items: [],
+			discountRate: "",
+			content: "",
+		});
+		setShowServiceTypeMenu(false);
 	};
 
 	const selectCriteria = (value: BenefitCriteria) => {
-		onUpdate({ criteria: value });
+		// 기준 변경 시 금액/인원수 초기화
+		onUpdate({ criteria: value, amount: "", minCount: "" });
 	};
 
 	const removeCategory = (idx: number) => {
@@ -52,13 +62,30 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 		<View className="bg-[#f4f4f5] rounded-lg p-[10px] gap-[15px]">
 			{/* 헤더 */}
 			<View className="flex-row items-center justify-between">
-				<Pressable
-					onPress={selectServiceType}
-					className="border border-primary rounded-lg px-[10px] py-[10px] flex-row items-center gap-[2px]"
-				>
-					<Text className="text-primary text-[13px]">{benefit.serviceType}</Text>
-					<Ionicons name="chevron-down" size={14} color={colorTokens.primary} />
-				</Pressable>
+				<View>
+					<Pressable
+						onPress={() => setShowServiceTypeMenu((v) => !v)}
+						className="border border-primary rounded-lg px-[10px] py-[10px] flex-row items-center gap-[2px]"
+					>
+						<Text className="text-primary text-[13px]">{benefit.serviceType}</Text>
+						<Ionicons name="chevron-down" size={14} color={colorTokens.primary} />
+					</Pressable>
+					{showServiceTypeMenu && (
+						<View className="absolute top-[42px] left-0 z-10 bg-white rounded-lg shadow-md border border-[#e0e0e0] overflow-hidden">
+							{SERVICE_TYPES.map((type) => (
+								<Pressable
+									key={type}
+									onPress={() => selectServiceType(type)}
+									className="px-[14px] py-[10px]"
+								>
+									<Text className={`text-[13px] ${benefit.serviceType === type ? "text-primary font-medium" : "text-content-primary"}`}>
+										{type}
+									</Text>
+								</Pressable>
+							))}
+						</View>
+					)}
+				</View>
 				<Pressable onPress={onRemove}>
 					<Text className="text-content-secondary text-[13px]">삭제하기</Text>
 				</Pressable>
@@ -103,7 +130,7 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 						</View>
 					</View>
 
-					{/* 기준 입력 (밑줄 스타일) */}
+					{/* 기준 입력 */}
 					{benefit.criteria === "금액" && (
 						<View className="flex-row items-center gap-[8px]">
 							<View className="w-[77px]" />
@@ -142,7 +169,7 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 						</View>
 					)}
 
-					{/* 카테고리 입력 / 할인율 */}
+					{/* 카테고리 / 할인율 */}
 					{benefit.serviceType === "할인 혜택" ? (
 						<View className="flex-row items-center gap-[8px]">
 							<Text className="w-[77px] text-[13px] text-content-primary">할인율</Text>
