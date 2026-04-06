@@ -1,10 +1,12 @@
+import type { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform } from "react-native";
-import type { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 
 type DateField = "startDate" | "endDate";
 
-export function useDatePicker(onSelect: (field: DateField, date: string) => void) {
+export function useDatePicker(
+	onSelect: (field: DateField, date: string) => void,
+) {
 	const [dateField, setDateField] = useState<DateField | null>(null);
 	const [tempDate, setTempDate] = useState(new Date());
 

@@ -1,6 +1,6 @@
+import { Pressable, Text, View } from "react-native";
 import { QRIcon } from "@/shared/assets/icons";
 import { InfoLinkText } from "@/shared/ui/info";
-import { Pressable, Text, View } from "react-native";
 
 export const QRScannerButton = () => {
 	return (

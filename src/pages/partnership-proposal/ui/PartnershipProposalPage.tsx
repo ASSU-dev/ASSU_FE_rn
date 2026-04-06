@@ -1,9 +1,14 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ProposalInfoStep, ContractUploadStep, ProposalCompleteView } from "@/features/partnership-proposal";
-import { proposalSchema, type ProposalFormData } from "@/features/partnership-proposal";
+import { FormProvider, useForm } from "react-hook-form";
+import {
+	ContractUploadStep,
+	ProposalCompleteView,
+	type ProposalFormData,
+	ProposalInfoStep,
+	proposalSchema,
+} from "@/features/partnership-proposal";
 import { PageLayout } from "@/shared/ui/layout";
 import { TopBar } from "@/shared/ui/top-bar";
 
@@ -34,7 +39,11 @@ export function PartnershipProposalPage() {
 
 	return (
 		<FormProvider {...methods}>
-			<PageLayout withTopInset withBottomInset={false} contentContainerClassName="flex-1">
+			<PageLayout
+				withTopInset
+				withBottomInset={false}
+				contentContainerClassName="flex-1"
+			>
 				<TopBar title="제휴 제안서" onBack={handleBack} />
 				{step === "step1" && (
 					<ProposalInfoStep onNext={() => setStep("step2")} />

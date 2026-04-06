@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const SERVICE_TYPES = ["서비스 제공", "할인 혜택", "기타 혜택"] as const;
-export type ServiceType = typeof SERVICE_TYPES[number];
+export type ServiceType = (typeof SERVICE_TYPES)[number];
 
 export const benefitItemSchema = z.object({
 	id: z.string(),

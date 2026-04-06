@@ -1,5 +1,5 @@
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
-import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import type { ProposalFormData } from "../model";
@@ -9,7 +9,10 @@ type Props = { onNext: () => void };
 
 export function ProposalInfoStep({ onNext }: Props) {
 	const { control, trigger } = useFormContext<ProposalFormData>();
-	const { fields, append, remove, update } = useFieldArray({ control, name: "benefits" });
+	const { fields, append, remove, update } = useFieldArray({
+		control,
+		name: "benefits",
+	});
 
 	const handleNext = async () => {
 		const valid = await trigger(["companyName", "proposerName"]);
@@ -18,7 +21,10 @@ export function ProposalInfoStep({ onNext }: Props) {
 
 	return (
 		<View className="flex-1">
-			<ScrollView className="flex-1" contentContainerClassName="px-[24px] gap-[25px] pb-4">
+			<ScrollView
+				className="flex-1"
+				contentContainerClassName="px-[24px] gap-[25px] pb-4"
+			>
 				<Controller
 					control={control}
 					name="companyName"
@@ -91,7 +97,9 @@ function UnderlineField({
 }) {
 	return (
 		<View className="gap-[5px]">
-			<Text className="text-[13px] text-content-secondary px-[15px]">{label}</Text>
+			<Text className="text-[13px] text-content-secondary px-[15px]">
+				{label}
+			</Text>
 			<TextInput
 				value={value}
 				onChangeText={onChangeText}

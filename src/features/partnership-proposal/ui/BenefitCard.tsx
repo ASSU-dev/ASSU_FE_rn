@@ -1,9 +1,14 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { CheckIcon, CheckGrayIcon } from "@/shared/assets/icons";
+import { CheckGrayIcon, CheckIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
-import { SERVICE_TYPES, type BenefitCriteria, type BenefitItem, type ServiceType } from "../model";
+import {
+	type BenefitCriteria,
+	type BenefitItem,
+	SERVICE_TYPES,
+	type ServiceType,
+} from "../model";
 
 interface Props {
 	benefit: BenefitItem;
@@ -65,8 +70,14 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 						onPress={() => setShowServiceTypeMenu((v) => !v)}
 						className="border border-primary rounded-lg px-[10px] py-[10px] flex-row items-center gap-[2px]"
 					>
-						<Text className="text-primary text-[13px]">{benefit.serviceType}</Text>
-						<Ionicons name="chevron-down" size={14} color={colorTokens.primary} />
+						<Text className="text-primary text-[13px]">
+							{benefit.serviceType}
+						</Text>
+						<Ionicons
+							name="chevron-down"
+							size={14}
+							color={colorTokens.primary}
+						/>
 					</Pressable>
 					{showServiceTypeMenu && (
 						<View className="absolute top-[42px] left-0 z-10 bg-white rounded-lg shadow-md border border-[#e0e0e0] overflow-hidden">
@@ -76,7 +87,9 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 									onPress={() => selectServiceType(type)}
 									className="px-[14px] py-[10px]"
 								>
-									<Text className={`text-[13px] ${benefit.serviceType === type ? "text-primary font-medium" : "text-content-primary"}`}>
+									<Text
+										className={`text-[13px] ${benefit.serviceType === type ? "text-primary font-medium" : "text-content-primary"}`}
+									>
 										{type}
 									</Text>
 								</Pressable>
@@ -94,7 +107,9 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 			{benefit.serviceType === "기타 혜택" ? (
 				/* 기타 혜택: 제휴 내용 입력 */
 				<View className="gap-[8px] py-[5px]">
-					<Text className="text-[15px] text-content-primary">제휴 내용 입력</Text>
+					<Text className="text-[15px] text-content-primary">
+						제휴 내용 입력
+					</Text>
 					<TextInput
 						value={benefit.content}
 						onChangeText={(v) => onUpdate({ content: v })}
@@ -103,14 +118,20 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 						placeholder="제휴 내용을 입력해주세요"
 						placeholderTextColor={colorTokens.contentSecondary}
 						className="text-[15px] text-content-primary px-[4px]"
-						style={{ borderBottomWidth: 1, borderBottomColor: borderColor("content"), height: 36 }}
+						style={{
+							borderBottomWidth: 1,
+							borderBottomColor: borderColor("content"),
+							height: 36,
+						}}
 					/>
 				</View>
 			) : (
 				<>
 					{/* 제공 기준 */}
 					<View className="flex-row items-center">
-						<Text className="w-[77px] text-[13px] text-content-primary">제공 기준</Text>
+						<Text className="w-[77px] text-[13px] text-content-primary">
+							제공 기준
+						</Text>
 						<View className="flex-row gap-[12px]">
 							{(["금액", "인원수"] as BenefitCriteria[]).map((option) => {
 								const selected = benefit.criteria === option;
@@ -120,8 +141,14 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 										onPress={() => selectCriteria(option)}
 										className="flex-row items-center gap-[5px]"
 									>
-										{selected ? <CheckIcon width={15} height={15} /> : <CheckGrayIcon width={15} height={15} />}
-										<Text className="text-[13px] text-content-primary">{option}</Text>
+										{selected ? (
+											<CheckIcon width={15} height={15} />
+										) : (
+											<CheckGrayIcon width={15} height={15} />
+										)}
+										<Text className="text-[13px] text-content-primary">
+											{option}
+										</Text>
 									</Pressable>
 								);
 							})}
@@ -133,7 +160,11 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 						<View className="flex-row items-center gap-[8px]">
 							<View className="w-[77px]" />
 							<TextInput
-								value={benefit.amount ? benefit.amount.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
+								value={
+									benefit.amount
+										? benefit.amount.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+										: ""
+								}
 								onChangeText={(v) => onUpdate({ amount: v.replace(/,/g, "") })}
 								onFocus={() => setFocusedField("amount")}
 								onBlur={() => setFocusedField(null)}
@@ -142,9 +173,15 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 								keyboardType="numeric"
 								textAlign="right"
 								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{ borderBottomWidth: 0.5, borderBottomColor: borderColor("amount"), height: 36 }}
+								style={{
+									borderBottomWidth: 0.5,
+									borderBottomColor: borderColor("amount"),
+									height: 36,
+								}}
 							/>
-							<Text className="text-[13px] text-content-secondary w-[88px]">원 이상일 경우,</Text>
+							<Text className="text-[13px] text-content-secondary w-[88px]">
+								원 이상일 경우,
+							</Text>
 						</View>
 					)}
 
@@ -161,16 +198,24 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 								keyboardType="numeric"
 								textAlign="right"
 								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{ borderBottomWidth: 0.5, borderBottomColor: borderColor("minCount"), height: 36 }}
+								style={{
+									borderBottomWidth: 0.5,
+									borderBottomColor: borderColor("minCount"),
+									height: 36,
+								}}
 							/>
-							<Text className="text-[13px] text-content-secondary w-[88px]">인 이상일 경우,</Text>
+							<Text className="text-[13px] text-content-secondary w-[88px]">
+								인 이상일 경우,
+							</Text>
 						</View>
 					)}
 
 					{/* 카테고리 / 할인율 */}
 					{benefit.serviceType === "할인 혜택" ? (
 						<View className="flex-row items-center gap-[8px]">
-							<Text className="w-[77px] text-[13px] text-content-primary">할인율</Text>
+							<Text className="w-[77px] text-[13px] text-content-primary">
+								할인율
+							</Text>
 							<TextInput
 								value={benefit.discountRate}
 								onChangeText={(v) => onUpdate({ discountRate: v })}
@@ -181,14 +226,22 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 								keyboardType="numeric"
 								textAlign="right"
 								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{ borderBottomWidth: 0.5, borderBottomColor: borderColor("discountRate"), height: 36 }}
+								style={{
+									borderBottomWidth: 0.5,
+									borderBottomColor: borderColor("discountRate"),
+									height: 36,
+								}}
 							/>
-							<Text className="text-[13px] text-content-secondary w-[88px]">% 할인</Text>
+							<Text className="text-[13px] text-content-secondary w-[88px]">
+								% 할인
+							</Text>
 						</View>
 					) : (
 						<View className="gap-[8px]">
 							<View className="flex-row items-center gap-[8px]">
-								<Text className="text-[13px] text-content-secondary">카테고리 입력</Text>
+								<Text className="text-[13px] text-content-secondary">
+									카테고리 입력
+								</Text>
 								<TextInput
 									value={benefit.categories[0] ?? ""}
 									onChangeText={(v) => onUpdate({ categories: v ? [v] : [] })}
@@ -198,14 +251,18 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 									placeholderTextColor={colorTokens.contentSecondary}
 									textAlign="center"
 									className="flex-1 text-[13px] text-content-primary px-[4px]"
-									style={{ borderBottomWidth: 0.5, borderBottomColor: borderColor("category"), height: 36 }}
+									style={{
+										borderBottomWidth: 0.5,
+										borderBottomColor: borderColor("category"),
+										height: 36,
+									}}
 								/>
 							</View>
 							{benefit.categories.length > 1 && (
 								<View className="flex-row flex-wrap gap-[6px]">
 									{benefit.categories.slice(1).map((cat, idx) => (
 										<Pressable
-											key={idx}
+											key={`${benefit.id}-category-${cat}`}
 											onPress={() => removeCategory(idx + 1)}
 											className="flex-row items-center bg-[#e5f6fe] rounded-full px-[8px] py-[4px] gap-[3px]"
 										>
@@ -222,12 +279,14 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 
 					{/* 제공 항목 */}
 					<View className="flex-row items-start gap-[8px]">
-						<Text className="w-[77px] text-[13px] text-content-primary mt-[4px]">제공 항목</Text>
+						<Text className="w-[77px] text-[13px] text-content-primary mt-[4px]">
+							제공 항목
+						</Text>
 						<View className="flex-1 gap-[8px]">
 							<View className="flex-row flex-wrap items-center gap-[6px]">
 								{benefit.items.map((item, idx) => (
 									<Pressable
-										key={idx}
+										key={`${benefit.id}-item-${item}`}
 										onPress={() => removeItem(idx)}
 										className="flex-row items-center bg-[#e5f6fe] rounded-full px-[8px] py-[4px] gap-[3px]"
 									>
@@ -257,13 +316,26 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 										returnKeyType="done"
 										autoFocus
 										className="flex-1 text-[13px] text-content-primary px-[4px]"
-										style={{ borderBottomWidth: 0.5, borderBottomColor: borderColor("itemInput"), height: 32 }}
+										style={{
+											borderBottomWidth: 0.5,
+											borderBottomColor: borderColor("itemInput"),
+											height: 32,
+										}}
 									/>
 									<Pressable onPress={addItem}>
-										<Text className="text-[13px] text-primary font-medium">추가</Text>
+										<Text className="text-[13px] text-primary font-medium">
+											추가
+										</Text>
 									</Pressable>
-									<Pressable onPress={() => { setShowItemInput(false); setItemInput(""); }}>
-										<Text className="text-[13px] text-content-secondary">취소</Text>
+									<Pressable
+										onPress={() => {
+											setShowItemInput(false);
+											setItemInput("");
+										}}
+									>
+										<Text className="text-[13px] text-content-secondary">
+											취소
+										</Text>
 									</Pressable>
 								</View>
 							)}

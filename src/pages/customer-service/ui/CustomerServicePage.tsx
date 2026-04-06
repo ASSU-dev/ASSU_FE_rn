@@ -1,12 +1,14 @@
-import { InquiryForm } from "@/features/inquiry-form";
-import { InquiryList } from "@/features/inquiry-list";
-import { PageLayout } from "@/shared/ui/layout";
-import { TabBar } from "@/shared/ui/TabBar";
-import { colorTokens } from "@/shared/styles/tokens";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
-import { Pressable, Text, View, ActivityIndicator } from "react-native";
+import type { SubmitHandler, UseFormHandleSubmit } from "react-hook-form";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { InquiryForm } from "@/features/inquiry-form";
+import type { InquiryFormData } from "@/features/inquiry-form";
+import { InquiryList } from "@/features/inquiry-list";
+import { colorTokens } from "@/shared/styles/tokens";
+import { PageLayout } from "@/shared/ui/layout";
+import { TabBar } from "@/shared/ui/TabBar";
 
 // Mock user data - 실제 auth 시스템 연결은 나중에
 const MOCK_USER = {
@@ -23,8 +25,11 @@ export function CustomerServicePage() {
 	const router = useRouter();
 	const user = MOCK_USER; // In production: const { user } = useAuth();
 	const [activeTab, setActiveTab] = useState<string>("inquiry");
-	const [isPending, setIsPending] = useState(false);
-	const formRef = useRef<{ handleSubmit: any; onSubmit: any } | null>(null);
+	const isPending = false;
+	const formRef = useRef<{
+		handleSubmit: UseFormHandleSubmit<InquiryFormData>;
+		onSubmit: SubmitHandler<InquiryFormData>;
+	} | null>(null);
 
 	const handleSubmitButton = () => {
 		if (formRef.current) {
@@ -64,7 +69,7 @@ export function CustomerServicePage() {
 				{activeTab === "inquiry" && (
 					<InquiryForm
 						userEmail={user?.email || ""}
-						onSubmitHandler={(handleSubmit: any, onSubmit: any) => {
+						onSubmitHandler={(handleSubmit, onSubmit) => {
 							formRef.current = { handleSubmit, onSubmit };
 						}}
 					/>
@@ -88,7 +93,9 @@ export function CustomerServicePage() {
 							{isPending ? (
 								<ActivityIndicator color="#FFFFFF" />
 							) : (
-								<Text className="text-[20px] font-bold text-white">작성하기</Text>
+								<Text className="text-[20px] font-bold text-white">
+									작성하기
+								</Text>
 							)}
 						</Pressable>
 					</View>
