@@ -3,15 +3,13 @@ import { Pressable, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CheckIcon, CheckGrayIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
-import type { BenefitCriteria, BenefitItem } from "../model";
+import { SERVICE_TYPES, type BenefitCriteria, type BenefitItem, type ServiceType } from "../model";
 
 interface Props {
 	benefit: BenefitItem;
 	onRemove: () => void;
 	onUpdate: (data: Partial<BenefitItem>) => void;
 }
-
-const SERVICE_TYPES = ["서비스 제공", "할인 혜택", "기타 혜택"] as const;
 
 export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 	const [showItemInput, setShowItemInput] = useState(false);
@@ -22,7 +20,7 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 	const borderColor = (field: string) =>
 		focusedField === field ? colorTokens.primary : "#e0e0e0";
 
-	const selectServiceType = (type: string) => {
+	const selectServiceType = (type: ServiceType) => {
 		// 서비스 타입 변경 시 관련 값 전부 초기화
 		onUpdate({
 			serviceType: type,

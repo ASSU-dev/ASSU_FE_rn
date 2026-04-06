@@ -1,13 +1,13 @@
-import { useState } from "react";
 import { Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useFormContext } from "react-hook-form";
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as DocumentPicker from "expo-document-picker";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { UploadFilesIcon } from "@/shared/assets/icons";
 import type { ProposalFormData } from "../model";
+import { useDatePicker } from "../model";
 
 type Props = { onComplete: () => void };
 
@@ -18,32 +18,9 @@ export function ContractUploadStep({ onComplete }: Props) {
 	const contractFile = watch("contractFile");
 	const isValid = !!startDate && !!endDate && !!contractFile;
 
-	const [dateField, setDateField] = useState<"startDate" | "endDate" | null>(null);
-	const [tempDate, setTempDate] = useState(new Date());
-
-	const openDatePicker = (field: "startDate" | "endDate") => {
-		const existing = field === "startDate" ? startDate : endDate;
-		setTempDate(existing ? new Date(existing) : new Date());
-		setDateField(field);
-	};
-
-	const onDateChange = (event: DateTimePickerEvent, selected?: Date) => {
-		if (Platform.OS === "android") {
-			setDateField(null);
-			if (event.type === "set" && selected && dateField) {
-				setValue(dateField, selected.toISOString().slice(0, 10));
-			}
-		} else {
-			if (selected) setTempDate(selected);
-		}
-	};
-
-	const confirmIOSDate = () => {
-		if (dateField) {
-			setValue(dateField, tempDate.toISOString().slice(0, 10));
-		}
-		setDateField(null);
-	};
+	const { dateField, tempDate, open, onChange, confirm, dismiss } = useDatePicker(
+		(field, date) => setValue(field, date),
+	);
 
 	const pickFile = async () => {
 		try {
@@ -69,7 +46,7 @@ export function ContractUploadStep({ onComplete }: Props) {
 				<View className="flex-row items-center gap-[8px]">
 					<Pressable
 						className="bg-[#f4f4f5] rounded-lg flex-1 p-[15px] flex-row justify-between items-center"
-						onPress={() => openDatePicker("startDate")}
+						onPress={() => open("startDate", startDate)}
 					>
 						<Text className={`text-[14px] ${startDate ? "text-content-primary" : "text-content-secondary"}`}>
 							{formatDate(startDate)}
@@ -81,7 +58,7 @@ export function ContractUploadStep({ onComplete }: Props) {
 
 					<Pressable
 						className="bg-[#f4f4f5] rounded-lg flex-1 p-[15px] flex-row justify-between items-center"
-						onPress={() => openDatePicker("endDate")}
+						onPress={() => open("endDate", endDate)}
 					>
 						<Text className={`text-[14px] ${endDate ? "text-content-primary" : "text-content-secondary"}`}>
 							{formatDate(endDate)}
@@ -111,19 +88,19 @@ export function ContractUploadStep({ onComplete }: Props) {
 					value={tempDate}
 					mode="date"
 					display="calendar"
-					onChange={onDateChange}
+					onChange={onChange}
 				/>
 			)}
 
 			{Platform.OS === "ios" && (
 				<Modal transparent animationType="slide" visible={!!dateField}>
-					<Pressable className="flex-1 bg-black/40" onPress={() => setDateField(null)} />
+					<Pressable className="flex-1 bg-black/40" onPress={dismiss} />
 					<View className="bg-white rounded-t-2xl px-4 pb-6 pt-2">
 						<View className="flex-row justify-between items-center py-3">
-							<Pressable onPress={() => setDateField(null)}>
+							<Pressable onPress={dismiss}>
 								<Text className="text-[16px] text-content-secondary">취소</Text>
 							</Pressable>
-							<Pressable onPress={confirmIOSDate}>
+							<Pressable onPress={confirm}>
 								<Text className="text-[16px] text-primary font-semibold">확인</Text>
 							</Pressable>
 						</View>
@@ -131,7 +108,7 @@ export function ContractUploadStep({ onComplete }: Props) {
 							value={tempDate}
 							mode="date"
 							display="spinner"
-							onChange={onDateChange}
+							onChange={onChange}
 							style={{ height: 200 }}
 						/>
 					</View>
