@@ -12,6 +12,8 @@ export const colorTokens = {
 	primary: "#0068FE",
 	/** global.styles.css: --color-primary-tint (blue-100) */
 	primaryTint: "#E5F6FE",
+	/** global.styles.css: --color-sub (blue-400) — dark 배경 위 선택 강조색 */
+	primaryOnDark: "#66A4FE",
 
 	/** global.styles.css: --color-neutral (gray-100) */
 	neutral: "#F4F4F5",
