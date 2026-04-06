@@ -32,7 +32,9 @@ export function InquiryItem({ inquiry }: InquiryItemProps) {
 				<View
 					className="px-2.5 py-1 rounded"
 					style={{
-						backgroundColor: isCompleted ? "transparent" : colorTokens.neutralVariant,
+						backgroundColor: isCompleted
+							? "transparent"
+							: colorTokens.neutralVariant,
 					}}
 				>
 					<Text

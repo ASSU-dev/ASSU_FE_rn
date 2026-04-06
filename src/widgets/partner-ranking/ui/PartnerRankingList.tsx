@@ -1,5 +1,5 @@
-import { PartnerItem } from "@/entities/partner/ui/PartnerItem";
 import { Text, View } from "react-native";
+import { PartnerItem } from "@/entities/partner/ui/PartnerItem";
 
 const MOCK_PARTNERS = [
 	{ storeId: 1, storeName: "역전할머니맥주" },

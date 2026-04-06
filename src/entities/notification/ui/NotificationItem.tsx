@@ -33,9 +33,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 						{formatTimeAgo(createdAt)}
 					</Text>
 				</View>
-				<Text
-					className="text-5 font-medium text-content-primary"
-				>
+				<Text className="text-5 font-medium text-content-primary">
 					{message}
 				</Text>
 			</View>

@@ -1,4 +1,4 @@
-export { InquiryList } from "./ui/InquiryList";
-export { InquiryItem } from "./ui/InquiryItem";
-export type { Inquiry } from "./model/types";
 export { useInquiryList } from "./api/useInquiryList";
+export type { Inquiry } from "./model/types";
+export { InquiryItem } from "./ui/InquiryItem";
+export { InquiryList } from "./ui/InquiryList";

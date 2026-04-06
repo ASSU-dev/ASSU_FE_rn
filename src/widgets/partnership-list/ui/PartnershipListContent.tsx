@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { Partnership, PartnershipCard } from "@/entities/partnership";
+import { type Partnership, PartnershipCard } from "@/entities/partnership";
 import { EmptyState } from "@/shared/ui/empty-state";
 
 interface PartnershipListContentProps {
