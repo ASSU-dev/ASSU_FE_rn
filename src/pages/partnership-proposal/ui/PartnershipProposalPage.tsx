@@ -10,7 +10,7 @@ import {
 	proposalSchema,
 } from "@/features/partnership-proposal";
 import { PageLayout } from "@/shared/ui/layout";
-import { TopBar } from "@/shared/ui/top-bar";
+import { AppTopBar } from "@/shared/ui/app-top-bar";
 
 type Step = "step1" | "step2" | "complete";
 
@@ -44,7 +44,7 @@ export function PartnershipProposalPage() {
 				withBottomInset={false}
 				contentContainerClassName="flex-1"
 			>
-				<TopBar title="제휴 제안서" onBack={handleBack} />
+				<AppTopBar title="제휴 제안서" onBack={handleBack} />
 				{step === "step1" && (
 					<ProposalInfoStep onNext={() => setStep("step2")} />
 				)}

@@ -14,4 +14,3 @@ export * from "./SearchBar";
 export * from "./select";
 export * from "./TabBar";
 export * from "./toggle";
-export * from "./top-bar";
