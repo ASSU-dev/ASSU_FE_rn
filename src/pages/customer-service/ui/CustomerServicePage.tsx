@@ -1,3 +1,4 @@
+import type { SubmitHandler, UseFormHandleSubmit } from "react-hook-form";
 import { InquiryForm } from "@/features/inquiry-form";
 import { InquiryList } from "./InquiryList";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
@@ -7,6 +8,7 @@ import { colorTokens } from "@/shared/styles/tokens";
 import { useRef, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { InquiryFormData } from "@/features/inquiry-form";
 
 // Mock user data - 실제 auth 시스템 연결은 나중에
 const MOCK_USER = {
@@ -22,8 +24,11 @@ const tabs = [
 export function CustomerServicePage() {
 	const user = MOCK_USER; // In production: const { user } = useAuth();
 	const [activeTab, setActiveTab] = useState<string>("inquiry");
-	const [isPending, setIsPending] = useState(false);
-	const formRef = useRef<{ handleSubmit: any; onSubmit: any } | null>(null);
+	const isPending = false;
+	const formRef = useRef<{
+		handleSubmit: UseFormHandleSubmit<InquiryFormData>;
+		onSubmit: SubmitHandler<InquiryFormData>;
+	} | null>(null);
 
 	const handleSubmitButton = () => {
 		if (formRef.current) {
@@ -52,7 +57,7 @@ export function CustomerServicePage() {
 				{activeTab === "inquiry" && (
 					<InquiryForm
 						userEmail={user?.email || ""}
-						onSubmitHandler={(handleSubmit: any, onSubmit: any) => {
+						onSubmitHandler={(handleSubmit, onSubmit) => {
 							formRef.current = { handleSubmit, onSubmit };
 						}}
 					/>

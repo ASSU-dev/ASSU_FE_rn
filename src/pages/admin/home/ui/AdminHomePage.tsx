@@ -55,10 +55,10 @@ function RecommendationSection() {
 }
 
 // Manual registration button component
-function ManualRegistrationButton() {
+function ManualRegistrationButton({ onPress }: { onPress: () => void }) {
 	return (
 		<Pressable
-			onPress={noop}
+			onPress={onPress}
 			className="rounded-lg bg-neutral-variant px-5 py-3.5"
 		>
 			<Text className="text-center text-xs font-regular text-content-primary">
@@ -99,7 +99,9 @@ export function AdminHomePage() {
 				<RecommendationSection />
 
 				{/* Manual registration button */}
-				<ManualRegistrationButton />
+				<ManualRegistrationButton
+					onPress={() => router.push("/(protected)/partnership-proposal")}
+				/>
 			</View>
 		</PageLayout>
 	);

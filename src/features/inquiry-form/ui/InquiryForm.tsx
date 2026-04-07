@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import {
-	ActivityIndicator,
-	Pressable,
-	Text,
-	TextInput,
-	View,
-} from "react-native";
+	Controller,
+	type SubmitHandler,
+	type UseFormHandleSubmit,
+	useForm,
+} from "react-hook-form";
+import { Text, TextInput, View } from "react-native";
 import { z } from "zod";
 import { colorTokens } from "@/shared/styles/tokens";
 import { useSubmitInquiry } from "../api/useSubmitInquiry";
@@ -21,11 +20,14 @@ const schema = z.object({
 
 interface InquiryFormProps {
 	userEmail: string;
-	onSubmitHandler?: (handleSubmit: any, onSubmit: any) => void;
+	onSubmitHandler?: (
+		handleSubmit: UseFormHandleSubmit<InquiryFormData>,
+		onSubmit: SubmitHandler<InquiryFormData>,
+	) => void;
 }
 
 export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
-	const { mutate, isPending } = useSubmitInquiry();
+	const { mutate } = useSubmitInquiry();
 	const [successMessage, setSuccessMessage] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -43,7 +45,7 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 		},
 	});
 
-	const onSubmit = (data: InquiryFormData) => {
+	const onSubmit: SubmitHandler<InquiryFormData> = (data) => {
 		mutate(data, {
 			onSuccess: () => {
 				setSuccessMessage("문의가 등록되었습니다.");
