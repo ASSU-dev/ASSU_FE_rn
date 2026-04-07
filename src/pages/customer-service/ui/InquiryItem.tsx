@@ -37,10 +37,13 @@ export function InquiryItem({ inquiry }: InquiryItemProps) {
 				<View
 					className="px-2.5 py-1 rounded"
 					style={{
-						backgroundColor: isCompleted ? "transparent" : colorTokens.neutralVariant,
+						backgroundColor: isCompleted
+							? "transparent"
+							: colorTokens.neutralVariant,
 					}}
 				>
 					<Text
+						numberOfLines={1}
 						className={`text-xs font-regular tracking-[-0.32px] ${
 							isCompleted ? "text-primary" : "text-content-primary"
 						}`}

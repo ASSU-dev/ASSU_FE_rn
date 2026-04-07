@@ -1,6 +1,6 @@
+import { Text, TouchableOpacity, View } from "react-native";
 import { StampItem } from "@/entities/stamp/ui/StampItem";
 import { InfoLinkText } from "@/shared/ui/info";
-import { Text, TouchableOpacity, View } from "react-native";
 
 export const StampBoard = ({ currentCount = 0 }) => {
 	const STAMP_LIMIT = 10;

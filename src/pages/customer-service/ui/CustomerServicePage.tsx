@@ -1,12 +1,11 @@
-import { BackArrowIcon } from "@/shared/assets/icons";
 import { InquiryForm } from "@/features/inquiry-form";
 import { InquiryList } from "./InquiryList";
+import { AppTopBar } from "@/shared/ui/app-top-bar";
 import { PageLayout } from "@/shared/ui/layout";
 import { TabBar } from "@/shared/ui/TabBar";
 import { colorTokens } from "@/shared/styles/tokens";
-import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
-import { Pressable, Text, View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Mock user data - 실제 auth 시스템 연결은 나중에
@@ -21,7 +20,6 @@ const tabs = [
 ];
 
 export function CustomerServicePage() {
-	const router = useRouter();
 	const user = MOCK_USER; // In production: const { user } = useAuth();
 	const [activeTab, setActiveTab] = useState<string>("inquiry");
 	const [isPending, setIsPending] = useState(false);
@@ -35,18 +33,7 @@ export function CustomerServicePage() {
 
 	return (
 		<SafeAreaView edges={["top"]} className="flex-1 bg-canvas">
-			{/* Header */}
-			<View className="flex-row items-center gap-[12px] px-[24px] py-[24px]">
-				<Pressable onPress={() => router.back()} className="w-6 h-6">
-					<BackArrowIcon width={24} height={24} />
-				</Pressable>
-				<View className="flex-1 items-center">
-					<Text className="text-xl font-semibold text-content-primary">
-						고객센터
-					</Text>
-				</View>
-				<View className="w-6" />
-			</View>
+			<AppTopBar title="고객센터" />
 
 			{/* Tab Bar */}
 			<View className="px-[24px] mb-[24px]">
@@ -89,7 +76,9 @@ export function CustomerServicePage() {
 							{isPending ? (
 								<ActivityIndicator color="#FFFFFF" />
 							) : (
-								<Text className="text-[20px] font-bold text-white">작성하기</Text>
+								<Text className="text-[20px] font-bold text-white">
+									작성하기
+								</Text>
 							)}
 						</Pressable>
 					</View>

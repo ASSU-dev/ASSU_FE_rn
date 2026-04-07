@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import { SCHOOL_SELECT_OPTIONS } from "@/entities/signup";
 import type { SignupSchool } from "@/entities/signup";
+import { SCHOOL_SELECT_OPTIONS } from "@/entities/signup";
 import { Select } from "@/shared/ui/select";
 import { SignupStepTitle } from "../SignupStepTitle";
 

@@ -1,7 +1,7 @@
-import { Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
+import { Pressable, Text, View } from "react-native";
 import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
+import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PartnershipListContent } from "@/widgets/partnership-list";
 
