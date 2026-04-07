@@ -1,16 +1,21 @@
-import { Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
-import type { Inquiry } from "../model/types";
+import type { Inquiry } from "@/entities/inquiry";
 
 interface InquiryItemProps {
 	inquiry: Inquiry;
 }
 
 export function InquiryItem({ inquiry }: InquiryItemProps) {
+	const router = useRouter();
 	const isCompleted = inquiry.status === "completed";
 
 	return (
-		<View className="border-b border-neutralVariant flex-row items-center justify-between py-[16px] w-full">
+		<Pressable
+			onPress={() => router.push(`/customer-service/${inquiry.id}`)}
+			className="border-b border-gray-200 flex-row items-center justify-between py-[16px] w-full"
+		>
 			{/* Left: Title */}
 			<View className="flex-1">
 				<Text
@@ -22,7 +27,7 @@ export function InquiryItem({ inquiry }: InquiryItemProps) {
 			</View>
 
 			{/* Right Column */}
-			<View className="gap-1 items-end ml-3">
+			<View className="gap-3 items-end ml-3">
 				{/* DateTime */}
 				<Text className="text-xs text-content-secondary tracking-[-0.32px]">
 					{inquiry.createdAt}
@@ -38,6 +43,7 @@ export function InquiryItem({ inquiry }: InquiryItemProps) {
 					}}
 				>
 					<Text
+						numberOfLines={1}
 						className={`text-xs font-regular tracking-[-0.32px] ${
 							isCompleted ? "text-primary" : "text-content-primary"
 						}`}
@@ -46,6 +52,6 @@ export function InquiryItem({ inquiry }: InquiryItemProps) {
 					</Text>
 				</View>
 			</View>
-		</View>
+		</Pressable>
 	);
 }

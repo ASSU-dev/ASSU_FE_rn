@@ -4,3 +4,8 @@ export interface Inquiry {
 	createdAt: string; // Format: YYYY-MM-DD HH:MM
 	status: "waiting" | "completed";
 }
+
+export interface InquiryDetail extends Inquiry {
+	content: string;
+	answer?: string;
+}
