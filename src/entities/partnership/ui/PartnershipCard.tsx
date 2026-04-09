@@ -20,7 +20,8 @@ export const PartnershipCard = memo(
 	}: PartnershipCardProps) => {
 		const bgClass = variant === "gray" ? "bg-neutral" : "bg-canvas";
 		const badgeBgClass = variant === "gray" ? "bg-sub" : "bg-primary-tint";
-		const badgeTextClass = variant === "gray" ? "text-content-inverse" : "text-primary";
+		const badgeTextClass =
+			variant === "gray" ? "text-content-inverse" : "text-primary";
 		return (
 			<View className={`flex-1 rounded-lg ${bgClass} px-4 py-5`}>
 				{/* Store name */}
@@ -30,7 +31,9 @@ export const PartnershipCard = memo(
 
 				{/* Benefit content row */}
 				<View className="mb-1 flex-row items-center gap-2">
-					<View className={`flex-shrink-0 rounded-full ${badgeBgClass} px-2.5 py-1`}>
+					<View
+						className={`flex-shrink-0 rounded-full ${badgeBgClass} px-2.5 py-1`}
+					>
 						<Text className={`text-sm font-regular ${badgeTextClass}`}>
 							{BADGE_LABEL_CONTENT}
 						</Text>
@@ -44,7 +47,9 @@ export const PartnershipCard = memo(
 
 				{/* Partnership period row */}
 				<View className="flex-row items-center gap-2">
-					<View className={`flex-shrink-0 rounded-full ${badgeBgClass} px-2.5 py-1`}>
+					<View
+						className={`flex-shrink-0 rounded-full ${badgeBgClass} px-2.5 py-1`}
+					>
 						<Text className={`text-sm font-regular ${badgeTextClass}`}>
 							{BADGE_LABEL_PERIOD}
 						</Text>

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Pressable, Text, View } from "react-native";
-import { PartnershipCard, type Partnership } from "@/entities/partnership";
+import { type Partnership, PartnershipCard } from "@/entities/partnership";
 
 interface PartnershipListWidgetProps {
 	partnerships: Partnership[];

@@ -1,8 +1,8 @@
 import { router } from "expo-router";
+import { Pressable, ScrollView, Text } from "react-native";
 import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
 import { PartnerRankingList } from "@/widgets/partner-ranking/ui/PartnerRankingList";
 import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
-import { Pressable, ScrollView, Text } from "react-native";
 
 export function StudentHomePage() {
 	const userStampCount = 4;

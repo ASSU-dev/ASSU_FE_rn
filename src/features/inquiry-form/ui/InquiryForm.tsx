@@ -1,11 +1,16 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import {
+	Controller,
+	type SubmitHandler,
+	type UseFormHandleSubmit,
+	useForm,
+} from "react-hook-form";
+import { Text, TextInput, View } from "react-native";
+import { z } from "zod";
+import { colorTokens } from "@/shared/styles/tokens";
 import { useSubmitInquiry } from "../api/useSubmitInquiry";
 import type { InquiryFormData } from "../model/types";
-import { colorTokens } from "@/shared/styles/tokens";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Pressable, Text, TextInput, View, ActivityIndicator } from "react-native";
-import { useState } from "react";
 
 const schema = z.object({
 	title: z.string().min(1, "제목을 작성해주세요"),
@@ -15,15 +20,23 @@ const schema = z.object({
 
 interface InquiryFormProps {
 	userEmail: string;
-	onSubmitHandler?: (handleSubmit: any, onSubmit: any) => void;
+	onSubmitHandler?: (
+		handleSubmit: UseFormHandleSubmit<InquiryFormData>,
+		onSubmit: SubmitHandler<InquiryFormData>,
+	) => void;
 }
 
 export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
-	const { mutate, isPending } = useSubmitInquiry();
+	const { mutate } = useSubmitInquiry();
 	const [successMessage, setSuccessMessage] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 
-	const { control, handleSubmit, reset, formState: { errors } } = useForm<InquiryFormData>({
+	const {
+		control,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<InquiryFormData>({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			title: "",
@@ -32,7 +45,7 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 		},
 	});
 
-	const onSubmit = (data: InquiryFormData) => {
+	const onSubmit: SubmitHandler<InquiryFormData> = (data) => {
 		mutate(data, {
 			onSuccess: () => {
 				setSuccessMessage("문의가 등록되었습니다.");
@@ -52,7 +65,9 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 	}
 
 	const getInputBorderColor = (fieldName: string) => {
-		return focusedField === fieldName ? colorTokens.contentPrimary : colorTokens.neutralVariant;
+		return focusedField === fieldName
+			? colorTokens.contentPrimary
+			: colorTokens.neutralVariant;
 	};
 
 	return (
@@ -151,7 +166,6 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 					문의사항 등록 시 개인정보 수집 및 이용에 동의하는 것으로 간주됩니다.
 				</Text>
 			</View>
-
 
 			{/* Success Message */}
 			{successMessage && (

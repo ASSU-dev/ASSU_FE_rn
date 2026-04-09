@@ -1,7 +1,7 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
+import { colorTokens } from "@/shared/styles/tokens";
 import { useInquiryList } from "../api/useInquiryList";
 import { InquiryItem } from "./InquiryItem";
-import { colorTokens } from "@/shared/styles/tokens";
 
 export function InquiryList() {
 	const { data, isLoading, isError, error } = useInquiryList();

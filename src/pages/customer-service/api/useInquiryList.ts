@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Inquiry } from "../model/types";
+import type { Inquiry } from "@/entities/inquiry";
 
 // Mock data
 const MOCK_INQUIRIES: Inquiry[] = [

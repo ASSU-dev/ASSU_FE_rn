@@ -1,4 +1,5 @@
 export * from "./address-search";
+export * from "./app-top-bar";
 export * from "./bottom-sheet";
 export * from "./checkbox";
 export * from "./comment";
