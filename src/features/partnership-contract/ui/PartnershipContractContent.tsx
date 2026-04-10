@@ -3,20 +3,12 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { PartnershipContract } from "@/entities/partnership";
 import { colorTokens } from "@/shared/styles/tokens";
+import { formatDate, formatKoreanDate } from "@/shared/utils";
 import { BenefitSummaryCard } from "./BenefitSummaryCard";
 
 interface Props {
 	data: PartnershipContract;
 	onClose: () => void;
-}
-
-function formatPeriodDate(dateStr: string) {
-	return dateStr.replace(/-/g, " - ");
-}
-
-function formatSignatureDate(dateStr: string) {
-	const [year, month, day] = dateStr.split("-");
-	return `${year}년 ${month}월 ${day}일`;
 }
 
 function InfoField({ label, value }: { label: string; value: string }) {
@@ -81,13 +73,13 @@ export function PartnershipContractContent({ data, onClose }: Props) {
 					<View className="flex-row items-center gap-[5px]">
 						<View className="flex-1 px-[15px] py-[5px]">
 							<Text className="text-[14px] text-content-primary">
-								{formatPeriodDate(data.startDate)}
+								{formatDate(data.startDate, { separator: "-" })}
 							</Text>
 						</View>
 						<Text className="text-[20px] font-bold text-content-primary">~</Text>
 						<View className="flex-1 px-[15px] py-[5px]">
 							<Text className="text-[14px] text-content-primary">
-								{formatPeriodDate(data.endDate)}
+								{formatDate(data.endDate, { separator: "-" })}
 							</Text>
 						</View>
 					</View>
@@ -95,7 +87,7 @@ export function PartnershipContractContent({ data, onClose }: Props) {
 					{/* 서명 박스 */}
 					<View className="bg-neutral rounded-lg p-[15px] min-h-[134px] items-start justify-center">
 						<Text className="text-[14px] text-content-secondary leading-[20px]">
-							{`위와 같이 숭실대학교 총학생회와\n제휴를 제안합니다.\n\n${formatSignatureDate(data.contractDate)}\n대표 (인)`}
+							{`위와 같이 숭실대학교 총학생회와\n제휴를 제안합니다.\n\n${formatKoreanDate(data.contractDate)}\n대표 (인)`}
 						</Text>
 					</View>
 				</View>
