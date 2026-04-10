@@ -38,7 +38,10 @@ export function PartnerHomePage() {
 					partnerships={MOCK_PARTNERSHIPS}
 					title="제휴단체 목록"
 					onViewAll={() =>
-						router.push("/(protected)/(partner)/partner-partnership-list")
+						router.push("/(protected)/partner/partner-partnership-list")
+					}
+					onPressCard={(id) =>
+						router.push(`/(protected)/partnership-contract/${id}`)
 					}
 				/>
 

@@ -57,7 +57,7 @@ export function StudentSuggestionPage() {
 							<Pressable
 								onPress={() =>
 									router.push(
-										`/(protected)/(student)/benefit-all?month=${month}`,
+										`/(protected)/student/benefit-all?month=${month}`,
 									)
 								}
 							>

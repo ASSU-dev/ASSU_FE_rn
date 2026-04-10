@@ -1,12 +1,18 @@
 import { z } from "zod";
+import {
+	SERVICE_TYPES,
+	type BenefitCriteria,
+	type BenefitItem,
+	type ServiceType,
+} from "@/entities/partnership";
 
-export const SERVICE_TYPES = ["서비스 제공", "할인 혜택", "기타 혜택"] as const;
-export type ServiceType = (typeof SERVICE_TYPES)[number];
+// 엔티티 타입 re-export (기존 import 경로 유지)
+export { SERVICE_TYPES, type BenefitCriteria, type BenefitItem, type ServiceType };
 
 export const benefitItemSchema = z.object({
 	id: z.string(),
 	serviceType: z.enum(SERVICE_TYPES),
-	criteria: z.enum(["금액", "인원수"]),
+	criteria: z.enum(["금액", "인원수"] as const),
 	amount: z.string(),
 	minCount: z.string(),
 	categories: z.array(z.string()),
@@ -24,6 +30,4 @@ export const proposalSchema = z.object({
 	contractFile: z.object({ uri: z.string(), name: z.string() }).nullable(),
 });
 
-export type BenefitCriteria = "금액" | "인원수";
-export type BenefitItem = z.infer<typeof benefitItemSchema>;
 export type ProposalFormData = z.infer<typeof proposalSchema>;
