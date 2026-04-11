@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as DocumentPicker from "expo-document-picker";
-import { useFormContext } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 import {
+	Alert,
 	Modal,
 	Platform,
 	Pressable,
@@ -10,6 +11,7 @@ import {
 	Text,
 	View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UploadFilesIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
@@ -19,14 +21,29 @@ import { useDatePicker } from "../model";
 type Props = { onComplete: () => void };
 
 export function ContractUploadStep({ onComplete }: Props) {
-	const { setValue, watch } = useFormContext<ProposalFormData>();
-	const startDate = watch("startDate");
-	const endDate = watch("endDate");
-	const contractFile = watch("contractFile");
+	const { control } = useFormContext<ProposalFormData>();
+	const { bottom } = useSafeAreaInsets();
+
+	const { field: startDateField } = useController({
+		control,
+		name: "startDate",
+	});
+	const { field: endDateField } = useController({ control, name: "endDate" });
+	const { field: contractFileField } = useController({
+		control,
+		name: "contractFile",
+	});
+
+	const startDate = startDateField.value;
+	const endDate = endDateField.value;
+	const contractFile = contractFileField.value;
 	const isValid = !!startDate && !!endDate && !!contractFile;
 
 	const { dateField, tempDate, open, onChange, confirm, dismiss } =
-		useDatePicker((field, date) => setValue(field, date));
+		useDatePicker((field, date) => {
+			if (field === "startDate") startDateField.onChange(date);
+			else endDateField.onChange(date);
+		});
 
 	const pickFile = async () => {
 		try {
@@ -34,12 +51,21 @@ export function ContractUploadStep({ onComplete }: Props) {
 				type: ["application/pdf", "image/*"],
 				copyToCacheDirectory: true,
 			});
-			if (!result.canceled && result.assets[0]) {
-				const asset = result.assets[0];
-				setValue("contractFile", { uri: asset.uri, name: asset.name });
+			if (result.canceled) return;
+			const asset = result.assets?.[0];
+			if (!asset?.uri) {
+				Alert.alert("오류", "파일을 불러올 수 없습니다. 다시 시도해 주세요.");
+				return;
 			}
-		} catch {
-			// 사용자 취소 또는 권한 없음
+			contractFileField.onChange({
+				uri: asset.uri,
+				name: asset.name ?? "파일",
+			});
+		} catch (err) {
+			Alert.alert(
+				"오류",
+				"파일 선택 중 문제가 발생했습니다. 다시 시도해 주세요.",
+			);
 		}
 	};
 
@@ -51,6 +77,7 @@ export function ContractUploadStep({ onComplete }: Props) {
 			<ScrollView
 				className="flex-1"
 				contentContainerClassName="px-[24px] gap-[10px]"
+				keyboardShouldPersistTaps="handled"
 			>
 				<Text className="text-[13px] text-content-secondary">
 					제휴 기간 선택
@@ -143,12 +170,11 @@ export function ContractUploadStep({ onComplete }: Props) {
 				</Modal>
 			)}
 
-			<View className="items-center pb-[16px]">
-				<MediumButton
-					disabled={!isValid}
-					style={!isValid ? { opacity: 0.3 } : undefined}
-					onPress={onComplete}
-				>
+			<View
+				className="items-center"
+				style={{ paddingBottom: Math.max(bottom, 16) }}
+			>
+				<MediumButton disabled={!isValid} onPress={onComplete}>
 					계약서 등록하기
 				</MediumButton>
 			</View>

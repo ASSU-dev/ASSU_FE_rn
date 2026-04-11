@@ -7,7 +7,10 @@ interface PartnershipListContentProps {
 	onPressCard?: (id: string) => void;
 }
 
-export function PartnershipListContent({ data, onPressCard }: PartnershipListContentProps) {
+export function PartnershipListContent({
+	data,
+	onPressCard,
+}: PartnershipListContentProps) {
 	if (data.length === 0) {
 		return (
 			<EmptyState

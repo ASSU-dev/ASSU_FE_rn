@@ -1,7 +1,7 @@
 export { MOCK_ADMIN_AFFILIATION_SUMMARY } from "./model/mockAdminAffiliationSummary";
 export { MOCK_PARTNER_AFFILIATION_SUMMARIES } from "./model/mockPartnerAffiliationSummaries";
-export { MOCK_PARTNERSHIPS } from "./model/mockPartnerships";
 export { MOCK_PARTNERSHIP_CONTRACTS } from "./model/mockPartnershipContracts";
+export { MOCK_PARTNERSHIPS } from "./model/mockPartnerships";
 export type {
 	BenefitCriteria,
 	BenefitItem,

@@ -18,5 +18,7 @@ export function PartnershipContractPage() {
 		);
 	}
 
-	return <PartnershipContractContent data={contract} onClose={() => router.back()} />;
+	return (
+		<PartnershipContractContent data={contract} onClose={() => router.back()} />
+	);
 }

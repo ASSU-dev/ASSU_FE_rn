@@ -15,7 +15,9 @@ export function BenefitSummaryCard({ benefit }: Props) {
 					</Text>
 				</View>
 				<View className="px-[10px] py-[5px]">
-					<Text className="text-[15px] text-content-primary">{benefit.content}</Text>
+					<Text className="text-[15px] text-content-primary">
+						{benefit.content}
+					</Text>
 				</View>
 			</View>
 		);
@@ -26,7 +28,8 @@ export function BenefitSummaryCard({ benefit }: Props) {
 			? `${benefit.minCount}인`
 			: `${Number(benefit.amount).toLocaleString()}원`;
 
-	const conditionSuffix = benefit.criteria === "인원수" ? "인 이상일 경우" : "원 이상일 경우";
+	const conditionSuffix =
+		benefit.criteria === "인원수" ? "인 이상일 경우" : "원 이상일 경우";
 
 	if (benefit.serviceType === "할인 혜택") {
 		return (
@@ -50,7 +53,9 @@ export function BenefitSummaryCard({ benefit }: Props) {
 							{benefit.discountRate}%
 						</Text>
 					</View>
-					<Text className="text-[17px] text-content-primary opacity-70">할인</Text>
+					<Text className="text-[17px] text-content-primary opacity-70">
+						할인
+					</Text>
 				</View>
 			</View>
 		);
@@ -78,7 +83,9 @@ export function BenefitSummaryCard({ benefit }: Props) {
 						{benefit.items.join(", ")}
 					</Text>
 				</View>
-				<Text className="text-[17px] text-content-primary opacity-70">제공</Text>
+				<Text className="text-[17px] text-content-primary opacity-70">
+					제공
+				</Text>
 			</View>
 		</View>
 	);

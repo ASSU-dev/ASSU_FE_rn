@@ -16,7 +16,9 @@ function Header({ onBack }: { onBack: () => void }) {
 			<Pressable onPress={onBack} className="absolute left-0">
 				<BackArrowIcon width={24} height={24} />
 			</Pressable>
-			<Text className="text-lg font-semibold text-content-primary">제휴단체 목록</Text>
+			<Text className="text-lg font-semibold text-content-primary">
+				제휴단체 목록
+			</Text>
 		</View>
 	);
 }
@@ -43,7 +45,9 @@ function CountSection({ count }: { count: number }) {
 
 export function PartnerListPage() {
 	const router = useRouter();
-	const [selectedContractId, setSelectedContractId] = useState<string | null>(null);
+	const [selectedContractId, setSelectedContractId] = useState<string | null>(
+		null,
+	);
 
 	const selectedContract =
 		MOCK_PARTNERSHIP_CONTRACTS.find((c) => c.id === selectedContractId) ?? null;

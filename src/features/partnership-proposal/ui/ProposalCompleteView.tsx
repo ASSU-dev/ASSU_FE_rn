@@ -19,7 +19,9 @@ export function ProposalCompleteView({ contractId }: Props) {
 			</View>
 
 			<View className="flex-1 items-center justify-center gap-[20px]">
-				<Text className="text-[30px] font-semibold text-content-primary">등록 완료</Text>
+				<Text className="text-[30px] font-semibold text-content-primary">
+					등록 완료
+				</Text>
 				<Text className="text-xl text-content-secondary">
 					계약서는 확인을 거쳐 등록될 예정입니다!
 				</Text>

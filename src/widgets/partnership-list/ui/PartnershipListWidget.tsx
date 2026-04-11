@@ -39,10 +39,7 @@ export const PartnershipListWidget = memo(
 							key={partnership.id}
 							onPress={() => onPressCard?.(partnership.id)}
 						>
-							<PartnershipCard
-								{...partnership}
-								variant={variant}
-							/>
+							<PartnershipCard {...partnership} variant={variant} />
 						</Pressable>
 					))}
 				</View>

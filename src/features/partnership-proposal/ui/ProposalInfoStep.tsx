@@ -1,5 +1,11 @@
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import {
+	Controller,
+	useFieldArray,
+	useFormContext,
+	useWatch,
+} from "react-hook-form";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import type { ProposalFormData } from "../model";
@@ -9,10 +15,15 @@ type Props = { onNext: () => void };
 
 export function ProposalInfoStep({ onNext }: Props) {
 	const { control, trigger } = useFormContext<ProposalFormData>();
-	const { fields, append, remove, update } = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "benefits",
 	});
+	const { bottom } = useSafeAreaInsets();
+
+	const companyName = useWatch({ control, name: "companyName" });
+	const proposerName = useWatch({ control, name: "proposerName" });
+	const isNextEnabled = companyName.length > 0 && proposerName.length > 0;
 
 	const handleNext = async () => {
 		const valid = await trigger(["companyName", "proposerName"]);
@@ -24,6 +35,7 @@ export function ProposalInfoStep({ onNext }: Props) {
 			<ScrollView
 				className="flex-1"
 				contentContainerClassName="px-[24px] gap-[25px] pb-4"
+				keyboardShouldPersistTaps="handled"
 			>
 				<Controller
 					control={control}
@@ -70,15 +82,19 @@ export function ProposalInfoStep({ onNext }: Props) {
 				{fields.map((field, index) => (
 					<BenefitCard
 						key={field.id}
-						benefit={field}
+						index={index}
 						onRemove={() => remove(index)}
-						onUpdate={(data) => update(index, { ...field, ...data })}
 					/>
 				))}
 			</ScrollView>
 
-			<View className="items-center pb-4 px-[24px]">
-				<MediumButton onPress={handleNext}>다음</MediumButton>
+			<View
+				className="items-center px-[24px]"
+				style={{ paddingBottom: Math.max(bottom, 16) }}
+			>
+				<MediumButton disabled={!isNextEnabled} onPress={handleNext}>
+					다음
+				</MediumButton>
 			</View>
 		</View>
 	);

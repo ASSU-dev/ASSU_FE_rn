@@ -1,13 +1,18 @@
 import { z } from "zod";
 import {
-	SERVICE_TYPES,
 	type BenefitCriteria,
 	type BenefitItem,
+	SERVICE_TYPES,
 	type ServiceType,
 } from "@/entities/partnership";
 
 // 엔티티 타입 re-export (기존 import 경로 유지)
-export { SERVICE_TYPES, type BenefitCriteria, type BenefitItem, type ServiceType };
+export {
+	SERVICE_TYPES,
+	type BenefitCriteria,
+	type BenefitItem,
+	type ServiceType,
+};
 
 export const benefitItemSchema = z.object({
 	id: z.string(),

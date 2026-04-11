@@ -1,3 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	ContractUploadStep,
 	ProposalCompleteView,
@@ -6,11 +12,6 @@ import {
 	proposalSchema,
 } from "@/features/partnership-proposal";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
-import { PageLayout } from "@/shared/ui/layout";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
 
 type Step = "step1" | "step2" | "complete";
 
@@ -32,7 +33,8 @@ export function PartnershipProposalPage() {
 	});
 
 	// 완료 화면은 자체 레이아웃(PageLayout + X버튼)을 가지므로 별도 렌더
-	if (step === "complete") return <ProposalCompleteView contractId={contractId} />;
+	if (step === "complete")
+		return <ProposalCompleteView contractId={contractId} />;
 
 	const handleBack = () => {
 		if (step === "step1") router.back();
@@ -41,25 +43,26 @@ export function PartnershipProposalPage() {
 
 	return (
 		<FormProvider {...methods}>
-			<PageLayout
-				withTopInset
-				withBottomInset={false}
-				contentContainerClassName="flex-1"
-			>
-				<AppTopBar title="제휴 제안서" onBack={handleBack} />
-				{step === "step1" && (
-					<ProposalInfoStep onNext={() => setStep("step2")} />
-				)}
-				{step === "step2" && (
-					<ContractUploadStep
-						onComplete={methods.handleSubmit(() => {
-							// [TEST] 목 데이터 — API 연동 시: setContractId(response.id)
-							setContractId("1");
-							setStep("complete");
-						})}
-					/>
-				)}
-			</PageLayout>
+			<SafeAreaView edges={["top"]} className="flex-1 bg-canvas">
+				<KeyboardAvoidingView
+					className="flex-1"
+					behavior={Platform.OS === "ios" ? "padding" : "height"}
+				>
+					<AppTopBar title="제휴 제안서" onBack={handleBack} />
+					{step === "step1" && (
+						<ProposalInfoStep onNext={() => setStep("step2")} />
+					)}
+					{step === "step2" && (
+						<ContractUploadStep
+							onComplete={methods.handleSubmit(() => {
+								// [TEST] 목 데이터 — API 연동 시: setContractId(response.id)
+								setContractId("1");
+								setStep("complete");
+							})}
+						/>
+					)}
+				</KeyboardAvoidingView>
+			</SafeAreaView>
 		</FormProvider>
 	);
 }
