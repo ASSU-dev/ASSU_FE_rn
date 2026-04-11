@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { PartnershipContract } from "@/entities/partnership";
@@ -18,10 +19,16 @@ function InfoField({ label, value }: { label: string; value: string }) {
 				<Text className="text-[13px] text-content-secondary">{label}</Text>
 			</View>
 			<View className="px-[15px] py-[15px]">
-				<Text className="text-[17px] text-content-primary opacity-70">{value}</Text>
+				<Text className="text-[17px] text-content-primary opacity-70">
+					{value}
+				</Text>
 			</View>
 			<View
-				style={{ height: 0.5, backgroundColor: "#e0e0e0", marginHorizontal: 15 }}
+				style={{
+					height: 0.5,
+					backgroundColor: "#e0e0e0",
+					marginHorizontal: 15,
+				}}
 			/>
 		</View>
 	);
@@ -66,7 +73,9 @@ export function PartnershipContractContent({ data, onClose }: Props) {
 				{/* 제휴 기간 */}
 				<View className="gap-[10px]">
 					<View className="px-[15px] py-[5px]">
-						<Text className="text-[13px] text-content-secondary">제휴 기간</Text>
+						<Text className="text-[13px] text-content-secondary">
+							제휴 기간
+						</Text>
 					</View>
 
 					{/* 기간 행 */}
@@ -76,7 +85,9 @@ export function PartnershipContractContent({ data, onClose }: Props) {
 								{formatDate(data.startDate, { separator: "-" })}
 							</Text>
 						</View>
-						<Text className="text-[20px] font-bold text-content-primary">~</Text>
+						<Text className="text-[20px] font-bold text-content-primary">
+							~
+						</Text>
 						<View className="flex-1 px-[15px] py-[5px]">
 							<Text className="text-[14px] text-content-primary">
 								{formatDate(data.endDate, { separator: "-" })}
@@ -98,12 +109,25 @@ export function PartnershipContractContent({ data, onClose }: Props) {
 				className="flex-row gap-[10px] px-6 pt-4"
 				style={{ paddingBottom: Math.max(insets.bottom, 16) }}
 			>
-				<Pressable className="flex-1 border-[0.5px] border-content-primary rounded-xl items-center justify-center py-[18px]">
-					<Text className="text-[20px] font-medium text-content-primary">QR저장</Text>
+				<Pressable
+					className="flex-1 border-[0.5px] border-content-primary rounded-xl items-center justify-center py-[18px]"
+					onPress={() =>
+						router.push({ pathname: "/qr-view/[id]", params: { id: data.id } })
+					}
+				>
+					<Text className="text-[20px] font-medium text-content-primary">
+						QR저장
+					</Text>
 				</Pressable>
 				<Pressable className="flex-1 bg-content-primary rounded-xl flex-row items-center justify-center gap-[10px] py-[18px]">
-					<Ionicons name="pencil" size={18} color={colorTokens.contentInverse} />
-					<Text className="text-[20px] font-medium text-content-inverse">수정하기</Text>
+					<Ionicons
+						name="pencil"
+						size={18}
+						color={colorTokens.contentInverse}
+					/>
+					<Text className="text-[20px] font-medium text-content-inverse">
+						수정하기
+					</Text>
 				</Pressable>
 			</View>
 		</View>
