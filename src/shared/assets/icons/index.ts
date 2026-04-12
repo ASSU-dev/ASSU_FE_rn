@@ -21,7 +21,7 @@ export { default as SearchIcon } from "./search-icon.svg";
 export { default as SpeechBubbleIcon } from "./speech-bubble-icon.svg";
 export { default as StampActive } from "./stamp-active.svg";
 export { default as StampInactive } from "./stamp-inactive.svg";
-export { default as UploadFilesIcon } from "./upload-files-icon.svg";
 export { StarIcon } from "./star-icon";
+export { default as UploadFilesIcon } from "./upload-files-icon.svg";
 export { default as UserIcon } from "./user-icon.svg";
 export { default as WritingIcon } from "./writing-icon.svg";

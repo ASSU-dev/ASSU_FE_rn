@@ -1,8 +1,14 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+	ActivityIndicator,
+	Pressable,
+	ScrollView,
+	Text,
+	View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useInquiryDetail } from "../api/useInquiryDetail";
 
 export function InquiryDetailPage() {
@@ -43,9 +49,7 @@ export function InquiryDetailPage() {
 			)}
 
 			{data && (
-				<ScrollView
-					contentContainerClassName="px-6 pt-7 pb-10"
-				>
+				<ScrollView contentContainerClassName="px-6 pt-7 pb-10">
 					{/* 제목 + 날짜 */}
 					<View className="items-center gap-0.5 mb-6">
 						<Text className="text-[18px] font-semibold text-content-primary tracking-[0.25px] text-center">

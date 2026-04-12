@@ -6,7 +6,7 @@ export function PartnerDashboardPage() {
 		<View className="flex-1 items-center justify-center bg-canvas gap-gutter">
 			<Text className="text-content-primary font-medium">업체 대시보드</Text>
 			<Pressable
-				onPress={() => router.push("/(protected)/(partner)/review")}
+				onPress={() => router.push("/(protected)/partner/review")}
 				className="bg-primary px-screen-m py-card-p rounded-md items-center"
 			>
 				<Text className="text-content-inverse font-semibold text-md">

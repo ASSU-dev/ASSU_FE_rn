@@ -56,9 +56,7 @@ export function StudentSuggestionPage() {
 						{count > COLLAPSED_LIMIT && (
 							<Pressable
 								onPress={() =>
-									router.push(
-										`/(protected)/(student)/benefit-all?month=${month}`,
-									)
+									router.push(`/(protected)/student/benefit-all?month=${month}`)
 								}
 							>
 								<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">

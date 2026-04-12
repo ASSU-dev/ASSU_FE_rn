@@ -166,7 +166,7 @@ export function SignupUserFlowWidget() {
 						<MediumButton
 							onPress={
 								step === "complete"
-									? () => router.replace("/(protected)/(student)/(tabs)/home")
+									? () => router.replace("/(protected)/student/(tabs)/home")
 									: goNext
 							}
 							disabled={isBottomDisabled}
