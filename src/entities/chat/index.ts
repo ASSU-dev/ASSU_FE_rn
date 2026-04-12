@@ -3,4 +3,10 @@ export type {
 	Message,
 	MessageItemProps,
 } from "./model/types";
-export { ChatRoomItem, MessageBubble, MessageItem, MessageTime } from "./ui";
+export {
+	ChatRoomItem,
+	ChatRoomList,
+	MessageBubble,
+	MessageItem,
+	MessageTime,
+} from "./ui";
