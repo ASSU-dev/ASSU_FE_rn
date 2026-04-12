@@ -22,7 +22,7 @@ function ChatRoomList({ rooms }: { rooms: ChatRoomItemProps[] }) {
 			ListEmptyComponent={
 				<EmptyState
 					title="아직 채팅 내역이 없어요"
-					description={"제휴 협력을 원하는 매장에 채팅을\n시도 할 수 있어요!"}
+					description={"운영진에게 제휴 관련 문의를\n시도할 수 있어요."}
 				/>
 			}
 			contentContainerClassName="pt-2"
