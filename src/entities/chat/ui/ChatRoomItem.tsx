@@ -14,7 +14,7 @@ export function ChatRoomItem({
 }: ChatRoomItemProps) {
 	const displayCount = unreadCount > 99 ? "99+" : unreadCount; // 100 이상은 "99+"로 표시
 	return (
-		<Pressable onPress={onPress}>
+		<Pressable onPress={onPress} disabled={!onPress}>
 			{({ pressed }) => (
 				<View
 					className="w-full h-[70px] justify-center"
