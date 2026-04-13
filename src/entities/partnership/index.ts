@@ -5,8 +5,11 @@ export { MOCK_PARTNERSHIPS } from "./model/mockPartnerships";
 export type {
 	BenefitCriteria,
 	BenefitItem,
+	DiscountBenefitItem,
+	EtcBenefitItem,
 	Partnership,
 	PartnershipContract,
+	ServiceBenefitItem,
 	ServiceType,
 } from "./model/types";
 export { SERVICE_TYPES } from "./model/types";

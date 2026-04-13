@@ -44,10 +44,7 @@ export function PartnershipProposalPage() {
 	return (
 		<FormProvider {...methods}>
 			<SafeAreaView edges={["top"]} className="flex-1 bg-canvas">
-				<KeyboardAvoidingView
-					className="flex-1"
-					behavior={Platform.OS === "ios" ? "padding" : "height"}
-				>
+				<KeyboardAvoidingView className="flex-1" behavior="padding">
 					<AppTopBar title="제휴 제안서" onBack={handleBack} />
 					{step === "step1" && (
 						<ProposalInfoStep onNext={() => setStep("step2")} />

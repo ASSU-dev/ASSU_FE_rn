@@ -23,7 +23,20 @@ export function ProposalInfoStep({ onNext }: Props) {
 
 	const companyName = useWatch({ control, name: "companyName" });
 	const proposerName = useWatch({ control, name: "proposerName" });
-	const isNextEnabled = companyName.length > 0 && proposerName.length > 0;
+	const benefits = useWatch({ control, name: "benefits" });
+
+	const isBenefitFilled = (b: (typeof benefits)[number]) => {
+		if (b.serviceType === "서비스 제공") return b.items.length > 0;
+		if (b.serviceType === "할인 혜택") return b.discountRate.trim() !== "";
+		if (b.serviceType === "기타 혜택") return b.content.trim() !== "";
+		return false;
+	};
+
+	const isNextEnabled =
+		companyName.length > 0 &&
+		proposerName.length > 0 &&
+		benefits.length > 0 &&
+		benefits.every(isBenefitFilled);
 
 	const handleNext = async () => {
 		const valid = await trigger(["companyName", "proposerName"]);

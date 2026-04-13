@@ -37,7 +37,9 @@ export function ContractUploadStep({ onComplete }: Props) {
 	const startDate = startDateField.value;
 	const endDate = endDateField.value;
 	const contractFile = contractFileField.value;
-	const isValid = !!startDate && !!endDate && !!contractFile;
+	const isDateOrderInvalid = !!startDate && !!endDate && endDate <= startDate;
+	const isValid =
+		!!startDate && !!endDate && !isDateOrderInvalid && !!contractFile;
 
 	const { dateField, tempDate, open, onChange, confirm, dismiss } =
 		useDatePicker((field, date) => {
@@ -117,6 +119,11 @@ export function ContractUploadStep({ onComplete }: Props) {
 						/>
 					</Pressable>
 				</View>
+				{isDateOrderInvalid && (
+					<Text className="text-[12px] text-red-500">
+						종료일은 시작일보다 이후여야 합니다
+					</Text>
+				)}
 
 				<Text className="text-[13px] text-content-secondary mt-[14px]">
 					제휴 계약서 등록

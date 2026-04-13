@@ -2,17 +2,35 @@ export const SERVICE_TYPES = ["서비스 제공", "할인 혜택", "기타 혜�
 export type ServiceType = (typeof SERVICE_TYPES)[number];
 export type BenefitCriteria = "금액" | "인원수";
 
-export interface BenefitItem {
+// 서비스 제공 / 할인 혜택 공통 base
+interface CriteriaBenefitBase {
 	id: string;
-	serviceType: ServiceType;
 	criteria: BenefitCriteria;
 	amount: string;
 	minCount: string;
+}
+
+export interface ServiceBenefitItem extends CriteriaBenefitBase {
+	serviceType: "서비스 제공";
 	categories: string[];
 	items: string[];
+}
+
+export interface DiscountBenefitItem extends CriteriaBenefitBase {
+	serviceType: "할인 혜택";
 	discountRate: string;
+}
+
+export interface EtcBenefitItem {
+	id: string;
+	serviceType: "기타 혜택";
 	content: string;
 }
+
+export type BenefitItem =
+	| ServiceBenefitItem
+	| DiscountBenefitItem
+	| EtcBenefitItem;
 
 export interface Partnership {
 	id: string;

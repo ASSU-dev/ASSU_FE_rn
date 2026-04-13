@@ -1,0 +1,118 @@
+import { useState } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { Pressable, Text, TextInput, View } from "react-native";
+import { CheckGrayIcon, CheckIcon } from "@/shared/assets/icons";
+import { colorTokens } from "@/shared/styles/tokens";
+import type { BenefitCriteria, ProposalFormData } from "../../model";
+
+interface Props {
+	index: number;
+}
+
+export function CriteriaFields({ index }: Props) {
+	const { control, setValue } = useFormContext<ProposalFormData>();
+	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const criteria = useWatch({ control, name: `benefits.${index}.criteria` });
+
+	const borderColor = (field: string) =>
+		focusedField === field ? colorTokens.primary : "#e0e0e0";
+
+	const selectCriteria = (value: BenefitCriteria) => {
+		setValue(`benefits.${index}.criteria`, value);
+		setValue(`benefits.${index}.amount`, "");
+		setValue(`benefits.${index}.minCount`, "");
+	};
+
+	return (
+		<>
+			<View className="flex-row items-center">
+				<Text className="w-[77px] text-[13px] text-content-primary">
+					제공 기준
+				</Text>
+				<View className="flex-row gap-[12px]">
+					{(["금액", "인원수"] as BenefitCriteria[]).map((option) => {
+						const selected = criteria === option;
+						return (
+							<Pressable
+								key={option}
+								onPress={() => selectCriteria(option)}
+								className="flex-row items-center gap-[5px]"
+							>
+								{selected ? (
+									<CheckIcon width={15} height={15} />
+								) : (
+									<CheckGrayIcon width={15} height={15} />
+								)}
+								<Text className="text-[13px] text-content-primary">
+									{option}
+								</Text>
+							</Pressable>
+						);
+					})}
+				</View>
+			</View>
+
+			{criteria === "금액" && (
+				<View className="flex-row items-center gap-[8px]">
+					<View className="w-[77px]" />
+					<Controller
+						control={control}
+						name={`benefits.${index}.amount`}
+						render={({ field: { value, onChange } }) => (
+							<TextInput
+								value={value ? value.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
+								onChangeText={(v) => onChange(v.replace(/,/g, ""))}
+								onFocus={() => setFocusedField("amount")}
+								onBlur={() => setFocusedField(null)}
+								placeholder="금액 입력"
+								placeholderTextColor={colorTokens.contentSecondary}
+								keyboardType="numeric"
+								textAlign="right"
+								className="flex-1 text-[15px] text-content-primary px-[4px]"
+								style={{
+									borderBottomWidth: 0.5,
+									borderBottomColor: borderColor("amount"),
+									height: 36,
+								}}
+							/>
+						)}
+					/>
+					<Text className="text-[13px] text-content-secondary w-[88px]">
+						원 이상일 경우,
+					</Text>
+				</View>
+			)}
+
+			{criteria === "인원수" && (
+				<View className="flex-row items-center gap-[8px]">
+					<View className="w-[77px]" />
+					<Controller
+						control={control}
+						name={`benefits.${index}.minCount`}
+						render={({ field: { value, onChange } }) => (
+							<TextInput
+								value={value}
+								onChangeText={onChange}
+								onFocus={() => setFocusedField("minCount")}
+								onBlur={() => setFocusedField(null)}
+								placeholder="인원 입력"
+								placeholderTextColor={colorTokens.contentSecondary}
+								keyboardType="numeric"
+								textAlign="right"
+								className="flex-1 text-[15px] text-content-primary px-[4px]"
+								style={{
+									borderBottomWidth: 0.5,
+									borderBottomColor: borderColor("minCount"),
+									height: 36,
+								}}
+							/>
+						)}
+					/>
+					<Text className="text-[13px] text-content-secondary w-[88px]">
+						인 이상일 경우,
+					</Text>
+				</View>
+			)}
+		</>
+	);
+}
