@@ -4,6 +4,7 @@ import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { ProposalFormData } from "../../model";
+import { useFocusBorder } from "../../model";
 
 interface Props {
 	index: number;
@@ -11,7 +12,7 @@ interface Props {
 
 export function ServiceBenefitFields({ index }: Props) {
 	const { control, setValue } = useFormContext<ProposalFormData>();
-	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const { borderColor, onFocus, onBlur } = useFocusBorder();
 	const [showItemInput, setShowItemInput] = useState(false);
 	const [itemInput, setItemInput] = useState("");
 
@@ -20,9 +21,6 @@ export function ServiceBenefitFields({ index }: Props) {
 		name: `benefits.${index}.categories`,
 	});
 	const items = useWatch({ control, name: `benefits.${index}.items` });
-
-	const borderColor = (field: string) =>
-		focusedField === field ? colorTokens.primary : "#e0e0e0";
 
 	const removeCategory = (idx: number) => {
 		setValue(
@@ -61,8 +59,8 @@ export function ServiceBenefitFields({ index }: Props) {
 							<TextInput
 								value={value[0] ?? ""}
 								onChangeText={(v) => onChange(v ? [v] : [])}
-								onFocus={() => setFocusedField("category")}
-								onBlur={() => setFocusedField(null)}
+								onFocus={onFocus("category")}
+								onBlur={onBlur}
 								placeholder="카테고리를 입력해주세요"
 								placeholderTextColor={colorTokens.contentSecondary}
 								textAlign="center"
@@ -82,10 +80,14 @@ export function ServiceBenefitFields({ index }: Props) {
 							<Pressable
 								key={`category-${cat}`}
 								onPress={() => removeCategory(id + 1)}
-								className="flex-row items-center bg-[#e5f6fe] rounded-full px-[8px] py-[4px] gap-[3px]"
+								className="flex-row items-center bg-primary-tint rounded-full px-[8px] py-[4px] gap-[3px]"
 							>
-								<Text className="text-[11px] text-[#66a4fe]">{cat}</Text>
-								<Ionicons name="close" size={10} color="#66a4fe" />
+								<Text className="text-[11px] text-sub">{cat}</Text>
+								<Ionicons
+									name="close"
+									size={10}
+									color={colorTokens.primaryOnDark}
+								/>
 							</Pressable>
 						))}
 					</View>
@@ -105,10 +107,14 @@ export function ServiceBenefitFields({ index }: Props) {
 							<Pressable
 								key={`item-${item}`}
 								onPress={() => removeItem(id)}
-								className="flex-row items-center bg-[#e5f6fe] rounded-full px-[8px] py-[4px] gap-[3px]"
+								className="flex-row items-center bg-primary-tint rounded-full px-[8px] py-[4px] gap-[3px]"
 							>
-								<Text className="text-[11px] text-[#66a4fe]">{item}</Text>
-								<Ionicons name="close" size={10} color="#66a4fe" />
+								<Text className="text-[11px] text-sub">{item}</Text>
+								<Ionicons
+									name="close"
+									size={10}
+									color={colorTokens.primaryOnDark}
+								/>
 							</Pressable>
 						))}
 						{!showItemInput && (
@@ -126,8 +132,8 @@ export function ServiceBenefitFields({ index }: Props) {
 								value={itemInput}
 								onChangeText={setItemInput}
 								onSubmitEditing={addItem}
-								onFocus={() => setFocusedField("itemInput")}
-								onBlur={() => setFocusedField(null)}
+								onFocus={onFocus("itemInput")}
+								onBlur={onBlur}
 								placeholder="항목을 입력해주세요"
 								placeholderTextColor={colorTokens.contentSecondary}
 								returnKeyType="done"

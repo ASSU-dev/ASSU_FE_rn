@@ -4,11 +4,20 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { Pressable, Text, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { ProposalFormData, ServiceType } from "../model";
-import { SERVICE_TYPES } from "../model";
+import { DEFAULT_BENEFIT_ITEM, SERVICE_TYPES } from "../model";
 import { CriteriaFields } from "./benefit-fields/CriteriaFields";
 import { DiscountBenefitFields } from "./benefit-fields/DiscountBenefitFields";
 import { EtcBenefitFields } from "./benefit-fields/EtcBenefitFields";
 import { ServiceBenefitFields } from "./benefit-fields/ServiceBenefitFields";
+
+const BENEFIT_CONFIG: Record<
+	ServiceType,
+	{ showCriteria: boolean; Fields: React.ComponentType<{ index: number }> }
+> = {
+	"서비스 제공": { showCriteria: true, Fields: ServiceBenefitFields },
+	"할인 혜택": { showCriteria: true, Fields: DiscountBenefitFields },
+	"기타 혜택": { showCriteria: false, Fields: EtcBenefitFields },
+};
 
 interface Props {
 	index: number;
@@ -16,7 +25,7 @@ interface Props {
 }
 
 export function BenefitCard({ index, onRemove }: Props) {
-	const { control, setValue } = useFormContext<ProposalFormData>();
+	const { control, setValue, getValues } = useFormContext<ProposalFormData>();
 	const [showServiceTypeMenu, setShowServiceTypeMenu] = useState(false);
 
 	const serviceType = useWatch({
@@ -25,19 +34,17 @@ export function BenefitCard({ index, onRemove }: Props) {
 	});
 
 	const selectServiceType = (type: ServiceType) => {
-		setValue(`benefits.${index}.serviceType`, type);
-		setValue(`benefits.${index}.criteria`, "금액");
-		setValue(`benefits.${index}.amount`, "");
-		setValue(`benefits.${index}.minCount`, "");
-		setValue(`benefits.${index}.categories`, []);
-		setValue(`benefits.${index}.items`, []);
-		setValue(`benefits.${index}.discountRate`, "");
-		setValue(`benefits.${index}.content`, "");
+		const currentId = getValues(`benefits.${index}.id`);
+		setValue(`benefits.${index}`, {
+			...DEFAULT_BENEFIT_ITEM,
+			id: currentId,
+			serviceType: type,
+		});
 		setShowServiceTypeMenu(false);
 	};
 
 	return (
-		<View className="bg-[#f4f4f5] rounded-lg p-[10px] gap-[15px]">
+		<View className="bg-neutral rounded-lg p-[10px] gap-[15px]">
 			{/* 헤더: 혜택 타입 선택 + 삭제 */}
 			<View className="flex-row items-center justify-between">
 				<View>
@@ -78,18 +85,15 @@ export function BenefitCard({ index, onRemove }: Props) {
 			<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
 
 			{/* 혜택 타입별 필드 */}
-			{serviceType === "기타 혜택" ? (
-				<EtcBenefitFields index={index} />
-			) : (
-				<>
-					<CriteriaFields index={index} />
-					{serviceType === "할인 혜택" ? (
-						<DiscountBenefitFields index={index} />
-					) : (
-						<ServiceBenefitFields index={index} />
-					)}
-				</>
-			)}
+			{(() => {
+				const { showCriteria, Fields } = BENEFIT_CONFIG[serviceType];
+				return (
+					<>
+						{showCriteria && <CriteriaFields index={index} />}
+						<Fields index={index} />
+					</>
+				);
+			})()}
 		</View>
 	);
 }

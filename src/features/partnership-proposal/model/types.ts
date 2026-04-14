@@ -76,3 +76,15 @@ export const proposalSchema = z.object({
 });
 
 export type ProposalFormData = z.infer<typeof proposalSchema>;
+
+export const DEFAULT_BENEFIT_ITEM: BenefitItemFormData = {
+	id: "",
+	serviceType: "서비스 제공",
+	criteria: "금액",
+	amount: "",
+	minCount: "",
+	categories: [],
+	items: [],
+	discountRate: "",
+	content: "",
+};

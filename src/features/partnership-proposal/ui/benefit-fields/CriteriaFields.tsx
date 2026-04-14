@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { CheckGrayIcon, CheckIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { BenefitCriteria, ProposalFormData } from "../../model";
+import { useFocusBorder } from "../../model";
 
 interface Props {
 	index: number;
@@ -11,11 +11,8 @@ interface Props {
 
 export function CriteriaFields({ index }: Props) {
 	const { control, setValue } = useFormContext<ProposalFormData>();
-	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const { borderColor, onFocus, onBlur } = useFocusBorder();
 	const criteria = useWatch({ control, name: `benefits.${index}.criteria` });
-
-	const borderColor = (field: string) =>
-		focusedField === field ? colorTokens.primary : "#e0e0e0";
 
 	const selectCriteria = (value: BenefitCriteria) => {
 		setValue(`benefits.${index}.criteria`, value);
@@ -62,8 +59,8 @@ export function CriteriaFields({ index }: Props) {
 							<TextInput
 								value={value ? value.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
 								onChangeText={(v) => onChange(v.replace(/,/g, ""))}
-								onFocus={() => setFocusedField("amount")}
-								onBlur={() => setFocusedField(null)}
+								onFocus={onFocus("amount")}
+								onBlur={onBlur}
 								placeholder="금액 입력"
 								placeholderTextColor={colorTokens.contentSecondary}
 								keyboardType="numeric"
@@ -93,8 +90,8 @@ export function CriteriaFields({ index }: Props) {
 							<TextInput
 								value={value}
 								onChangeText={onChange}
-								onFocus={() => setFocusedField("minCount")}
-								onBlur={() => setFocusedField(null)}
+								onFocus={onFocus("minCount")}
+								onBlur={onBlur}
 								placeholder="인원 입력"
 								placeholderTextColor={colorTokens.contentSecondary}
 								keyboardType="numeric"

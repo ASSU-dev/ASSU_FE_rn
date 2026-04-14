@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { Text, TextInput, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { ProposalFormData } from "../../model";
+import { useFocusBorder } from "../../model";
 
 interface Props {
 	index: number;
@@ -10,10 +10,7 @@ interface Props {
 
 export function DiscountBenefitFields({ index }: Props) {
 	const { control } = useFormContext<ProposalFormData>();
-	const [focusedField, setFocusedField] = useState<string | null>(null);
-
-	const borderColor = (field: string) =>
-		focusedField === field ? colorTokens.primary : "#e0e0e0";
+	const { borderColor, onFocus, onBlur } = useFocusBorder();
 
 	return (
 		<View className="flex-row items-center gap-[8px]">
@@ -25,8 +22,8 @@ export function DiscountBenefitFields({ index }: Props) {
 					<TextInput
 						value={value}
 						onChangeText={onChange}
-						onFocus={() => setFocusedField("discountRate")}
-						onBlur={() => setFocusedField(null)}
+						onFocus={onFocus("discountRate")}
+						onBlur={onBlur}
 						placeholder="0"
 						placeholderTextColor={colorTokens.contentSecondary}
 						keyboardType="numeric"

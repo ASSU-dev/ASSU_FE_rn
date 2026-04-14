@@ -1,22 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import * as DocumentPicker from "expo-document-picker";
 import { useController, useFormContext } from "react-hook-form";
-import {
-	Alert,
-	Modal,
-	Platform,
-	Pressable,
-	ScrollView,
-	Text,
-	View,
-} from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UploadFilesIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import type { ProposalFormData } from "../model";
-import { useDatePicker } from "../model";
+import { DateRangeField } from "./DateRangeField";
 
 type Props = { onComplete: () => void };
 
@@ -41,12 +32,6 @@ export function ContractUploadStep({ onComplete }: Props) {
 	const isValid =
 		!!startDate && !!endDate && !isDateOrderInvalid && !!contractFile;
 
-	const { dateField, tempDate, open, onChange, confirm, dismiss } =
-		useDatePicker((field, date) => {
-			if (field === "startDate") startDateField.onChange(date);
-			else endDateField.onChange(date);
-		});
-
 	const pickFile = async () => {
 		try {
 			const result = await DocumentPicker.getDocumentAsync({
@@ -63,16 +48,13 @@ export function ContractUploadStep({ onComplete }: Props) {
 				uri: asset.uri,
 				name: asset.name ?? "파일",
 			});
-		} catch (err) {
+		} catch {
 			Alert.alert(
 				"오류",
 				"파일 선택 중 문제가 발생했습니다. 다시 시도해 주세요.",
 			);
 		}
 	};
-
-	const formatDate = (d: string | null) =>
-		d ? d.replace(/-/g, ". ") : "YYYY. MM. DD";
 
 	return (
 		<View className="flex-1">
@@ -84,52 +66,19 @@ export function ContractUploadStep({ onComplete }: Props) {
 				<Text className="text-[13px] text-content-secondary">
 					제휴 기간 선택
 				</Text>
-				<View className="flex-row items-center gap-[8px]">
-					<Pressable
-						className="bg-[#f4f4f5] rounded-lg flex-1 p-[15px] flex-row justify-between items-center"
-						onPress={() => open("startDate", startDate)}
-					>
-						<Text
-							className={`text-[14px] ${startDate ? "text-content-primary" : "text-content-secondary"}`}
-						>
-							{formatDate(startDate)}
-						</Text>
-						<Ionicons
-							name="calendar-outline"
-							size={20}
-							color={colorTokens.contentSecondary}
-						/>
-					</Pressable>
-
-					<Text className="text-[14px] text-content-secondary">~</Text>
-
-					<Pressable
-						className="bg-[#f4f4f5] rounded-lg flex-1 p-[15px] flex-row justify-between items-center"
-						onPress={() => open("endDate", endDate)}
-					>
-						<Text
-							className={`text-[14px] ${endDate ? "text-content-primary" : "text-content-secondary"}`}
-						>
-							{formatDate(endDate)}
-						</Text>
-						<Ionicons
-							name="calendar-outline"
-							size={20}
-							color={colorTokens.contentSecondary}
-						/>
-					</Pressable>
-				</View>
-				{isDateOrderInvalid && (
-					<Text className="text-[12px] text-red-500">
-						종료일은 시작일보다 이후여야 합니다
-					</Text>
-				)}
+				<DateRangeField
+					startDate={startDate}
+					endDate={endDate}
+					onStartDateChange={startDateField.onChange}
+					onEndDateChange={endDateField.onChange}
+					isDateOrderInvalid={isDateOrderInvalid}
+				/>
 
 				<Text className="text-[13px] text-content-secondary mt-[14px]">
 					제휴 계약서 등록
 				</Text>
 				<Pressable
-					className="bg-[#f4f4f5] rounded-lg p-[15px] flex-row justify-between items-center"
+					className="bg-neutral rounded-lg p-[15px] flex-row justify-between items-center"
 					onPress={pickFile}
 				>
 					<Text className="text-[17px] text-content-secondary flex-1 mr-2">
@@ -142,40 +91,6 @@ export function ContractUploadStep({ onComplete }: Props) {
 					)}
 				</Pressable>
 			</ScrollView>
-
-			{Platform.OS === "android" && dateField && (
-				<DateTimePicker
-					value={tempDate}
-					mode="date"
-					display="calendar"
-					onChange={onChange}
-				/>
-			)}
-
-			{Platform.OS === "ios" && (
-				<Modal transparent animationType="slide" visible={!!dateField}>
-					<Pressable className="flex-1 bg-black/40" onPress={dismiss} />
-					<View className="bg-white rounded-t-2xl px-4 pb-6 pt-2">
-						<View className="flex-row justify-between items-center py-3">
-							<Pressable onPress={dismiss}>
-								<Text className="text-[16px] text-content-secondary">취소</Text>
-							</Pressable>
-							<Pressable onPress={confirm}>
-								<Text className="text-[16px] text-primary font-semibold">
-									확인
-								</Text>
-							</Pressable>
-						</View>
-						<DateTimePicker
-							value={tempDate}
-							mode="date"
-							display="spinner"
-							onChange={onChange}
-							style={{ height: 200 }}
-						/>
-					</View>
-				</Modal>
-			)}
 
 			<View
 				className="items-center"
