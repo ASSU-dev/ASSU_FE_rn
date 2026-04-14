@@ -31,7 +31,7 @@ export function ServiceBenefitFields({ index }: Props) {
 
 	const addItem = () => {
 		const trimmed = itemInput.trim();
-		if (!trimmed) return;
+		if (!trimmed || items.includes(trimmed)) return;
 		setValue(`benefits.${index}.items`, [...items, trimmed]);
 		setItemInput("");
 		setShowItemInput(false);

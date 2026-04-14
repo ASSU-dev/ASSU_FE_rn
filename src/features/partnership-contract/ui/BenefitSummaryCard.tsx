@@ -25,8 +25,8 @@ export function BenefitSummaryCard({ benefit }: Props) {
 
 	const criterionText =
 		benefit.criteria === "인원수"
-			? `${benefit.minCount}인`
-			: `${Number(benefit.amount).toLocaleString()}원`;
+			? `${benefit.minCount}`
+			: `${Number(benefit.amount).toLocaleString()}`;
 
 	const conditionSuffix =
 		benefit.criteria === "인원수" ? "인 이상일 경우" : "원 이상일 경우";
