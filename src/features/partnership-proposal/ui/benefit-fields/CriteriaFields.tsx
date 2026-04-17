@@ -11,7 +11,7 @@ interface Props {
 
 export function CriteriaFields({ index }: Props) {
 	const { control, setValue } = useFormContext<ProposalFormData>();
-	const { borderColor, onFocus, onBlur } = useFocusBorder();
+	const { onFocus, onBlur } = useFocusBorder();
 	const criteria = useWatch({ control, name: `benefits.${index}.criteria` });
 
 	const selectCriteria = (value: BenefitCriteria) => {
