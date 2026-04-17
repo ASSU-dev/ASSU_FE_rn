@@ -46,10 +46,12 @@ export function ServiceBenefitFields({ index }: Props) {
 
 	return (
 		<>
+			<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
+
 			{/* 카테고리 */}
 			<View className="gap-[8px]">
 				<View className="flex-row items-center gap-[8px]">
-					<Text className="text-[13px] text-content-secondary">
+					<Text className="text-[13px] text-content-primary">
 						카테고리 입력
 					</Text>
 					<Controller
@@ -93,8 +95,6 @@ export function ServiceBenefitFields({ index }: Props) {
 					</View>
 				)}
 			</View>
-
-			<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
 
 			{/* 제공 항목 */}
 			<View className="flex-row items-start gap-[8px]">

@@ -38,6 +38,13 @@ export function ProposalInfoStep({ onNext }: Props) {
 		benefits.length > 0 &&
 		benefits.every(isBenefitFilled);
 
+	const getGuideMessage = () => {
+		if (!companyName.length) return "제휴 제안업체를 입력해주세요";
+		if (!proposerName.length) return "제휴 제안인을 입력해주세요";
+		if (!benefits.length) return "혜택을 추가해주세요";
+		return "혜택 내용을 모두 입력해주세요";
+	};
+
 	const handleNext = async () => {
 		const valid = await trigger(["companyName", "proposerName"]);
 		if (valid) onNext();
@@ -47,7 +54,7 @@ export function ProposalInfoStep({ onNext }: Props) {
 		<View className="flex-1">
 			<ScrollView
 				className="flex-1"
-				contentContainerClassName="px-[24px] gap-[25px] pb-4"
+				contentContainerClassName="px-[24px] pt-[24px] gap-[25px] pb-4"
 				keyboardShouldPersistTaps="handled"
 			>
 				<Controller
@@ -74,6 +81,13 @@ export function ProposalInfoStep({ onNext }: Props) {
 						/>
 					)}
 				/>
+				{fields.map((field, index) => (
+					<BenefitCard
+						key={field.id}
+						index={index}
+						onRemove={() => remove(index)}
+					/>
+				))}
 				<Pressable
 					onPress={() =>
 						append({ ...DEFAULT_BENEFIT_ITEM, id: Date.now().toString() })
@@ -82,13 +96,6 @@ export function ProposalInfoStep({ onNext }: Props) {
 				>
 					<Text className="text-[11px] text-sub">혜택 추가하기</Text>
 				</Pressable>
-				{fields.map((field, index) => (
-					<BenefitCard
-						key={field.id}
-						index={index}
-						onRemove={() => remove(index)}
-					/>
-				))}
 			</ScrollView>
 
 			<View
@@ -96,7 +103,7 @@ export function ProposalInfoStep({ onNext }: Props) {
 				style={{ paddingBottom: Math.max(bottom, 16) }}
 			>
 				<MediumButton disabled={!isNextEnabled} onPress={handleNext}>
-					다음
+					{isNextEnabled ? "다음" : getGuideMessage()}
 				</MediumButton>
 			</View>
 		</View>

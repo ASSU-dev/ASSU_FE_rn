@@ -15,6 +15,13 @@ interface Props {
 
 const formatDisplay = (d: string | null) => (d ? formatDate(d) : "YYYY.MM.DD");
 
+const getEndDateMinimum = (startDate: string | null): Date | undefined => {
+	if (!startDate) return undefined;
+	const d = new Date(startDate);
+	d.setDate(d.getDate() + 1);
+	return d;
+};
+
 export function DateRangeField({
 	startDate,
 	endDate,
@@ -27,6 +34,8 @@ export function DateRangeField({
 			if (field === "startDate") onStartDateChange(date);
 			else onEndDateChange(date);
 		});
+
+	const endDateMinimum = getEndDateMinimum(startDate);
 
 	return (
 		<>
@@ -78,6 +87,7 @@ export function DateRangeField({
 					mode="date"
 					display="calendar"
 					onChange={onChange}
+					minimumDate={dateField === "endDate" ? endDateMinimum : undefined}
 				/>
 			)}
 
@@ -100,6 +110,7 @@ export function DateRangeField({
 							mode="date"
 							display="spinner"
 							onChange={onChange}
+							minimumDate={dateField === "endDate" ? endDateMinimum : undefined}
 							style={{ height: 200 }}
 						/>
 					</View>

@@ -1,5 +1,5 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Keyboard, Pressable, Text, TextInput, View } from "react-native";
 import { CheckGrayIcon, CheckIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { BenefitCriteria, ProposalFormData } from "../../model";
@@ -61,16 +61,15 @@ export function CriteriaFields({ index }: Props) {
 								onChangeText={(v) => onChange(v.replace(/,/g, ""))}
 								onFocus={onFocus("amount")}
 								onBlur={onBlur}
+								onSubmitEditing={() => Keyboard.dismiss()}
 								placeholder="금액 입력"
 								placeholderTextColor={colorTokens.contentSecondary}
 								keyboardType="numeric"
+								returnKeyType="done"
+								returnKeyLabel="완료"
 								textAlign="right"
 								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{
-									borderBottomWidth: 0.5,
-									borderBottomColor: borderColor("amount"),
-									height: 36,
-								}}
+								style={{ height: 36 }}
 							/>
 						)}
 					/>
@@ -92,16 +91,15 @@ export function CriteriaFields({ index }: Props) {
 								onChangeText={onChange}
 								onFocus={onFocus("minCount")}
 								onBlur={onBlur}
+								onSubmitEditing={() => Keyboard.dismiss()}
 								placeholder="인원 입력"
 								placeholderTextColor={colorTokens.contentSecondary}
-								keyboardType="numeric"
+								keyboardType="number-pad"
+								returnKeyType="done"
+								returnKeyLabel="완료"
 								textAlign="right"
 								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{
-									borderBottomWidth: 0.5,
-									borderBottomColor: borderColor("minCount"),
-									height: 36,
-								}}
+								style={{ height: 36 }}
 							/>
 						)}
 					/>

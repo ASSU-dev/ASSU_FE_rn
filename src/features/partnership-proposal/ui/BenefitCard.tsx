@@ -44,9 +44,9 @@ export function BenefitCard({ index, onRemove }: Props) {
 	};
 
 	return (
-		<View className="bg-neutral rounded-lg p-[10px] gap-[15px]">
+		<View className="bg-neutral rounded-lg px-[20px]">
 			{/* 헤더: 혜택 타입 선택 + 삭제 */}
-			<View className="flex-row items-center justify-between">
+			<View className="py-[15px] flex-row items-center justify-between">
 				<View>
 					<Pressable
 						onPress={() => setShowServiceTypeMenu((v) => !v)}
@@ -82,18 +82,18 @@ export function BenefitCard({ index, onRemove }: Props) {
 				</Pressable>
 			</View>
 
-			<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
-
 			{/* 혜택 타입별 필드 */}
-			{(() => {
-				const { showCriteria, Fields } = BENEFIT_CONFIG[serviceType];
-				return (
-					<>
-						{showCriteria && <CriteriaFields index={index} />}
-						<Fields index={index} />
-					</>
-				);
-			})()}
+			<View className="pt-[24px] pb-[20px] gap-[15px] px-[10px]">
+				{(() => {
+					const { showCriteria, Fields } = BENEFIT_CONFIG[serviceType];
+					return (
+						<>
+							{showCriteria && <CriteriaFields index={index} />}
+							<Fields index={index} />
+						</>
+					);
+				})()}
+			</View>
 		</View>
 	);
 }

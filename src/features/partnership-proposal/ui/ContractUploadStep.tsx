@@ -60,7 +60,7 @@ export function ContractUploadStep({ onComplete }: Props) {
 		<View className="flex-1">
 			<ScrollView
 				className="flex-1"
-				contentContainerClassName="px-[24px] gap-[10px]"
+				contentContainerClassName="px-[24px] pt-[24px] gap-[10px]"
 				keyboardShouldPersistTaps="handled"
 			>
 				<Text className="text-[13px] text-content-secondary">

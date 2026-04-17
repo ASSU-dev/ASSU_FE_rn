@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { KeyboardAvoidingView } from "react-native";
+import { KeyboardAvoidingView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	ContractUploadStep,
@@ -46,6 +46,13 @@ export function PartnershipProposalPage() {
 			<SafeAreaView edges={["top"]} className="flex-1 bg-canvas">
 				<KeyboardAvoidingView className="flex-1" behavior="padding">
 					<AppTopBar title="제휴 제안서" onBack={handleBack} />
+					{/* 스텝 인디케이터 */}
+					<View className="flex-row px-[24px] gap-[6px] pb-3">
+						<View className="h-[3px] flex-1 rounded-full bg-primary" />
+						<View
+							className={`h-[3px] flex-1 rounded-full ${step === "step2" ? "bg-primary" : "bg-neutral"}`}
+						/>
+					</View>
 					{step === "step1" && (
 						<ProposalInfoStep onNext={() => setStep("step2")} />
 					)}
