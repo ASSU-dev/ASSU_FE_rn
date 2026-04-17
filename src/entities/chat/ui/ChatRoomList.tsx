@@ -1,4 +1,4 @@
-import { FlatList, Pressable } from "react-native";
+import { FlatList } from "react-native";
 
 import { EmptyState } from "@/shared/ui/empty-state";
 
@@ -21,9 +21,7 @@ export function ChatRoomList({ rooms, onPressRoom }: ChatRoomListProps) {
 				index,
 			})}
 			renderItem={({ item }) => (
-				<Pressable onPress={() => onPressRoom?.(item.id)}>
-					<ChatRoomItem {...item} />
-				</Pressable>
+				<ChatRoomItem {...item} onPress={() => onPressRoom?.(item.id)} />
 			)}
 			ListEmptyComponent={
 				<EmptyState
