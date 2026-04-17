@@ -1,12 +1,12 @@
 import { Pressable, Text, View } from "react-native";
-import { QRIcon } from "@/shared/assets/icons";
+import { QrIcon } from "@/shared/assets/icons";
 import { InfoLinkText } from "@/shared/ui/info";
 
 export const QRScannerButton = () => {
 	return (
 		<Pressable className="bg-gray-100 rounded-2xl p-6 flex-row items-center">
 			<View>
-				<QRIcon width={40} height={40} className="pl-2" />
+				<QrIcon width={40} height={40} className="pl-2" />
 			</View>
 			<View>
 				<Text className="text-lg font-bold text-slate-900">
