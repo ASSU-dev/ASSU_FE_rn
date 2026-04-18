@@ -33,6 +33,8 @@ export function BenefitCard({ index, onRemove }: Props) {
 		name: `benefits.${index}.serviceType`,
 	});
 
+	const { showCriteria, Fields } = BENEFIT_CONFIG[serviceType];
+
 	const selectServiceType = (type: ServiceType) => {
 		const currentId = getValues(`benefits.${index}.id`);
 		setValue(`benefits.${index}`, {
@@ -84,15 +86,8 @@ export function BenefitCard({ index, onRemove }: Props) {
 
 			{/* 혜택 타입별 필드 */}
 			<View className="pt-[24px] pb-[20px] gap-[15px] px-[10px]">
-				{(() => {
-					const { showCriteria, Fields } = BENEFIT_CONFIG[serviceType];
-					return (
-						<>
-							{showCriteria && <CriteriaFields index={index} />}
-							<Fields index={index} />
-						</>
-					);
-				})()}
+				{showCriteria && <CriteriaFields index={index} />}
+				<Fields index={index} />
 			</View>
 		</View>
 	);

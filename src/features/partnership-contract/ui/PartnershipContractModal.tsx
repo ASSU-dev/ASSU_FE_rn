@@ -6,9 +6,15 @@ interface Props {
 	visible: boolean;
 	data: PartnershipContract | null;
 	onClose: () => void;
+	onQrPress: () => void;
 }
 
-export function PartnershipContractModal({ visible, data, onClose }: Props) {
+export function PartnershipContractModal({
+	visible,
+	data,
+	onClose,
+	onQrPress,
+}: Props) {
 	if (!data) return null;
 
 	return (
@@ -19,7 +25,11 @@ export function PartnershipContractModal({ visible, data, onClose }: Props) {
 			statusBarTranslucent
 			onRequestClose={onClose}
 		>
-			<PartnershipContractContent data={data} onClose={onClose} />
+			<PartnershipContractContent
+				data={data}
+				onClose={onClose}
+				onQrPress={onQrPress}
+			/>
 		</Modal>
 	);
 }

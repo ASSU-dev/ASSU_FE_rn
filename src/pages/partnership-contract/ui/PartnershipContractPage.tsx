@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MOCK_PARTNERSHIP_CONTRACTS } from "@/entities/partnership";
+import { MOCK_PARTNERSHIP_CONTRACTS } from "@/entities/partnership/model/mockPartnershipContracts";
 import { PartnershipContractContent } from "@/features/partnership-contract";
 import { EmptyState } from "@/shared/ui/empty-state";
 
@@ -19,6 +19,15 @@ export function PartnershipContractPage() {
 	}
 
 	return (
-		<PartnershipContractContent data={contract} onClose={() => router.back()} />
+		<PartnershipContractContent
+			data={contract}
+			onClose={() => router.back()}
+			onQrPress={() =>
+				router.push({
+					pathname: "/qr-view/[id]",
+					params: { id: contract.id },
+				})
+			}
+		/>
 	);
 }

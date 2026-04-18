@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { PartnershipContract } from "@/entities/partnership";
@@ -10,6 +9,7 @@ import { BenefitSummaryCard } from "./BenefitSummaryCard";
 interface Props {
 	data: PartnershipContract;
 	onClose: () => void;
+	onQrPress: () => void;
 }
 
 function InfoField({ label, value }: { label: string; value: string }) {
@@ -26,7 +26,7 @@ function InfoField({ label, value }: { label: string; value: string }) {
 			<View
 				style={{
 					height: 0.5,
-					backgroundColor: "#e0e0e0",
+					backgroundColor: colorTokens.neutralVariant,
 					marginHorizontal: 15,
 				}}
 			/>
@@ -34,7 +34,11 @@ function InfoField({ label, value }: { label: string; value: string }) {
 	);
 }
 
-export function PartnershipContractContent({ data, onClose }: Props) {
+export function PartnershipContractContent({
+	data,
+	onClose,
+	onQrPress,
+}: Props) {
 	const insets = useSafeAreaInsets();
 
 	return (
@@ -111,9 +115,7 @@ export function PartnershipContractContent({ data, onClose }: Props) {
 			>
 				<Pressable
 					className="flex-1 border-[0.5px] border-content-primary rounded-xl items-center justify-center py-[18px]"
-					onPress={() =>
-						router.push({ pathname: "/qr-view/[id]", params: { id: data.id } })
-					}
+					onPress={onQrPress}
 				>
 					<Text className="text-[20px] font-medium text-content-primary">
 						QR저장

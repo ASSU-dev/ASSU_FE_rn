@@ -16,18 +16,7 @@ export function ServiceBenefitFields({ index }: Props) {
 	const [showItemInput, setShowItemInput] = useState(false);
 	const [itemInput, setItemInput] = useState("");
 
-	const categories = useWatch({
-		control,
-		name: `benefits.${index}.categories`,
-	});
 	const items = useWatch({ control, name: `benefits.${index}.items` });
-
-	const removeCategory = (idx: number) => {
-		setValue(
-			`benefits.${index}.categories`,
-			categories.filter((_, i) => i !== idx),
-		);
-	};
 
 	const addItem = () => {
 		const trimmed = itemInput.trim();
@@ -46,7 +35,9 @@ export function ServiceBenefitFields({ index }: Props) {
 
 	return (
 		<>
-			<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
+			<View
+				style={{ height: 0.5, backgroundColor: colorTokens.neutralVariant }}
+			/>
 
 			{/* 카테고리 */}
 			<View className="gap-[8px]">
@@ -76,24 +67,6 @@ export function ServiceBenefitFields({ index }: Props) {
 						)}
 					/>
 				</View>
-				{categories.length > 1 && (
-					<View className="flex-row flex-wrap gap-[6px]">
-						{categories.slice(1).map((cat, id) => (
-							<Pressable
-								key={`category-${cat}`}
-								onPress={() => removeCategory(id + 1)}
-								className="flex-row items-center bg-primary-tint rounded-full px-[8px] py-[4px] gap-[3px]"
-							>
-								<Text className="text-[11px] text-sub">{cat}</Text>
-								<Ionicons
-									name="close"
-									size={10}
-									color={colorTokens.primaryOnDark}
-								/>
-							</Pressable>
-						))}
-					</View>
-				)}
 			</View>
 
 			{/* 제공 항목 */}
@@ -103,10 +76,10 @@ export function ServiceBenefitFields({ index }: Props) {
 				</Text>
 				<View className="flex-1 gap-[8px]">
 					<View className="flex-row flex-wrap items-center gap-[6px]">
-						{items.map((item, id) => (
+						{items.map((item, idx) => (
 							<Pressable
-								key={`item-${item}`}
-								onPress={() => removeItem(id)}
+								key={item}
+								onPress={() => removeItem(idx)}
 								className="flex-row items-center bg-primary-tint rounded-full px-[8px] py-[4px] gap-[3px]"
 							>
 								<Text className="text-[11px] text-sub">{item}</Text>

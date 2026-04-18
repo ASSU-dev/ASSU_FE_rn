@@ -1,10 +1,8 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import {
-	MOCK_PARTNERSHIP_CONTRACTS,
-	MOCK_PARTNERSHIPS,
-} from "@/entities/partnership";
+import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
+import { MOCK_PARTNERSHIP_CONTRACTS } from "@/entities/partnership/model/mockPartnershipContracts";
 import { PartnershipContractModal } from "@/features/partnership-contract";
 import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
@@ -74,6 +72,14 @@ export function PartnershipListPage() {
 				visible={selectedContractId !== null}
 				data={selectedContract}
 				onClose={() => setSelectedContractId(null)}
+				onQrPress={() => {
+					if (selectedContractId) {
+						router.push({
+							pathname: "/qr-view/[id]",
+							params: { id: selectedContractId },
+						});
+					}
+				}}
 			/>
 		</>
 	);

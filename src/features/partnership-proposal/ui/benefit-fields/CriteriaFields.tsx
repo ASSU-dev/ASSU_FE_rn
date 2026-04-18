@@ -1,4 +1,7 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
+
+const THOUSAND_SEPARATOR = /\B(?=(\d{3})+(?!\d))/g;
+
 import { Keyboard, Pressable, Text, TextInput, View } from "react-native";
 import { CheckGrayIcon, CheckIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
@@ -57,7 +60,7 @@ export function CriteriaFields({ index }: Props) {
 						name={`benefits.${index}.amount`}
 						render={({ field: { value, onChange } }) => (
 							<TextInput
-								value={value ? value.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""}
+								value={value ? value.replace(THOUSAND_SEPARATOR, ",") : ""}
 								onChangeText={(v) => onChange(v.replace(/,/g, ""))}
 								onFocus={onFocus("amount")}
 								onBlur={onBlur}
