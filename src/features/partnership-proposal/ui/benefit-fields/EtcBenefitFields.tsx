@@ -26,11 +26,16 @@ export function EtcBenefitFields({ index }: Props) {
 						onBlur={onBlur}
 						placeholder="제휴 내용을 입력해주세요"
 						placeholderTextColor={colorTokens.contentSecondary}
-						className="text-[15px] text-content-primary px-[4px]"
+						multiline
+						scrollEnabled
+						textAlignVertical="top"
+						className="text-[15px] text-content-primary px-[10px] py-[8px]"
 						style={{
-							borderBottomWidth: 1,
-							borderBottomColor: borderColor("content"),
-							height: 36,
+							minHeight: 80,
+							maxHeight: 160,
+							borderWidth: 1,
+							borderColor: borderColor("content"),
+							borderRadius: 8,
 						}}
 					/>
 				)}
