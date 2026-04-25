@@ -1,7 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { ReviewCard } from "@/entities/review";
 import { SortArrowDownIcon } from "@/shared/assets/icons";
+import {
+	type SortOrder,
+	useSortedByDate,
+} from "@/shared/lib/hooks/useSortedByDate";
 import { colorTokens } from "@/shared/styles/tokens";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
 import { DarkSelectBottomSheet } from "@/shared/ui/bottom-sheet";
@@ -10,9 +14,7 @@ import { PageLayout } from "@/shared/ui/layout";
 import { mockReviews } from "../model/mockReviews";
 import type { Review } from "../model/types";
 
-type SortType = "latest" | "oldest";
-
-const SORT_ITEMS: { label: string; value: SortType }[] = [
+const SORT_ITEMS: { label: string; value: SortOrder }[] = [
 	{ label: "최신순", value: "latest" },
 	{ label: "오래된순", value: "oldest" },
 ];
@@ -24,16 +26,12 @@ const listContentStyle = {
 } as const;
 
 export function MyReviewsPage() {
-	const [sort, setSort] = useState<SortType>("latest");
 	const [isSortSheetVisible, setSortSheetVisible] = useState(false);
-
-	const sortedReviews = useMemo(() => {
-		return [...mockReviews].sort((a, b) => {
-			if (sort === "latest")
-				return b.createdAt.getTime() - a.createdAt.getTime();
-			return a.createdAt.getTime() - b.createdAt.getTime();
-		});
-	}, [sort]);
+	const {
+		sort,
+		setSort,
+		sortedItems: sortedReviews,
+	} = useSortedByDate(mockReviews);
 
 	const renderItem = useCallback(
 		({ item }: { item: Review }) => (
