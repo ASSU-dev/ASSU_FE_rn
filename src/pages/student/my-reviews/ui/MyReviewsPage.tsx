@@ -1,9 +1,9 @@
-import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { ReviewCard } from "@/entities/review";
-import { BackArrowIcon } from "@/shared/assets/icons";
+import { SortArrowDownIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
+import { AppTopBar } from "@/shared/ui/app-top-bar";
 import { DarkSelectBottomSheet } from "@/shared/ui/bottom-sheet";
 import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { PageLayout } from "@/shared/ui/layout";
@@ -52,25 +52,10 @@ export function MyReviewsPage() {
 				contentContainerClassName="flex-1"
 				withBottomInset
 			>
-				{/* 헤더 */}
-				<View className="flex-row items-center px-gutter py-[12px]">
-					<Pressable onPress={() => router.back()} hitSlop={8}>
-						<BackArrowIcon
-							width={24}
-							height={24}
-							color={colorTokens.contentPrimary}
-						/>
-					</Pressable>
-					<View className="flex-1 items-center">
-						<Text className="text-[20px] font-semibold text-content-primary leading-caption tracking-caption">
-							내가 작성한 리뷰
-						</Text>
-					</View>
-					<View className="w-[24px]" />
-				</View>
+				<AppTopBar title="내가 작성한 리뷰" titleAlign="left" />
 
 				{/* 서브헤더 */}
-				<View className="flex-row items-center justify-between px-screen-m mt-[16px] pb-[16px]">
+				<View className="flex-row items-center justify-between px-screen-m pt-[20px] pb-[16px]">
 					<Text className="text-sm font-medium text-content-primary">
 						작성한 리뷰가{" "}
 						<Text className="text-primary">{sortedReviews.length}</Text>건
@@ -84,12 +69,17 @@ export function MyReviewsPage() {
 						<Text className="text-sm font-medium text-content-primary">
 							{SORT_ITEMS.find((item) => item.value === sort)?.label}
 						</Text>
+						<SortArrowDownIcon
+							width={20}
+							height={20}
+							color={colorTokens.contentPrimary}
+						/>
 					</Pressable>
 				</View>
 
 				{/* 리뷰 목록 또는 빈 상태 */}
 				{sortedReviews.length === 0 ? (
-					<View className="flex-1 items-center justify-center gap-5">
+					<View className="absolute inset-0 items-center justify-center gap-7">
 						<View className="items-center gap-1.5">
 							<Text className="text-base font-medium text-content-primary">
 								아직 작성된 리뷰가 없어요!

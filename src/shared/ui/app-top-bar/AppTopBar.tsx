@@ -6,9 +6,15 @@ import { colorTokens } from "@/shared/styles/tokens";
 interface AppTopBarProps {
 	title: string;
 	onBack?: () => void;
+	titleAlign?: "left" | "center";
 }
 
-export function AppTopBar({ title, onBack }: AppTopBarProps) {
+export function AppTopBar({
+	title,
+	onBack,
+	titleAlign = "center",
+}: AppTopBarProps) {
+	const isLeft = titleAlign === "left";
 	return (
 		<View className="flex-row items-center px-screen-m pt-7 pb-4">
 			<Pressable hitSlop={8} onPress={onBack ?? (() => router.back())}>
@@ -18,10 +24,12 @@ export function AppTopBar({ title, onBack }: AppTopBarProps) {
 					color={colorTokens.contentPrimary}
 				/>
 			</Pressable>
-			<Text className="flex-1 text-center text-lg font-semibold text-content-primary">
+			<Text
+				className={`flex-1 text-xl font-semibold text-content-primary ${isLeft ? "ml-3" : "text-center"}`}
+			>
 				{title}
 			</Text>
-			<View style={{ width: 24 }} />
+			{!isLeft && <View style={{ width: 24 }} />}
 		</View>
 	);
 }
