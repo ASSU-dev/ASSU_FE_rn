@@ -13,6 +13,7 @@ export { default as HeadphoneIcon } from "./headphone-icon.svg";
 export { default as InfoFillIcon } from "./info-fill-icon.svg";
 export { default as InfoIcon } from "./info-icon.svg";
 export { default as ListIcon } from "./list-icon.svg";
+export { default as LocationIcon } from "./location.svg";
 export { default as LoginCheckIcon } from "./login-check-icon.svg";
 export { default as LoginNoIcon } from "./login-no-icon.svg";
 export { default as Logo } from "./logo.svg";
