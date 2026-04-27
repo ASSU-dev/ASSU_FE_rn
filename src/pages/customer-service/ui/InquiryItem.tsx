@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
-import { colorTokens } from "@/shared/styles/tokens";
 import type { Inquiry } from "@/entities/inquiry";
+import { colorTokens } from "@/shared/styles/tokens";
 
 interface InquiryItemProps {
 	inquiry: Inquiry;
