@@ -1,0 +1,62 @@
+import * as Crypto from "expo-crypto";
+import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
+import {
+	getProfileImageUri,
+	type Message,
+	MOCK_ADMIN_CHAT_ROOMS,
+} from "@/entities/chat";
+import { formatChatTime } from "@/shared/lib/formatTime";
+import { ChatHeaderActions, ChatMessages } from "@/widgets/chat/chat-room";
+
+import {
+	ADMIN_CURRENT_USER_ID,
+	MOCK_CHAT_MESSAGES,
+} from "../model/mockMessages";
+
+export function AdminChatRoomPage() {
+	const { id } = useLocalSearchParams<{ id: string }>();
+
+	// TODO: Zustand 도입 후 store에서 조회
+	const room = MOCK_ADMIN_CHAT_ROOMS.find((r) => r.id === id);
+	const profileImage = getProfileImageUri(room?.profileImage);
+
+	const [messages, setMessages] = useState<Message[]>(MOCK_CHAT_MESSAGES);
+
+	function handleSend(text: string) {
+		setMessages((prev) => [
+			{
+				id: Crypto.randomUUID(),
+				text,
+				senderId: ADMIN_CURRENT_USER_ID,
+				sentAt: formatChatTime(),
+			},
+			...prev,
+		]);
+	}
+
+	function handleBlock() {
+		// TODO: 차단 API 연동
+	}
+
+	function handleLeave() {
+		// TODO: 채팅방 나가기 API 연동
+	}
+
+	return (
+		<ChatMessages
+			roomName={room?.roomName ?? "채팅방"}
+			messages={messages}
+			currentUserId={ADMIN_CURRENT_USER_ID}
+			partnerProfileImage={profileImage}
+			onSend={handleSend}
+			headerActions={
+				<ChatHeaderActions
+					partnerName={room?.roomName ?? ""}
+					onBlock={handleBlock}
+					onLeave={handleLeave}
+				/>
+			}
+		/>
+	);
+}
