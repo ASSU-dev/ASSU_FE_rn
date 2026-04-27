@@ -1,1 +1,1 @@
-export { ChatBar } from "./ui";
+export { ChatMessageComposer } from "./ui";
