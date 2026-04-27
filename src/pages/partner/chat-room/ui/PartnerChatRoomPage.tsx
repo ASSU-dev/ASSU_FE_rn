@@ -18,6 +18,7 @@ export function PartnerChatRoomPage() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 
 	// TODO: Zustand 도입 후 store에서 조회
+	// TODO: API 연동 후 room이 없는 경우(삭제된 채팅방, 잘못된 ID) router.back() 처리 필요
 	const room = MOCK_PARTNER_CHAT_ROOMS.find((r) => r.id === id);
 	const profileImage = getProfileImageUri(room?.profileImage);
 
