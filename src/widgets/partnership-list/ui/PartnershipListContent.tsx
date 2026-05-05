@@ -1,12 +1,16 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { type Partnership, PartnershipCard } from "@/entities/partnership";
 import { EmptyState } from "@/shared/ui/empty-state";
 
 interface PartnershipListContentProps {
 	data: Partnership[];
+	onPressCard?: (id: string) => void;
 }
 
-export function PartnershipListContent({ data }: PartnershipListContentProps) {
+export function PartnershipListContent({
+	data,
+	onPressCard,
+}: PartnershipListContentProps) {
 	if (data.length === 0) {
 		return (
 			<EmptyState
@@ -19,7 +23,12 @@ export function PartnershipListContent({ data }: PartnershipListContentProps) {
 	return (
 		<View className="gap-5">
 			{data.map((partnership) => (
-				<PartnershipCard key={partnership.id} {...partnership} variant="gray" />
+				<Pressable
+					key={partnership.id}
+					onPress={() => onPressCard?.(partnership.id)}
+				>
+					<PartnershipCard {...partnership} variant="gray" />
+				</Pressable>
 			))}
 		</View>
 	);

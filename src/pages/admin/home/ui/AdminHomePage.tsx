@@ -93,6 +93,9 @@ export function AdminHomePage() {
 					onViewAll={() =>
 						router.push("/(protected)/admin/admin-partnership-list")
 					}
+					onPressCard={(id) =>
+						router.push(`/(protected)/partnership-contract/${id}`)
+					}
 				/>
 
 				{/* Recommendation section */}

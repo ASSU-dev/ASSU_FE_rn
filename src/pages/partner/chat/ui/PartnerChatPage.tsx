@@ -1,4 +1,3 @@
-import { View } from "react-native";
 import { ChatRoomList } from "@/entities/chat";
 import { PageLayout } from "@/shared/ui/layout";
 import { PageTitle } from "@/shared/ui/page-title";
