@@ -7,6 +7,7 @@ interface PartnershipListWidgetProps {
 	title?: string;
 	variant?: "white" | "gray";
 	onViewAll?: () => void;
+	onPressCard?: (id: string) => void;
 }
 
 export const PartnershipListWidget = memo(
@@ -15,6 +16,7 @@ export const PartnershipListWidget = memo(
 		title = "제휴단체 목록",
 		variant = "white",
 		onViewAll,
+		onPressCard,
 	}: PartnershipListWidgetProps) => {
 		return (
 			<View className="gap-2">
@@ -33,11 +35,12 @@ export const PartnershipListWidget = memo(
 				{/* Cards list */}
 				<View className="gap-5">
 					{partnerships.map((partnership) => (
-						<PartnershipCard
+						<Pressable
 							key={partnership.id}
-							{...partnership}
-							variant={variant}
-						/>
+							onPress={() => onPressCard?.(partnership.id)}
+						>
+							<PartnershipCard {...partnership} variant={variant} />
+						</Pressable>
 					))}
 				</View>
 			</View>

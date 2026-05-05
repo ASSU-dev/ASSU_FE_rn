@@ -12,7 +12,11 @@ export function StudentProfilePage() {
 	const router = useRouter();
 
 	const myAccountItems: AccountMenuItemProps[] = [
-		{ label: "내가 작성한 리뷰", iconName: "writing" },
+		{
+			label: "내가 작성한 리뷰",
+			iconName: "writing",
+			onPress: () => router.push("../my-reviews"),
+		},
 		{ label: "로그아웃", iconName: "exitRight" },
 	];
 

@@ -1,6 +1,9 @@
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
+import { MOCK_PARTNERSHIP_CONTRACTS } from "@/entities/partnership/model/mockPartnershipContracts";
+import { PartnershipContractModal } from "@/features/partnership-contract";
 import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PartnershipListContent } from "@/widgets/partnership-list";
@@ -40,19 +43,44 @@ function CountSection({ count }: { count: number }) {
 
 export function PartnerListPage() {
 	const router = useRouter();
+	const [selectedContractId, setSelectedContractId] = useState<string | null>(
+		null,
+	);
+
+	const selectedContract =
+		MOCK_PARTNERSHIP_CONTRACTS.find((c) => c.id === selectedContractId) ?? null;
 
 	return (
-		<PageLayout
-			scrollable={true}
-			withTopInset={true}
-			withBottomInset={false}
-			className="flex-1 bg-canvas"
-			contentContainerClassName="gap-5 px-6 pb-6 pt-4"
-		>
-			<Header onBack={() => router.back()} />
-			<InfoBox />
-			<CountSection count={MOCK_PARTNERSHIPS.length} />
-			<PartnershipListContent data={MOCK_PARTNERSHIPS} />
-		</PageLayout>
+		<>
+			<PageLayout
+				scrollable={true}
+				withTopInset={true}
+				withBottomInset={false}
+				className="flex-1 bg-canvas"
+				contentContainerClassName="gap-5 px-6 pb-6 pt-4"
+			>
+				<Header onBack={() => router.back()} />
+				<InfoBox />
+				<CountSection count={MOCK_PARTNERSHIPS.length} />
+				<PartnershipListContent
+					data={MOCK_PARTNERSHIPS}
+					onPressCard={(id) => setSelectedContractId(id)}
+				/>
+			</PageLayout>
+
+			<PartnershipContractModal
+				visible={selectedContractId !== null}
+				data={selectedContract}
+				onClose={() => setSelectedContractId(null)}
+				onQrPress={() => {
+					if (selectedContractId) {
+						router.push({
+							pathname: "/qr-view/[id]",
+							params: { id: selectedContractId },
+						});
+					}
+				}}
+			/>
+		</>
 	);
 }
