@@ -1,78 +1,60 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
-import { CheckGrayIcon, CheckIcon } from "@/shared/assets/icons";
+import { useFormContext, useWatch } from "react-hook-form";
+import { Pressable, Text, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
-import {
-	type BenefitCriteria,
-	type BenefitItem,
-	SERVICE_TYPES,
-	type ServiceType,
-} from "../model";
+import type { ProposalFormData, ServiceType } from "../model";
+import { DEFAULT_BENEFIT_ITEM, SERVICE_TYPES } from "../model";
+import { CriteriaFields } from "./benefit-fields/CriteriaFields";
+import { DiscountBenefitFields } from "./benefit-fields/DiscountBenefitFields";
+import { EtcBenefitFields } from "./benefit-fields/EtcBenefitFields";
+import { ServiceBenefitFields } from "./benefit-fields/ServiceBenefitFields";
+
+const BENEFIT_CONFIG: Record<
+	ServiceType,
+	{ showCriteria: boolean; Fields: React.ComponentType<{ index: number }> }
+> = {
+	"서비스 제공": { showCriteria: true, Fields: ServiceBenefitFields },
+	"할인 혜택": { showCriteria: true, Fields: DiscountBenefitFields },
+	"기타 혜택": { showCriteria: false, Fields: EtcBenefitFields },
+};
 
 interface Props {
-	benefit: BenefitItem;
+	index: number;
 	onRemove: () => void;
-	onUpdate: (data: Partial<BenefitItem>) => void;
 }
 
-export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
-	const [showItemInput, setShowItemInput] = useState(false);
-	const [itemInput, setItemInput] = useState("");
-	const [focusedField, setFocusedField] = useState<string | null>(null);
+export function BenefitCard({ index, onRemove }: Props) {
+	const { control, setValue, getValues } = useFormContext<ProposalFormData>();
 	const [showServiceTypeMenu, setShowServiceTypeMenu] = useState(false);
 
-	const borderColor = (field: string) =>
-		focusedField === field ? colorTokens.primary : "#e0e0e0";
+	const serviceType = useWatch({
+		control,
+		name: `benefits.${index}.serviceType`,
+	});
+
+	const { showCriteria, Fields } = BENEFIT_CONFIG[serviceType];
 
 	const selectServiceType = (type: ServiceType) => {
-		// 서비스 타입 변경 시 관련 값 전부 초기화
-		onUpdate({
+		const currentId = getValues(`benefits.${index}.id`);
+		setValue(`benefits.${index}`, {
+			...DEFAULT_BENEFIT_ITEM,
+			id: currentId,
 			serviceType: type,
-			criteria: "금액",
-			amount: "",
-			minCount: "",
-			categories: [],
-			items: [],
-			discountRate: "",
-			content: "",
 		});
 		setShowServiceTypeMenu(false);
 	};
 
-	const selectCriteria = (value: BenefitCriteria) => {
-		// 기준 변경 시 금액/인원수 초기화
-		onUpdate({ criteria: value, amount: "", minCount: "" });
-	};
-
-	const removeCategory = (idx: number) => {
-		onUpdate({ categories: benefit.categories.filter((_, i) => i !== idx) });
-	};
-
-	const addItem = () => {
-		const trimmed = itemInput.trim();
-		if (!trimmed) return;
-		onUpdate({ items: [...benefit.items, trimmed] });
-		setItemInput("");
-		setShowItemInput(false);
-	};
-
-	const removeItem = (idx: number) => {
-		onUpdate({ items: benefit.items.filter((_, i) => i !== idx) });
-	};
-
 	return (
-		<View className="bg-[#f4f4f5] rounded-lg p-[10px] gap-[15px]">
-			{/* 헤더 */}
-			<View className="flex-row items-center justify-between">
+		<View className="bg-neutral rounded-lg px-[20px]">
+			{/* 헤더: 혜택 타입 선택 + 삭제 */}
+			<View className="py-[15px] flex-row items-center justify-between">
 				<View>
 					<Pressable
 						onPress={() => setShowServiceTypeMenu((v) => !v)}
 						className="border border-primary rounded-lg px-[10px] py-[10px] flex-row items-center gap-[2px]"
 					>
-						<Text className="text-primary text-[13px]">
-							{benefit.serviceType}
-						</Text>
+						<Text className="text-primary text-[13px]">{serviceType}</Text>
 						<Ionicons
 							name="chevron-down"
 							size={14}
@@ -88,7 +70,7 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 									className="px-[14px] py-[10px]"
 								>
 									<Text
-										className={`text-[13px] ${benefit.serviceType === type ? "text-primary font-medium" : "text-content-primary"}`}
+										className={`text-[13px] ${serviceType === type ? "text-primary font-medium" : "text-content-primary"}`}
 									>
 										{type}
 									</Text>
@@ -102,247 +84,11 @@ export function BenefitCard({ benefit, onRemove, onUpdate }: Props) {
 				</Pressable>
 			</View>
 
-			<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
-
-			{benefit.serviceType === "기타 혜택" ? (
-				/* 기타 혜택: 제휴 내용 입력 */
-				<View className="gap-[8px] py-[5px]">
-					<Text className="text-[15px] text-content-primary">
-						제휴 내용 입력
-					</Text>
-					<TextInput
-						value={benefit.content}
-						onChangeText={(v) => onUpdate({ content: v })}
-						onFocus={() => setFocusedField("content")}
-						onBlur={() => setFocusedField(null)}
-						placeholder="제휴 내용을 입력해주세요"
-						placeholderTextColor={colorTokens.contentSecondary}
-						className="text-[15px] text-content-primary px-[4px]"
-						style={{
-							borderBottomWidth: 1,
-							borderBottomColor: borderColor("content"),
-							height: 36,
-						}}
-					/>
-				</View>
-			) : (
-				<>
-					{/* 제공 기준 */}
-					<View className="flex-row items-center">
-						<Text className="w-[77px] text-[13px] text-content-primary">
-							제공 기준
-						</Text>
-						<View className="flex-row gap-[12px]">
-							{(["금액", "인원수"] as BenefitCriteria[]).map((option) => {
-								const selected = benefit.criteria === option;
-								return (
-									<Pressable
-										key={option}
-										onPress={() => selectCriteria(option)}
-										className="flex-row items-center gap-[5px]"
-									>
-										{selected ? (
-											<CheckIcon width={15} height={15} />
-										) : (
-											<CheckGrayIcon width={15} height={15} />
-										)}
-										<Text className="text-[13px] text-content-primary">
-											{option}
-										</Text>
-									</Pressable>
-								);
-							})}
-						</View>
-					</View>
-
-					{/* 기준 입력 */}
-					{benefit.criteria === "금액" && (
-						<View className="flex-row items-center gap-[8px]">
-							<View className="w-[77px]" />
-							<TextInput
-								value={
-									benefit.amount
-										? benefit.amount.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-										: ""
-								}
-								onChangeText={(v) => onUpdate({ amount: v.replace(/,/g, "") })}
-								onFocus={() => setFocusedField("amount")}
-								onBlur={() => setFocusedField(null)}
-								placeholder="금액 입력"
-								placeholderTextColor={colorTokens.contentSecondary}
-								keyboardType="numeric"
-								textAlign="right"
-								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{
-									borderBottomWidth: 0.5,
-									borderBottomColor: borderColor("amount"),
-									height: 36,
-								}}
-							/>
-							<Text className="text-[13px] text-content-secondary w-[88px]">
-								원 이상일 경우,
-							</Text>
-						</View>
-					)}
-
-					{benefit.criteria === "인원수" && (
-						<View className="flex-row items-center gap-[8px]">
-							<View className="w-[77px]" />
-							<TextInput
-								value={benefit.minCount}
-								onChangeText={(v) => onUpdate({ minCount: v })}
-								onFocus={() => setFocusedField("minCount")}
-								onBlur={() => setFocusedField(null)}
-								placeholder="인원 입력"
-								placeholderTextColor={colorTokens.contentSecondary}
-								keyboardType="numeric"
-								textAlign="right"
-								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{
-									borderBottomWidth: 0.5,
-									borderBottomColor: borderColor("minCount"),
-									height: 36,
-								}}
-							/>
-							<Text className="text-[13px] text-content-secondary w-[88px]">
-								인 이상일 경우,
-							</Text>
-						</View>
-					)}
-
-					{/* 카테고리 / 할인율 */}
-					{benefit.serviceType === "할인 혜택" ? (
-						<View className="flex-row items-center gap-[8px]">
-							<Text className="w-[77px] text-[13px] text-content-primary">
-								할인율
-							</Text>
-							<TextInput
-								value={benefit.discountRate}
-								onChangeText={(v) => onUpdate({ discountRate: v })}
-								onFocus={() => setFocusedField("discountRate")}
-								onBlur={() => setFocusedField(null)}
-								placeholder="0"
-								placeholderTextColor={colorTokens.contentSecondary}
-								keyboardType="numeric"
-								textAlign="right"
-								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{
-									borderBottomWidth: 0.5,
-									borderBottomColor: borderColor("discountRate"),
-									height: 36,
-								}}
-							/>
-							<Text className="text-[13px] text-content-secondary w-[88px]">
-								% 할인
-							</Text>
-						</View>
-					) : (
-						<View className="gap-[8px]">
-							<View className="flex-row items-center gap-[8px]">
-								<Text className="text-[13px] text-content-secondary">
-									카테고리 입력
-								</Text>
-								<TextInput
-									value={benefit.categories[0] ?? ""}
-									onChangeText={(v) => onUpdate({ categories: v ? [v] : [] })}
-									onFocus={() => setFocusedField("category")}
-									onBlur={() => setFocusedField(null)}
-									placeholder="카테고리를 입력해주세요"
-									placeholderTextColor={colorTokens.contentSecondary}
-									textAlign="center"
-									className="flex-1 text-[13px] text-content-primary px-[4px]"
-									style={{
-										borderBottomWidth: 0.5,
-										borderBottomColor: borderColor("category"),
-										height: 36,
-									}}
-								/>
-							</View>
-							{benefit.categories.length > 1 && (
-								<View className="flex-row flex-wrap gap-[6px]">
-									{benefit.categories.slice(1).map((cat, idx) => (
-										<Pressable
-											key={`${benefit.id}-category-${cat}`}
-											onPress={() => removeCategory(idx + 1)}
-											className="flex-row items-center bg-[#e5f6fe] rounded-full px-[8px] py-[4px] gap-[3px]"
-										>
-											<Text className="text-[11px] text-[#66a4fe]">{cat}</Text>
-											<Ionicons name="close" size={10} color="#66a4fe" />
-										</Pressable>
-									))}
-								</View>
-							)}
-						</View>
-					)}
-
-					<View style={{ height: 0.5, backgroundColor: "#e0e0e0" }} />
-
-					{/* 제공 항목 */}
-					<View className="flex-row items-start gap-[8px]">
-						<Text className="w-[77px] text-[13px] text-content-primary mt-[4px]">
-							제공 항목
-						</Text>
-						<View className="flex-1 gap-[8px]">
-							<View className="flex-row flex-wrap items-center gap-[6px]">
-								{benefit.items.map((item, idx) => (
-									<Pressable
-										key={`${benefit.id}-item-${item}`}
-										onPress={() => removeItem(idx)}
-										className="flex-row items-center bg-[#e5f6fe] rounded-full px-[8px] py-[4px] gap-[3px]"
-									>
-										<Text className="text-[11px] text-[#66a4fe]">{item}</Text>
-										<Ionicons name="close" size={10} color="#66a4fe" />
-									</Pressable>
-								))}
-								{!showItemInput && (
-									<Pressable
-										onPress={() => setShowItemInput(true)}
-										className="bg-primary rounded-full px-[10px] py-[4px]"
-									>
-										<Text className="text-[11px] text-white">+ 추가</Text>
-									</Pressable>
-								)}
-							</View>
-							{showItemInput && (
-								<View className="flex-row items-center gap-[8px]">
-									<TextInput
-										value={itemInput}
-										onChangeText={setItemInput}
-										onSubmitEditing={addItem}
-										onFocus={() => setFocusedField("itemInput")}
-										onBlur={() => setFocusedField(null)}
-										placeholder="항목을 입력해주세요"
-										placeholderTextColor={colorTokens.contentSecondary}
-										returnKeyType="done"
-										autoFocus
-										className="flex-1 text-[13px] text-content-primary px-[4px]"
-										style={{
-											borderBottomWidth: 0.5,
-											borderBottomColor: borderColor("itemInput"),
-											height: 32,
-										}}
-									/>
-									<Pressable onPress={addItem}>
-										<Text className="text-[13px] text-primary font-medium">
-											추가
-										</Text>
-									</Pressable>
-									<Pressable
-										onPress={() => {
-											setShowItemInput(false);
-											setItemInput("");
-										}}
-									>
-										<Text className="text-[13px] text-content-secondary">
-											취소
-										</Text>
-									</Pressable>
-								</View>
-							)}
-						</View>
-					</View>
-				</>
-			)}
+			{/* 혜택 타입별 필드 */}
+			<View className="pt-[24px] pb-[20px] gap-[15px] px-[10px]">
+				{showCriteria && <CriteriaFields index={index} />}
+				<Fields index={index} />
+			</View>
 		</View>
 	);
 }

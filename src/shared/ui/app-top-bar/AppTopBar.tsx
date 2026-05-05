@@ -6,9 +6,15 @@ import { colorTokens } from "@/shared/styles/tokens";
 interface AppTopBarProps {
 	title: string;
 	onBack?: () => void;
+	titleAlign?: "left" | "center";
 }
 
-export function AppTopBar({ title, onBack }: AppTopBarProps) {
+export function AppTopBar({
+	title,
+	onBack,
+	titleAlign = "center",
+}: AppTopBarProps) {
+	const isLeft = titleAlign === "left";
 	return (
 		<View className="relative flex-row items-center justify-center px-screen-m py-4 mt-3">
 			<Pressable
@@ -23,11 +29,11 @@ export function AppTopBar({ title, onBack }: AppTopBarProps) {
 				/>
 			</Pressable>
 			<Text
-				className="text-xl font-semibold text-content-primary"
-				style={{ includeFontPadding: false }}
+				className={`flex-1 text-xl font-semibold text-content-primary ${isLeft ? "ml-3" : "text-center"}`}
 			>
 				{title}
 			</Text>
+			{!isLeft && <View style={{ width: 24 }} />}
 		</View>
 	);
 }
