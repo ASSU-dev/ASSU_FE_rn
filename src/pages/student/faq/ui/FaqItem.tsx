@@ -38,7 +38,7 @@ export const FaqItem = memo(function FaqItem({
 	};
 
 	return (
-		<View className="border-neutral-variant" style={{ borderBottomWidth: 0.5 }}>
+		<View>
 			<Pressable
 				onPress={handlePress}
 				className="flex-row items-center justify-between px-9 py-5"
@@ -55,7 +55,11 @@ export const FaqItem = memo(function FaqItem({
 					</Text>
 				</View>
 				<Animated.View style={animatedChevronStyle}>
-					<BackArrowIcon width={20} height={20} />
+					<BackArrowIcon
+						width={20}
+						height={20}
+						color={colorTokens.contentTertiary}
+					/>
 				</Animated.View>
 			</Pressable>
 

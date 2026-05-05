@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
 import { FAQ_DATA } from "../model/mockFaqs";
@@ -19,6 +19,12 @@ export function FaqPage() {
 				data={FAQ_DATA}
 				keyExtractor={(item) => item.id}
 				contentContainerStyle={{ paddingBottom: 32 }}
+				ItemSeparatorComponent={() => (
+					<View
+						style={{ borderBottomWidth: 0.5 }}
+						className="border-neutral-variant"
+					/>
+				)}
 				renderItem={({ item }) => (
 					<FaqItem
 						id={item.id}
