@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
@@ -9,59 +9,63 @@ import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 
 interface FaqItemProps {
+	id: string;
 	question: string;
 	answer: string;
 	isExpanded: boolean;
-	onToggle: () => void;
+	onToggle: (id: string) => void;
 }
 
-export function FaqItem({
+export const FaqItem = memo(function FaqItem({
+	id,
 	question,
 	answer,
 	isExpanded,
 	onToggle,
 }: FaqItemProps) {
-	const rotation = useSharedValue(isExpanded ? -90 : 90);
+	const rotation = useSharedValue(isExpanded ? 90 : -90);
 
 	useEffect(() => {
-		rotation.value = withTiming(isExpanded ? -90 : 90, { duration: 200 });
+		rotation.value = withTiming(isExpanded ? 90 : -90, { duration: 200 });
 	}, [isExpanded, rotation]);
 
 	const animatedChevronStyle = useAnimatedStyle(() => ({
 		transform: [{ rotate: `${rotation.value}deg` }],
 	}));
 
+	const handlePress = () => {
+		onToggle(id);
+	};
+
 	return (
-		<View className="border-b border-gray-200">
+		<View className="border-neutral-variant" style={{ borderBottomWidth: 0.5 }}>
 			<Pressable
-				onPress={onToggle}
-				className="flex-row items-center justify-between px-6 py-5"
+				onPress={handlePress}
+				className="flex-row items-center justify-between px-9 py-5"
 			>
-				<View className="flex-row items-center flex-1 gap-2 mr-3">
-					<Text className="text-base font-bold text-content-primary">Q</Text>
+				<View className="flex-row flex-1 gap-2 mr-3">
+					<Text className="text-[17px] font-semibold text-content-primary">
+						Q
+					</Text>
 					<Text
-						className="text-base text-content-primary flex-1"
-						numberOfLines={1}
+						className="text-[17px] font-medium text-content-primary flex-1"
+						numberOfLines={isExpanded ? undefined : 1}
 					>
 						{question}
 					</Text>
 				</View>
 				<Animated.View style={animatedChevronStyle}>
-					<BackArrowIcon
-						width={20}
-						height={20}
-						color={colorTokens.contentPrimary}
-					/>
+					<BackArrowIcon width={20} height={20} />
 				</Animated.View>
 			</Pressable>
 
 			{isExpanded && (
-				<View className="px-6 pb-5">
-					<Text className="text-sm text-content-secondary leading-5">
+				<View className="px-9 pb-5">
+					<Text className="text-sm text-content-primary leading-5 tracking-body">
 						{answer}
 					</Text>
 				</View>
 			)}
 		</View>
 	);
-}
+});
