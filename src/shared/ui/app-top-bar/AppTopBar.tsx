@@ -10,7 +10,7 @@ interface AppTopBarProps {
 
 export function AppTopBar({ title, onBack }: AppTopBarProps) {
 	return (
-		<View className="relative flex-row items-center justify-center px-screen-m pt-7 pb-4">
+		<View className="relative flex-row items-center justify-center px-screen-m py-4 mt-3">
 			<Pressable
 				hitSlop={8}
 				onPress={onBack ?? (() => router.back())}
@@ -22,7 +22,10 @@ export function AppTopBar({ title, onBack }: AppTopBarProps) {
 					color={colorTokens.contentPrimary}
 				/>
 			</Pressable>
-			<Text className="text-lg font-semibold text-content-primary">
+			<Text
+				className="text-xl font-semibold text-content-primary"
+				style={{ includeFontPadding: false }}
+			>
 				{title}
 			</Text>
 		</View>
