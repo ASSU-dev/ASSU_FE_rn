@@ -49,7 +49,7 @@ export function AdminDashboardPage() {
 				activeOpacity={0.8}
 				className="bg-primary items-center justify-center rounded-[8px] h-[41px]"
 				onPress={() => {
-					router.push("/(protected)/(admin)/partner-ship-suggestion-box");
+					router.push("/(protected)/admin/partner-ship-suggestion-box");
 				}}
 			>
 				<Text className="text-[11px] font-semibold text-content-inverse leading-caption tracking-caption">

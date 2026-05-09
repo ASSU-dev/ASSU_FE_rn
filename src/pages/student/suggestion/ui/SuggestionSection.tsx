@@ -29,7 +29,7 @@ export function SuggestionSection() {
 				</View>
 				<Pressable
 					className="bg-primary py-card-p rounded-[12px] items-center"
-					onPress={() => router.push("/(protected)/(student)/suggestion-form")}
+					onPress={() => router.push("/(protected)/student/suggestion-form")}
 				>
 					<Text className="font-bold text-lg text-content-inverse leading-body tracking-body">
 						제휴 건의하기
