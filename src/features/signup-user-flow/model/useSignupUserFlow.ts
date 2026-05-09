@@ -1,24 +1,37 @@
 import { useCallback, useMemo, useState } from "react";
-import {
-	type Path,
-	type PathValue,
-	useForm,
-} from "react-hook-form";
+import { type Path, type PathValue, useForm } from "react-hook-form";
+import type { SignupSchool } from "@/entities/signup";
+import { USER_TYPE, type UserType } from "@/entities/user/model/types";
+import type { AddressSearchItem } from "@/shared/ui/address-search";
 import { useCountdownTimer } from "../hooks/useCountdownTimer";
+import { findAdminCollegeOption, findAdminDepartmentOption } from "./admin";
+import { getNextAgreementState } from "./agreements";
 import {
 	getSignupFlowConfig,
 	getSignupFlowVariant,
 	VERIFICATION_SUCCESS_CODE,
 } from "./flowConfig";
 import { DEFAULT_SIGNUP_FORM_STATE } from "./mock/signupUserFlow.mock";
-import { useSignupFormActions } from "./useSignupFormActions";
-import { isSignupStepValid } from "./validation";
 import type {
+	SignupAdminOrganizationType,
 	SignupFormState,
+	SignupIdentityFormState,
 	SignupStep,
 } from "./types";
+import { isSignupStepValid } from "./validation";
 
 type SignupObjectSectionKey = Exclude<keyof SignupFormState, "role">;
+
+function resetVerificationAttempt(
+	identity: SignupIdentityFormState,
+	verificationCode: string,
+) {
+	return {
+		...identity,
+		verificationCode,
+		verificationAttempted: false,
+	};
+}
 
 export function useSignupUserFlow() {
 	const [step, setStep] = useState<SignupStep>("login1");
@@ -47,11 +60,11 @@ export function useSignupUserFlow() {
 	const updateSection = useCallback(
 		<K extends SignupObjectSectionKey>(
 			section: K,
-			updater: (
-				value: SignupFormState[K],
-			) => SignupFormState[K],
+			updater: (value: SignupFormState[K]) => SignupFormState[K],
 		) => {
-			const nextValue = updater(getValues(section as Path<SignupFormState>) as SignupFormState[K]);
+			const nextValue = updater(
+				getValues(section as Path<SignupFormState>) as SignupFormState[K],
+			);
 			setValue(
 				section as Path<SignupFormState>,
 				nextValue as PathValue<SignupFormState, Path<SignupFormState>>,
@@ -76,8 +89,14 @@ export function useSignupUserFlow() {
 		[setValue],
 	);
 
-	const flowVariant = useMemo(() => getSignupFlowVariant(form.role), [form.role]);
-	const flowConfig = useMemo(() => getSignupFlowConfig(flowVariant), [flowVariant]);
+	const flowVariant = useMemo(
+		() => getSignupFlowVariant(form.role),
+		[form.role],
+	);
+	const flowConfig = useMemo(
+		() => getSignupFlowConfig(flowVariant),
+		[flowVariant],
+	);
 
 	const progress = useMemo(
 		() => flowConfig.progressByStep[step] ?? 0,
@@ -113,12 +132,116 @@ export function useSignupUserFlow() {
 		setStep(nextStep);
 	};
 
-	const actions = useSignupFormActions({
-		updateForm,
-		updateSection,
-		setSectionField,
-		startVerificationCountdown: timer.start,
-	});
+	const setAuthEmail = (email: string) =>
+		setSectionField("auth", "email", email);
+	const setAuthPassword = (password: string) =>
+		setSectionField("auth", "password", password);
+
+	const setPhone = (phone: string) =>
+		setSectionField("identity", "phone", phone);
+	const setVerificationCode = (verificationCode: string) => {
+		updateSection("identity", (identity) =>
+			resetVerificationAttempt(identity, verificationCode),
+		);
+	};
+	const sendVerificationCode = () => {
+		updateSection("identity", (identity) => ({
+			...identity,
+			isCodeSent: true,
+			verificationAttempted: false,
+		}));
+		timer.start();
+	};
+
+	const setRole = (role: UserType) =>
+		updateForm((prev) => ({
+			...prev,
+			role,
+			student:
+				role === USER_TYPE.STUDENT
+					? prev.student
+					: DEFAULT_SIGNUP_FORM_STATE.student,
+			partner:
+				role === USER_TYPE.PARTNER
+					? prev.partner
+					: DEFAULT_SIGNUP_FORM_STATE.partner,
+			admin:
+				role === USER_TYPE.ADMIN ? prev.admin : DEFAULT_SIGNUP_FORM_STATE.admin,
+			agreements: DEFAULT_SIGNUP_FORM_STATE.agreements,
+		}));
+	const setSchool = (school: SignupSchool) =>
+		setSectionField("student", "school", school);
+
+	const setPartnerEmail = (email: string) =>
+		setSectionField("partner", "email", email);
+	const setPartnerPassword = (password: string) =>
+		setSectionField("partner", "password", password);
+	const setPartnerCompanyName = (companyName: string) =>
+		setSectionField("partner", "companyName", companyName);
+	const setPartnerOfficeAddress = ({ id }: AddressSearchItem) =>
+		setSectionField("partner", "officeAddressId", id);
+	const setPartnerOfficeAddressDetail = (officeAddressDetail: string) =>
+		setSectionField("partner", "officeAddressDetail", officeAddressDetail);
+	const selectPartnerBusinessRegistrationMock = () =>
+		setSectionField(
+			"partner",
+			"businessRegistrationFileName",
+			"사업자등록증.jpg",
+		);
+
+	const setAdminEmail = (email: string) =>
+		setSectionField("admin", "email", email);
+	const setAdminPassword = (password: string) =>
+		setSectionField("admin", "password", password);
+	const setAdminOrganizationType = (
+		organizationType: SignupAdminOrganizationType | null,
+	) => {
+		updateSection("admin", (admin) => ({
+			...admin,
+			organizationType,
+			collegeId: null,
+			departmentId: null,
+			officeAddressId: null,
+			officeAddressDetail: "",
+			sealFileName: "",
+		}));
+	};
+	const setAdminCollege = (value: string | null) => {
+		const selectedCollege = findAdminCollegeOption(value);
+		updateSection("admin", (admin) => ({
+			...admin,
+			collegeId: selectedCollege?.value ?? null,
+			departmentId: null,
+		}));
+	};
+	const setAdminDepartment = (value: string | null) => {
+		const selectedDepartment = findAdminDepartmentOption(value);
+		setSectionField("admin", "departmentId", selectedDepartment?.value ?? null);
+	};
+	const setAdminOfficeAddress = ({ id }: AddressSearchItem) =>
+		setSectionField("admin", "officeAddressId", id);
+	const setAdminOfficeAddressDetail = (officeAddressDetail: string) =>
+		setSectionField("admin", "officeAddressDetail", officeAddressDetail);
+	const selectAdminSealMock = () =>
+		setSectionField("admin", "sealFileName", "IMG.127");
+
+	const setAgreePrivacy = (checked: boolean) => {
+		updateSection("agreements", (agreements) =>
+			getNextAgreementState(agreements, { agreePrivacy: checked }),
+		);
+	};
+	const setAgreeMarketing = (checked: boolean) => {
+		updateSection("agreements", (agreements) =>
+			getNextAgreementState(agreements, { agreeMarketing: checked }),
+		);
+	};
+	const setAgreeAll = (checked: boolean) => {
+		updateSection("agreements", () => ({
+			agreeAll: checked,
+			agreePrivacy: checked,
+			agreeMarketing: checked,
+		}));
+	};
 
 	const activateStudentInput3 = () => {
 		setStep("studentInput3");
@@ -136,31 +259,30 @@ export function useSignupUserFlow() {
 		formMethods,
 		goTo,
 		goNext,
-		setAuthEmail: actions.auth.setEmail,
-		setAuthPassword: actions.auth.setPassword,
-		setPhone: actions.identity.setPhone,
-		setVerificationCode: actions.identity.setVerificationCode,
-		sendVerificationCode: actions.identity.sendVerificationCode,
-		setRole: actions.student.setRole,
-		setSchool: actions.student.setSchool,
-		setPartnerEmail: actions.partner.setEmail,
-		setPartnerPassword: actions.partner.setPassword,
-		setAdminEmail: actions.admin.setEmail,
-		setAdminPassword: actions.admin.setPassword,
-		setAdminOrganizationType: actions.admin.setOrganizationType,
-		setAdminCollege: actions.admin.setCollege,
-		setAdminDepartment: actions.admin.setDepartment,
-		setAdminOfficeAddress: actions.admin.setOfficeAddress,
-		setAdminOfficeAddressDetail: actions.admin.setOfficeAddressDetail,
-		selectAdminSealMock: actions.admin.selectSealMock,
-		setPartnerCompanyName: actions.partner.setCompanyName,
-		setPartnerOfficeAddress: actions.partner.setOfficeAddress,
-		setPartnerOfficeAddressDetail: actions.partner.setOfficeAddressDetail,
-		selectPartnerBusinessRegistrationMock:
-			actions.partner.selectBusinessRegistrationMock,
-		setAgreePrivacy: actions.agreements.setPrivacy,
-		setAgreeMarketing: actions.agreements.setMarketing,
-		setAgreeAll: actions.agreements.setAll,
+		setAuthEmail,
+		setAuthPassword,
+		setPhone,
+		setVerificationCode,
+		sendVerificationCode,
+		setRole,
+		setSchool,
+		setPartnerEmail,
+		setPartnerPassword,
+		setAdminEmail,
+		setAdminPassword,
+		setAdminOrganizationType,
+		setAdminCollege,
+		setAdminDepartment,
+		setAdminOfficeAddress,
+		setAdminOfficeAddressDetail,
+		selectAdminSealMock,
+		setPartnerCompanyName,
+		setPartnerOfficeAddress,
+		setPartnerOfficeAddressDetail,
+		selectPartnerBusinessRegistrationMock,
+		setAgreePrivacy,
+		setAgreeMarketing,
+		setAgreeAll,
 		activateStudentInput3,
 	};
 }

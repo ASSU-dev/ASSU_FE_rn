@@ -57,7 +57,9 @@ export function InlineSelect({
 	return (
 		<View testID={testID}>
 			{!!label && (
-				<Text className="mb-2 font-regular text-content-secondary">{label}</Text>
+				<Text className="mb-2 font-regular text-content-secondary">
+					{label}
+				</Text>
 			)}
 
 			<View

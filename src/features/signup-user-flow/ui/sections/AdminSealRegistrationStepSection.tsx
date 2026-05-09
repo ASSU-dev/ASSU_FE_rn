@@ -1,46 +1,47 @@
+import { Controller, useFormContext } from "react-hook-form";
+import type { SignupFormState } from "@/features/signup-user-flow/model/types";
 import { AgreementFooter } from "../components/AgreementFooter";
 import { FileUploadButton } from "../components/FileUploadButton";
 import { AdminStepLayout } from "../layout/AdminStepLayout";
 
 type AdminSealRegistrationStepSectionProps = {
-  sealFileName: string;
-  agreeAll: boolean;
-  agreePrivacy: boolean;
-  agreeMarketing: boolean;
-  onPressUpload: () => void;
-  onToggleAll: () => void;
-  onTogglePrivacy: () => void;
-  onToggleMarketing: () => void;
+	onPressUpload: () => void;
+	onToggleAll: () => void;
+	onTogglePrivacy: () => void;
+	onToggleMarketing: () => void;
 };
 
 export function AdminSealRegistrationStepSection({
-  sealFileName,
-  agreeAll,
-  agreePrivacy,
-  agreeMarketing,
-  onPressUpload,
-  onToggleAll,
-  onTogglePrivacy,
-  onToggleMarketing,
+	onPressUpload,
+	onToggleAll,
+	onTogglePrivacy,
+	onToggleMarketing,
 }: AdminSealRegistrationStepSectionProps) {
-  return (
-    <AdminStepLayout
-      firstLine="단체의 인감 등록 및"
-      secondLine="약관 동의를 진행해주세요!"
-      contentGapClassName="flex-1"
-    >
-      <FileUploadButton
-        fileName={sealFileName}
-        onPressUpload={onPressUpload}
-        className="mt-[63px]"
-      />
+	const { control } = useFormContext<SignupFormState>();
 
-      <AgreementFooter
-        agreements={{ agreeAll, agreePrivacy, agreeMarketing }}
-        onToggleAll={onToggleAll}
-        onTogglePrivacy={onTogglePrivacy}
-        onToggleMarketing={onToggleMarketing}
-      />
-    </AdminStepLayout>
-  );
+	return (
+		<AdminStepLayout
+			firstLine="단체의 인감 등록 및"
+			secondLine="약관 동의를 진행해주세요!"
+			contentGapClassName="flex-1"
+		>
+			<Controller
+				control={control}
+				name="admin.sealFileName"
+				render={({ field }) => (
+					<FileUploadButton
+						fileName={field.value}
+						onPressUpload={onPressUpload}
+						className="mt-[63px]"
+					/>
+				)}
+			/>
+
+			<AgreementFooter
+				onToggleAll={onToggleAll}
+				onTogglePrivacy={onTogglePrivacy}
+				onToggleMarketing={onToggleMarketing}
+			/>
+		</AdminStepLayout>
+	);
 }

@@ -1,7 +1,7 @@
-import { SignupStepTitle } from "../SignupStepTitle";
-import { LabeledInputField } from "../LabeledInputField";
-import { OfficeAddressPicker } from "../components/OfficeAddressPicker";
 import { View } from "react-native";
+import { OfficeAddressPicker } from "../components/OfficeAddressPicker";
+import { LabeledInputField } from "../LabeledInputField";
+import { SignupStepTitle } from "../SignupStepTitle";
 
 type PartnerCompanyInfoStepSectionProps = {
 	partnerCompanyName: string;

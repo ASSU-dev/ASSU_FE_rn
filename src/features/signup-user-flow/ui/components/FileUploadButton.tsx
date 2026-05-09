@@ -1,6 +1,6 @@
+import { Pressable, Text } from "react-native";
 import { CheckIcon, ImageUploadIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
-import { Pressable, Text } from "react-native";
 
 type FileUploadButtonProps = {
 	fileName: string;
@@ -38,4 +38,3 @@ export function FileUploadButton({
 		</Pressable>
 	);
 }
-

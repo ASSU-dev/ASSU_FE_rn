@@ -1,8 +1,10 @@
-import {
-	findAddressOption,
-} from "@/features/signup-user-flow/model/admin";
-import type { SignupFormState, SignupStep } from "@/features/signup-user-flow/model/types";
 import { useFormContext } from "react-hook-form";
+import { findAddressOption } from "@/features/signup-user-flow/model/admin";
+import { useSignupFlowUi } from "@/features/signup-user-flow/model/flowUiContext";
+import type {
+	SignupFormState,
+	SignupStep,
+} from "@/features/signup-user-flow/model/types";
 import { AdminCredentialsStepSection } from "./sections/AdminCredentialsStepSection";
 import { AdminOrganizationInfoStepSection } from "./sections/AdminOrganizationInfoStepSection";
 import { AdminOrganizationTypeStepSection } from "./sections/AdminOrganizationTypeStepSection";
@@ -17,69 +19,14 @@ import { SchoolStepSection } from "./sections/SchoolStepSection";
 import { StudentAgreementStepSection } from "./sections/StudentAgreementStepSection";
 import { StudentVerificationStepSection } from "./sections/StudentVerificationStepSection";
 
-type IdentityActions = {
-	onChangePhone: (value: string) => void;
-	onChangeVerificationCode: (value: string) => void;
-	onSendCode: () => void;
-	onPressInfoLink: () => void;
-};
-
-type StudentActions = {
-	onSelectRole: (role: NonNullable<SignupFormState["role"]>) => void;
-	onSelectSchool: (school: NonNullable<SignupFormState["student"]["school"]>) => void;
-	onPressStudentVerify: () => void;
-};
-
-type PartnerActions = {
-	onChangePartnerEmail: (value: string) => void;
-	onChangePartnerPassword: (value: string) => void;
-	onChangePartnerCompanyName: (value: string) => void;
-	onChangePartnerOfficeAddressDetail: (value: string) => void;
-	onPressPartnerOfficeAddress: () => void;
-	onPressPartnerBusinessRegistrationUpload: () => void;
-};
-
-type AdminActions = {
-	onChangeAdminEmail: (value: string) => void;
-	onChangeAdminPassword: (value: string) => void;
-	onChangeAdminOrganizationType: (
-		value: NonNullable<SignupFormState["admin"]["organizationType"]> | null,
-	) => void;
-	onChangeAdminCollege: (value: string | null) => void;
-	onChangeAdminDepartment: (value: string | null) => void;
-	onChangeAdminOfficeAddressDetail: (value: string) => void;
-	onPressAdminOfficeAddress: () => void;
-	onPressAdminSealUpload: () => void;
-};
-
-type AgreementActions = {
-	onToggleAgreeAll: () => void;
-	onToggleAgreePrivacy: () => void;
-	onToggleAgreeMarketing: () => void;
-};
-
 type SignupStepContentProps = {
 	step: SignupStep;
-	countdown: string;
-	completeDisplayName: string;
-	isVerificationError: boolean;
-	actions: {
-		identity: IdentityActions;
-		student: StudentActions;
-		partner: PartnerActions;
-		admin: AdminActions;
-		agreements: AgreementActions;
-	};
 };
 
-export function SignupStepContent({
-	step,
-	countdown,
-	completeDisplayName,
-	isVerificationError,
-	actions,
-}: SignupStepContentProps) {
+export function SignupStepContent({ step }: SignupStepContentProps) {
 	const { watch } = useFormContext<SignupFormState>();
+	const { countdown, completeDisplayName, isVerificationError, actions } =
+		useSignupFlowUi();
 	const form = watch();
 
 	switch (step) {
@@ -109,10 +56,7 @@ export function SignupStepContent({
 			);
 		case "school":
 			return (
-				<SchoolStepSection
-					school={form.student.school}
-					onSelectSchool={actions.student.onSelectSchool}
-				/>
+				<SchoolStepSection onSelectSchool={actions.student.onSelectSchool} />
 			);
 		case "studentInput1":
 			return (
@@ -127,9 +71,6 @@ export function SignupStepContent({
 				<StudentAgreementStepSection
 					major={form.student.major}
 					studentId={form.student.studentId}
-					agreeAll={form.agreements.agreeAll}
-					agreePrivacy={form.agreements.agreePrivacy}
-					agreeMarketing={form.agreements.agreeMarketing}
 					onToggleAll={actions.agreements.onToggleAgreeAll}
 					onTogglePrivacy={actions.agreements.onToggleAgreePrivacy}
 					onToggleMarketing={actions.agreements.onToggleAgreeMarketing}
@@ -156,16 +97,12 @@ export function SignupStepContent({
 		case "adminOrganizationType":
 			return (
 				<AdminOrganizationTypeStepSection
-					organizationType={form.admin.organizationType}
 					onChangeOrganizationType={actions.admin.onChangeAdminOrganizationType}
 				/>
 			);
 		case "adminOrganizationInfo":
 			return (
 				<AdminOrganizationInfoStepSection
-					organizationType={form.admin.organizationType}
-					collegeId={form.admin.collegeId}
-					departmentId={form.admin.departmentId}
 					officeAddress={
 						findAddressOption(form.admin.officeAddressId)?.label ?? ""
 					}
@@ -182,10 +119,6 @@ export function SignupStepContent({
 		case "adminSealRegistration":
 			return (
 				<AdminSealRegistrationStepSection
-					sealFileName={form.admin.sealFileName}
-					agreeAll={form.agreements.agreeAll}
-					agreePrivacy={form.agreements.agreePrivacy}
-					agreeMarketing={form.agreements.agreeMarketing}
 					onPressUpload={actions.admin.onPressAdminSealUpload}
 					onToggleAll={actions.agreements.onToggleAgreeAll}
 					onTogglePrivacy={actions.agreements.onToggleAgreePrivacy}
@@ -200,7 +133,9 @@ export function SignupStepContent({
 						findAddressOption(form.partner.officeAddressId)?.label ?? ""
 					}
 					partnerOfficeAddressDetail={form.partner.officeAddressDetail}
-					onChangePartnerCompanyName={actions.partner.onChangePartnerCompanyName}
+					onChangePartnerCompanyName={
+						actions.partner.onChangePartnerCompanyName
+					}
 					onChangePartnerOfficeAddressDetail={
 						actions.partner.onChangePartnerOfficeAddressDetail
 					}
@@ -210,12 +145,6 @@ export function SignupStepContent({
 		case "partnerBusinessRegistration":
 			return (
 				<PartnerBusinessRegistrationStepSection
-					businessRegistrationFileName={
-						form.partner.businessRegistrationFileName
-					}
-					agreeAll={form.agreements.agreeAll}
-					agreePrivacy={form.agreements.agreePrivacy}
-					agreeMarketing={form.agreements.agreeMarketing}
 					onPressUpload={
 						actions.partner.onPressPartnerBusinessRegistrationUpload
 					}

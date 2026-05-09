@@ -1,5 +1,5 @@
-import { AdminStepLayout } from "../layout/AdminStepLayout";
 import { CredentialsFields } from "../components/CredentialsFields";
+import { AdminStepLayout } from "../layout/AdminStepLayout";
 
 type AdminCredentialsStepSectionProps = {
 	adminEmail: string;
@@ -15,10 +15,7 @@ export function AdminCredentialsStepSection({
 	onChangeAdminPassword,
 }: AdminCredentialsStepSectionProps) {
 	return (
-		<AdminStepLayout
-			firstLine="아이디/비밀번호를"
-			secondLine="입력해주세요!"
-		>
+		<AdminStepLayout firstLine="아이디/비밀번호를" secondLine="입력해주세요!">
 			<CredentialsFields
 				emailValue={adminEmail}
 				passwordValue={adminPassword}

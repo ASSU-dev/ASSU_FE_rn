@@ -1,20 +1,21 @@
+import { Controller, useFormContext } from "react-hook-form";
 import { View } from "react-native";
 import { shouldShowAdminOfficeAddressBySelection } from "@/features/signup-user-flow/model/admin";
-import type { SignupAdminOrganizationType } from "@/features/signup-user-flow/model/types";
 import {
 	ADMIN_COLLEGE_OPTIONS,
 	ADMIN_DEPARTMENT_OPTIONS,
 	ADMIN_ORGANIZATION_TYPE_OPTIONS,
 } from "@/features/signup-user-flow/model/data/adminOptions";
+import type {
+	SignupAdminOrganizationType,
+	SignupFormState,
+} from "@/features/signup-user-flow/model/types";
 import { Select } from "@/shared/ui/select";
-import { AdminStepLayout } from "../layout/AdminStepLayout";
-import { LabeledInputField } from "../LabeledInputField";
 import { OfficeAddressPicker } from "../components/OfficeAddressPicker";
+import { LabeledInputField } from "../LabeledInputField";
+import { AdminStepLayout } from "../layout/AdminStepLayout";
 
 type AdminOrganizationInfoStepSectionProps = {
-	organizationType: SignupAdminOrganizationType | null;
-	collegeId: string | null;
-	departmentId: string | null;
 	officeAddress: string;
 	officeAddressDetail: string;
 	onChangeOrganizationType: (value: SignupAdminOrganizationType | null) => void;
@@ -25,9 +26,6 @@ type AdminOrganizationInfoStepSectionProps = {
 };
 
 export function AdminOrganizationInfoStepSection({
-	organizationType,
-	collegeId,
-	departmentId,
 	officeAddress,
 	officeAddressDetail,
 	onChangeOrganizationType,
@@ -36,6 +34,10 @@ export function AdminOrganizationInfoStepSection({
 	onChangeOfficeAddressDetail,
 	onPressOfficeAddress,
 }: AdminOrganizationInfoStepSectionProps) {
+	const { control, watch } = useFormContext<SignupFormState>();
+	const organizationType = watch("admin.organizationType");
+	const collegeId = watch("admin.collegeId");
+	const departmentId = watch("admin.departmentId");
 	const shouldShowOfficeAddress = shouldShowAdminOfficeAddressBySelection(
 		organizationType as SignupAdminOrganizationType | null,
 		collegeId,
@@ -43,23 +45,29 @@ export function AdminOrganizationInfoStepSection({
 	);
 
 	return (
-		<AdminStepLayout
-			firstLine="관리단체의 정보를"
-			secondLine="입력해주세요"
-		>
+		<AdminStepLayout firstLine="관리단체의 정보를" secondLine="입력해주세요">
 			<View className="gap-[10px]">
-					<Select
-						label="단위"
-						items={ADMIN_ORGANIZATION_TYPE_OPTIONS}
-						value={organizationType}
-						onChange={(value) =>
-							onChangeOrganizationType(value as SignupAdminOrganizationType | null)
-						}
-					placeholder="단위 선택"
-					presentation="inline"
+				<Controller
+					control={control}
+					name="admin.organizationType"
+					render={({ field }) => (
+						<Select
+							label="단위"
+							items={ADMIN_ORGANIZATION_TYPE_OPTIONS}
+							value={field.value}
+							onChange={(value) => {
+								field.onChange(value);
+								onChangeOrganizationType(
+									value as SignupAdminOrganizationType | null,
+								);
+							}}
+							placeholder="단위 선택"
+							presentation="inline"
+						/>
+					)}
 				/>
 
-					{organizationType === "GENERAL_STUDENT_COUNCIL" ? (
+				{organizationType === "GENERAL_STUDENT_COUNCIL" ? (
 					<LabeledInputField
 						label="대상"
 						value="총학생회"
@@ -68,35 +76,53 @@ export function AdminOrganizationInfoStepSection({
 					/>
 				) : null}
 
-					{organizationType === "COLLEGE_STUDENT_COUNCIL" ||
-					organizationType === "DEPARTMENT_STUDENT_COUNCIL" ? (
-						<Select
-							label="단과대 선택"
-							items={ADMIN_COLLEGE_OPTIONS}
-							value={collegeId}
-							onChange={onChangeCollege}
-						placeholder="단과대 선택"
-						presentation="inline"
+				{organizationType === "COLLEGE_STUDENT_COUNCIL" ||
+				organizationType === "DEPARTMENT_STUDENT_COUNCIL" ? (
+					<Controller
+						control={control}
+						name="admin.collegeId"
+						render={({ field }) => (
+							<Select
+								label="단과대 선택"
+								items={ADMIN_COLLEGE_OPTIONS}
+								value={field.value}
+								onChange={(value) => {
+									field.onChange(value);
+									onChangeCollege(value);
+								}}
+								placeholder="단과대 선택"
+								presentation="inline"
+							/>
+						)}
 					/>
 				) : null}
 
-					{organizationType === "DEPARTMENT_STUDENT_COUNCIL" ? (
-						<Select
-							label="학과/부 선택"
-							items={ADMIN_DEPARTMENT_OPTIONS}
-							value={departmentId}
-							onChange={onChangeDepartment}
-						placeholder="학과/부 선택"
-						presentation="inline"
+				{organizationType === "DEPARTMENT_STUDENT_COUNCIL" ? (
+					<Controller
+						control={control}
+						name="admin.departmentId"
+						render={({ field }) => (
+							<Select
+								label="학과/부 선택"
+								items={ADMIN_DEPARTMENT_OPTIONS}
+								value={field.value}
+								onChange={(value) => {
+									field.onChange(value);
+									onChangeDepartment(value);
+								}}
+								placeholder="학과/부 선택"
+								presentation="inline"
+							/>
+						)}
 					/>
 				) : null}
 
 				{shouldShowOfficeAddress ? (
-						<OfficeAddressPicker
-							officeAddress={officeAddress}
-							officeAddressDetail={officeAddressDetail}
-							onPressOfficeAddress={onPressOfficeAddress}
-							onChangeOfficeAddressDetail={onChangeOfficeAddressDetail}
+					<OfficeAddressPicker
+						officeAddress={officeAddress}
+						officeAddressDetail={officeAddressDetail}
+						onPressOfficeAddress={onPressOfficeAddress}
+						onChangeOfficeAddressDetail={onChangeOfficeAddressDetail}
 						gapClassName="gap-[10px]"
 					/>
 				) : null}

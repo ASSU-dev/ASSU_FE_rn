@@ -21,4 +21,3 @@ export const ADMIN_DEPARTMENT_OPTIONS: SelectItem[] = [
 	{ label: "전자정보공학부", value: "EE" },
 	{ label: "AI융합학과", value: "AI" },
 ];
-

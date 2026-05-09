@@ -96,6 +96,15 @@ export function useSignupStepActions({
 			},
 			agreements: agreementHandlers,
 		}),
-		[admin, agreementHandlers, goTo, identity, overlays, partner, step, student],
+		[
+			admin,
+			agreementHandlers,
+			goTo,
+			identity,
+			overlays,
+			partner,
+			step,
+			student,
+		],
 	);
 }

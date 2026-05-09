@@ -6,7 +6,11 @@ export const identityStepSchema = z.object({
 });
 
 export const schoolStepSchema = z.object({
-	school: z.string().min(1).nullable().refine((value) => value !== null),
+	school: z
+		.string()
+		.min(1)
+		.nullable()
+		.refine((value) => value !== null),
 });
 
 export const credentialsStepSchema = z.object({

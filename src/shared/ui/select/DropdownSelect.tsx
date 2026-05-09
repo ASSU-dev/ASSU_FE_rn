@@ -53,7 +53,9 @@ export function DropdownSelect({
 	return (
 		<View testID={testID}>
 			{!!label && (
-				<Text className="mb-2 font-regular text-content-secondary">{label}</Text>
+				<Text className="mb-2 font-regular text-content-secondary">
+					{label}
+				</Text>
 			)}
 
 			<Dropdown
@@ -81,11 +83,11 @@ export function DropdownSelect({
 								borderBottomLeftRadius: 0,
 								borderBottomRightRadius: 0,
 								borderBottomColor: colorTokens.neutralVariant,
-						  }
+							}
 						: {
 								borderRadius: 12,
 								borderBottomColor: "transparent",
-						  }),
+							}),
 					borderBottomWidth: 2,
 					backgroundColor: colorTokens.canvas,
 					paddingHorizontal: sizeToken.fieldPx,

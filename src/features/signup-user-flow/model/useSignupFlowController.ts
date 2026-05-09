@@ -1,6 +1,7 @@
+import { router } from "expo-router";
+import { useMemo } from "react";
+import type { SignupFlowUiContextValue } from "./flowUiContext";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
-import { useSignupFlowViewModel } from "./useSignupFlowViewModel";
-import { useSignupLoginViewModel } from "./useSignupLoginViewModel";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
 
@@ -89,38 +90,67 @@ export function useSignupFlowController() {
 		agreementHandlers,
 	});
 
-	const flow = useSignupFlowViewModel({
-		step,
-		progress,
-		progressSteps,
-		currentProgressIndex,
-		showProgress,
-		showBottomButton,
-		isBottomDisabled,
-		buttonLabel,
-		goTo,
-		goNext,
-	});
+	const flow = useMemo(
+		() => ({
+			step,
+			progress,
+			progressSteps,
+			currentProgressIndex,
+			showProgress,
+			showBottomButton,
+			isBottomDisabled,
+			buttonLabel,
+			onSegmentPress: (segmentIndex: number) => {
+				if (segmentIndex >= currentProgressIndex) {
+					return;
+				}
 
-	const login = useSignupLoginViewModel({
-		email: form.auth.email,
-		password: form.auth.password,
-		onChangeEmail: setAuthEmail,
-		onChangePassword: setAuthPassword,
-		onPressSignup: () => goTo("identity"),
-	});
+				goTo(progressSteps[segmentIndex]);
+			},
+			onBottomButtonPress:
+				step === "complete"
+					? () => router.replace("/(protected)/(student)/(tabs)/home" as never)
+					: goNext,
+		}),
+		[
+			buttonLabel,
+			currentProgressIndex,
+			goNext,
+			goTo,
+			isBottomDisabled,
+			progress,
+			progressSteps,
+			showBottomButton,
+			showProgress,
+			step,
+		],
+	);
+
+	const login = useMemo(
+		() => ({
+			email: form.auth.email,
+			password: form.auth.password,
+			onChangeEmail: setAuthEmail,
+			onChangePassword: setAuthPassword,
+			onPressLogin: () => {
+				console.log("로그인 성공");
+			},
+			onPressSignup: () => goTo("identity"),
+		}),
+		[form.auth.email, form.auth.password, goTo, setAuthEmail, setAuthPassword],
+	);
 
 	return {
 		formMethods,
 		flow,
 		login,
-		stepContent: {
+		flowUi: {
 			step,
 			countdown,
 			completeDisplayName,
 			isVerificationError,
 			actions: stepContentActions,
-		},
+		} satisfies SignupFlowUiContextValue,
 		overlays,
 	};
 }

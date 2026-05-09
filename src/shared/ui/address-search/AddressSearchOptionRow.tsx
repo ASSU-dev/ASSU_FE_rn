@@ -33,7 +33,11 @@ export function AddressSearchOptionRow({
 			>
 				{label}
 			</Text>
-			{selected ? <CheckIcon width={18} height={18} /> : <View className="w-[18px]" />}
+			{selected ? (
+				<CheckIcon width={18} height={18} />
+			) : (
+				<View className="w-[18px]" />
+			)}
 		</Pressable>
 	);
 }

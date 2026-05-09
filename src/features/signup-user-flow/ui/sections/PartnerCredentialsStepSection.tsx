@@ -1,6 +1,6 @@
-import { SignupStepTitle } from "../SignupStepTitle";
 import { View } from "react-native";
 import { CredentialsFields } from "../components/CredentialsFields";
+import { SignupStepTitle } from "../SignupStepTitle";
 
 type PartnerCredentialsStepSectionProps = {
 	partnerEmail: string;

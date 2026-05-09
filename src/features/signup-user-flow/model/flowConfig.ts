@@ -1,5 +1,5 @@
-import { USER_TYPE } from "@/entities/user/model/types";
 import type { UserType } from "@/entities/user/model/types";
+import { USER_TYPE } from "@/entities/user/model/types";
 import type { SignupFlowVariant, SignupStep } from "./types";
 
 export const VERIFICATION_SUCCESS_CODE = "0502";
