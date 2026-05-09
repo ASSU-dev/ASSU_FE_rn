@@ -20,6 +20,7 @@ export { default as LoginNoIcon } from "./login-no-icon.svg";
 export { default as Logo } from "./logo.svg";
 export { default as QRIcon } from "./qr-icon.svg";
 export { default as SearchIcon } from "./search-icon.svg";
+export { default as SortArrowDownIcon } from "./sort-arrow-down.svg";
 export { default as SpeechBubbleIcon } from "./speech-bubble-icon.svg";
 export { default as StampActive } from "./stamp-active.svg";
 export { default as StampInactive } from "./stamp-inactive.svg";

@@ -45,6 +45,16 @@ export function formatDateTime(
 	return `${ymd} ${hh}:${mm}`;
 }
 
+/**
+ * 날짜를 `YYYY년 MM월 DD일` 형태로 포맷합니다.
+ * - invalid date면 빈 문자열 반환
+ */
+export function formatKoreanDate(input: DateInput): string {
+	const date = toDate(input);
+	if (!date) return "";
+	return `${date.getFullYear()}년 ${pad2(date.getMonth() + 1)}월 ${pad2(date.getDate())}일`;
+}
+
 function toDate(input: DateInput): Date | null {
 	const date = input instanceof Date ? input : new Date(input);
 	if (Number.isNaN(date.getTime())) return null;

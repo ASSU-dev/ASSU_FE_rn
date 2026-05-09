@@ -59,7 +59,6 @@ export function SignupUserFlowWidget() {
 								onSegmentPress={flow.onSegmentPress}
 							/>
 						) : null}
-
 						<View
 							className={
 								flow.step === "complete"
