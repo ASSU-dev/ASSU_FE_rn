@@ -37,8 +37,8 @@ export const adminOrganizationInfoStepSchema = z
 		organizationType: z.string().min(1).nullable(),
 		collegeId: z.string().nullable(),
 		departmentId: z.string().nullable(),
-		officeAddressId: z.string().min(1),
-		officeAddressDetail: z.string().min(1),
+		officeAddressId: z.string().nullable(),
+		officeAddressDetail: z.string(),
 	})
 	.superRefine((values, ctx) => {
 		if (!values.organizationType) {
@@ -65,6 +65,35 @@ export const adminOrganizationInfoStepSchema = z
 				path: ["departmentId"],
 				message: "학과/부를 선택해주세요",
 			});
+		}
+
+		// Address is required only when the UI should show it
+		const shouldRequireOfficeAddress =
+			values.organizationType === "GENERAL_STUDENT_COUNCIL" ||
+			(values.organizationType === "COLLEGE_STUDENT_COUNCIL" &&
+				Boolean(values.collegeId)) ||
+			(values.organizationType === "DEPARTMENT_STUDENT_COUNCIL" &&
+				Boolean(values.collegeId && values.departmentId));
+
+		if (shouldRequireOfficeAddress) {
+			if (!values.officeAddressId) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					path: ["officeAddressId"],
+					message: "사무실주소를 선택해주세요",
+				});
+			}
+
+			if (
+				!values.officeAddressDetail ||
+				values.officeAddressDetail.trim().length === 0
+			) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					path: ["officeAddressDetail"],
+					message: "상세주소를 입력해주세요",
+				});
+			}
 		}
 	});
 

@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { View } from "react-native";
 import { shouldShowAdminOfficeAddressBySelection } from "@/features/signup-user-flow/model/admin";
 import {
@@ -34,10 +34,13 @@ export function AdminOrganizationInfoStepSection({
 	onChangeOfficeAddressDetail,
 	onPressOfficeAddress,
 }: AdminOrganizationInfoStepSectionProps) {
-	const { control, watch } = useFormContext<SignupFormState>();
-	const organizationType = watch("admin.organizationType");
-	const collegeId = watch("admin.collegeId");
-	const departmentId = watch("admin.departmentId");
+	const { control } = useFormContext<SignupFormState>();
+	const organizationType = useWatch({
+		control,
+		name: "admin.organizationType",
+	});
+	const collegeId = useWatch({ control, name: "admin.collegeId" });
+	const departmentId = useWatch({ control, name: "admin.departmentId" });
 	const shouldShowOfficeAddress = shouldShowAdminOfficeAddressBySelection(
 		organizationType as SignupAdminOrganizationType | null,
 		collegeId,

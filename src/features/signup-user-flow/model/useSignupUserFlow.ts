@@ -39,7 +39,7 @@ export function useSignupUserFlow() {
 		mode: "onChange",
 		defaultValues: DEFAULT_SIGNUP_FORM_STATE,
 	});
-	const { watch, setValue, getValues } = formMethods;
+	const { watch, setValue, getValues, resetField } = formMethods;
 	const form = watch();
 	const timer = useCountdownTimer({ initialSeconds: 300 });
 
@@ -194,25 +194,20 @@ export function useSignupUserFlow() {
 	const setAdminPassword = (password: string) =>
 		setSectionField("admin", "password", password);
 	const setAdminOrganizationType = (
-		organizationType: SignupAdminOrganizationType | null,
+		_organizationType: SignupAdminOrganizationType | null,
 	) => {
-		updateSection("admin", (admin) => ({
-			...admin,
-			organizationType,
-			collegeId: null,
-			departmentId: null,
-			officeAddressId: null,
-			officeAddressDetail: "",
-			sealFileName: "",
-		}));
+		// The organization type itself is controlled by the form field change.
+		// Here we only reset dependent fields.
+		resetField("admin.collegeId", { defaultValue: null });
+		resetField("admin.departmentId", { defaultValue: null });
+		resetField("admin.officeAddressId", { defaultValue: null });
+		resetField("admin.officeAddressDetail", { defaultValue: "" });
+		resetField("admin.sealFileName", { defaultValue: "" });
 	};
 	const setAdminCollege = (value: string | null) => {
 		const selectedCollege = findAdminCollegeOption(value);
-		updateSection("admin", (admin) => ({
-			...admin,
-			collegeId: selectedCollege?.value ?? null,
-			departmentId: null,
-		}));
+		setSectionField("admin", "collegeId", selectedCollege?.value ?? null);
+		resetField("admin.departmentId", { defaultValue: null });
 	};
 	const setAdminDepartment = (value: string | null) => {
 		const selectedDepartment = findAdminDepartmentOption(value);
