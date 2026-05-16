@@ -12,6 +12,7 @@ import {
 	proposalSchema,
 } from "@/features/partnership-proposal";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
+import { PageLayout } from "@/shared/ui/layout";
 
 type Step = "step1" | "step2" | "complete";
 
