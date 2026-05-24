@@ -1,1 +1,1 @@
-export { ChatBar } from "./ChatBar";
+export { ChatMessageComposer } from "./ChatMessageComposer";
