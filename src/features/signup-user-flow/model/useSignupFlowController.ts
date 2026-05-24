@@ -1,14 +1,13 @@
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { Alert } from "react-native";
-import { useSignupMutation } from "@/features/signup-user-flow/api/useSignupMutation";
-import { useSSUAuthMutation } from "@/features/signup-user-flow/api/useSSUAuthMutation";
-import { StudentTokenAuthPayloadDTOUniversity } from "@/shared/api";
-import { ENV } from "@/shared/config/env";
+import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
+import { useStudentLoginAction } from "./useStudentLoginAction";
+import { useStudentSignupAction } from "./useStudentSignupAction";
+import { useStudentVerificationAction } from "./useStudentVerificationAction";
 
 export function useSignupFlowController() {
 	const FORCE_PHONE_VERIFICATION_BYPASS = false;
@@ -55,112 +54,51 @@ export function useSignupFlowController() {
 		completeDisplayName,
 		agreementHandlers,
 	} = useSignupFlowPresentation();
+
 	const [studentAuthPayload, setStudentAuthPayload] = useState<{
 		sIdno: string;
 		sToken: string;
 	} | null>(null);
-	const [isStudentAuthWebViewVisible, setStudentAuthWebViewVisible] =
-		useState(false);
-	const ssuAuthMutation = useSSUAuthMutation();
-	const signupStudentMutation = useSignupMutation();
-	const verifyStudentWithSsu = useCallback(
-		async ({ sIdno, sToken }: { sIdno: string; sToken: string }) => {
-			try {
-				const response = await ssuAuthMutation.mutateAsync({ sIdno, sToken });
-				const result = response.result;
-				if (!response.isSuccess || !result) {
-					Alert.alert(
-						"인증 실패",
-						response.message ?? "유세인트 인증에 실패했습니다.",
-					);
-					return;
-				}
 
-				setStudentAuthPayload({ sIdno, sToken });
-				if (result.studentNumber) {
-					setStudentId(result.studentNumber);
-				}
-				if (result.majorStr) {
-					setStudentMajor(result.majorStr);
-				}
-				if (result.name) {
-					setProfileName(result.name);
-				}
-
-				setStudentAuthWebViewVisible(false);
-				goTo("studentInput2");
-			} catch (error) {
-				const message =
-					error instanceof Error
-						? error.message
-						: "유세인트 인증에 실패했습니다.";
-				Alert.alert("인증 실패", message);
-			}
+	const handleVerified = useCallback(
+		({
+			sIdno,
+			sToken,
+			studentNumber,
+			majorStr,
+			name,
+		}: {
+			sIdno: string;
+			sToken: string;
+			studentNumber?: string;
+			majorStr?: string;
+			name?: string;
+		}) => {
+			setStudentAuthPayload({ sIdno, sToken });
+			if (studentNumber) setStudentId(studentNumber);
+			if (majorStr) setStudentMajor(majorStr);
+			if (name) setProfileName(name);
+			goTo("studentInput2");
 		},
-		[goTo, setProfileName, setStudentId, setStudentMajor, ssuAuthMutation],
+		[goTo, setProfileName, setStudentId, setStudentMajor],
 	);
 
-	const handleStudentSsuVerify = useCallback(async () => {
-		if (ENV.SSU_TEST_SIDNO && ENV.SSU_TEST_STOKEN) {
-			await verifyStudentWithSsu({
-				sIdno: ENV.SSU_TEST_SIDNO,
-				sToken: ENV.SSU_TEST_STOKEN,
-			});
-			return;
-		}
+	const { handlePressVerify, webView: studentAuthWebView } =
+		useStudentVerificationAction(handleVerified);
 
-		setStudentAuthWebViewVisible(true);
-	}, [verifyStudentWithSsu]);
+	const handleSignupFailure = useCallback(() => goTo("loginForm"), [goTo]);
 
-	const handleStudentWebViewVerified = useCallback(
-		async (payload: { sIdno: string; sToken: string }) => {
-			await verifyStudentWithSsu(payload);
-		},
-		[verifyStudentWithSsu],
-	);
-
-	const handleStudentSignup = useCallback(async () => {
-		if (!studentAuthPayload) {
-			Alert.alert("인증 필요", "먼저 LMS 인증을 진행해주세요.");
-			return;
-		}
-
-		try {
-			const response = await signupStudentMutation.mutateAsync({
-				locationAgree: form.agreements.agreePrivacy,
-				marketingAgree: form.agreements.agreeMarketing,
-				studentTokenAuth: {
-					sIdno: studentAuthPayload.sIdno,
-					sToken: studentAuthPayload.sToken,
-					university: StudentTokenAuthPayloadDTOUniversity.SSU,
-				},
-			});
-
-			if (!response.isSuccess) {
-				Alert.alert(
-					"회원가입 실패",
-					response.message ?? "회원가입에 실패했습니다.",
-				);
-				return;
-			}
-
-			goNext();
-		} catch (error) {
-			const message =
-				error instanceof Error ? error.message : "회원가입에 실패했습니다.";
-			Alert.alert("회원가입 실패", message);
-		}
-	}, [
-		form.agreements.agreeMarketing,
-		form.agreements.agreePrivacy,
-		goNext,
-		signupStudentMutation,
+	const { signup: handleStudentSignup } = useStudentSignupAction({
 		studentAuthPayload,
-	]);
+		agreePrivacy: form.agreements.agreePrivacy,
+		agreeMarketing: form.agreements.agreeMarketing,
+		onSuccess: goNext,
+		onFailure: handleSignupFailure,
+	});
 
-	const sendIdentityVerificationCode = () => {
-		sendVerificationCode();
-	};
+	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
+
+	const sendIdentityVerificationCode = () => sendVerificationCode();
 
 	const overlays = useSignupOverlays({
 		adminOfficeAddressId: form.admin.officeAddressId,
@@ -186,7 +124,7 @@ export function useSignupFlowController() {
 		student: {
 			setRole,
 			setSchool,
-			onPressStudentVerify: handleStudentSsuVerify,
+			onPressStudentVerify: handlePressVerify,
 		},
 		partner: {
 			setPartnerEmail,
@@ -218,31 +156,25 @@ export function useSignupFlowController() {
 			isBottomDisabled,
 			buttonLabel,
 			onSegmentPress: (segmentIndex: number) => {
-				if (segmentIndex >= currentProgressIndex) {
-					return;
-				}
-
+				if (segmentIndex >= currentProgressIndex) return;
 				goTo(progressSteps[segmentIndex]);
 			},
-			onBottomButtonPress:
-				step === "complete"
-					? () => router.replace("/(protected)/(student)/(tabs)/home" as never)
-					: async () => {
-							if (step === "identity") {
-								if (FORCE_PHONE_VERIFICATION_BYPASS) {
-									setIdentityVerified();
-									goNext();
-									return;
-								}
-							}
-
-							if (step === "studentInput3") {
-								await handleStudentSignup();
-								return;
-							}
-
-							goNext();
-						},
+			onBottomButtonPress: async () => {
+				if (step === "complete") {
+					router.replace(getHomeRouteByRole("STUDENT") as never);
+					return;
+				}
+				if (step === "identity" && FORCE_PHONE_VERIFICATION_BYPASS) {
+					setIdentityVerified();
+					goNext();
+					return;
+				}
+				if (step === "studentInput3") {
+					await handleStudentSignup();
+					return;
+				}
+				goNext();
+			},
 		}),
 		[
 			buttonLabel,
@@ -266,12 +198,18 @@ export function useSignupFlowController() {
 			password: form.auth.password,
 			onChangeEmail: setAuthEmail,
 			onChangePassword: setAuthPassword,
-			onPressLogin: () => {
-				console.log("로그인 성공");
-			},
+			onPressLogin: () => console.log("로그인 성공"),
+			onPressLmsLogin: handlePressLmsLogin,
 			onPressSignup: () => goTo("identity"),
 		}),
-		[form.auth.email, form.auth.password, goTo, setAuthEmail, setAuthPassword],
+		[
+			form.auth.email,
+			form.auth.password,
+			goTo,
+			handlePressLmsLogin,
+			setAuthEmail,
+			setAuthPassword,
+		],
 	);
 
 	return {
@@ -286,11 +224,7 @@ export function useSignupFlowController() {
 			actions: stepContentActions,
 		} satisfies SignupFlowUiContextValue,
 		overlays,
-		studentAuthWebView: {
-			visible: isStudentAuthWebViewVisible,
-			loginUrl: ENV.SSU_LOGIN_URL,
-			close: () => setStudentAuthWebViewVisible(false),
-			onVerifySuccess: handleStudentWebViewVerified,
-		},
+		studentAuthWebView,
+		loginWebView,
 	};
 }

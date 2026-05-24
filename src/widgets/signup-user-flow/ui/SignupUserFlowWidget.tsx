@@ -14,8 +14,15 @@ import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 export function SignupUserFlowWidget() {
-	const { formMethods, flow, login, flowUi, overlays, studentAuthWebView } =
-		useSignupFlowController();
+	const {
+		formMethods,
+		flow,
+		login,
+		flowUi,
+		overlays,
+		studentAuthWebView,
+		loginWebView,
+	} = useSignupFlowController();
 
 	if (flow.step === "login1") {
 		return (
@@ -30,14 +37,23 @@ export function SignupUserFlowWidget() {
 
 	if (flow.step === "loginForm") {
 		return (
-			<LoginFormScreen
-				email={login.email}
-				password={login.password}
-				onChangeEmail={login.onChangeEmail}
-				onChangePassword={login.onChangePassword}
-				onPressLogin={login.onPressLogin}
-				onPressSignup={login.onPressSignup}
-			/>
+			<>
+				<LoginFormScreen
+					email={login.email}
+					password={login.password}
+					onChangeEmail={login.onChangeEmail}
+					onChangePassword={login.onChangePassword}
+					onPressLogin={login.onPressLogin}
+					onPressLmsLogin={login.onPressLmsLogin}
+					onPressSignup={login.onPressSignup}
+				/>
+				<USaintAuthWebViewModal
+					visible={loginWebView.visible}
+					loginUrl={loginWebView.loginUrl}
+					onClose={loginWebView.close}
+					onVerifySuccess={loginWebView.onVerifySuccess}
+				/>
+			</>
 		);
 	}
 
