@@ -1,13 +1,10 @@
 import { Text, View } from "react-native";
+import { AgreementFooter } from "../components/AgreementFooter";
 import { LabeledInputField } from "../LabeledInputField";
-import { SignupAgreementSection } from "../SignupAgreementSection";
 
 type StudentAgreementStepSectionProps = {
 	major: string;
 	studentId: string;
-	agreeAll: boolean;
-	agreePrivacy: boolean;
-	agreeMarketing: boolean;
 	onToggleAll: () => void;
 	onTogglePrivacy: () => void;
 	onToggleMarketing: () => void;
@@ -16,9 +13,6 @@ type StudentAgreementStepSectionProps = {
 export function StudentAgreementStepSection({
 	major,
 	studentId,
-	agreeAll,
-	agreePrivacy,
-	agreeMarketing,
 	onToggleAll,
 	onTogglePrivacy,
 	onToggleMarketing,
@@ -52,16 +46,11 @@ export function StudentAgreementStepSection({
 					/>
 				</View>
 			</View>
-			<View className="mb-[22px] mt-auto">
-				<SignupAgreementSection
-					agreeAll={agreeAll}
-					agreePrivacy={agreePrivacy}
-					agreeMarketing={agreeMarketing}
-					onToggleAll={onToggleAll}
-					onTogglePrivacy={onTogglePrivacy}
-					onToggleMarketing={onToggleMarketing}
-				/>
-			</View>
+			<AgreementFooter
+				onToggleAll={onToggleAll}
+				onTogglePrivacy={onTogglePrivacy}
+				onToggleMarketing={onToggleMarketing}
+			/>
 		</View>
 	);
 }

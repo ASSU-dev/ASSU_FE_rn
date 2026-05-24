@@ -40,6 +40,9 @@ export function PartnerHomePage() {
 					onViewAll={() =>
 						router.push("/(protected)/partner/partner-partnership-list")
 					}
+					onPressCard={(id) =>
+						router.push(`/(protected)/partnership-contract/${id}`)
+					}
 				/>
 
 				{/* Recommendation widget with 2 cards */}

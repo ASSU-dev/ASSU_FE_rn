@@ -11,6 +11,7 @@ export type SearchBarActiveProps = {
 	onChangeText: (text: string) => void;
 	onBack: () => void;
 	autoFocus?: boolean;
+	iconVariant?: "search" | "location";
 };
 
 export type SearchBarProps = SearchBarDefaultProps | SearchBarActiveProps;

@@ -1,65 +1,112 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { type Path, type PathValue, useForm } from "react-hook-form";
 import type { SignupSchool } from "@/entities/signup";
-import type { UserType } from "@/entities/user/model/types";
+import { USER_TYPE, type UserType } from "@/entities/user/model/types";
+import type { AddressSearchItem } from "@/shared/ui/address-search";
 import { useCountdownTimer } from "../hooks/useCountdownTimer";
-import { VERIFICATION_SUCCESS_CODE } from "./constants";
+import { findAdminCollegeOption, findAdminDepartmentOption } from "./admin";
+import { getNextAgreementState } from "./agreements";
+import {
+	getSignupFlowConfig,
+	getSignupFlowVariant,
+	VERIFICATION_SUCCESS_CODE,
+} from "./flowConfig";
 import { DEFAULT_SIGNUP_FORM_STATE } from "./mock/signupUserFlow.mock";
-import type { SignupFormState, SignupStep } from "./types";
+import type {
+	SignupAdminOrganizationType,
+	SignupFormState,
+	SignupIdentityFormState,
+	SignupStep,
+} from "./types";
+import { isSignupStepValid } from "./validation";
 
-const STEP_ORDER: SignupStep[] = [
-	"login1",
-	"loginForm",
-	"identity",
-	"role",
-	"school",
-	"studentInput1",
-	"studentInput2",
-	"studentInput3",
-	"complete",
-];
+type SignupObjectSectionKey = Exclude<keyof SignupFormState, "role">;
+
+function resetVerificationAttempt(
+	identity: SignupIdentityFormState,
+	verificationCode: string,
+) {
+	return {
+		...identity,
+		verificationCode,
+		verificationAttempted: false,
+	};
+}
 
 export function useSignupUserFlow() {
 	const [step, setStep] = useState<SignupStep>("login1");
-	const [form, setForm] = useState<SignupFormState>(DEFAULT_SIGNUP_FORM_STATE);
+	const formMethods = useForm<SignupFormState>({
+		mode: "onChange",
+		defaultValues: DEFAULT_SIGNUP_FORM_STATE,
+	});
+	const { watch, setValue, getValues, resetField } = formMethods;
+	const form = watch();
 	const timer = useCountdownTimer({ initialSeconds: 300 });
 
-	const progress = useMemo(() => {
-		switch (step) {
-			case "identity":
-				return 16.67;
-			case "role":
-				return 50;
-			case "school":
-				return 66.67;
-			case "studentInput1":
-			case "studentInput2":
-			case "studentInput3":
-				return 83.33;
-			default:
-				return 0;
-		}
-	}, [step]);
-
-	const isCurrentStepValid = useMemo(() => {
-		switch (step) {
-			case "identity":
-				return (
-					form.phone.length > 0 &&
-					form.verificationCode.length > 0 &&
-					form.isCodeSent &&
-					timer.secondsLeft > 0
+	const updateForm = useCallback(
+		(updater: (prev: SignupFormState) => SignupFormState) => {
+			const nextForm = updater(getValues());
+			(Object.keys(nextForm) as Array<keyof SignupFormState>).forEach((key) => {
+				setValue(
+					key as Path<SignupFormState>,
+					nextForm[key] as PathValue<SignupFormState, Path<SignupFormState>>,
+					{ shouldDirty: true, shouldValidate: true },
 				);
-			case "role":
-				return Boolean(form.role);
-			case "school":
-				return Boolean(form.school);
-			case "studentInput2":
-			case "studentInput3":
-				return form.agreePrivacy;
-			default:
-				return true;
-		}
-	}, [form, step, timer.secondsLeft]);
+			});
+		},
+		[getValues, setValue],
+	);
+
+	const updateSection = useCallback(
+		<K extends SignupObjectSectionKey>(
+			section: K,
+			updater: (value: SignupFormState[K]) => SignupFormState[K],
+		) => {
+			const nextValue = updater(
+				getValues(section as Path<SignupFormState>) as SignupFormState[K],
+			);
+			setValue(
+				section as Path<SignupFormState>,
+				nextValue as PathValue<SignupFormState, Path<SignupFormState>>,
+				{ shouldDirty: true, shouldValidate: true },
+			);
+		},
+		[getValues, setValue],
+	);
+
+	const setSectionField = useCallback(
+		<K extends SignupObjectSectionKey, F extends keyof SignupFormState[K]>(
+			section: K,
+			field: F,
+			value: SignupFormState[K][F],
+		) => {
+			setValue(
+				`${String(section)}.${String(field)}` as Path<SignupFormState>,
+				value as PathValue<SignupFormState, Path<SignupFormState>>,
+				{ shouldDirty: true, shouldValidate: true },
+			);
+		},
+		[setValue],
+	);
+
+	const flowVariant = useMemo(
+		() => getSignupFlowVariant(form.role),
+		[form.role],
+	);
+	const flowConfig = useMemo(
+		() => getSignupFlowConfig(flowVariant),
+		[flowVariant],
+	);
+
+	const progress = useMemo(
+		() => flowConfig.progressByStep[step] ?? 0,
+		[flowConfig.progressByStep, step],
+	);
+
+	const isCurrentStepValid = useMemo(
+		() => isSignupStepValid({ step, form, secondsLeft: timer.secondsLeft }),
+		[form, step, timer.secondsLeft],
+	);
 
 	const goTo = (nextStep: SignupStep) => {
 		setStep(nextStep);
@@ -70,86 +117,121 @@ export function useSignupUserFlow() {
 			if (!isCurrentStepValid) {
 				return;
 			}
-			if (form.verificationCode !== VERIFICATION_SUCCESS_CODE) {
-				setForm((prev) => ({ ...prev, verificationAttempted: true }));
+			if (form.identity.verificationCode !== VERIFICATION_SUCCESS_CODE) {
+				setSectionField("identity", "verificationAttempted", true);
 				return;
 			}
 		}
 
-		const currentIndex = STEP_ORDER.indexOf(step);
-		const nextStep = STEP_ORDER[currentIndex + 1];
-		if (!nextStep) {
-			return;
-		}
-
-		if (!isCurrentStepValid) {
+		const currentIndex = flowConfig.stepOrder.indexOf(step);
+		const nextStep = flowConfig.stepOrder[currentIndex + 1];
+		if (!nextStep || !isCurrentStepValid) {
 			return;
 		}
 
 		setStep(nextStep);
 	};
 
-	const setPhone = (phone: string) => {
-		setForm((prev) => ({ ...prev, phone }));
-	};
+	const setAuthEmail = (email: string) =>
+		setSectionField("auth", "email", email);
+	const setAuthPassword = (password: string) =>
+		setSectionField("auth", "password", password);
 
-	const setEmail = (email: string) => {
-		setForm((prev) => ({ ...prev, email }));
-	};
-
-	const setPassword = (password: string) => {
-		setForm((prev) => ({ ...prev, password }));
-	};
-
+	const setPhone = (phone: string) =>
+		setSectionField("identity", "phone", phone);
 	const setVerificationCode = (verificationCode: string) => {
-		setForm((prev) => ({
-			...prev,
-			verificationCode,
-			verificationAttempted: false,
-		}));
+		updateSection("identity", (identity) =>
+			resetVerificationAttempt(identity, verificationCode),
+		);
 	};
-
 	const sendVerificationCode = () => {
-		setForm((prev) => ({
-			...prev,
+		updateSection("identity", (identity) => ({
+			...identity,
 			isCodeSent: true,
 			verificationAttempted: false,
 		}));
 		timer.start();
 	};
 
-	const setRole = (role: UserType) => {
-		setForm((prev) => ({ ...prev, role }));
-	};
+	const setRole = (role: UserType) =>
+		updateForm((prev) => ({
+			...prev,
+			role,
+			student:
+				role === USER_TYPE.STUDENT
+					? prev.student
+					: DEFAULT_SIGNUP_FORM_STATE.student,
+			partner:
+				role === USER_TYPE.PARTNER
+					? prev.partner
+					: DEFAULT_SIGNUP_FORM_STATE.partner,
+			admin:
+				role === USER_TYPE.ADMIN ? prev.admin : DEFAULT_SIGNUP_FORM_STATE.admin,
+			agreements: DEFAULT_SIGNUP_FORM_STATE.agreements,
+		}));
+	const setSchool = (school: SignupSchool) =>
+		setSectionField("student", "school", school);
 
-	const setSchool = (school: SignupSchool) => {
-		setForm((prev) => ({ ...prev, school }));
-	};
+	const setPartnerEmail = (email: string) =>
+		setSectionField("partner", "email", email);
+	const setPartnerPassword = (password: string) =>
+		setSectionField("partner", "password", password);
+	const setPartnerCompanyName = (companyName: string) =>
+		setSectionField("partner", "companyName", companyName);
+	const setPartnerOfficeAddress = ({ id }: AddressSearchItem) =>
+		setSectionField("partner", "officeAddressId", id);
+	const setPartnerOfficeAddressDetail = (officeAddressDetail: string) =>
+		setSectionField("partner", "officeAddressDetail", officeAddressDetail);
+	const selectPartnerBusinessRegistrationMock = () =>
+		setSectionField(
+			"partner",
+			"businessRegistrationFileName",
+			"사업자등록증.jpg",
+		);
 
-	const setAgreementState = (
-		updater: (prev: SignupFormState) => Partial<SignupFormState>,
+	const setAdminEmail = (email: string) =>
+		setSectionField("admin", "email", email);
+	const setAdminPassword = (password: string) =>
+		setSectionField("admin", "password", password);
+	const setAdminOrganizationType = (
+		_organizationType: SignupAdminOrganizationType | null,
 	) => {
-		setForm((prev) => {
-			const partial = updater(prev);
-			const next = { ...prev, ...partial };
-			return {
-				...next,
-				agreeAll: next.agreePrivacy && next.agreeMarketing,
-			};
-		});
+		// The organization type itself is controlled by the form field change.
+		// Here we only reset dependent fields.
+		resetField("admin.collegeId", { defaultValue: null });
+		resetField("admin.departmentId", { defaultValue: null });
+		resetField("admin.officeAddressId", { defaultValue: null });
+		resetField("admin.officeAddressDetail", { defaultValue: "" });
+		resetField("admin.sealFileName", { defaultValue: "" });
 	};
+	const setAdminCollege = (value: string | null) => {
+		const selectedCollege = findAdminCollegeOption(value);
+		setSectionField("admin", "collegeId", selectedCollege?.value ?? null);
+		resetField("admin.departmentId", { defaultValue: null });
+	};
+	const setAdminDepartment = (value: string | null) => {
+		const selectedDepartment = findAdminDepartmentOption(value);
+		setSectionField("admin", "departmentId", selectedDepartment?.value ?? null);
+	};
+	const setAdminOfficeAddress = ({ id }: AddressSearchItem) =>
+		setSectionField("admin", "officeAddressId", id);
+	const setAdminOfficeAddressDetail = (officeAddressDetail: string) =>
+		setSectionField("admin", "officeAddressDetail", officeAddressDetail);
+	const selectAdminSealMock = () =>
+		setSectionField("admin", "sealFileName", "IMG.127");
 
 	const setAgreePrivacy = (checked: boolean) => {
-		setAgreementState(() => ({ agreePrivacy: checked }));
+		updateSection("agreements", (agreements) =>
+			getNextAgreementState(agreements, { agreePrivacy: checked }),
+		);
 	};
-
 	const setAgreeMarketing = (checked: boolean) => {
-		setAgreementState(() => ({ agreeMarketing: checked }));
+		updateSection("agreements", (agreements) =>
+			getNextAgreementState(agreements, { agreeMarketing: checked }),
+		);
 	};
-
 	const setAgreeAll = (checked: boolean) => {
-		setForm((prev) => ({
-			...prev,
+		updateSection("agreements", () => ({
 			agreeAll: checked,
 			agreePrivacy: checked,
 			agreeMarketing: checked,
@@ -163,19 +245,36 @@ export function useSignupUserFlow() {
 	return {
 		step,
 		form,
+		flowVariant,
+		flowConfig,
 		progress,
 		isCurrentStepValid,
 		countdown: timer.mmss,
-		isCountdownExpired: form.isCodeSent && timer.secondsLeft === 0,
+		isCountdownExpired: form.identity.isCodeSent && timer.secondsLeft === 0,
+		formMethods,
 		goTo,
 		goNext,
-		setEmail,
-		setPassword,
+		setAuthEmail,
+		setAuthPassword,
 		setPhone,
 		setVerificationCode,
 		sendVerificationCode,
 		setRole,
 		setSchool,
+		setPartnerEmail,
+		setPartnerPassword,
+		setAdminEmail,
+		setAdminPassword,
+		setAdminOrganizationType,
+		setAdminCollege,
+		setAdminDepartment,
+		setAdminOfficeAddress,
+		setAdminOfficeAddressDetail,
+		selectAdminSealMock,
+		setPartnerCompanyName,
+		setPartnerOfficeAddress,
+		setPartnerOfficeAddressDetail,
+		selectPartnerBusinessRegistrationMock,
 		setAgreePrivacy,
 		setAgreeMarketing,
 		setAgreeAll,
