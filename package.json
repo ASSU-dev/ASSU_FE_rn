@@ -11,7 +11,8 @@
 		"biome:lint": "biome lint .",
 		"biome:fix": "biome check --write .",
 		"biome:format": "biome format . --write",
-		"icons": "node scripts/generate-icons.js"
+		"icons": "node scripts/generate-icons.js",
+		"generate:api": "node scripts/generate-api.js"
 	},
 	"dependencies": {
 		"@expo/vector-icons": "^15.0.3",
