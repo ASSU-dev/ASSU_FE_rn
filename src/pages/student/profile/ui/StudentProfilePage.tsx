@@ -22,7 +22,11 @@ export function StudentProfilePage() {
 
 	const customerServiceItems: AccountMenuItemProps[] = [
 		{ label: "개인정보 처리방침 안내", iconName: "folder" },
-		{ label: "자주 묻는 질문", iconName: "speechBubble" },
+		{
+			label: "자주 묻는 질문",
+			iconName: "speechBubble",
+			onPress: () => router.push("../faq"),
+		},
 		{
 			label: "고객센터",
 			iconName: "headphone",
