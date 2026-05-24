@@ -8,13 +8,33 @@ apiInstance.interceptors.request.use((config) => {
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
+	console.log(
+		"[API REQ]",
+		config.method?.toUpperCase(),
+		config.url,
+		JSON.stringify(config.data),
+	);
 	return config;
 });
 
 apiInstance.interceptors.response.use(
-	(response) => response,
+	(response) => {
+		console.log(
+			"[API RES]",
+			response.status,
+			response.config.url,
+			JSON.stringify(response.data),
+		);
+		return response;
+	},
 	(error) => {
 		const status = error.response?.status;
+		console.log(
+			"[API ERR]",
+			status,
+			error.config?.url,
+			JSON.stringify(error.response?.data),
+		);
 
 		if (status === 401) {
 			// TODO: 로그아웃 처리 (토큰 저장소 연동 후 구현)

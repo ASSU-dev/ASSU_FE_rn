@@ -8,13 +8,13 @@ import {
 	SignupProgressBar,
 	SignupStepContent,
 } from "@/features/signup-user-flow/ui";
-
+import { USaintAuthWebViewModal } from "@/features/signup-user-flow/ui/components/USaintAuthWebViewModal";
 import { AddressSearchDialog } from "@/shared/ui/address-search";
 import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 export function SignupUserFlowWidget() {
-	const { formMethods, flow, login, flowUi, overlays } =
+	const { formMethods, flow, login, flowUi, overlays, studentAuthWebView } =
 		useSignupFlowController();
 
 	if (flow.step === "login1") {
@@ -94,6 +94,13 @@ export function SignupUserFlowWidget() {
 						actionLabel="재전송하기"
 						onClose={overlays.resendSheet.close}
 						onAction={overlays.resendSheet.action}
+					/>
+
+					<USaintAuthWebViewModal
+						visible={studentAuthWebView.visible}
+						loginUrl={studentAuthWebView.loginUrl}
+						onClose={studentAuthWebView.close}
+						onVerifySuccess={studentAuthWebView.onVerifySuccess}
 					/>
 
 					<AddressSearchDialog
