@@ -4,7 +4,7 @@ import { FormFieldInput } from "@/shared/ui/FormField/FormFieldInput";
 import type { ColorTokenKey } from "@/shared/ui/FormField/types";
 
 type LabeledInputFieldProps = {
-	label: string;
+	label?: string;
 	placeholder?: string;
 	value: string;
 	onChangeText?: (text: string) => void;
@@ -12,6 +12,7 @@ type LabeledInputFieldProps = {
 	editable?: boolean;
 	inputTextColor?: ColorTokenKey;
 	inputBorderColor?: ColorTokenKey;
+	secureTextEntry?: boolean;
 };
 
 export function LabeledInputField({
@@ -23,10 +24,13 @@ export function LabeledInputField({
 	editable = true,
 	inputTextColor,
 	inputBorderColor,
+	secureTextEntry,
 }: LabeledInputFieldProps) {
 	return (
-		<View className="w-full gap-[8px]">
-			<Text className="text-[13px] text-content-secondary">{label}</Text>
+		<View className={label ? "w-full gap-[8px]" : "w-full"}>
+			{label ? (
+				<Text className="text-[13px] text-content-secondary">{label}</Text>
+			) : null}
 			<FormFieldInput
 				appearance="filled"
 				placeholder={placeholder}
@@ -36,6 +40,7 @@ export function LabeledInputField({
 				editable={editable}
 				inputTextColor={inputTextColor}
 				inputBorderColor={inputBorderColor}
+				secureTextEntry={secureTextEntry}
 			/>
 		</View>
 	);
