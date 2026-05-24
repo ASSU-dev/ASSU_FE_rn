@@ -4,7 +4,7 @@ const path = require("path");
 const readline = require("readline");
 
 const ROOT = path.resolve(__dirname, "..");
-const SPEC_PATH = path.join(ROOT, "openapi/oepnapi.json");
+const SPEC_PATH = path.join(ROOT, "openapi/openapi.json");
 
 const args = process.argv.slice(2);
 const opsArgIndex = args.indexOf("--operations");
@@ -209,9 +209,19 @@ function getAlreadyExportedNames(indexContent) {
     }
   }
 
-  // export { EnumName } from (as 없는 단순 export만)
-  for (const match of indexContent.matchAll(/export \{ (\w+) \} from/g)) {
-    names.add(match[1]);
+  // export { A, B as C, ... } from (멀티라인 + as 별칭 포함)
+  for (const match of indexContent.matchAll(/export \{([^}]+)\} from/gs)) {
+    for (const part of match[1].split(",")) {
+      const trimmed = part.trim();
+      if (!trimmed) continue;
+      const asMatch = trimmed.match(/^(\w+)\s+as\s+(\w+)$/);
+      if (asMatch) {
+        names.add(asMatch[1]); // 원본 이름
+        names.add(asMatch[2]); // 별칭
+      } else if (/^\w+$/.test(trimmed)) {
+        names.add(trimmed);
+      }
+    }
   }
 
   return names;
