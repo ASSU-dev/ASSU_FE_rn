@@ -14,10 +14,15 @@ import { MonthNavigator } from "./MonthNavigator";
 
 export function BenefitAllPage() {
 	const { month: monthParam } = useLocalSearchParams<{ month: string }>();
+	const now = new Date();
+	const initialYear = now.getFullYear();
 	const initialMonth = monthParam
 		? parseInt(monthParam, 10)
-		: new Date().getMonth() + 1;
-	const { month, handlePrev, handleNext } = useMonthNavigator(initialMonth);
+		: now.getMonth() + 1;
+	const { month, handlePrev, handleNext } = useMonthNavigator(
+		initialYear,
+		initialMonth,
+	);
 	const benefits = useBenefitsStore((s) => s.benefits);
 
 	const benefitsForMonth = benefits.filter(

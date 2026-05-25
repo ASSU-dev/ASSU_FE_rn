@@ -22,6 +22,7 @@ export function MapLocateButton({ onPress, disabled }: MapLocateButtonProps) {
 			className="absolute right-card-p flex-row items-center justify-center gap-gutter rounded-full bg-canvas p-gutter"
 			style={{
 				top: insets.top + TOP_OFFSET_BELOW_SEARCH_BAR,
+				opacity: disabled ? 0.5 : 1,
 				...shadows.neutral,
 			}}
 			hitSlop={8}

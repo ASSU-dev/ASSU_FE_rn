@@ -15,6 +15,7 @@ export function useUserLocation() {
 
 	useFocusEffect(
 		useCallback(() => {
+			let isMounted = true;
 			let positionSub: Location.LocationSubscription | undefined;
 			let headingSub: Location.LocationSubscription | undefined;
 
@@ -30,7 +31,7 @@ export function useUserLocation() {
 				setCenter(userLoc);
 				setMyLocation(userLoc);
 
-				positionSub = await Location.watchPositionAsync(
+				const posSub = await Location.watchPositionAsync(
 					{
 						accuracy: Location.Accuracy.High,
 						timeInterval: 2000,
@@ -39,8 +40,13 @@ export function useUserLocation() {
 					(l) =>
 						setMyLocation({ lat: l.coords.latitude, lng: l.coords.longitude }),
 				);
+				if (!isMounted) {
+					posSub.remove();
+					return;
+				}
+				positionSub = posSub;
 
-				headingSub = await Location.watchHeadingAsync((hdg) => {
+				const hdgSub = await Location.watchHeadingAsync((hdg) => {
 					const rounded = Math.round(hdg.magHeading);
 					if (
 						lastHeadingRef.current === null ||
@@ -50,9 +56,15 @@ export function useUserLocation() {
 						setHeading(rounded);
 					}
 				});
+				if (!isMounted) {
+					hdgSub.remove();
+					return;
+				}
+				headingSub = hdgSub;
 			})();
 
 			return () => {
+				isMounted = false;
 				positionSub?.remove();
 				headingSub?.remove();
 			};

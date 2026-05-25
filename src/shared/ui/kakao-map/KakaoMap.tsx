@@ -158,7 +158,6 @@ function buildMapHtml(
         center: initialPos,
         level: 3
       });
-      createMyLocationOverlay(initialPos);
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }
   </script>

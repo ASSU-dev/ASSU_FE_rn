@@ -18,9 +18,10 @@ import { SuggestionSection } from "./SuggestionSection";
 const COLLAPSED_LIMIT = 3;
 
 export function StudentSuggestionPage() {
-	const year = new Date().getFullYear();
-	const { month, handlePrev, handleNext } = useMonthNavigator(
-		new Date().getMonth() + 1,
+	const now = new Date();
+	const { year, month, handlePrev, handleNext } = useMonthNavigator(
+		now.getFullYear(),
+		now.getMonth() + 1,
 	);
 
 	const { data, isLoading, isError, error } = useMyPartnerships(year, month);
