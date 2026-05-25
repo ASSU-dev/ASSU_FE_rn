@@ -24,7 +24,7 @@ export function PartnershipContractPage() {
 			onClose={() => router.back()}
 			onQrPress={() =>
 				router.push({
-					pathname: "/qr-view/[id]",
+					pathname: "/(protected)/qr-view/[id]",
 					params: { id: contract.id },
 				})
 			}
