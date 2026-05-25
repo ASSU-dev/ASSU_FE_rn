@@ -1,9 +1,13 @@
 import { router } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	Pressable,
+	ScrollView,
+	Text,
+	View,
+} from "react-native";
+import { useMyPartnerships } from "@/entities/partnership";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
-import { MOCK_BENEFITS } from "../model/mockBenefits";
-import { getMonthFromDateStr } from "../model/types";
-import { useBenefitsStore } from "../model/useBenefitsStore";
 import { useMonthNavigator } from "../model/useMonthNavigator";
 import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
@@ -14,43 +18,26 @@ import { SuggestionSection } from "./SuggestionSection";
 const COLLAPSED_LIMIT = 3;
 
 export function StudentSuggestionPage() {
+	const year = new Date().getFullYear();
 	const { month, handlePrev, handleNext } = useMonthNavigator(
 		new Date().getMonth() + 1,
 	);
-	const { benefits, addBenefit } = useBenefitsStore();
 
-	const benefitsForMonth = benefits.filter(
-		(b) => getMonthFromDateStr(b.date) === month,
-	);
-	const count = benefitsForMonth.length;
-	const displayBenefits = benefitsForMonth.slice(0, COLLAPSED_LIMIT);
+	const { data, isLoading, isError, error } = useMyPartnerships(year, month);
 
-	const handleAddRandom = () => {
-		const random =
-			MOCK_BENEFITS[Math.floor(Math.random() * MOCK_BENEFITS.length)];
-		const dateStr = new Date().toISOString().split("T")[0];
-		addBenefit({ ...random, id: `${random.id}-${Date.now()}`, date: dateStr });
-	};
+	const details = data?.details ?? [];
+	const count = data?.serviceCount ?? 0;
+	const displayBenefits = details.slice(0, COLLAPSED_LIMIT);
 
 	return (
 		<PageLayout contentContainerClassName="flex-1">
 			<ScrollView className="flex-1" contentContainerClassName="flex-grow">
 				<View className="px-screen-m gap-6 pt-10">
-					<View className="flex-row items-center justify-between">
-						<MonthNavigator
-							month={month}
-							onPrev={handlePrev}
-							onNext={handleNext}
-						/>
-						<Pressable
-							className="bg-neutral px-3 py-1.5 rounded-[8px]"
-							onPress={handleAddRandom}
-						>
-							<Text className="font-medium text-sm text-content-secondary">
-								+ 가게 추가
-							</Text>
-						</Pressable>
-					</View>
+					<MonthNavigator
+						month={month}
+						onPrev={handlePrev}
+						onNext={handleNext}
+					/>
 					<View className="flex-row items-end justify-between">
 						<BenefitSummary month={month} count={count} />
 						{count > COLLAPSED_LIMIT && (
@@ -66,7 +53,15 @@ export function StudentSuggestionPage() {
 						)}
 					</View>
 				</View>
-				{count === 0 ? (
+				{isLoading ? (
+					<View className="flex-1 items-center justify-center">
+						<ActivityIndicator />
+					</View>
+				) : isError ? (
+					<View className="flex-1 items-center justify-center">
+						<Text className="text-danger">{String(error)}</Text>
+					</View>
+				) : count === 0 ? (
 					<View className="flex-1 items-center justify-center">
 						<BenefitEmptyState />
 					</View>
