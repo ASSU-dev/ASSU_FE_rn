@@ -1,7 +1,7 @@
 // 별점 요약 섹션 — 별 5개(표시용) + 평균 점수 + n개의 평가
 
 import { Text, View } from "react-native";
-import { StarIcon } from "@/shared/assets/icons";
+import { StarIcon } from "@/shared/assets/icons/star-icon";
 
 interface Props {
 	averageRating: number;
