@@ -69,7 +69,7 @@ export const SummaryCard = memo(
 					{actionLabel ? (
 						<Pressable
 							onPress={onActionPress}
-							className={`rounded-lg px-5 py-3 ${
+							className={`rounded-lg px-[10px] py-[5px] ${
 								isAffiliated ? "bg-primary" : "bg-primary-tint"
 							}`}
 						>
