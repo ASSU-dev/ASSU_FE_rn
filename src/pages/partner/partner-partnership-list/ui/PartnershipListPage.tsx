@@ -75,7 +75,7 @@ export function PartnershipListPage() {
 				onQrPress={() => {
 					if (selectedContractId) {
 						router.push({
-							pathname: "/qr-view/[id]",
+							pathname: "/(protected)/qr-view/[id]",
 							params: { id: selectedContractId },
 						});
 					}

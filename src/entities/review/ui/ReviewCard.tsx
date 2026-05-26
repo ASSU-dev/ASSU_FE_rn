@@ -1,5 +1,5 @@
 import { Image, Pressable, Text, View } from "react-native";
-import { StarIcon } from "@/shared/assets/icons";
+import { StarIcon } from "@/shared/assets/icons/star-icon";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { Review, ReviewImage } from "../model/types";
 

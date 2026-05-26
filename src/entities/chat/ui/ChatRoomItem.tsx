@@ -3,6 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
 import { ProfileAvatar } from "@/shared/ui/profile";
 
+import { getProfileImageUri } from "../lib/getProfileImageUri";
 import type { ChatRoomItemProps } from "../model/types";
 
 export function ChatRoomItem({
@@ -23,7 +24,10 @@ export function ChatRoomItem({
 					<View className="h-[48px] px-6 flex-row items-center justify-between gap-[27px]">
 						{/* 프로필 + 텍스트 영역 */}
 						<View className="ml-2 flex-row shrink items-center gap-[27px]">
-							<ProfileAvatar source={profileImage} size={48} />
+							<ProfileAvatar
+								source={getProfileImageUri(profileImage)}
+								size={48}
+							/>
 							{/* 텍스트 */}
 							<View className="shrink">
 								<Text className="font-bold text-[16px] leading-[22px] text-content-primary">

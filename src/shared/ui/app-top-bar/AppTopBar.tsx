@@ -16,8 +16,13 @@ export function AppTopBar({
 }: AppTopBarProps) {
 	const isLeft = titleAlign === "left";
 	return (
-		<View className="flex-row items-center px-screen-m pt-7 pb-4">
-			<Pressable hitSlop={8} onPress={onBack ?? (() => router.back())}>				<BackArrowIcon
+		<View className="relative flex-row items-center justify-center px-screen-m py-4 mt-3">
+			<Pressable
+				hitSlop={8}
+				onPress={onBack ?? (() => router.back())}
+				className="absolute left-6"
+			>
+				<BackArrowIcon
 					width={24}
 					height={24}
 					color={colorTokens.contentPrimary}

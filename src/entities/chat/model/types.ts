@@ -2,7 +2,7 @@ import type { ImageSource } from "expo-image";
 
 export interface ChatRoomItemProps {
 	id: string;
-	profileImage: ImageSource;
+	profileImage: string;
 	roomName: string;
 	lastMessage: string;
 	unreadCount?: number;
