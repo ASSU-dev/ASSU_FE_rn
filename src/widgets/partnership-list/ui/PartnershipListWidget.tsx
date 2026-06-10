@@ -6,6 +6,7 @@ interface PartnershipListWidgetProps {
 	partnerships: Partnership[];
 	title?: string;
 	variant?: "white" | "gray";
+	maxItems?: number;
 	onViewAll?: () => void;
 	onPressCard?: (id: string) => void;
 }
@@ -15,12 +16,14 @@ export const PartnershipListWidget = memo(
 		partnerships,
 		title = "제휴단체 목록",
 		variant = "white",
+		maxItems,
 		onViewAll,
 		onPressCard,
 	}: PartnershipListWidgetProps) => {
+		const displayed = maxItems ? partnerships.slice(0, maxItems) : partnerships;
+
 		return (
 			<View className="gap-2">
-				{/* Header */}
 				<View className="flex-row items-center justify-between">
 					<Text className="text-lg font-medium text-content-primary">
 						{title}
@@ -32,9 +35,8 @@ export const PartnershipListWidget = memo(
 					</Pressable>
 				</View>
 
-				{/* Cards list */}
 				<View className="gap-5">
-					{partnerships.map((partnership) => (
+					{displayed.map((partnership) => (
 						<Pressable
 							key={partnership.id}
 							onPress={() => onPressCard?.(partnership.id)}
