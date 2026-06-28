@@ -22,16 +22,27 @@ type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
 	myLocation?: { lat: number; lng: number } | null;
 	heading?: number | null;
+	markers?: KakaoMapMarker[];
 };
 
 export type KakaoMapHandle = {
 	panTo: (lat: number, lng: number) => void;
 };
 
+export type KakaoMapMarker = {
+	id: string;
+	name: string;
+	latitude: number;
+	longitude: number;
+};
+
 const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 
 export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
-	function KakaoMap({ initialCenter = SOONGSIL, myLocation, heading }, ref) {
+	function KakaoMap(
+		{ initialCenter = SOONGSIL, myLocation, heading, markers = [] },
+		ref,
+	) {
 		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY ?? "";
 		const webViewRef = useRef<WebView>(null);
 		const [isMapReady, setIsMapReady] = useState(false);
@@ -69,6 +80,17 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				`window.updateHeading(${heading ?? "null"}); true;`,
 			);
 		}, [heading, isMapReady]);
+
+		useEffect(() => {
+			if (!isMapReady) return;
+			const serializedMarkers = JSON.stringify(markers).replace(
+				/</g,
+				"\\u003c",
+			);
+			webViewRef.current?.injectJavaScript(
+				`window.updateStoreMarkers(${serializedMarkers}); true;`,
+			);
+		}, [isMapReady, markers]);
 
 		const handleMessage = (event: WebViewMessageEvent) => {
 			try {
@@ -118,6 +140,7 @@ function buildMapHtml(
   <script>
     var map;
     var myLocationOverlay = null;
+    var storeMarkers = [];
 
     function createMyLocationOverlay(position) {
       var content =
@@ -150,6 +173,22 @@ function buildMapHtml(
       var cone = document.getElementById('loc-cone');
       if (!cone || heading === null || heading === undefined) return;
       cone.style.transform = 'rotate(' + heading + 'deg)';
+    };
+
+    window.updateStoreMarkers = function(markers) {
+      storeMarkers.forEach(function(marker) { marker.setMap(null); });
+      storeMarkers = [];
+      if (!Array.isArray(markers)) return;
+
+      markers.forEach(function(markerData) {
+        if (typeof markerData.latitude !== 'number' || typeof markerData.longitude !== 'number') return;
+        var marker = new kakao.maps.Marker({
+          position: new kakao.maps.LatLng(markerData.latitude, markerData.longitude),
+          title: markerData.name || ''
+        });
+        marker.setMap(map);
+        storeMarkers.push(marker);
+      });
     };
 
     function initMap() {
