@@ -1,5 +1,4 @@
 import {
-	type ElementRef,
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
@@ -7,8 +6,11 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { type NativeSyntheticEvent, StyleSheet } from "react-native";
-import { WebView } from "react-native-webview";
+import { StyleSheet } from "react-native";
+import WebView, {
+	type WebViewMessageEvent,
+	type WebViewProps,
+} from "react-native-webview/index";
 
 import { colorTokens } from "@/shared/styles/tokens";
 
@@ -20,7 +22,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 	};
 }
 
-type KakaoWebViewMessageEvent = NativeSyntheticEvent<{ data: string }>;
+type KakaoWebViewSource = NonNullable<WebViewProps["source"]>;
 
 type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
@@ -37,9 +39,9 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	function KakaoMap({ initialCenter = SOONGSIL, myLocation, heading }, ref) {
 		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
-		const webViewRef = useRef<ElementRef<typeof WebView>>(null);
+		const webViewRef = useRef<WebView>(null);
 		const [isMapReady, setIsMapReady] = useState(false);
-		const webViewSource = useMemo(() => {
+		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
 
 			return {
@@ -64,7 +66,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			},
 		}));
 
-		// 탭 복귀 시 카메라 이동
+		// Recenter the map when returning to this tab.
 		useEffect(() => {
 			if (!isMapReady) return;
 			webViewRef.current?.injectJavaScript(`
@@ -74,7 +76,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 		`);
 		}, [initialCenter.lat, initialCenter.lng, isMapReady]);
 
-		// 위치 변경 -> 오버레이 생성 or 위치만 이동
+		// Create or move the current-location overlay.
 		useEffect(() => {
 			if (!isMapReady || !myLocation) return;
 			webViewRef.current?.injectJavaScript(
@@ -82,7 +84,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			);
 		}, [myLocation, isMapReady]);
 
-		// 방향 변경 -> cone의 CSS transform만 교체 (DOM 재생성 없음)
+		// Update only the heading cone transform.
 		useEffect(() => {
 			if (!isMapReady) return;
 			webViewRef.current?.injectJavaScript(
@@ -90,7 +92,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			);
 		}, [heading, isMapReady]);
 
-		const handleMessage = (event: KakaoWebViewMessageEvent) => {
+		const handleMessage = (event: WebViewMessageEvent) => {
 			try {
 				const data = JSON.parse(event.nativeEvent.data) as { type: string };
 				if (data.type === "MAP_READY") setIsMapReady(true);
@@ -111,7 +113,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			<WebView
 				ref={webViewRef}
 				source={webViewSource}
-				style={StyleSheet.absoluteFill}
+				style={StyleSheet.absoluteFillObject}
 				originWhitelist={["*"]}
 				javaScriptEnabled
 				scrollEnabled={false}
