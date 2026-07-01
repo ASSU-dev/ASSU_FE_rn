@@ -1,4 +1,5 @@
 import {
+	type ElementRef,
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
@@ -6,8 +7,8 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { StyleSheet } from "react-native";
-import WebView, { type WebViewMessageEvent } from "react-native-webview";
+import { type NativeSyntheticEvent, StyleSheet } from "react-native";
+import { WebView } from "react-native-webview";
 
 import { colorTokens } from "@/shared/styles/tokens";
 
@@ -18,6 +19,8 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 		b: Number.parseInt(hex.slice(5, 7), 16),
 	};
 }
+
+type KakaoWebViewMessageEvent = NativeSyntheticEvent<{ data: string }>;
 
 type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
@@ -34,7 +37,7 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	function KakaoMap({ initialCenter = SOONGSIL, myLocation, heading }, ref) {
 		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
-		const webViewRef = useRef<WebView>(null);
+		const webViewRef = useRef<ElementRef<typeof WebView>>(null);
 		const [isMapReady, setIsMapReady] = useState(false);
 		const webViewSource = useMemo(() => {
 			if (!appKey) return null;
@@ -71,7 +74,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 		`);
 		}, [initialCenter.lat, initialCenter.lng, isMapReady]);
 
-		// 위치 변경 → 오버레이 생성 or 위치만 이동
+		// 위치 변경 -> 오버레이 생성 or 위치만 이동
 		useEffect(() => {
 			if (!isMapReady || !myLocation) return;
 			webViewRef.current?.injectJavaScript(
@@ -79,7 +82,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			);
 		}, [myLocation, isMapReady]);
 
-		// 방향 변경 → cone의 CSS transform만 교체 (DOM 재생성 없음)
+		// 방향 변경 -> cone의 CSS transform만 교체 (DOM 재생성 없음)
 		useEffect(() => {
 			if (!isMapReady) return;
 			webViewRef.current?.injectJavaScript(
@@ -87,7 +90,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			);
 		}, [heading, isMapReady]);
 
-		const handleMessage = (event: WebViewMessageEvent) => {
+		const handleMessage = (event: KakaoWebViewMessageEvent) => {
 			try {
 				const data = JSON.parse(event.nativeEvent.data) as { type: string };
 				if (data.type === "MAP_READY") setIsMapReady(true);
