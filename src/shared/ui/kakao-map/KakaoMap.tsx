@@ -2,6 +2,7 @@ import {
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
+	useMemo,
 	useRef,
 	useState,
 } from "react";
@@ -32,9 +33,25 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 
 export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	function KakaoMap({ initialCenter = SOONGSIL, myLocation, heading }, ref) {
-		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY ?? "";
+		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
 		const webViewRef = useRef<WebView>(null);
 		const [isMapReady, setIsMapReady] = useState(false);
+		const webViewSource = useMemo(() => {
+			if (!appKey) return null;
+
+			return {
+				html: buildMapHtml(appKey),
+				baseUrl: "http://localhost",
+			};
+		}, [appKey]);
+
+		useEffect(() => {
+			if (appKey || !__DEV__) return;
+
+			console.error(
+				"KakaoMap requires EXPO_PUBLIC_KAKAO_JS_KEY to render the map.",
+			);
+		}, [appKey]);
 
 		useImperativeHandle(ref, () => ({
 			panTo: (lat, lng) => {
@@ -52,7 +69,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			map.setLevel(3);
 			true;
 		`);
-		}, [initialCenter, isMapReady]);
+		}, [initialCenter.lat, initialCenter.lng, isMapReady]);
 
 		// 위치 변경 → 오버레이 생성 or 위치만 이동
 		useEffect(() => {
@@ -74,16 +91,23 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			try {
 				const data = JSON.parse(event.nativeEvent.data) as { type: string };
 				if (data.type === "MAP_READY") setIsMapReady(true);
-			} catch {}
+			} catch (error) {
+				if (__DEV__) {
+					console.warn(
+						"KakaoMap received an invalid WebView message.",
+						event.nativeEvent.data,
+						error,
+					);
+				}
+			}
 		};
+
+		if (!webViewSource) return null;
 
 		return (
 			<WebView
 				ref={webViewRef}
-				source={{
-					html: buildMapHtml(appKey, initialCenter),
-					baseUrl: "http://localhost",
-				}}
+				source={webViewSource}
 				style={StyleSheet.absoluteFill}
 				originWhitelist={["*"]}
 				javaScriptEnabled
@@ -94,10 +118,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	},
 );
 
-function buildMapHtml(
-	appKey: string,
-	center: { lat: number; lng: number },
-): string {
+function buildMapHtml(appKey: string): string {
 	const { r, g, b } = hexToRgb(colorTokens.primary);
 	const primary = colorTokens.primary;
 	const canvas = colorTokens.canvas;
@@ -153,12 +174,11 @@ function buildMapHtml(
     };
 
     function initMap() {
-      var initialPos = new kakao.maps.LatLng(${center.lat}, ${center.lng});
+      var initialPos = new kakao.maps.LatLng(${SOONGSIL.lat}, ${SOONGSIL.lng});
       map = new kakao.maps.Map(document.getElementById('map'), {
         center: initialPos,
         level: 3
       });
-      createMyLocationOverlay(initialPos);
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }
   </script>
