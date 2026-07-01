@@ -1,5 +1,8 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MOCK_PARTNERSHIP_CONTRACTS } from "@/entities/partnership/model/mockPartnershipContracts";
+import {
+	toPartnershipContract,
+	usePartnershipDetail,
+} from "@/entities/partnership";
 import { PartnershipContractContent } from "@/features/partnership-contract";
 import { EmptyState } from "@/shared/ui/empty-state";
 
@@ -7,9 +10,13 @@ export function PartnershipContractPage() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const router = useRouter();
 
-	const contract = MOCK_PARTNERSHIP_CONTRACTS.find((c) => c.id === id) ?? null;
+	const { data, isLoading } = usePartnershipDetail(id ?? null);
 
-	if (!contract) {
+	if (isLoading) {
+		return null;
+	}
+
+	if (!data) {
 		return (
 			<EmptyState
 				title="계약서를 찾을 수 없습니다"
@@ -17,6 +24,8 @@ export function PartnershipContractPage() {
 			/>
 		);
 	}
+
+	const contract = toPartnershipContract(data);
 
 	return (
 		<PartnershipContractContent

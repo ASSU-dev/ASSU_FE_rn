@@ -9,6 +9,7 @@ type LoginFormScreenProps = {
 	onChangeEmail: (value: string) => void;
 	onChangePassword: (value: string) => void;
 	onPressLogin: () => void;
+	onPressLmsLogin: () => void;
 	onPressSignup: () => void;
 };
 
@@ -18,6 +19,7 @@ export function LoginFormScreen({
 	onChangeEmail,
 	onChangePassword,
 	onPressLogin,
+	onPressLmsLogin,
 	onPressSignup,
 }: LoginFormScreenProps) {
 	return (
@@ -47,11 +49,14 @@ export function LoginFormScreen({
 
 			<View className="mt-[35px] gap-[25px]">
 				<View className="h-[0.5px] bg-content-secondary mx-[15px]" />
-				<View className="h-[41px] items-center justify-center rounded-lg bg-primary-tint">
+				<Pressable
+					onPress={onPressLmsLogin}
+					className="h-[41px] items-center justify-center rounded-lg bg-primary-tint"
+				>
 					<Text className="text-[13px] font-semibold text-primary">
 						LMS 학생 로그인
 					</Text>
-				</View>
+				</Pressable>
 				<View className="items-center gap-[15px]">
 					<Text className="text-[13px] font-regular text-content-secondary">
 						아직 계정이 없으신가요?

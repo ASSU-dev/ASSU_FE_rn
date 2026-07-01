@@ -1,11 +1,16 @@
 import { router } from "expo-router";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
+import { useStudentLoginAction } from "./useStudentLoginAction";
+import { useStudentSignupAction } from "./useStudentSignupAction";
+import { useStudentVerificationAction } from "./useStudentVerificationAction";
 
 export function useSignupFlowController() {
+	const FORCE_PHONE_VERIFICATION_BYPASS = false;
 	const {
 		step,
 		form,
@@ -19,8 +24,12 @@ export function useSignupFlowController() {
 		setPhone,
 		setVerificationCode,
 		sendVerificationCode,
+		setIdentityVerified,
 		setRole,
 		setSchool,
+		setStudentMajor,
+		setStudentId,
+		setProfileName,
 		setPartnerEmail,
 		setPartnerPassword,
 		setAdminEmail,
@@ -46,10 +55,55 @@ export function useSignupFlowController() {
 		agreementHandlers,
 	} = useSignupFlowPresentation();
 
+	const [studentAuthPayload, setStudentAuthPayload] = useState<{
+		sIdno: string;
+		sToken: string;
+	} | null>(null);
+
+	const handleVerified = useCallback(
+		({
+			sIdno,
+			sToken,
+			studentNumber,
+			majorStr,
+			name,
+		}: {
+			sIdno: string;
+			sToken: string;
+			studentNumber?: string;
+			majorStr?: string;
+			name?: string;
+		}) => {
+			setStudentAuthPayload({ sIdno, sToken });
+			if (studentNumber) setStudentId(studentNumber);
+			if (majorStr) setStudentMajor(majorStr);
+			if (name) setProfileName(name);
+			goTo("studentInput2");
+		},
+		[goTo, setProfileName, setStudentId, setStudentMajor],
+	);
+
+	const { handlePressVerify, webView: studentAuthWebView } =
+		useStudentVerificationAction(handleVerified);
+
+	const handleSignupFailure = useCallback(() => goTo("loginForm"), [goTo]);
+
+	const { signup: handleStudentSignup } = useStudentSignupAction({
+		studentAuthPayload,
+		agreePrivacy: form.agreements.agreePrivacy,
+		agreeMarketing: form.agreements.agreeMarketing,
+		onSuccess: goNext,
+		onFailure: handleSignupFailure,
+	});
+
+	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
+
+	const sendIdentityVerificationCode = () => sendVerificationCode();
+
 	const overlays = useSignupOverlays({
 		adminOfficeAddressId: form.admin.officeAddressId,
 		partnerOfficeAddressId: form.partner.officeAddressId,
-		onSendVerificationCode: sendVerificationCode,
+		onSendVerificationCode: sendIdentityVerificationCode,
 		onSelectAdminOfficeAddress: setAdminOfficeAddress,
 		onSelectPartnerOfficeAddress: setPartnerOfficeAddress,
 	});
@@ -65,11 +119,12 @@ export function useSignupFlowController() {
 		identity: {
 			setPhone,
 			setVerificationCode,
-			sendVerificationCode,
+			sendVerificationCode: sendIdentityVerificationCode,
 		},
 		student: {
 			setRole,
 			setSchool,
+			onPressStudentVerify: handlePressVerify,
 		},
 		partner: {
 			setPartnerEmail,
@@ -101,25 +156,36 @@ export function useSignupFlowController() {
 			isBottomDisabled,
 			buttonLabel,
 			onSegmentPress: (segmentIndex: number) => {
-				if (segmentIndex >= currentProgressIndex) {
-					return;
-				}
-
+				if (segmentIndex >= currentProgressIndex) return;
 				goTo(progressSteps[segmentIndex]);
 			},
-			onBottomButtonPress:
-				step === "complete"
-					? () => router.replace("/(protected)/(student)/(tabs)/home" as never)
-					: goNext,
+			onBottomButtonPress: async () => {
+				if (step === "complete") {
+					router.replace(getHomeRouteByRole("STUDENT") as never);
+					return;
+				}
+				if (step === "identity" && FORCE_PHONE_VERIFICATION_BYPASS) {
+					setIdentityVerified();
+					goNext();
+					return;
+				}
+				if (step === "studentInput3") {
+					await handleStudentSignup();
+					return;
+				}
+				goNext();
+			},
 		}),
 		[
 			buttonLabel,
 			currentProgressIndex,
 			goNext,
 			goTo,
+			handleStudentSignup,
 			isBottomDisabled,
 			progress,
 			progressSteps,
+			setIdentityVerified,
 			showBottomButton,
 			showProgress,
 			step,
@@ -132,12 +198,18 @@ export function useSignupFlowController() {
 			password: form.auth.password,
 			onChangeEmail: setAuthEmail,
 			onChangePassword: setAuthPassword,
-			onPressLogin: () => {
-				console.log("로그인 성공");
-			},
+			onPressLogin: () => console.log("로그인 성공"),
+			onPressLmsLogin: handlePressLmsLogin,
 			onPressSignup: () => goTo("identity"),
 		}),
-		[form.auth.email, form.auth.password, goTo, setAuthEmail, setAuthPassword],
+		[
+			form.auth.email,
+			form.auth.password,
+			goTo,
+			handlePressLmsLogin,
+			setAuthEmail,
+			setAuthPassword,
+		],
 	);
 
 	return {
@@ -152,5 +224,7 @@ export function useSignupFlowController() {
 			actions: stepContentActions,
 		} satisfies SignupFlowUiContextValue,
 		overlays,
+		studentAuthWebView,
+		loginWebView,
 	};
 }

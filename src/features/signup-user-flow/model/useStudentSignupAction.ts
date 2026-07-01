@@ -1,0 +1,67 @@
+import { useCallback } from "react";
+import { Alert } from "react-native";
+import { useSignupMutation } from "@/features/signup-user-flow/api/useSignupMutation";
+import { StudentTokenAuthPayloadDTOUniversity } from "@/shared/api";
+
+type Params = {
+	studentAuthPayload: { sIdno: string; sToken: string } | null;
+	agreePrivacy: boolean;
+	agreeMarketing: boolean;
+	onSuccess: () => void;
+	onFailure: () => void;
+};
+
+export function useStudentSignupAction({
+	studentAuthPayload,
+	agreePrivacy,
+	agreeMarketing,
+	onSuccess,
+	onFailure,
+}: Params) {
+	const mutation = useSignupMutation();
+
+	const signup = useCallback(async () => {
+		if (!studentAuthPayload) {
+			Alert.alert("인증 필요", "먼저 LMS 인증을 진행해주세요.");
+			return;
+		}
+
+		try {
+			const response = await mutation.mutateAsync({
+				locationAgree: agreePrivacy,
+				marketingAgree: agreeMarketing,
+				studentTokenAuth: {
+					sIdno: studentAuthPayload.sIdno,
+					sToken: studentAuthPayload.sToken,
+					university: StudentTokenAuthPayloadDTOUniversity.SSU,
+				},
+			});
+
+			if (!response.isSuccess) {
+				Alert.alert(
+					"회원가입 실패",
+					response.message ?? "회원가입에 실패했습니다.",
+					[{ text: "확인", onPress: onFailure }],
+				);
+				return;
+			}
+
+			onSuccess();
+		} catch (error) {
+			Alert.alert(
+				"회원가입 실패",
+				error instanceof Error ? error.message : "회원가입에 실패했습니다.",
+				[{ text: "확인", onPress: onFailure }],
+			);
+		}
+	}, [
+		agreeMarketing,
+		agreePrivacy,
+		mutation,
+		onFailure,
+		onSuccess,
+		studentAuthPayload,
+	]);
+
+	return { signup };
+}
