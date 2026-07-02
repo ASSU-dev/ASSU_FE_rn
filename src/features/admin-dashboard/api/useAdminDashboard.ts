@@ -30,7 +30,7 @@ async function fetchAdminDashboard(): Promise<DashboardData> {
 		apiInstance.get<BaseResponse<NewCountAdminResponseDto>>(
 			"/admin/dashBoard/new",
 		),
-		apiInstance.get<BaseResponse<CountUsageResponseDto>>(
+		apiInstance.get<BaseResponse<CountUsageResponseDto | null>>(
 			"/admin/dashBoard/top",
 		),
 		apiInstance.get<BaseResponse<CountUsageListResponseDto>>(

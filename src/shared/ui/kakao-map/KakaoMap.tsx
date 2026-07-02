@@ -45,6 +45,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	) {
 		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY ?? "";
 		const webViewRef = useRef<WebView>(null);
+		const prevMarkersRef = useRef<string>("");
 		const [isMapReady, setIsMapReady] = useState(false);
 
 		useImperativeHandle(ref, () => ({
@@ -87,6 +88,9 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				/</g,
 				"\\u003c",
 			);
+			if (prevMarkersRef.current === serializedMarkers) return;
+			prevMarkersRef.current = serializedMarkers;
+
 			webViewRef.current?.injectJavaScript(
 				`window.updateStoreMarkers(${serializedMarkers}); true;`,
 			);

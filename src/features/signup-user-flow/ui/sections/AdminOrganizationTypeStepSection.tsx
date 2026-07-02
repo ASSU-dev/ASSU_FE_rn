@@ -1,10 +1,10 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { ADMIN_ORGANIZATION_TYPE_OPTIONS } from "@/features/signup-user-flow/model/data/adminOptions";
+import { Select } from "@/shared/ui/select";
+import { ADMIN_ORGANIZATION_TYPE_OPTIONS } from "../../model/data/adminOptions";
 import type {
 	SignupAdminOrganizationType,
 	SignupFormState,
-} from "@/features/signup-user-flow/model/types";
-import { Select } from "@/shared/ui/select";
+} from "../../model/types";
 import { AdminStepLayout } from "../layout/AdminStepLayout";
 
 type AdminOrganizationTypeStepSectionProps = {

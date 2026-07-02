@@ -176,11 +176,12 @@ async function fetchNearbyRaw(viewport: MapViewport): Promise<unknown[]> {
 	const res = await apiInstance.get<BaseResponse<unknown>>("/map/nearby", {
 		params: viewport,
 	});
-	const result = pickList(res.data.result);
+	const responseResult = res.data?.result;
+	const result = pickList(responseResult);
 	if (__DEV__)
 		console.log("[fetchNearbyRaw] 응답:", {
 			count: result.length,
-			result: res.data.result,
+			result: responseResult,
 		});
 	return result;
 }
@@ -216,24 +217,26 @@ const fetchSearchStores = async (
 		apiInstance.get<BaseResponse<unknown>>("/map/search", {
 			params: { searchKeyword: query },
 		}),
-		apiInstance.get<BaseResponse<PlaceSuggestionDto[]>>("/map/place", {
+		apiInstance.get<BaseResponse<PlaceSuggestionDto[] | null>>("/map/place", {
 			params: { searchKeyword: query, limit: 10 },
 		}),
 	]);
 
-	const stores =
+	const storeResult =
 		storeSearchResult.status === "fulfilled"
-			? pickList(storeSearchResult.value.data.result)
-					.map(toSearchResultStore)
-					.filter((store): store is SearchResultStore => store !== null)
-			: [];
-	const places =
+			? storeSearchResult.value.data?.result
+			: undefined;
+	const placeResult =
 		placeSearchResult.status === "fulfilled"
-			? (Array.isArray(placeSearchResult.value.data.result)
-					? placeSearchResult.value.data.result
-					: []
-				).map(toPlaceSearchResult)
-			: [];
+			? placeSearchResult.value.data?.result
+			: undefined;
+
+	const stores = pickList(storeResult)
+		.map(toSearchResultStore)
+		.filter((store): store is SearchResultStore => store !== null);
+	const places = (Array.isArray(placeResult) ? placeResult : []).map(
+		toPlaceSearchResult,
+	);
 
 	const results = dedupeStores([...stores, ...places]);
 	if (__DEV__)

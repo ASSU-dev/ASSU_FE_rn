@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { type MapViewport, useNearbyStores } from "@/features/map-search";
 import { KakaoMap, type KakaoMapHandle } from "@/shared/ui/kakao-map";
-import { useUserLocation } from "@/widgets/map/model/useUserLocation";
+import { useUserLocation } from "../model/useUserLocation";
 
 import { MapLocateButton } from "./MapLocateButton";
 

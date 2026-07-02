@@ -45,7 +45,7 @@ export function ChatRoomItem({
 						{/* 안읽은 메세지 카운트 뱃지 */}
 						{unreadCount > 0 && (
 							<View className="rounded-full bg-primary justify-center px-[8px]">
-								<Text className="font-regular text-[12px] leading-[22px] tracking-[-0.41px] text-white">
+								<Text className="font-regular text-[12px] leading-[22px] tracking-[-0.41px] text-content-inverse">
 									{displayCount}
 								</Text>
 							</View>

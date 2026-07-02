@@ -14,18 +14,18 @@ export const StampBoard = ({ currentCount = 0 }) => {
 	return (
 		<View>
 			<View className="flex-row justify-between items-end pt-5">
-				<Text className="text-gray-900 text-lg font-bold">
+				<Text className="text-content-primary text-lg font-bold">
 					나의 스탬프 적립 현황
 				</Text>
 
 				<TouchableOpacity>
-					<Text className="text-gray-400 text-xs mb-1">
+					<Text className="text-content-tertiary text-xs mb-1">
 						적립 내역 더보기 {">"}
 					</Text>
 				</TouchableOpacity>
 			</View>
 
-			<View className="bg-gray-100 border-gray-600 p-6 rounded-[24px] mt-4 ">
+			<View className="bg-neutral border-neutral-variant p-6 rounded-[24px] mt-4 ">
 				<View className="flex-row flex-wrap justify-between px-1 pt-2">
 					{stamps.map((stamp) => (
 						<View key={stamp.id} style={{ width: "18%", aspectRatio: 1 }}>

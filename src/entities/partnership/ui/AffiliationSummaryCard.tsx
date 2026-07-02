@@ -29,7 +29,7 @@ export const AffiliationSummaryCard = memo(
 					onPress={onPress}
 					className="rounded-lg bg-primary px-5 py-2"
 				>
-					<Text className="text-center text-xs font-semibold text-white">
+					<Text className="text-center text-xs font-semibold text-content-inverse">
 						문의하기
 					</Text>
 				</Pressable>

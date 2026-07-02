@@ -7,12 +7,12 @@ import type { WeeklyRank } from "../model/types";
 async function fetchPartnerWeeklyRanking(): Promise<WeeklyRank[]> {
 	if (__DEV__)
 		console.log("[fetchPartnerWeeklyRanking] 요청:", "/store/ranking/weekly");
-	const res = await apiInstance.get<BaseResponse<WeeklyRankResponseDto[]>>(
-		"/store/ranking/weekly",
-	);
+	const res = await apiInstance.get<
+		BaseResponse<WeeklyRankResponseDto[] | null>
+	>("/store/ranking/weekly");
 	if (__DEV__)
 		console.log("[fetchPartnerWeeklyRanking] 응답:", res.data.result);
-	return res.data.result.map((item, index) => ({
+	return (res.data.result ?? []).map((item, index) => ({
 		weekLabel: `${index + 1}주차`,
 		rank: item.rank,
 		usageCount: item.usageCount,

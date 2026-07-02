@@ -38,24 +38,27 @@ async function fetchReviewPage(
 	const requestParams = withDefaultPageable(params);
 	if (__DEV__) console.log("[fetchReviewPage] 요청:", endpoint, requestParams);
 	const res = await apiInstance.get<
-		BaseResponse<PageResponseDto<CheckReviewResponseDto>>
+		BaseResponse<PageResponseDto<CheckReviewResponseDto> | null>
 	>(endpoint, {
 		params: requestParams,
 	});
 	const page = res.data.result;
+	const rawContent = page?.content;
+	const content = Array.isArray(rawContent) ? rawContent : [];
+	const reviews = content.map(toReview);
 	if (__DEV__)
 		console.log("[fetchReviewPage] 응답:", {
-			totalElements: page.totalElements,
-			numberOfElements: page.numberOfElements,
+			totalElements: page?.totalElements ?? reviews.length,
+			numberOfElements: page?.numberOfElements ?? reviews.length,
 		});
 
 	return {
-		reviews: page.content.map(toReview),
-		totalElements: page.totalElements,
-		totalPages: page.totalPages,
-		page: page.number,
-		size: page.size,
-		isLast: page.last,
+		reviews,
+		totalElements: page?.totalElements ?? reviews.length,
+		totalPages: page?.totalPages ?? 0,
+		page: page?.number ?? requestParams.page ?? DEFAULT_PAGEABLE.page,
+		size: page?.size ?? requestParams.size ?? DEFAULT_PAGEABLE.size,
+		isLast: page?.last ?? true,
 	};
 }
 

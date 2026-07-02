@@ -17,10 +17,10 @@ export function toAdminDashboardData({
 	auth: CountAdminAuthResponseDto;
 	newCount: NewCountAdminResponseDto;
 	todayUsage: CountUsagePersonResponseDto;
-	topUsage: CountUsageResponseDto;
+	topUsage: CountUsageResponseDto | null;
 	usageList: CountUsageListResponseDto;
 }): DashboardData {
-	const monthlyUsage: MonthlyUsage[] = usageList.items
+	const monthlyUsage: MonthlyUsage[] = (usageList?.items ?? [])
 		.slice(0, 6)
 		.map((item) => ({
 			month: item.storeName,
@@ -36,8 +36,8 @@ export function toAdminDashboardData({
 		},
 		monthlyUsage,
 		insight: {
-			topStoreName: topUsage.storeName,
-			expectedCount: topUsage.usageCount,
+			topStoreName: topUsage?.storeName ?? null,
+			expectedCount: topUsage?.usageCount ?? 0,
 		},
 	};
 }

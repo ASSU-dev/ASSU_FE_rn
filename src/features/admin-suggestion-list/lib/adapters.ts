@@ -19,7 +19,9 @@ const STATUS_LABELS: Record<string, string> = {
 	GRADUATED: "졸업생",
 };
 
-function toReadableEnum(value: string): string {
+function toReadableEnum(value?: string | null): string {
+	if (!value) return "";
+
 	return value
 		.split("_")
 		.map((word) => word.slice(0, 1) + word.slice(1).toLowerCase())
@@ -32,7 +34,8 @@ export function toSuggestion(dto: GetSuggestionResponseDto): Suggestion {
 		storeName: dto.storeName,
 		department:
 			MAJOR_LABELS[dto.studentMajor] ?? toReadableEnum(dto.studentMajor),
-		studentStatus: STATUS_LABELS[dto.enrollmentStatus] ?? dto.enrollmentStatus,
+		studentStatus:
+			STATUS_LABELS[dto.enrollmentStatus] ?? dto.enrollmentStatus ?? "",
 		content: dto.content,
 		createdAt: new Date(dto.createdAt),
 	};
