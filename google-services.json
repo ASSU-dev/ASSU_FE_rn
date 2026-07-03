@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "228828260901",
+    "project_id": "assu-v1-43065",
+    "storage_bucket": "assu-v1-43065.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228828260901:android:9576de428cf0715c8fedcc",
+        "android_client_info": {
+          "package_name": "com.ssu.assu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvI5BHxrAYqJyzdSCseqkyrOgMGVFZ-kI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228828260901:android:d6fd08e0ba4878898fedcc",
+        "android_client_info": {
+          "package_name": "com.ssu.assu_rn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvI5BHxrAYqJyzdSCseqkyrOgMGVFZ-kI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,28 @@
+import { useEffect } from "react";
+import {
+	getFcmToken,
+	requestNotificationPermission,
+} from "@/shared/lib/fcm/fcmService";
+import { useRegisterMutation } from "../api/useRegisterMutation";
+
+export function useInitFcm() {
+	const { mutate: registerToken } = useRegisterMutation();
+
+	useEffect(() => {
+		async function init() {
+			const granted = await requestNotificationPermission();
+			if (!granted) {
+				console.warn("[FCM] 알림 권한 거부됨");
+				return;
+			}
+
+			const token = await getFcmToken();
+			if (!token) return;
+
+			console.log("[FCM] 토큰 취득 ✅:", token);
+			registerToken({ token });
+		}
+
+		init();
+	}, [registerToken]);
+}

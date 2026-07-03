@@ -18,6 +18,12 @@ export type {
 // refreshToken
 export { getAssuApi as getRefreshTokenApi } from "./_generated/auth/refreshToken";
 export type {
+	BaseResponseLong,
+	RegisterParams,
+} from "./_generated/auth/register";
+// register
+export { getAssuApi as getRegisterApi } from "./_generated/auth/register";
+export type {
 	BaseResponseSignUpResponseDTO,
 	SignUpResponseDTO,
 	StudentTokenAuthPayloadDTO,
