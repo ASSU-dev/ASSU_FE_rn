@@ -23,7 +23,8 @@
 				"monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
 			},
 			"edgeToEdgeEnabled": true,
-			"predictiveBackGestureEnabled": false
+			"predictiveBackGestureEnabled": false,
+			"package": "com.eunhyekimyeah.ASSU_FE_RN"
 		},
 		"web": {
 			"bundler": "metro",
@@ -52,6 +53,12 @@
 		"experiments": {
 			"typedRoutes": true,
 			"reactCompiler": true
+		},
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
+			}
 		}
 	}
 }
