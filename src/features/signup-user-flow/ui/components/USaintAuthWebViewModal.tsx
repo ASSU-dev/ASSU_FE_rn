@@ -45,7 +45,7 @@ export function USaintAuthWebViewModal({
 					domStorageEnabled
 					javaScriptEnabled
 					onNavigationStateChange={(navState) => {
-						if (processedRef.current || navState.loading) return;
+						if (processedRef.current) return;
 						if (!navState.url.includes("saint.ssu.ac.kr")) return;
 
 						try {
