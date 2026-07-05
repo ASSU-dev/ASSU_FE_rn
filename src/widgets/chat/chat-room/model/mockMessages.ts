@@ -1,7 +1,5 @@
 import type { Message } from "@/entities/chat";
 
-export const PARTNER_CURRENT_USER_ID = "partner-1";
-
 export const MOCK_CHAT_MESSAGES: Message[] = [
 	{
 		id: "3",
