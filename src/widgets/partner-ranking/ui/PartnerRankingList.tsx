@@ -1,49 +1,41 @@
 import { Text, View } from "react-native";
 import { PartnerItem } from "@/entities/partner/ui/PartnerItem";
-
-const MOCK_PARTNERS = [
-	{ storeId: 1, storeName: "역전할머니맥주" },
-	{ storeId: 2, storeName: "취향" },
-	{ storeId: 3, storeName: "Bread & co" },
-	{ storeId: 4, storeName: "인쌩맥주" },
-	{ storeId: 5, storeName: "역전할머니맥주" },
-	{ storeId: 6, storeName: "취향" },
-	{ storeId: 7, storeName: "Bread & co" },
-	{ storeId: 8, storeName: "인쌩맥주" },
-];
+import { useTodayBestStoresQuery } from "@/entities/store/api/useTodayBestStoresQuery";
 
 export const PartnerRankingList = () => {
-	const left = MOCK_PARTNERS.filter((_, i) => i % 2 === 0);
-	const right = MOCK_PARTNERS.filter((_, i) => i % 2 === 1);
+	const { data: stores = [], isLoading } = useTodayBestStoresQuery();
+	const left = stores.filter((_, i) => i % 2 === 0);
+	const right = stores.filter((_, i) => i % 2 === 1);
+	const isEmpty = !isLoading && stores.length === 0;
 
 	return (
-		<View className="bg-white p-4 rounded-2xl mb-6">
-			<Text className="text-lg font-bold mb-1">🔥 Today 제휴 인기 매장</Text>
-			<Text className="text-xs text-gray-400 mb-3">오늘 12:00 기준</Text>
+		<View className="bg-canvas p-4 rounded-2xl mb-6">
+			<Text className="text-lg font-bold mb-1">Today 제휴 인기 매장</Text>
+			<Text className="text-xs text-content-tertiary mb-3">
+				오늘 12:00 기준
+			</Text>
 
-			<View className="flex-row">
-				<View className="flex-1">
-					{left.map((item, i) => (
-						<PartnerItem
-							key={item.storeId}
-							rank={i * 2 + 1}
-							name={item.storeName}
-						/>
-					))}
+			{isEmpty ? (
+				<Text className="text-sm font-regular text-content-secondary">
+					오늘 인기 매장이 아직 없습니다.
+				</Text>
+			) : (
+				<View className="flex-row">
+					<View className="flex-1">
+						{left.map((item, i) => (
+							<PartnerItem key={item.id} rank={i * 2 + 1} name={item.name} />
+						))}
+					</View>
+
+					<View className="w-px border-l border-black mx-2" />
+
+					<View className="flex-1">
+						{right.map((item, i) => (
+							<PartnerItem key={item.id} rank={i * 2 + 2} name={item.name} />
+						))}
+					</View>
 				</View>
-
-				<View className="w-px border-l border-black mx-2" />
-
-				<View className="flex-1">
-					{right.map((item, i) => (
-						<PartnerItem
-							key={item.storeId}
-							rank={i * 2 + 2}
-							name={item.storeName}
-						/>
-					))}
-				</View>
-			</View>
+			)}
 		</View>
 	);
 };

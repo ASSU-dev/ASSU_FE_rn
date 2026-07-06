@@ -44,3 +44,19 @@ export interface SearchResultStore {
 	partnershipStartDate?: string;
 	partnershipEndDate?: string;
 }
+
+export interface BaseResponse<T> {
+	isSuccess?: boolean;
+	code?: string;
+	message?: string;
+	result?: T;
+}
+
+export interface TodayBestResponseDTO {
+	bestStores?: string[];
+}
+
+export interface TodayBestStore {
+	id: string;
+	name: string;
+}

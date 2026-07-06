@@ -1,6 +1,10 @@
+import type { ImageSource } from "expo-image";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useProfileImageQuery } from "@/entities/user/api/useProfileImageQuery";
+import { formatProfileSubtitle } from "@/entities/user/lib/formatProfileSubtitle";
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { PageLayout } from "@/shared/ui/layout";
 import {
 	type AccountMenuItemProps,
@@ -10,6 +14,11 @@ import {
 
 export function StudentProfilePage() {
 	const router = useRouter();
+	const basicInfo = useUserBasicInfo();
+	const { data: profileImage } = useProfileImageQuery();
+	const profileImageSource: ImageSource | undefined = profileImage?.url
+		? { uri: profileImage.url }
+		: undefined;
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
@@ -37,16 +46,13 @@ export function StudentProfilePage() {
 	return (
 		<PageLayout
 			scrollable
-			contentContainerStyle={{
-				paddingHorizontal: 24,
-				paddingTop: 28,
-				paddingBottom: 120,
-			}}
+			contentContainerClassName="px-screen-m pt-[28px] pb-[120px]"
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name="김승실"
-					subtitle="숭실대학교 IT대학 글로벌미디어학부"
+					name={basicInfo?.name ?? "사용자"}
+					subtitle={formatProfileSubtitle(basicInfo)}
+					profileImage={profileImageSource}
 				/>
 
 				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
