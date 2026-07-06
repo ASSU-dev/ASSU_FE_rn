@@ -10,7 +10,7 @@ import { StyleSheet } from "react-native";
 import WebView, {
 	type WebViewMessageEvent,
 	type WebViewProps,
-} from "react-native-webview/index";
+} from "react-native-webview";
 
 import { colorTokens } from "@/shared/styles/tokens";
 
