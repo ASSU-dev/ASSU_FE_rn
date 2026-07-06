@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
+import { useCommonLoginAction } from "./useCommonLoginAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
@@ -97,6 +98,7 @@ export function useSignupFlowController() {
 	});
 
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
+	const { login: handlePressCommonLogin } = useCommonLoginAction();
 
 	const sendIdentityVerificationCode = () => sendVerificationCode();
 
@@ -198,7 +200,11 @@ export function useSignupFlowController() {
 			password: form.auth.password,
 			onChangeEmail: setAuthEmail,
 			onChangePassword: setAuthPassword,
-			onPressLogin: () => console.log("로그인 성공"),
+			onPressLogin: () =>
+				handlePressCommonLogin({
+					email: form.auth.email,
+					password: form.auth.password,
+				}),
 			onPressLmsLogin: handlePressLmsLogin,
 			onPressSignup: () => goTo("identity"),
 		}),
@@ -206,6 +212,7 @@ export function useSignupFlowController() {
 			form.auth.email,
 			form.auth.password,
 			goTo,
+			handlePressCommonLogin,
 			handlePressLmsLogin,
 			setAuthEmail,
 			setAuthPassword,
