@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
+import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
+import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
@@ -96,6 +98,13 @@ export function useSignupFlowController() {
 		onFailure: handleSignupFailure,
 	});
 
+	const { signup: handleAdminSignup } = useAdminSignupAction({
+		form,
+		onSuccess: goNext,
+		onFailure: handleSignupFailure,
+	});
+	const { checkEmailAvailability } = useAdminEmailAvailabilityAction();
+
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
 
 	const sendIdentityVerificationCode = () => sendVerificationCode();
@@ -161,7 +170,7 @@ export function useSignupFlowController() {
 			},
 			onBottomButtonPress: async () => {
 				if (step === "complete") {
-					router.replace(getHomeRouteByRole("STUDENT") as never);
+					router.replace(getHomeRouteByRole(form.role) as never);
 					return;
 				}
 				if (step === "identity" && FORCE_PHONE_VERIFICATION_BYPASS) {
@@ -173,12 +182,28 @@ export function useSignupFlowController() {
 					await handleStudentSignup();
 					return;
 				}
+				if (step === "adminCredentials") {
+					const isEmailAvailable = await checkEmailAvailability(
+						form.admin.email,
+					);
+					if (!isEmailAvailable) return;
+					goNext();
+					return;
+				}
+				if (step === "adminSealRegistration") {
+					await handleAdminSignup();
+					return;
+				}
 				goNext();
 			},
 		}),
 		[
 			buttonLabel,
 			currentProgressIndex,
+			checkEmailAvailability,
+			handleAdminSignup,
+			form.admin.email,
+			form.role,
 			goNext,
 			goTo,
 			handleStudentSignup,
