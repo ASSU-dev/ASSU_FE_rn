@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
+import { usePartnerSignupAction } from "./usePartnerSignupAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
@@ -96,6 +97,12 @@ export function useSignupFlowController() {
 		onFailure: handleSignupFailure,
 	});
 
+	const { signup: handlePartnerSignup } = usePartnerSignupAction({
+		form,
+		onSuccess: goNext,
+		onFailure: handleSignupFailure,
+	});
+
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
 
 	const sendIdentityVerificationCode = () => sendVerificationCode();
@@ -161,7 +168,7 @@ export function useSignupFlowController() {
 			},
 			onBottomButtonPress: async () => {
 				if (step === "complete") {
-					router.replace(getHomeRouteByRole("STUDENT") as never);
+					router.replace(getHomeRouteByRole(form.role) as never);
 					return;
 				}
 				if (step === "identity" && FORCE_PHONE_VERIFICATION_BYPASS) {
@@ -173,14 +180,20 @@ export function useSignupFlowController() {
 					await handleStudentSignup();
 					return;
 				}
+				if (step === "partnerBusinessRegistration") {
+					await handlePartnerSignup();
+					return;
+				}
 				goNext();
 			},
 		}),
 		[
 			buttonLabel,
 			currentProgressIndex,
+			form.role,
 			goNext,
 			goTo,
+			handlePartnerSignup,
 			handleStudentSignup,
 			isBottomDisabled,
 			progress,

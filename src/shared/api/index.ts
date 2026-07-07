@@ -18,6 +18,28 @@ export type {
 // refreshToken
 export { getAssuApi as getRefreshTokenApi } from "./_generated/auth/refreshToken";
 export type {
+	AdminSignUpRequestDTO,
+	SignupAdminBody,
+} from "./_generated/auth/signupAdmin";
+// signupAdmin
+export { getAssuApi as getSignupAdminApi } from "./_generated/auth/signupAdmin";
+export type {
+	CommonAuthPayloadDTO,
+	CommonInfoPayloadDTO,
+	PartnerSignUpRequestDTO,
+	SelectedPlacePayload,
+	SignupPartnerBody,
+} from "./_generated/auth/signupPartner";
+// signupPartner
+export {
+	CommonAuthPayloadDTODepartment,
+	CommonAuthPayloadDTOMajor,
+	CommonAuthPayloadDTOUniversity,
+	getAssuApi as getSignupPartnerApi,
+	SignUpResponseDTORole,
+	SignUpResponseDTOStatus,
+} from "./_generated/auth/signupPartner";
+export type {
 	BaseResponseSignUpResponseDTO,
 	SignUpResponseDTO,
 	StudentTokenAuthPayloadDTO,
