@@ -1,6 +1,8 @@
 import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
+export type { CommonLoginRequestDTO } from "./_generated/auth/loginCommon";
+export { getAssuApi as getLoginCommonApi } from "./_generated/auth/loginCommon";
 export type {
 	BaseResponseLoginResponseDTO,
 	LoginResponseDTO,
