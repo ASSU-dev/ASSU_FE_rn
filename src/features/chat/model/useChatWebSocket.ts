@@ -28,6 +28,30 @@ export function useChatWebSocket(roomId: number, onReceive?: () => void) {
 			(frame) => {
 				const dto: SendMessageResponseDTO = JSON.parse(frame.body);
 
+				if (dto.eventType === "READ_RECEIPT") {
+					queryClient.setQueryData(["chatMessages", roomId], (old: unknown) => {
+						const data = old as
+							| { result?: { messages?: Message[] } }
+							| undefined;
+						const oldMessages: Message[] =
+							data?.result?.messages ??
+							(Array.isArray(old) ? (old as Message[]) : []);
+
+						const updatedMessages = oldMessages.map((m) =>
+							m.isMyMessage ? { ...m, unreadCountForSender: 0 } : m,
+						);
+
+						if (data?.result?.messages !== undefined) {
+							return {
+								...data,
+								result: { ...data.result, messages: updatedMessages },
+							};
+						}
+						return updatedMessages;
+					});
+					return;
+				}
+
 				if (dto.senderId === userId) return;
 
 				const newMessage: Message = {

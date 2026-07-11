@@ -1,4 +1,7 @@
+export type ChatEventType = "MESSAGE" | "READ_RECEIPT";
+
 export interface SendMessageResponseDTO {
+	eventType: ChatEventType;
 	messageId: number;
 	roomId: number;
 	senderId: number;

@@ -42,7 +42,7 @@ export class StompManager {
 		};
 
 		this.client.onStompError = (frame) => {
-			console.log("[STOMP ERR]", frame.headers["message"], frame.body);
+			console.log("[STOMP ERR]", frame.headers.message, frame.body);
 		};
 
 		this.client.onWebSocketError = (evt) => {

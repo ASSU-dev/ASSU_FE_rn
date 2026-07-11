@@ -1,7 +1,7 @@
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
+const readline = require("node:readline");
 
 const ROOT = path.resolve(__dirname, "..");
 const SPEC_PATH = path.join(ROOT, "openapi/openapi.json");
@@ -24,7 +24,7 @@ function collectSchemaRefs(node, allSchemas, visited = new Set()) {
 		}
 		return visited;
 	}
-	const ref = node["$ref"];
+	const ref = node.$ref;
 	if (ref) {
 		const name = ref.split("/").pop();
 		if (!visited.has(name)) {
@@ -267,7 +267,7 @@ function updateIndexTs(operationId, generatedFilePath) {
 		newExports += `export { ${name} } from "${relativePath}";\n`;
 	}
 
-	indexContent = indexContent.trimEnd() + "\n" + newExports;
+	indexContent = `${indexContent.trimEnd()}\n${newExports}`;
 	fs.writeFileSync(indexPath, indexContent);
 	console.log(`✅ index.ts 등록 완료`);
 }
