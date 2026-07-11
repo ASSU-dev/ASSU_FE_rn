@@ -6,13 +6,11 @@ import { type Message, MessageItem } from "@/entities/chat";
 
 interface ChatMessageListProps {
 	messages: Message[];
-	currentUserId: string;
 	partnerProfileImage?: ImageSource;
 }
 
 export function ChatMessageList({
 	messages,
-	currentUserId,
 	partnerProfileImage,
 }: ChatMessageListProps) {
 	const flatListRef = useRef<FlatList>(null);
@@ -27,13 +25,13 @@ export function ChatMessageList({
 			ref={flatListRef}
 			style={{ flex: 1 }}
 			data={messages}
-			keyExtractor={(item) => item.id}
+			keyExtractor={(item) => String(item.messageId ?? Math.random())}
 			renderItem={({ item }) => (
 				<MessageItem
 					message={item}
-					isMine={item.senderId === currentUserId}
+					isMyMessage={item.isMyMessage ?? false}
 					profileImage={
-						item.senderId !== currentUserId ? partnerProfileImage : undefined
+						!(item.isMyMessage ?? false) ? partnerProfileImage : undefined
 					}
 				/>
 			)}

@@ -1,34 +1,23 @@
 import { useRouter } from "expo-router";
-import { FlatList, View } from "react-native";
-import type { ChatRoomItemProps } from "@/entities/chat";
-import {
-	ChatRoomItem,
-	MOCK_ADMIN_CHAT_ROOMS,
-	MOCK_PARTNER_CHAT_ROOMS,
-} from "@/entities/chat";
+import { ActivityIndicator, FlatList, View } from "react-native";
+import { ChatRoomItem } from "@/entities/chat";
+import { useChatListWebSocket } from "@/features/chat/model/useChatListWebSocket";
+import { useChatRoomList } from "@/features/chat/model/useChatRoomList";
+import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout";
 import { PageTitle } from "@/shared/ui/page-title";
 
 type UserType = "PARTNER" | "ADMIN";
 
-interface ChatConfig {
-	rooms: ChatRoomItemProps[];
-	emptyDescription: string;
-	chatRoomRoute: string;
-}
+const CHAT_ROOM_ROUTE: Record<UserType, string> = {
+	PARTNER: "/(protected)/partner/chat-room",
+	ADMIN: "/(protected)/admin/chat-room",
+};
 
-const CHAT_CONFIG: Record<UserType, ChatConfig> = {
-	PARTNER: {
-		rooms: MOCK_PARTNER_CHAT_ROOMS,
-		emptyDescription: "제휴 협력을 원하는 학생회의 채팅을\n 받을 수 있어요!",
-		chatRoomRoute: "/(protected)/partner/chat-room",
-	},
-	ADMIN: {
-		rooms: MOCK_ADMIN_CHAT_ROOMS,
-		emptyDescription: "제휴 협력을 원하는 매장에 채팅을\n시도 할 수 있어요!",
-		chatRoomRoute: "/(protected)/admin/chat-room",
-	},
+const EMPTY_DESCRIPTION: Record<UserType, string> = {
+	PARTNER: "제휴 협력을 원하는 학생회의 채팅을\n 받을 수 있어요!",
+	ADMIN: "제휴 협력을 원하는 매장에 채팅을\n시도 할 수 있어요!",
 };
 
 interface ChatRoomListWidgetProps {
@@ -37,10 +26,44 @@ interface ChatRoomListWidgetProps {
 
 export function ChatRoomListWidget({ userType }: ChatRoomListWidgetProps) {
 	const router = useRouter();
-	const { rooms, emptyDescription, chatRoomRoute } = CHAT_CONFIG[userType];
+	const userId = useAuthStore((s) => s.userId);
+	const { rooms, isLoading, isError } = useChatRoomList();
+	useChatListWebSocket(userId);
 
-	function handlePressRoom(id: string) {
-		router.push(`${chatRoomRoute}/${id}` as never);
+	function handlePressRoom(roomId: number | undefined) {
+		router.push(`${CHAT_ROOM_ROUTE[userType]}/${roomId}` as never);
+	}
+
+	if (isLoading) {
+		return (
+			<PageLayout
+				withTopInset={true}
+				withBottomInset={false}
+				className="flex-1 bg-canvas"
+				contentContainerClassName="flex-1 pt-6 items-center justify-center"
+			>
+				<ActivityIndicator />
+			</PageLayout>
+		);
+	}
+
+	if (isError) {
+		return (
+			<PageLayout
+				withTopInset={true}
+				withBottomInset={false}
+				className="flex-1 bg-canvas"
+				contentContainerClassName="flex-1 pt-6"
+			>
+				<View className="px-6">
+					<PageTitle title="채팅 내역" />
+				</View>
+				<EmptyState
+					title="채팅 목록을 불러오지 못했어요"
+					description="잠시 후 다시 시도해 주세요."
+				/>
+			</PageLayout>
+		);
 	}
 
 	return (
@@ -55,19 +78,22 @@ export function ChatRoomListWidget({ userType }: ChatRoomListWidgetProps) {
 			</View>
 			<FlatList
 				data={rooms}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item) => String(item.roomId)}
 				getItemLayout={(_, index) => ({
 					length: 70,
 					offset: 70 * index,
 					index,
 				})}
 				renderItem={({ item }) => (
-					<ChatRoomItem {...item} onPress={() => handlePressRoom(item.id)} />
+					<ChatRoomItem
+						{...item}
+						onPress={() => handlePressRoom(item.roomId)}
+					/>
 				)}
 				ListEmptyComponent={
 					<EmptyState
 						title="아직 채팅 내역이 없어요"
-						description={emptyDescription}
+						description={EMPTY_DESCRIPTION[userType]}
 					/>
 				}
 			/>

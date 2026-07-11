@@ -7,13 +7,13 @@ import { getProfileImageUri } from "../lib/getProfileImageUri";
 import type { ChatRoomItemProps } from "../model/types";
 
 export function ChatRoomItem({
-	profileImage,
-	roomName,
+	opponentProfileImage,
+	opponentName,
 	lastMessage,
-	unreadCount = 0,
+	unreadMessagesCount = 0,
 	onPress,
 }: ChatRoomItemProps) {
-	const displayCount = unreadCount > 99 ? "99+" : unreadCount; // 100 이상은 "99+"로 표시
+	const displayCount = unreadMessagesCount > 99 ? "99+" : unreadMessagesCount;
 	return (
 		<Pressable onPress={onPress} disabled={!onPress}>
 			{({ pressed }) => (
@@ -25,13 +25,13 @@ export function ChatRoomItem({
 						{/* 프로필 + 텍스트 영역 */}
 						<View className="ml-2 flex-row shrink items-center gap-[27px]">
 							<ProfileAvatar
-								source={getProfileImageUri(profileImage)}
+								source={getProfileImageUri(opponentProfileImage)}
 								size={48}
 							/>
 							{/* 텍스트 */}
 							<View className="shrink">
 								<Text className="font-bold text-[16px] leading-[22px] text-content-primary">
-									{roomName}
+									{opponentName}
 								</Text>
 								<Text
 									className="font-regular text-[13px] leading-[22px] tracking-[-0.41px] text-content-secondary"
@@ -43,7 +43,7 @@ export function ChatRoomItem({
 						</View>
 
 						{/* 안읽은 메세지 카운트 뱃지 */}
-						{unreadCount > 0 && (
+						{unreadMessagesCount > 0 && (
 							<View className="rounded-full bg-primary justify-center px-[8px]">
 								<Text className="font-regular text-[12px] leading-[22px] tracking-[-0.41px] text-white">
 									{displayCount}

@@ -2,21 +2,24 @@ import type { Message } from "@/entities/chat";
 
 export const MOCK_CHAT_MESSAGES: Message[] = [
 	{
-		id: "3",
-		text: "네 있습니다!",
-		senderId: "admin-1",
-		sentAt: "17:59",
+		messageId: 3,
+		message: "네 있습니다!",
+		sendTime: new Date().toISOString(),
+		isMyMessage: false,
+		messageType: "TEXT",
 	},
 	{
-		id: "2",
-		text: "혹시 생각하신 내용 있을까요?",
-		senderId: "partner-1",
-		sentAt: "17:22",
+		messageId: 2,
+		message: "혹시 생각하신 내용 있을까요?",
+		sendTime: new Date().toISOString(),
+		isMyMessage: true,
+		messageType: "TEXT",
 	},
 	{
-		id: "1",
-		text: "제휴 협력 요청 드리고 싶습니다!",
-		senderId: "admin-1",
-		sentAt: "17:22",
+		messageId: 1,
+		message: "제휴 협력 요청 드리고 싶습니다!",
+		sendTime: new Date().toISOString(),
+		isMyMessage: false,
+		messageType: "TEXT",
 	},
 ];

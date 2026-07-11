@@ -1,4 +1,6 @@
 import {
+	type ComponentProps,
+	type ElementRef,
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
@@ -7,10 +9,12 @@ import {
 	useState,
 } from "react";
 import { StyleSheet } from "react-native";
-import WebView, {
-	type WebViewMessageEvent,
-	type WebViewProps,
-} from "react-native-webview/index";
+import WebView from "react-native-webview";
+
+type WebViewProps = ComponentProps<typeof WebView>;
+type WebViewMessageEvent = Parameters<
+	NonNullable<WebViewProps["onMessage"]>
+>[0];
 
 import { colorTokens } from "@/shared/styles/tokens";
 
@@ -39,7 +43,7 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	function KakaoMap({ initialCenter = SOONGSIL, myLocation, heading }, ref) {
 		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
-		const webViewRef = useRef<WebView>(null);
+		const webViewRef = useRef<ElementRef<typeof WebView>>(null);
 		const [isMapReady, setIsMapReady] = useState(false);
 		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
