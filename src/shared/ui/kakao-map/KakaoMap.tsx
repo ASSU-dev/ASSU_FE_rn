@@ -2,11 +2,15 @@ import {
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
+	useMemo,
 	useRef,
 	useState,
 } from "react";
 import { StyleSheet } from "react-native";
-import WebView, { type WebViewMessageEvent } from "react-native-webview";
+import WebView, {
+	type WebViewMessageEvent,
+	type WebViewProps,
+} from "react-native-webview/index";
 
 import { colorTokens } from "@/shared/styles/tokens";
 
@@ -17,6 +21,8 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 		b: Number.parseInt(hex.slice(5, 7), 16),
 	};
 }
+
+type KakaoWebViewSource = NonNullable<WebViewProps["source"]>;
 
 type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
@@ -32,9 +38,25 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 
 export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	function KakaoMap({ initialCenter = SOONGSIL, myLocation, heading }, ref) {
-		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY ?? "";
+		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
 		const webViewRef = useRef<WebView>(null);
 		const [isMapReady, setIsMapReady] = useState(false);
+		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
+			if (!appKey) return null;
+
+			return {
+				html: buildMapHtml(appKey),
+				baseUrl: "http://localhost",
+			};
+		}, [appKey]);
+
+		useEffect(() => {
+			if (appKey || !__DEV__) return;
+
+			console.error(
+				"KakaoMap requires EXPO_PUBLIC_KAKAO_JS_KEY to render the map.",
+			);
+		}, [appKey]);
 
 		useImperativeHandle(ref, () => ({
 			panTo: (lat, lng) => {
@@ -44,7 +66,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			},
 		}));
 
-		// 탭 복귀 시 카메라 이동
+		// Recenter the map when returning to this tab.
 		useEffect(() => {
 			if (!isMapReady) return;
 			webViewRef.current?.injectJavaScript(`
@@ -52,9 +74,9 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			map.setLevel(3);
 			true;
 		`);
-		}, [initialCenter, isMapReady]);
+		}, [initialCenter.lat, initialCenter.lng, isMapReady]);
 
-		// 위치 변경 → 오버레이 생성 or 위치만 이동
+		// Create or move the current-location overlay.
 		useEffect(() => {
 			if (!isMapReady || !myLocation) return;
 			webViewRef.current?.injectJavaScript(
@@ -62,7 +84,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			);
 		}, [myLocation, isMapReady]);
 
-		// 방향 변경 → cone의 CSS transform만 교체 (DOM 재생성 없음)
+		// Update only the heading cone transform.
 		useEffect(() => {
 			if (!isMapReady) return;
 			webViewRef.current?.injectJavaScript(
@@ -74,17 +96,24 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			try {
 				const data = JSON.parse(event.nativeEvent.data) as { type: string };
 				if (data.type === "MAP_READY") setIsMapReady(true);
-			} catch {}
+			} catch (error) {
+				if (__DEV__) {
+					console.warn(
+						"KakaoMap received an invalid WebView message.",
+						event.nativeEvent.data,
+						error,
+					);
+				}
+			}
 		};
+
+		if (!webViewSource) return null;
 
 		return (
 			<WebView
 				ref={webViewRef}
-				source={{
-					html: buildMapHtml(appKey, initialCenter),
-					baseUrl: "http://localhost",
-				}}
-				style={StyleSheet.absoluteFill}
+				source={webViewSource}
+				style={StyleSheet.absoluteFillObject}
 				originWhitelist={["*"]}
 				javaScriptEnabled
 				scrollEnabled={false}
@@ -94,10 +123,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	},
 );
 
-function buildMapHtml(
-	appKey: string,
-	center: { lat: number; lng: number },
-): string {
+function buildMapHtml(appKey: string): string {
 	const { r, g, b } = hexToRgb(colorTokens.primary);
 	const primary = colorTokens.primary;
 	const canvas = colorTokens.canvas;
@@ -153,7 +179,7 @@ function buildMapHtml(
     };
 
     function initMap() {
-      var initialPos = new kakao.maps.LatLng(${center.lat}, ${center.lng});
+      var initialPos = new kakao.maps.LatLng(${SOONGSIL.lat}, ${SOONGSIL.lng});
       map = new kakao.maps.Map(document.getElementById('map'), {
         center: initialPos,
         level: 3

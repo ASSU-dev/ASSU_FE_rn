@@ -18,6 +18,7 @@ type UseSignupStepActionsParams = {
 	student: {
 		setRole: (value: UserType) => void;
 		setSchool: (value: "숭실대학교") => void;
+		onPressStudentVerify?: () => void;
 	};
 	partner: {
 		setPartnerEmail: (value: string) => void;
@@ -65,7 +66,8 @@ export function useSignupStepActions({
 			student: {
 				onSelectRole: student.setRole,
 				onSelectSchool: student.setSchool,
-				onPressStudentVerify: () => goTo("studentInput2"),
+				onPressStudentVerify:
+					student.onPressStudentVerify ?? (() => goTo("studentInput2")),
 			},
 			partner: {
 				onChangePartnerEmail: partner.setPartnerEmail,

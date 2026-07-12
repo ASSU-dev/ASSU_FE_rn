@@ -1,8 +1,12 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { MOCK_PARTNERSHIPS } from "@/entities/partnership";
-import { MOCK_PARTNERSHIP_CONTRACTS } from "@/entities/partnership/model/mockPartnershipContracts";
+import {
+	toPartnership,
+	toPartnershipContract,
+	useAdminPartnerships,
+	usePartnershipDetail,
+} from "@/entities/partnership";
 import { PartnershipContractModal } from "@/features/partnership-contract";
 import { BackArrowIcon, InfoFillIcon } from "@/shared/assets/icons";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
@@ -47,8 +51,13 @@ export function PartnerListPage() {
 		null,
 	);
 
-	const selectedContract =
-		MOCK_PARTNERSHIP_CONTRACTS.find((c) => c.id === selectedContractId) ?? null;
+	const { data: partnershipsData } = useAdminPartnerships();
+	const partnerships = partnershipsData?.content.map(toPartnership) ?? [];
+
+	const { data: detailData } = usePartnershipDetail(selectedContractId);
+	const selectedContract = detailData
+		? toPartnershipContract(detailData)
+		: null;
 
 	return (
 		<>
@@ -61,9 +70,9 @@ export function PartnerListPage() {
 			>
 				<Header onBack={() => router.back()} />
 				<InfoBox />
-				<CountSection count={MOCK_PARTNERSHIPS.length} />
+				<CountSection count={partnerships.length} />
 				<PartnershipListContent
-					data={MOCK_PARTNERSHIPS}
+					data={partnerships}
 					onPressCard={(id) => setSelectedContractId(id)}
 				/>
 			</PageLayout>

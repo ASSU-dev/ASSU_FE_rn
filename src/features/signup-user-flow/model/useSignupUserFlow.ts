@@ -171,6 +171,14 @@ export function useSignupUserFlow() {
 		}));
 	const setSchool = (school: SignupSchool) =>
 		setSectionField("student", "school", school);
+	const setStudentMajor = (major: string) =>
+		setSectionField("student", "major", major);
+	const setStudentId = (studentId: string) =>
+		setSectionField("student", "studentId", studentId);
+	const setProfileName = (name: string) =>
+		setSectionField("profile", "name", name);
+	const setIdentityVerified = () =>
+		setSectionField("identity", "verificationCode", VERIFICATION_SUCCESS_CODE);
 
 	const setPartnerEmail = (email: string) =>
 		setSectionField("partner", "email", email);
@@ -261,6 +269,10 @@ export function useSignupUserFlow() {
 		sendVerificationCode,
 		setRole,
 		setSchool,
+		setStudentMajor,
+		setStudentId,
+		setProfileName,
+		setIdentityVerified,
 		setPartnerEmail,
 		setPartnerPassword,
 		setAdminEmail,
