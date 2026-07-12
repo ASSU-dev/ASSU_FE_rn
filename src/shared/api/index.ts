@@ -2,6 +2,12 @@ import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
 export type {
+	BaseResponseMapStringObject,
+	List1Params,
+} from "./_generated/auth/list_1";
+// list_1
+export { getAssuApi as getList_1Api } from "./_generated/auth/list_1";
+export type {
 	BaseResponseLoginResponseDTO,
 	LoginResponseDTO,
 } from "./_generated/auth/loginStudent";
@@ -11,6 +17,9 @@ export {
 	LoginResponseDTORole,
 	LoginResponseDTOStatus,
 } from "./_generated/auth/loginStudent";
+export type { BaseResponseString } from "./_generated/auth/markRead";
+// markRead
+export { getAssuApi as getMarkReadApi } from "./_generated/auth/markRead";
 export type {
 	BaseResponseRefreshResponseDTO,
 	RefreshResponseDTO,
@@ -43,4 +52,6 @@ export type {
 } from "./_generated/auth/ssuAuth";
 // ssuAuth
 export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
+// unregister
+export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
 export { apiInstance } from "./instance";

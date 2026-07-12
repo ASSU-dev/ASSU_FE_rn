@@ -1,9 +1,26 @@
-export type NotificationCategory = "제휴 건의" | "제휴 제안";
+export type NotificationType =
+	| "PARTNER_PROPOSAL"
+	| "PARTNER_SUGGESTION"
+	| "ORDER"
+	| "CHAT";
 
 export interface Notification {
-	id: string;
-	category: NotificationCategory;
-	message: string;
-	createdAt: Date;
-	isRead: boolean;
+	id: number;
+	type: NotificationType;
+	refId: number;
+	title: string;
+	messagePreview: string;
+	deeplink: string;
+	createdAt: string;
+	readAt: string | null;
+	timeAgo: string;
+	read: boolean;
+}
+
+export interface NotificationListResult {
+	items: Notification[];
+	page: number;
+	size: number;
+	totalPages: number;
+	totalElements: number;
 }
