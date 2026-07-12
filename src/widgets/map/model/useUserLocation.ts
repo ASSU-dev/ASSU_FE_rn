@@ -15,38 +15,48 @@ export function useUserLocation() {
 
 	useFocusEffect(
 		useCallback(() => {
-			let isMounted = true;
+			let isActive = true;
 			let positionSub: Location.LocationSubscription | undefined;
 			let headingSub: Location.LocationSubscription | undefined;
 
 			(async () => {
 				const { status } = await Location.requestForegroundPermissionsAsync();
+				if (!isActive) return;
+
 				if (status !== "granted") {
 					setCenter(SOONGSIL);
 					return;
 				}
 
 				const loc = await Location.getCurrentPositionAsync({});
+				if (!isActive) return;
+
 				const userLoc = { lat: loc.coords.latitude, lng: loc.coords.longitude };
 				setCenter(userLoc);
 				setMyLocation(userLoc);
 
-				const posSub = await Location.watchPositionAsync(
+				const nextPositionSub = await Location.watchPositionAsync(
 					{
 						accuracy: Location.Accuracy.High,
 						timeInterval: 2000,
 						distanceInterval: 3,
 					},
-					(l) =>
-						setMyLocation({ lat: l.coords.latitude, lng: l.coords.longitude }),
+					(l) => {
+						if (!isActive) return;
+
+						setMyLocation({ lat: l.coords.latitude, lng: l.coords.longitude });
+					},
 				);
-				if (!isMounted) {
-					posSub.remove();
+
+				if (!isActive) {
+					nextPositionSub.remove();
 					return;
 				}
-				positionSub = posSub;
+				positionSub = nextPositionSub;
 
-				const hdgSub = await Location.watchHeadingAsync((hdg) => {
+				const nextHeadingSub = await Location.watchHeadingAsync((hdg) => {
+					if (!isActive) return;
+
 					const rounded = Math.round(hdg.magHeading);
 					if (
 						lastHeadingRef.current === null ||
@@ -56,15 +66,16 @@ export function useUserLocation() {
 						setHeading(rounded);
 					}
 				});
-				if (!isMounted) {
-					hdgSub.remove();
+
+				if (!isActive) {
+					nextHeadingSub.remove();
 					return;
 				}
-				headingSub = hdgSub;
+				headingSub = nextHeadingSub;
 			})();
 
 			return () => {
-				isMounted = false;
+				isActive = false;
 				positionSub?.remove();
 				headingSub?.remove();
 			};

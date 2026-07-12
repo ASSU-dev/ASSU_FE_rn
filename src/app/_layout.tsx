@@ -1,9 +1,11 @@
 import "react-native-url-polyfill/auto";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "@/shared/api";
+import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
 import "@/shared/styles/global.styles.css";
@@ -23,8 +25,18 @@ export const unstable_settings = {
 
 export default function RootLayout() {
 	const fontsLoaded = useLoadFonts();
+	const [authReady, setAuthReady] = useState(false);
 
-	if (!fontsLoaded) {
+	useEffect(() => {
+		initAuth().then(({ isLoggedIn, role }) => {
+			setAuthReady(true);
+			if (isLoggedIn) {
+				router.replace(getHomeRouteByRole(role) as never);
+			}
+		});
+	}, []);
+
+	if (!fontsLoaded || !authReady) {
 		return null;
 	}
 

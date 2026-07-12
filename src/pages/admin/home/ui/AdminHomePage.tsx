@@ -1,20 +1,20 @@
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import {
-	MOCK_ADMIN_AFFILIATION_SUMMARY,
-	MOCK_PARTNERSHIPS,
+	toAdminAffiliationSummary,
+	toPartnership,
+	useAdminPartnerRecommend,
+	useAdminPartnerships,
 } from "@/entities/partnership";
 import { BellFill, Logo } from "@/shared/assets/icons";
+import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PageTitle } from "@/shared/ui/page-title";
 import { SummaryCard } from "@/shared/ui/summary-card";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
-import { MOCK_ADMIN_PAGE_INFO } from "../model/mockAdminPageInfo";
 
-// No-op for stable callback reference
 const noop = () => {};
 
-// Admin header section component
 function AdminHeaderSection({
 	onNotificationPress,
 }: {
@@ -30,31 +30,29 @@ function AdminHeaderSection({
 	);
 }
 
-// Recommendation section component
 function RecommendationSection() {
+	const { data } = useAdminPartnerRecommend();
+	const summary = data ? toAdminAffiliationSummary(data) : null;
+
+	if (!summary) return null;
+
 	return (
 		<View className="gap-2">
 			<Text className="text-lg font-medium text-content-primary">
 				🔍 제휴업체 추천
 			</Text>
 			<SummaryCard
-				imageUrl={MOCK_ADMIN_AFFILIATION_SUMMARY?.imageUrl}
-				title={MOCK_ADMIN_AFFILIATION_SUMMARY?.title || ""}
-				subtitle={MOCK_ADMIN_AFFILIATION_SUMMARY?.address || ""}
-				status={MOCK_ADMIN_AFFILIATION_SUMMARY?.status}
-				dateRange={MOCK_ADMIN_AFFILIATION_SUMMARY?.dateRange}
-				actionLabel={
-					MOCK_ADMIN_AFFILIATION_SUMMARY?.status === "제휴중"
-						? "제휴 계약서 보기"
-						: "문의하기"
-				}
+				title={summary.title}
+				subtitle={summary.address}
+				status={summary.status}
+				dateRange={summary.dateRange}
+				actionLabel="문의하기"
 				onActionPress={noop}
 			/>
 		</View>
 	);
 }
 
-// Manual registration button component
 function ManualRegistrationButton({ onPress }: { onPress: () => void }) {
 	return (
 		<Pressable
@@ -70,6 +68,40 @@ function ManualRegistrationButton({ onPress }: { onPress: () => void }) {
 
 export function AdminHomePage() {
 	const router = useRouter();
+	const { data: partnershipsData, isError: isPartnershipsError } =
+		useAdminPartnerships();
+	const partnerships = partnershipsData?.content.map(toPartnership) ?? [];
+
+	const renderPartnershipSection = () => {
+		if (isPartnershipsError) {
+			return (
+				<EmptyState
+					title="목록을 불러오지 못했어요"
+					description={"잠시 후 다시 시도해주세요"}
+				/>
+			);
+		}
+		if (partnerships.length === 0) {
+			return (
+				<EmptyState
+					title="진행 중인 제휴가 없어요"
+					description={"제휴업체가 추가되면\n여기서 확인할 수 있어요!"}
+				/>
+			);
+		}
+		return (
+			<PartnershipListWidget
+				partnerships={partnerships}
+				maxItems={3}
+				onViewAll={() =>
+					router.push("/(protected)/admin/admin-partnership-list")
+				}
+				onPressCard={(id) =>
+					router.push(`/(protected)/partnership-contract/${id}`)
+				}
+			/>
+		);
+	};
 
 	return (
 		<PageLayout
@@ -79,29 +111,15 @@ export function AdminHomePage() {
 			className="flex-1 bg-neutral"
 			contentContainerClassName="px-6 pb-6"
 		>
-			{/* Header */}
 			<AdminHeaderSection onNotificationPress={noop} />
 
-			{/* Title */}
-			<PageTitle title={MOCK_ADMIN_PAGE_INFO.title} />
+			<PageTitle title="숭실대학교 총학생회" />
 
-			{/* Content container */}
 			<View className="gap-5">
-				{/* Partnership list widget */}
-				<PartnershipListWidget
-					partnerships={MOCK_PARTNERSHIPS}
-					onViewAll={() =>
-						router.push("/(protected)/admin/admin-partnership-list")
-					}
-					onPressCard={(id) =>
-						router.push(`/(protected)/partnership-contract/${id}`)
-					}
-				/>
+				{renderPartnershipSection()}
 
-				{/* Recommendation section */}
 				<RecommendationSection />
 
-				{/* Manual registration button */}
 				<ManualRegistrationButton
 					onPress={() => router.push("/(protected)/partnership-proposal")}
 				/>
