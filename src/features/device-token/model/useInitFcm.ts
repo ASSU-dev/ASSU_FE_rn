@@ -1,18 +1,20 @@
 import { useEffect } from "react";
+
 import {
 	getFcmToken,
 	requestNotificationPermission,
 } from "@/shared/lib/fcm/fcmService";
-import { useRegisterMutation } from "../api/useRegisterMutation";
+
+import { useRegisterDeviceMutation } from "../api/useRegisterDeviceMutation";
 
 export function useInitFcm() {
-	const { mutate: registerToken } = useRegisterMutation();
+	const { mutate: registerToken } = useRegisterDeviceMutation();
 
 	useEffect(() => {
 		async function init() {
 			const granted = await requestNotificationPermission();
 			if (!granted) {
-				console.warn("[FCM] 알림 권한 거부됨");
+				console.warn("[FCM] 알림 권한 거부 ❌");
 				return;
 			}
 

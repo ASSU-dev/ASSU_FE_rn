@@ -1,63 +1,63 @@
 {
-  "expo": {
-    "name": "ASSU_FE_RN",
-    "slug": "ASSU_FE_RN",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./src/shared/assets/images/icon.png",
-    "scheme": "assufern",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "googleServicesFile": "./google-services.json",
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
-        "backgroundImage": "./src/shared/assets/images/android-icon-background.png",
-        "monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.ssu.assu_rn"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./src/shared/assets/images/favicon.png"
-    },
-    "plugins": [
-      "@react-native-firebase/app",
-      "@react-native-firebase/messaging",
-      "expo-router",
-      "expo-document-picker",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./src/shared/assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
-        }
-      ],
-      "@react-native-community/datetimepicker",
-      "expo-web-browser",
-      "expo-secure-store"
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
-      }
-    }
-  }
+	"expo": {
+		"name": "ASSU_FE_RN",
+		"slug": "ASSU_FE_RN",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./src/shared/assets/images/icon.png",
+		"scheme": "assufern",
+		"userInterfaceStyle": "automatic",
+		"newArchEnabled": true,
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"googleServicesFile": "./google-services.json",
+			"package": "com.ssu.assu_rn",
+			"adaptiveIcon": {
+				"backgroundColor": "#E6F4FE",
+				"foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
+				"backgroundImage": "./src/shared/assets/images/android-icon-background.png",
+				"monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
+			},
+			"edgeToEdgeEnabled": true,
+			"predictiveBackGestureEnabled": false
+		},
+		"web": {
+			"bundler": "metro",
+			"output": "static",
+			"favicon": "./src/shared/assets/images/favicon.png"
+		},
+		"plugins": [
+			"@react-native-firebase/app",
+			"@react-native-firebase/messaging",
+			"expo-router",
+			"expo-document-picker",
+			[
+				"expo-splash-screen",
+				{
+					"image": "./src/shared/assets/images/splash-icon.png",
+					"imageWidth": 200,
+					"resizeMode": "contain",
+					"backgroundColor": "#ffffff",
+					"dark": {
+						"backgroundColor": "#000000"
+					}
+				}
+			],
+			"@react-native-community/datetimepicker",
+			"expo-web-browser",
+			"expo-secure-store"
+		],
+		"experiments": {
+			"typedRoutes": true,
+			"reactCompiler": true
+		},
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
+			}
+		}
+	}
 }
