@@ -1,27 +1,15 @@
 import "react-native-url-polyfill/auto";
-import {
-	getMessaging,
-	setBackgroundMessageHandler,
-} from "@react-native-firebase/messaging";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "@/shared/api";
-import { useForegroundMessage, useInitFcm } from "@/features/push-notification";
+import { useForegroundMessage, useInitFcm } from "@/features/device-token";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
 import "@/shared/styles/global.styles.css";
-
-// 백그라운드·종료 상태 메시지 핸들러 (컴포넌트 밖 모듈 레벨에 등록해야 함)
-setBackgroundMessageHandler(getMessaging(), async (remoteMessage) => {
-	console.log(
-		"[FCM] 백그라운드 메시지 수신:",
-		JSON.stringify(remoteMessage, null, 2),
-	);
-});
 
 initMocks();
 
