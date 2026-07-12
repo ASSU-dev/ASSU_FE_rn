@@ -17,9 +17,11 @@ export const PartnerRankingList = () => {
 	const right = MOCK_PARTNERS.filter((_, i) => i % 2 === 1);
 
 	return (
-		<View className="bg-white p-4 rounded-2xl mb-6">
+		<View className="bg-canvas p-4 rounded-2xl mb-6">
 			<Text className="text-lg font-bold mb-1">🔥 Today 제휴 인기 매장</Text>
-			<Text className="text-xs text-gray-400 mb-3">오늘 12:00 기준</Text>
+			<Text className="text-xs text-content-tertiary mb-3">
+				오늘 12:00 기준
+			</Text>
 
 			<View className="flex-row">
 				<View className="flex-1">
@@ -32,7 +34,7 @@ export const PartnerRankingList = () => {
 					))}
 				</View>
 
-				<View className="w-px border-l border-black mx-2" />
+				<View className="w-px border-l border-content-primary mx-2" />
 
 				<View className="flex-1">
 					{right.map((item, i) => (
