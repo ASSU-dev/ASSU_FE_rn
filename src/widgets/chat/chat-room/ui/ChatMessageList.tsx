@@ -25,7 +25,9 @@ export function ChatMessageList({
 			ref={flatListRef}
 			style={{ flex: 1 }}
 			data={messages}
-			keyExtractor={(item) => String(item.messageId ?? Math.random())}
+			keyExtractor={(item, index) =>
+				String(item.messageId ?? `${item.sendTime}-${index}`)
+			}
 			renderItem={({ item }) => (
 				<MessageItem
 					message={item}

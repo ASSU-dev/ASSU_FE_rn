@@ -29,25 +29,18 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 	function updateChatCache(newMessage: Message) {
 		queryClient.setQueryData(
 			["chatMessages", Number(roomId)],
-			(old: unknown) => {
-				const data = old as { result?: { messages?: Message[] } } | undefined;
-				const oldMessages: Message[] =
-					data?.result?.messages ??
-					(Array.isArray(old) ? (old as Message[]) : []);
+			(old: { result?: { messages?: Message[] } } | undefined) => {
+				const oldMessages: Message[] = old?.result?.messages ?? [];
 				if (
 					newMessage.messageId !== undefined &&
 					oldMessages.some((m) => m.messageId === newMessage.messageId)
 				) {
 					return old;
 				}
-				const updatedMessages = [...oldMessages, newMessage];
-				if (data?.result?.messages !== undefined) {
-					return {
-						...data,
-						result: { ...data.result, messages: updatedMessages },
-					};
-				}
-				return updatedMessages;
+				return {
+					...old,
+					result: { ...old?.result, messages: [...oldMessages, newMessage] },
+				};
 			},
 		);
 	}
@@ -62,22 +55,17 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 
 				queryClient.setQueryData(
 					["chatMessages", Number(roomId)],
-					(old: unknown) => {
-						const msgs = old as
-							| { result?: { messages?: Message[] } }
-							| undefined;
-						const oldMessages: Message[] =
-							msgs?.result?.messages ??
-							(Array.isArray(old) ? (old as Message[]) : []);
+					(old: { result?: { messages?: Message[] } } | undefined) => {
+						const oldMessages: Message[] = old?.result?.messages ?? [];
 						const updated = oldMessages.map((m) =>
 							m.messageId !== undefined && readIds.has(m.messageId)
 								? { ...m, unreadCountForSender: 0 }
 								: m,
 						);
-						if (msgs?.result?.messages !== undefined) {
-							return { ...msgs, result: { ...msgs.result, messages: updated } };
-						}
-						return updated;
+						return {
+							...old,
+							result: { ...old?.result, messages: updated },
+						};
 					},
 				);
 			},

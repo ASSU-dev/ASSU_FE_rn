@@ -1,4 +1,5 @@
 import { Client, type IMessage, type StompSubscription } from "@stomp/stompjs";
+import { TextDecoder, TextEncoder } from "text-encoding";
 
 import { ENV } from "@/shared/config/env";
 import { useAuthStore } from "@/shared/lib/auth/authStore";

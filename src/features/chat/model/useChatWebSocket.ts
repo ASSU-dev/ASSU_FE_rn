@@ -29,19 +29,16 @@ export function useChatWebSocket(roomId: number, onReceive?: () => void) {
 
 		// 내가 보낸 모든 메시지 unreadCountForSender → 0
 		function markSentMessagesRead() {
-			queryClient.setQueryData(["chatMessages", roomId], (old: unknown) => {
-				const data = old as { result?: { messages?: Message[] } } | undefined;
-				const oldMessages: Message[] =
-					data?.result?.messages ??
-					(Array.isArray(old) ? (old as Message[]) : []);
-				const updated = oldMessages.map((m) =>
-					m.isMyMessage ? { ...m, unreadCountForSender: 0 } : m,
-				);
-				if (data?.result?.messages !== undefined) {
-					return { ...data, result: { ...data.result, messages: updated } };
-				}
-				return updated;
-			});
+			queryClient.setQueryData(
+				["chatMessages", roomId],
+				(old: { result?: { messages?: Message[] } } | undefined) => {
+					const oldMessages: Message[] = old?.result?.messages ?? [];
+					const updated = oldMessages.map((m) =>
+						m.isMyMessage ? { ...m, unreadCountForSender: 0 } : m,
+					);
+					return { ...old, result: { ...old?.result, messages: updated } };
+				},
+			);
 		}
 
 		const unsubscribe = stompManager.subscribeToTopic(
@@ -72,19 +69,21 @@ export function useChatWebSocket(roomId: number, onReceive?: () => void) {
 					unreadCountForSender: dto.unreadCountForSender,
 				};
 
-				queryClient.setQueryData(["chatMessages", roomId], (old: unknown) => {
-					const data = old as { result?: { messages?: Message[] } } | undefined;
-					const oldMessages: Message[] =
-						data?.result?.messages ??
-						(Array.isArray(old) ? (old as Message[]) : []);
-					if (oldMessages.some((m) => m.messageId === newMessage.messageId))
-						return old;
-					const updated = [...oldMessages, newMessage];
-					if (data?.result?.messages !== undefined) {
-						return { ...data, result: { ...data.result, messages: updated } };
-					}
-					return updated;
-				});
+				queryClient.setQueryData(
+					["chatMessages", roomId],
+					(old: { result?: { messages?: Message[] } } | undefined) => {
+						const oldMessages: Message[] = old?.result?.messages ?? [];
+						if (oldMessages.some((m) => m.messageId === newMessage.messageId))
+							return old;
+						return {
+							...old,
+							result: {
+								...old?.result,
+								messages: [...oldMessages, newMessage],
+							},
+						};
+					},
+				);
 
 				onReceiveRef.current?.();
 			},
