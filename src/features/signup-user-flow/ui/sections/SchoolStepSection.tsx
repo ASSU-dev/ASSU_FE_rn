@@ -2,8 +2,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { View } from "react-native";
 import type { SignupSchool } from "@/entities/signup";
 import { SCHOOL_SELECT_OPTIONS } from "@/entities/signup";
-import type { SignupFormState } from "@/features/signup-user-flow/model/types";
 import { Select } from "@/shared/ui/select";
+import type { SignupFormState } from "../../model/types";
 import { SignupStepTitle } from "../SignupStepTitle";
 
 type SchoolStepSectionProps = {

@@ -18,7 +18,7 @@ export function DialogConfirmButton({
 				disabled ? "opacity-disabled" : ""
 			}`}
 		>
-			<Text className="text-white font-semibold text-sm leading-5">
+			<Text className="text-content-inverse font-semibold text-sm leading-5">
 				{children}
 			</Text>
 		</Pressable>

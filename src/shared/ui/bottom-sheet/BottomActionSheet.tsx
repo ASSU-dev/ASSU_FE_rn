@@ -56,7 +56,7 @@ export function BottomActionSheet({
 			statusBarTranslucent={Platform.OS === "android"}
 			onRequestClose={onClose}
 		>
-			<View className="flex-1 justify-end bg-[rgba(0,0,0,0.3)]">
+			<View className="flex-1 justify-end bg-overlay">
 				<Pressable className="flex-1" onPress={onClose} />
 				<Animated.View
 					className="rounded-t-[20px] bg-canvas px-screen-m pt-[15px]"

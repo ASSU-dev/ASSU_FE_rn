@@ -1,4 +1,5 @@
 import { Text, TextInput, View } from "react-native";
+import { colorTokens } from "@/shared/styles/tokens";
 
 type LoginUnderlineInputProps = {
 	label: string;
@@ -25,7 +26,7 @@ export function LoginUnderlineInput({
 				value={value}
 				onChangeText={onChangeText}
 				placeholder={placeholder}
-				placeholderTextColor="rgba(4, 4, 4, 0.45)"
+				placeholderTextColor={colorTokens.contentPrimaryAlpha45}
 				secureTextEntry={secureTextEntry}
 				autoCapitalize="none"
 				autoCorrect={false}

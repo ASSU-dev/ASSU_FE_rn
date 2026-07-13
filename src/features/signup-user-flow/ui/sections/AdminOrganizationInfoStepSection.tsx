@@ -1,16 +1,16 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { View } from "react-native";
-import { shouldShowAdminOfficeAddressBySelection } from "@/features/signup-user-flow/model/admin";
+import { Select } from "@/shared/ui/select";
+import { shouldShowAdminOfficeAddressBySelection } from "../../model/admin";
 import {
 	ADMIN_COLLEGE_OPTIONS,
 	ADMIN_DEPARTMENT_OPTIONS,
 	ADMIN_ORGANIZATION_TYPE_OPTIONS,
-} from "@/features/signup-user-flow/model/data/adminOptions";
+} from "../../model/data/adminOptions";
 import type {
 	SignupAdminOrganizationType,
 	SignupFormState,
-} from "@/features/signup-user-flow/model/types";
-import { Select } from "@/shared/ui/select";
+} from "../../model/types";
 import { OfficeAddressPicker } from "../components/OfficeAddressPicker";
 import { LabeledInputField } from "../LabeledInputField";
 import { AdminStepLayout } from "../layout/AdminStepLayout";
