@@ -1,5 +1,7 @@
+import { getItemAsync, setItemAsync } from "expo-secure-store";
 import { useEffect } from "react";
 
+import { useAuthStore } from "@/shared/lib/auth/authStore";
 import {
 	getFcmToken,
 	requestNotificationPermission,
@@ -7,10 +9,15 @@ import {
 
 import { useRegisterDeviceMutation } from "../api/useRegisterDeviceMutation";
 
+const FCM_TOKEN_KEY = "fcm_device_token";
+
 export function useInitFcm() {
+	const role = useAuthStore((state) => state.role);
 	const { mutate: registerToken } = useRegisterDeviceMutation();
 
 	useEffect(() => {
+		if (!role) return;
+
 		async function init() {
 			const granted = await requestNotificationPermission();
 			if (!granted) {
@@ -21,10 +28,17 @@ export function useInitFcm() {
 			const token = await getFcmToken();
 			if (!token) return;
 
-			console.log("[FCM] 토큰 취득 ✅:", token);
-			registerToken({ token });
+			const cachedToken = await getItemAsync(FCM_TOKEN_KEY);
+			if (token === cachedToken) return;
+
+			registerToken(
+				{ token },
+				{
+					onSuccess: () => setItemAsync(FCM_TOKEN_KEY, token),
+				},
+			);
 		}
 
 		init();
-	}, [registerToken]);
+	}, [role, registerToken]);
 }

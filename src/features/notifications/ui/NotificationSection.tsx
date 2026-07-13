@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 
 import { NotificationItem } from "@/entities/notification/ui/NotificationItem";
+import { EmptyState } from "@/shared/ui/empty-state";
 import { TabBar } from "@/shared/ui/TabBar";
 
 import { useMarkReadMutation } from "../api/useMarkReadMutation";
@@ -41,6 +42,12 @@ export function NotificationSection() {
 							}}
 						/>
 					)}
+					ListEmptyComponent={
+						<EmptyState
+							title="알림이 없어요"
+							description="새로운 알림이 오면 여기서 확인할 수 있어요"
+						/>
+					}
 				/>
 			)}
 		</>
