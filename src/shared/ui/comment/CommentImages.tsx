@@ -15,7 +15,7 @@ export function CommentImages({ images }: CommentImagesProps) {
 				<Image
 					key={imageUri}
 					source={{ uri: imageUri }}
-					className="w-[95px] h-[95px] rounded-md bg-gray-400"
+					className="w-[95px] h-[95px] rounded-md bg-content-tertiary"
 				/>
 			))}
 		</View>

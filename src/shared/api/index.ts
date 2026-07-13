@@ -55,3 +55,4 @@ export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
 // unregister
 export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
 export { apiInstance } from "./instance";
+export type { BaseResponse } from "./types";

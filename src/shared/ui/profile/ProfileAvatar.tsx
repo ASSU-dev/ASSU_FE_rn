@@ -15,7 +15,7 @@ export function ProfileAvatar({ source, size = 48 }: ProfileAvatarProps) {
 
 	return (
 		<View
-			className="items-center justify-center overflow-hidden rounded-full border-[0.5px] border-black"
+			className="items-center justify-center overflow-hidden rounded-full border-[0.5px] border-content-primary"
 			style={{ width: size, height: size }}
 		>
 			<Image

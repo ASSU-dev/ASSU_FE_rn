@@ -1,1 +1,27 @@
-export { useReportSteps as useReportReview } from "@/shared/ui/report";
+import { useCallback } from "react";
+import { createReport, type ReportReason } from "@/entities/report";
+import { useReportSteps } from "@/shared/ui/report";
+
+export function useReportReview() {
+	const handleSubmit = useCallback(
+		async ({
+			entityId,
+			target,
+			reason,
+		}: {
+			entityId: string;
+			target: "user" | "post";
+			reason: string;
+		}) => {
+			await createReport({
+				reportTarget: target,
+				targetType: "REVIEW",
+				targetId: Number(entityId),
+				reason: reason as ReportReason,
+			});
+		},
+		[],
+	);
+
+	return useReportSteps({ onSubmit: handleSubmit });
+}

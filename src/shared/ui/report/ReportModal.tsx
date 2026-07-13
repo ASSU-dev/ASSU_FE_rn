@@ -29,6 +29,8 @@ export function ReportModal({ state, config }: ReportModalProps) {
 		close,
 		goToReason,
 		goToDone,
+		isSubmitting,
+		errorMessage,
 	} = state;
 
 	return (
@@ -70,11 +72,19 @@ export function ReportModal({ state, config }: ReportModalProps) {
 							</Dialog.RadioItem>
 						))}
 					</Dialog.RadioGroup>
+					{errorMessage && (
+						<Text className="font-regular text-sm text-danger">
+							{errorMessage}
+						</Text>
+					)}
 				</Dialog.Content>
 				<Dialog.Actions>
 					<Dialog.CancelButton onPress={close}>취소</Dialog.CancelButton>
-					<Dialog.ConfirmButton onPress={goToDone} disabled={!reason}>
-						신고하기
+					<Dialog.ConfirmButton
+						onPress={goToDone}
+						disabled={!reason || isSubmitting}
+					>
+						{isSubmitting ? "신고 중" : "신고하기"}
 					</Dialog.ConfirmButton>
 				</Dialog.Actions>
 			</Dialog>
