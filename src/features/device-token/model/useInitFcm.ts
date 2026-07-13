@@ -1,6 +1,9 @@
-import { getItemAsync, setItemAsync } from "expo-secure-store";
 import { useEffect } from "react";
 
+import {
+	getFcmDeviceToken,
+	setFcmDeviceToken,
+} from "@/shared/api/token-storage";
 import { useAuthStore } from "@/shared/lib/auth/authStore";
 import {
 	getFcmToken,
@@ -9,8 +12,7 @@ import {
 
 import { useRegisterDeviceMutation } from "../api/useRegisterDeviceMutation";
 
-const FCM_TOKEN_KEY = "fcm_device_token";
-
+// FCM 초기화 훅
 export function useInitFcm() {
 	const role = useAuthStore((state) => state.role);
 	const { mutate: registerToken } = useRegisterDeviceMutation();
@@ -28,13 +30,13 @@ export function useInitFcm() {
 			const token = await getFcmToken();
 			if (!token) return;
 
-			const cachedToken = await getItemAsync(FCM_TOKEN_KEY);
+			const cachedToken = await getFcmDeviceToken();
 			if (token === cachedToken) return;
 
 			registerToken(
 				{ token },
 				{
-					onSuccess: () => setItemAsync(FCM_TOKEN_KEY, token),
+					onSuccess: () => setFcmDeviceToken(token),
 				},
 			);
 		}
