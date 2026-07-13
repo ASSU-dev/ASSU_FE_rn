@@ -62,7 +62,7 @@ export function BenefitCard({ index, onRemove }: Props) {
 						/>
 					</Pressable>
 					{showServiceTypeMenu && (
-						<View className="absolute top-[42px] left-0 z-10 bg-white rounded-lg shadow-md border border-[#e0e0e0] overflow-hidden">
+						<View className="absolute top-[42px] left-0 z-10 bg-canvas rounded-lg shadow-md border border-neutral-variant overflow-hidden">
 							{SERVICE_TYPES.map((type) => (
 								<Pressable
 									key={type}

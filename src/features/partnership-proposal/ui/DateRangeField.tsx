@@ -76,7 +76,7 @@ export function DateRangeField({
 			</View>
 
 			{isDateOrderInvalid && (
-				<Text className="text-[12px] text-red-500">
+				<Text className="text-[12px] text-danger">
 					종료일은 시작일보다 이후여야 합니다
 				</Text>
 			)}
@@ -93,8 +93,8 @@ export function DateRangeField({
 
 			{Platform.OS === "ios" && (
 				<Modal transparent animationType="slide" visible={!!dateField}>
-					<Pressable className="flex-1 bg-black/40" onPress={dismiss} />
-					<View className="bg-white rounded-t-2xl px-4 pb-6 pt-2">
+					<Pressable className="flex-1 bg-overlay-strong" onPress={dismiss} />
+					<View className="bg-canvas rounded-t-2xl px-4 pb-6 pt-2">
 						<View className="flex-row justify-between items-center py-3">
 							<Pressable onPress={dismiss}>
 								<Text className="text-[16px] text-content-secondary">취소</Text>

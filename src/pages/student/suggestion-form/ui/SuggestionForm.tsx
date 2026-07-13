@@ -2,14 +2,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { Controller } from "react-hook-form";
 import { Text, View } from "react-native";
 
+import { useSuggestionAdmins } from "@/entities/suggestion";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { FormField } from "@/shared/ui/FormField";
 import { Select } from "@/shared/ui/select";
-import { SUGGESTION_TARGET_ITEMS, useSuggestionForm } from "../model";
+import { useSuggestionForm } from "../model";
 
 export function SuggestionForm() {
 	const { control, onSubmit, isValid } = useSuggestionForm();
+	const { data: targetItems = [] } = useSuggestionAdmins();
 
 	return (
 		<View className="flex-1 justify-between">
@@ -28,7 +30,7 @@ export function SuggestionForm() {
 							</View>
 							<View className="flex-1">
 								<Select
-									items={SUGGESTION_TARGET_ITEMS}
+									items={targetItems}
 									value={field.value || null}
 									onChange={(val) => field.onChange(val ?? "")}
 									placeholder="건의대상 선택"

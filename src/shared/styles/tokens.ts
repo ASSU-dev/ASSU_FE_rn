@@ -20,6 +20,13 @@ export const colorTokens = {
 	/** global.styles.css: --color-neutral-variant (gray-300) */
 	neutralVariant: "#DBDDE1",
 
+	/** Modal and bottom-sheet scrim overlay */
+	overlay: "rgba(0, 0, 0, 0.3)",
+	/** Stronger scrim overlay for native picker modals */
+	overlayStrong: "rgba(0, 0, 0, 0.4)",
+	/** Drag handle color on dark sheets */
+	handleOnDark: "rgba(235, 235, 245, 0.3)",
+
 	/** global.styles.css: --color-canvas (white) */
 	canvas: "#FEFFFE",
 
@@ -32,6 +39,8 @@ export const colorTokens = {
 	contentSecondary: "#8E9398",
 	/** contentSecondary at opacity 0.3 — RN은 hex + opacity 조합 불가하므로 별도 정의 */
 	contentSecondaryAlpha30: "rgba(142, 147, 152, 0.3)",
+	/** contentPrimary at opacity 0.45 for placeholders */
+	contentPrimaryAlpha45: "rgba(4, 4, 4, 0.45)",
 	/** global.styles.css: --color-content-tertiary (gray-400) */
 	contentTertiary: "#B4B4B4",
 	/** global.styles.css: --color-content-inverse (blue-50) */

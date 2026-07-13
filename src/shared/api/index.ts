@@ -92,3 +92,4 @@ export type { UnblockParams } from "./_generated/auth/unblock";
 // unblock
 export { getAssuApi as getUnblockApi } from "./_generated/auth/unblock";
 export { apiInstance } from "./instance";
+export type { BaseResponse } from "./types";

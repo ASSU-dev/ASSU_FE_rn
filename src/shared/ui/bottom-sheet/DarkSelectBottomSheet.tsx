@@ -97,7 +97,7 @@ export function DarkSelectBottomSheet<T extends string = string>({
 			statusBarTranslucent={Platform.OS === "android"}
 			onRequestClose={animateClose}
 		>
-			<View className="flex-1 justify-end bg-[rgba(0,0,0,0.3)]">
+			<View className="flex-1 justify-end bg-overlay">
 				<Pressable className="flex-1" onPress={animateClose} />
 				<Animated.View
 					{...panResponder.panHandlers}
@@ -115,7 +115,7 @@ export function DarkSelectBottomSheet<T extends string = string>({
 								width: 36,
 								height: 5,
 								borderRadius: 100,
-								backgroundColor: "rgba(235, 235, 245, 0.3)",
+								backgroundColor: colorTokens.handleOnDark,
 							}}
 						/>
 					</View>

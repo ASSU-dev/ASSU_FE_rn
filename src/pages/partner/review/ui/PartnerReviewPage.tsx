@@ -2,15 +2,24 @@
 
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
-import { ReviewCard } from "@/entities/review";
+import {
+	ActivityIndicator,
+	FlatList,
+	Pressable,
+	Text,
+	View,
+} from "react-native";
+import {
+	ReviewCard,
+	usePartnerReviewAverage,
+	usePartnerReviews,
+} from "@/entities/review";
 import { ReportReviewDialog, useReportReview } from "@/features/report-review";
 import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { DarkSelectBottomSheet } from "@/shared/ui/bottom-sheet";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
-import { mockReviews } from "../model/mockReviews";
 import type { Review } from "../model/types";
 import { ReviewListHeader, type SortType } from "./ReviewListHeader";
 import { ReviewSummary } from "./ReviewSummary";
@@ -20,9 +29,6 @@ const SORT_ITEMS: { label: string; value: SortType }[] = [
 	{ label: "오래된순", value: "oldest" },
 	{ label: "별점순", value: "rating" },
 ];
-
-const averageRating =
-	mockReviews.reduce((sum, r) => sum + r.rating, 0) / mockReviews.length;
 
 const listContentStyle = {
 	gap: 20,
@@ -34,16 +40,24 @@ export function PartnerReviewPage() {
 	const [sort, setSort] = useState<SortType>("latest");
 	const [isSortSheetVisible, setSortSheetVisible] = useState(false);
 	const report = useReportReview();
+	const {
+		data: reviewPage,
+		isLoading: isReviewsLoading,
+		isError: isReviewsError,
+		error: reviewsError,
+	} = usePartnerReviews();
+	const { data: averageRating = 0 } = usePartnerReviewAverage();
+	const reviews = reviewPage?.reviews ?? [];
 
 	const sortedReviews = useMemo(() => {
-		return [...mockReviews].sort((a, b) => {
+		return [...reviews].sort((a, b) => {
 			if (sort === "latest")
 				return b.createdAt.getTime() - a.createdAt.getTime();
 			if (sort === "oldest")
 				return a.createdAt.getTime() - b.createdAt.getTime();
 			return b.rating - a.rating;
 		});
-	}, [sort]);
+	}, [reviews, sort]);
 
 	const renderItem = useCallback(
 		({ item }: { item: Review }) => (
@@ -82,7 +96,7 @@ export function PartnerReviewPage() {
 				<View className="mt-screen-m items-center">
 					<ReviewSummary
 						averageRating={averageRating}
-						totalCount={mockReviews.length}
+						totalCount={reviewPage?.totalElements ?? sortedReviews.length}
 					/>
 				</View>
 
@@ -99,13 +113,25 @@ export function PartnerReviewPage() {
 				</View>
 
 				{/* 카드 스크롤 영역 */}
-				<FlatList<Review>
-					style={{ flex: 1 }}
-					data={sortedReviews}
-					keyExtractor={(item) => item.id}
-					renderItem={renderItem}
-					contentContainerStyle={listContentStyle}
-				/>
+				{isReviewsLoading ? (
+					<View className="flex-1 items-center justify-center">
+						<ActivityIndicator />
+					</View>
+				) : isReviewsError ? (
+					<View className="flex-1 items-center justify-center px-screen-m">
+						<Text className="text-center text-sm text-danger">
+							{String(reviewsError)}
+						</Text>
+					</View>
+				) : (
+					<FlatList<Review>
+						style={{ flex: 1 }}
+						data={sortedReviews}
+						keyExtractor={(item) => item.id}
+						renderItem={renderItem}
+						contentContainerStyle={listContentStyle}
+					/>
+				)}
 			</PageLayout>
 			<ReportReviewDialog state={report} />
 			<DarkSelectBottomSheet

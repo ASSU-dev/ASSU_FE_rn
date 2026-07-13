@@ -39,7 +39,7 @@ export function InquiryDetailPage() {
 
 			{isError && (
 				<View className="flex-1 items-center justify-center gap-2">
-					<Text className="text-base font-semibold text-red-500">
+					<Text className="text-base font-semibold text-danger">
 						문의를 불러오는데 실패했습니다.
 					</Text>
 					<Text className="text-sm text-content-secondary">
@@ -61,7 +61,7 @@ export function InquiryDetailPage() {
 					</View>
 
 					{/* 구분선 */}
-					<View className="border-b border-gray-200 mb-6" />
+					<View className="border-b border-neutral-variant mb-6" />
 
 					{/* 본문 */}
 					<Text className="text-[15px] text-content-primary tracking-[0.25px] leading-5 mb-16">
@@ -75,7 +75,7 @@ export function InquiryDetailPage() {
 								Answer
 							</Text>
 						</View>
-						<View className="bg-gray-100 rounded-lg p-4">
+						<View className="bg-neutral rounded-lg p-4">
 							{data.answer ? (
 								<Text className="text-[11px] font-medium text-content-primary tracking-[0.25px] leading-[20px]">
 									{data.answer}

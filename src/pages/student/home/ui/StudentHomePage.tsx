@@ -8,12 +8,12 @@ export function StudentHomePage() {
 	const userStampCount = 4;
 	const userName = "김숭실";
 	return (
-		<ScrollView className="flex-1 bg-white px-5 pt-10">
+		<ScrollView className="flex-1 bg-canvas px-5 pt-10">
 			<Pressable
 				className="rounded-lg bg-primary px-4 py-3"
 				onPress={() => router.push("/")}
 			>
-				<Text className="text-sm font-semibold text-white">
+				<Text className="text-sm font-semibold text-content-inverse">
 					허브로 돌아가기
 				</Text>
 			</Pressable>

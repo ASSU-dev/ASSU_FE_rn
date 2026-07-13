@@ -1,10 +1,7 @@
 import { useFormContext } from "react-hook-form";
-import { findAddressOption } from "@/features/signup-user-flow/model/admin";
-import { useSignupFlowUi } from "@/features/signup-user-flow/model/flowUiContext";
-import type {
-	SignupFormState,
-	SignupStep,
-} from "@/features/signup-user-flow/model/types";
+import { findAddressOption } from "../model/admin";
+import { useSignupFlowUi } from "../model/flowUiContext";
+import type { SignupFormState, SignupStep } from "../model/types";
 import { AdminCredentialsStepSection } from "./sections/AdminCredentialsStepSection";
 import { AdminOrganizationInfoStepSection } from "./sections/AdminOrganizationInfoStepSection";
 import { AdminOrganizationTypeStepSection } from "./sections/AdminOrganizationTypeStepSection";
