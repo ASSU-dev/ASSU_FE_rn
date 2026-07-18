@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useAccountSessionActions } from "@/features/account-session-management";
 import {
 	ProfileImageActionSheet,
 	useProfileImageEditor,
@@ -15,11 +16,22 @@ import {
 export function AdminProfilePage() {
 	const router = useRouter();
 	const profileImageEditor = useProfileImageEditor();
+	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{ label: "알림설정", iconName: "bell" },
 		{ label: "계정관리", iconName: "user" },
 		{ label: "대기중인 제휴 계약서", iconName: "list" },
+		{
+			label: "로그아웃",
+			iconName: "exitRight",
+			onPress: accountSession.requestLogout,
+		},
+		{
+			label: "회원 탈퇴",
+			iconName: "user",
+			onPress: accountSession.requestWithdrawal,
+		},
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
