@@ -14,13 +14,16 @@ import {
 
 interface BlockedPartnerRowProps {
 	partner: BlockedPartner;
-	onUnblock: (partner: BlockedPartner) => void;
+	onPress: (partner: BlockedPartner) => void;
 }
 
-function BlockedPartnerRow({ partner, onUnblock }: BlockedPartnerRowProps) {
+function BlockedPartnerRow({ partner, onPress }: BlockedPartnerRowProps) {
 	return (
-		<View className="h-[66px] flex-row items-center px-screen-m">
-			<View className="flex-1 px-gutter">
+		<Pressable
+			onPress={() => onPress(partner)}
+			className="h-[66px] flex-row items-center px-screen-m"
+		>
+			<View className="flex-1 justify-center self-stretch px-gutter">
 				<Text className="text-sm font-medium text-content-primary">
 					{partner.name}
 				</Text>
@@ -28,10 +31,10 @@ function BlockedPartnerRow({ partner, onUnblock }: BlockedPartnerRowProps) {
 					차단일 | {partner.blockedAt}
 				</Text>
 			</View>
-			<Pressable hitSlop={8} onPress={() => onUnblock(partner)}>
-				<Text className="text-[11px] font-medium text-primary">차단 해제하기</Text>
-			</Pressable>
-		</View>
+			<Text className="text-[11px] font-medium text-primary">
+				차단 해제하기
+			</Text>
+		</Pressable>
 	);
 }
 
@@ -62,15 +65,15 @@ export function AdminBlockedPartnersPage() {
 					<View className="px-screen-m">
 						<InfoBanner message="내가 차단한 업체 목록이에요" />
 						<Text className="px-[7px] pb-[15px] pt-[15px] text-[11px] text-content-secondary">
-							차단된 업체가 <Text className="text-primary">{partners.length}</Text>곳
-							 있어요
+							차단된 업체가{" "}
+							<Text className="text-primary">{partners.length}</Text>곳 있어요
 						</Text>
 					</View>
 					{partners.map((partner) => (
 						<BlockedPartnerRow
 							key={partner.id}
 							partner={partner}
-							onUnblock={setSelectedPartner}
+							onPress={setSelectedPartner}
 						/>
 					))}
 				</View>

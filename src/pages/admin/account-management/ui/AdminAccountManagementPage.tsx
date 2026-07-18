@@ -17,7 +17,7 @@ export function AdminAccountManagementPage() {
 		{
 			label: "차단 업체 관리",
 			iconName: "ban",
-			onPress: () => router.push("../blocked-partners"),
+			onPress: () => router.push("/(protected)/admin/blocked-partners"),
 		},
 		{ label: "로그아웃", iconName: "exitRight" },
 		{
