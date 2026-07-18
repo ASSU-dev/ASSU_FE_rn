@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import { Pressable, Text } from "react-native";
 
 import {
+	BanIcon,
 	BellIcon,
 	ExitRightIcon,
 	FolderIcon,
@@ -20,6 +21,7 @@ type AccountIconComponent = ComponentType<{
 }>;
 
 const ACCOUNT_MENU_ICONS: Record<AccountMenuIconName, AccountIconComponent> = {
+	ban: BanIcon,
 	bell: BellIcon,
 	exitRight: ExitRightIcon,
 	folder: FolderIcon,

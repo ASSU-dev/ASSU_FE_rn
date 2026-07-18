@@ -12,9 +12,21 @@ export function AdminProfilePage() {
 	const router = useRouter();
 
 	const myAccountItems: AccountMenuItemProps[] = [
-		{ label: "알림설정", iconName: "bell" },
-		{ label: "계정관리", iconName: "user" },
-		{ label: "대기중인 제휴 계약서", iconName: "list" },
+		{
+			label: "알림설정",
+			iconName: "bell",
+			onPress: () => router.push("../notification-settings"),
+		},
+		{
+			label: "계정관리",
+			iconName: "user",
+			onPress: () => router.push("../account-management"),
+		},
+		{
+			label: "대기중인 제휴 계약서",
+			iconName: "list",
+			onPress: () => router.push("../pending-contracts"),
+		},
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
