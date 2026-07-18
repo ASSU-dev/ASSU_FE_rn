@@ -1,16 +1,16 @@
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Alert } from "react-native";
+import { useProfileImageQuery } from "@/entities/user/api/useProfileImageQuery";
 
 import {
 	useDeleteProfileImage,
-	useProfileImage,
 	useReplaceProfileImage,
 } from "./useProfileImage";
 
 export function useProfileImageEditor() {
 	const [isOpen, setIsOpen] = useState(false);
-	const profileImage = useProfileImage();
+	const profileImage = useProfileImageQuery();
 	const replaceImage = useReplaceProfileImage();
 	const deleteImage = useDeleteProfileImage();
 	const isPending = replaceImage.isPending || deleteImage.isPending;
@@ -74,8 +74,10 @@ export function useProfileImageEditor() {
 	};
 
 	return {
-		imageSource: profileImage.data ? { uri: profileImage.data } : undefined,
-		hasImage: Boolean(profileImage.data),
+		imageSource: profileImage.data?.url
+			? { uri: profileImage.data.url }
+			: undefined,
+		hasImage: Boolean(profileImage.data?.url),
 		isOpen,
 		isPending,
 		open: () => setIsOpen(true),

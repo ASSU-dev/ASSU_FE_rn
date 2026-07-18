@@ -1,15 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-	deleteProfileImage,
-	getProfileImage,
-	replaceProfileImage,
-} from "../api/profileImage";
-
-export const profileImageQueryKey = ["member", "profile-image"] as const;
-
-export function useProfileImage() {
-	return useQuery({ queryKey: profileImageQueryKey, queryFn: getProfileImage });
-}
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { profileImageQueryKey } from "@/entities/user/api/useProfileImageQuery";
+import { deleteProfileImage, replaceProfileImage } from "../api/profileImage";
 
 export function useReplaceProfileImage() {
 	const queryClient = useQueryClient();
