@@ -1,13 +1,12 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
-
+import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { Dialog } from "@/shared/ui/dialog";
 import { PageLayout } from "@/shared/ui/layout";
-import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import {
-	type AccountMenuItemProps,
 	AccountMenuItem,
+	type AccountMenuItemProps,
 } from "@/widgets/account-management";
 
 export function AdminAccountManagementPage() {
@@ -15,7 +14,6 @@ export function AdminAccountManagementPage() {
 	const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
 
 	const items: AccountMenuItemProps[] = [
-		{ label: "차단 친구 관리", iconName: "ban" },
 		{
 			label: "차단 업체 관리",
 			iconName: "ban",
