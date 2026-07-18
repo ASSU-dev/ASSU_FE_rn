@@ -1,6 +1,10 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import {
+	ProfileImageActionSheet,
+	useProfileImageEditor,
+} from "@/features/profile-image-management";
 import { PageLayout } from "@/shared/ui/layout";
 import {
 	type AccountMenuItemProps,
@@ -10,6 +14,7 @@ import {
 
 export function PartnerProfilePage() {
 	const router = useRouter();
+	const profileImageEditor = useProfileImageEditor();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{ label: "알림설정", iconName: "bell" },
@@ -38,11 +43,21 @@ export function PartnerProfilePage() {
 				<AccountProfileHeader
 					name="역전할머니맥주 숭실대점"
 					subtitle="사업 수정"
+					profileImage={profileImageEditor.imageSource}
+					onProfileImagePress={profileImageEditor.open}
 				/>
 
 				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
 				<AccountMenuSection title="고객센터" items={customerServiceItems} />
 			</View>
+			<ProfileImageActionSheet
+				visible={profileImageEditor.isOpen}
+				hasImage={profileImageEditor.hasImage}
+				isPending={profileImageEditor.isPending}
+				onSelectImage={profileImageEditor.selectImage}
+				onDeleteImage={profileImageEditor.removeImage}
+				onClose={profileImageEditor.close}
+			/>
 		</PageLayout>
 	);
 }
