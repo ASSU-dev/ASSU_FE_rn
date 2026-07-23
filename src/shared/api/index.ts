@@ -2,6 +2,13 @@ import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
 export type {
+	BaseResponseNotificationSettingsResponseDTO,
+	NotificationSettingsResponseDTO,
+	NotificationSettingsResponseDTOSettings,
+} from "./_generated/auth/getSettings";
+// getSettings
+export { getAssuApi as getGetSettingsApi } from "./_generated/auth/getSettings";
+export type {
 	BaseResponseLoginResponseDTO,
 	LoginResponseDTO,
 } from "./_generated/auth/loginStudent";
@@ -37,5 +44,7 @@ export type {
 } from "./_generated/auth/ssuAuth";
 // ssuAuth
 export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
+// toggle
+export { getAssuApi as getToggleApi } from "./_generated/auth/toggle";
 export { apiInstance } from "./instance";
 export type { BaseResponse } from "./types";
