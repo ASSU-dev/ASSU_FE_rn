@@ -44,6 +44,7 @@ export function SignupUserFlowWidget() {
 					onChangeEmail={login.onChangeEmail}
 					onChangePassword={login.onChangePassword}
 					onPressLogin={login.onPressLogin}
+					isLoginPending={login.isLoginPending}
 					onPressLmsLogin={login.onPressLmsLogin}
 					onPressSignup={login.onPressSignup}
 				/>

@@ -58,6 +58,8 @@ export { getAssuApi as getLeaveChattingRoomApi } from "./_generated/auth/leaveCh
 } from "./_generated/auth/list";
 // list
 export { getAssuApi as getListApi, ListStatus } from "./_generated/auth/list";
+export type { CommonLoginRequestDTO } from "./_generated/auth/loginCommon";
+export { getAssuApi as getLoginCommonApi } from "./_generated/auth/loginCommon";
 export type {
 	BaseResponseLoginResponseDTO,
 	LoginResponseDTO,
@@ -89,6 +91,27 @@ export type {
 } from "./_generated/auth/register";
 // register
 export { getAssuApi as getRegisterApi } from "./_generated/auth/register";
+	AdminSignUpRequestDTO,
+	SignupAdminBody,
+} from "./_generated/auth/signupAdmin";
+// signupAdmin
+export { getAssuApi as getSignupAdminApi } from "./_generated/auth/signupAdmin";
+export type {
+	CommonAuthPayloadDTO,
+	CommonInfoPayloadDTO,
+	PartnerSignUpRequestDTO,
+	SelectedPlacePayload,
+	SignupPartnerBody,
+} from "./_generated/auth/signupPartner";
+// signupPartner
+export {
+	CommonAuthPayloadDTODepartment,
+	CommonAuthPayloadDTOMajor,
+	CommonAuthPayloadDTOUniversity,
+	getAssuApi as getSignupPartnerApi,
+	SignUpResponseDTORole,
+	SignUpResponseDTOStatus,
+} from "./_generated/auth/signupPartner";
 export type {
 	BaseResponseSignUpResponseDTO,
 	SignUpResponseDTO,
