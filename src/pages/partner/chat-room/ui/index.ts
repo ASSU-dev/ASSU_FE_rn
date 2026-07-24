@@ -1,1 +1,0 @@
-export { PartnerChatRoomPage } from "./PartnerChatRoomPage";

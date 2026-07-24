@@ -1,1 +1,1 @@
-export { AdminChatRoomPage } from "./ui";
+export { AdminChatRoomPage } from "./ui/AdminChatRoomPage";
