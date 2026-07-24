@@ -4,6 +4,7 @@ import type { UserBasicInfo } from "@/shared/lib/auth/authStore";
 const REFRESH_TOKEN_KEY = "refreshToken";
 const USER_ROLE_KEY = "userRole";
 const USER_BASIC_INFO_KEY = "userBasicInfo";
+const DEVICE_TOKEN_ID_KEY = "deviceTokenId";
 
 export async function setRefreshToken(token: string) {
 	await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, token);
@@ -62,4 +63,20 @@ export async function getUserBasicInfo(): Promise<UserBasicInfo | null> {
 
 export async function deleteUserBasicInfo() {
 	await SecureStore.deleteItemAsync(USER_BASIC_INFO_KEY);
+}
+
+export async function setDeviceTokenId(tokenId: number) {
+	await SecureStore.setItemAsync(DEVICE_TOKEN_ID_KEY, String(tokenId));
+}
+
+export async function getDeviceTokenId(): Promise<number | null> {
+	const value = await SecureStore.getItemAsync(DEVICE_TOKEN_ID_KEY);
+	if (!value) return null;
+
+	const tokenId = Number(value);
+	return Number.isSafeInteger(tokenId) && tokenId > 0 ? tokenId : null;
+}
+
+export async function deleteDeviceTokenId() {
+	await SecureStore.deleteItemAsync(DEVICE_TOKEN_ID_KEY);
 }

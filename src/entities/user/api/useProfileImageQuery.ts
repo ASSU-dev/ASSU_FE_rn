@@ -3,6 +3,7 @@ import { apiInstance } from "@/shared/api/instance";
 import type { BaseResponse, ProfileImageResponseDTO } from "../model/types";
 
 const PROFILE_IMAGE_STALE_TIME_MS = 1000 * 60 * 8;
+export const profileImageQueryKey = ["user", "profile-image"] as const;
 
 async function fetchProfileImage(): Promise<ProfileImageResponseDTO | null> {
 	const response = await apiInstance.get<BaseResponse<ProfileImageResponseDTO>>(
@@ -14,7 +15,7 @@ async function fetchProfileImage(): Promise<ProfileImageResponseDTO | null> {
 
 export function useProfileImageQuery() {
 	return useQuery({
-		queryKey: ["user", "profile-image"],
+		queryKey: profileImageQueryKey,
 		queryFn: fetchProfileImage,
 		staleTime: PROFILE_IMAGE_STALE_TIME_MS,
 	});
