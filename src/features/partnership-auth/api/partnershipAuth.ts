@@ -33,6 +33,17 @@ interface PersonalCertificationPayload {
 	tableNumber: 99;
 }
 
+interface GroupCertificationPayload {
+	people: number;
+	storeId: number;
+	adminId: number;
+	tableNumber: 99;
+}
+
+interface GroupCertificationResponseDTO {
+	sessionId?: number;
+}
+
 export async function getStorePartnerships(
 	storeId: number,
 ): Promise<VerifiedPartnershipStore> {
@@ -94,6 +105,30 @@ export async function certifyPersonalPartnership({
 	}
 }
 
+export async function createGroupCertificationSession({
+	people,
+	storeId,
+	adminId,
+}: Omit<GroupCertificationPayload, "tableNumber">): Promise<number> {
+	const response = await apiInstance.post<
+		BaseResponse<GroupCertificationResponseDTO>
+	>("/certification/session", {
+		people,
+		storeId,
+		adminId,
+		tableNumber: 99,
+	} satisfies GroupCertificationPayload);
+	const sessionId = response.data.result?.sessionId;
+
+	if (!sessionId) {
+		throw new Error(
+			response.data.message ?? "그룹 인증 세션을 만들지 못했습니다.",
+		);
+	}
+
+	return sessionId;
+}
+
 export async function recordPartnershipUsage(
 	payload: Omit<PartnershipUsagePayload, "tableNumber">,
 ): Promise<void> {
@@ -114,9 +149,47 @@ export async function recordPartnershipUsage(
 
 export function parsePartnershipStoreId(value: string): number | null {
 	const trimmed = value.trim();
-	const urlMatch = trimmed.match(/\/partnership\/(\d+)(?:[/?#]|$)/);
-	const rawStoreId = urlMatch?.[1] ?? (/^\d+$/.test(trimmed) ? trimmed : null);
-	if (!rawStoreId) return null;
+	let rawStoreId: string | number | null = null;
+
+	if (/^\d+$/.test(trimmed)) {
+		rawStoreId = trimmed;
+	}
+
+	if (rawStoreId === null) {
+		try {
+			const parsed = JSON.parse(trimmed) as unknown;
+			if (
+				typeof parsed === "object" &&
+				parsed !== null &&
+				"storeId" in parsed
+			) {
+				const storeId = (parsed as { storeId?: unknown }).storeId;
+				if (typeof storeId === "string" || typeof storeId === "number") {
+					rawStoreId = storeId;
+				}
+			}
+		} catch {
+			// QR 데이터가 JSON이 아니면 URL 또는 일반 문자열 규칙으로 확인합니다.
+		}
+	}
+
+	if (rawStoreId === null) {
+		try {
+			rawStoreId = new URL(trimmed).searchParams.get("storeId");
+		} catch {
+			// QR 데이터가 URL이 아니면 아래 문자열 규칙으로 확인합니다.
+		}
+	}
+
+	if (rawStoreId === null) {
+		const keyedMatch = trimmed.match(
+			/(?:^|[?&#,{]\s*["']?)storeId["']?\s*[:=]\s*["']?(\d+)/i,
+		);
+		const pathMatch = trimmed.match(/\/partnership\/(\d+)(?:[/?#]|$)/);
+		rawStoreId = keyedMatch?.[1] ?? pathMatch?.[1] ?? null;
+	}
+
+	if (rawStoreId === null || rawStoreId === "") return null;
 
 	const storeId = Number(rawStoreId);
 	return Number.isSafeInteger(storeId) && storeId > 0 ? storeId : null;

@@ -26,3 +26,25 @@ export interface PartnershipUsagePayload {
 	discount?: number;
 	userIds?: number[];
 }
+
+export interface GroupCertificationSession {
+	sessionId: number;
+	requiredPeople: number;
+	count: number;
+	status: "WAITING" | "COMPLETED";
+	userIds: number[];
+}
+
+export interface GroupCertificationProgressMessage {
+	type: string;
+	count: number;
+	message?: string;
+	userIds?: number[];
+}
+
+export interface GroupCertificationQrPayload {
+	type: "ASSU_GROUP_CERTIFICATION";
+	version: 1;
+	adminId: number;
+	sessionId: number;
+}

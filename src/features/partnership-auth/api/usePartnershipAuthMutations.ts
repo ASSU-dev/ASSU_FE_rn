@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
 	certifyPersonalPartnership,
+	createGroupCertificationSession,
 	getStorePartnerships,
 	recordPartnershipUsage,
 } from "./partnershipAuth";
@@ -15,6 +16,10 @@ export function useStorePartnershipQuery(storeId: number | null) {
 
 export function usePersonalCertificationMutation() {
 	return useMutation({ mutationFn: certifyPersonalPartnership });
+}
+
+export function useGroupCertificationSessionMutation() {
+	return useMutation({ mutationFn: createGroupCertificationSession });
 }
 
 export function usePartnershipUsageMutation() {

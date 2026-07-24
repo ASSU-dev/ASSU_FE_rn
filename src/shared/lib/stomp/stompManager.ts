@@ -87,10 +87,16 @@ export class StompManager {
 	}
 
 	// 메시지 발행
-	publish(destination: string, body: string): void {
-		if (this.client.connected) {
-			this.client.publish({ destination, body });
-		}
+	publish(destination: string, body: string): boolean {
+		if (!this.client.connected) return false;
+
+		const token = useAuthStore.getState().accessToken;
+		this.client.publish({
+			destination,
+			body,
+			headers: token ? { Authorization: `Bearer ${token}` } : {},
+		});
+		return true;
 	}
 }
 

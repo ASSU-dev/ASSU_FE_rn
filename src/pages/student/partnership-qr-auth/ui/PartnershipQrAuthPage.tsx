@@ -2,12 +2,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
-import { parsePartnershipStoreId } from "@/features/partnership-auth";
+import {
+	certifyGroupParticipant,
+	parseGroupCertificationQr,
+	parsePartnershipStoreId,
+} from "@/features/partnership-auth";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 export function PartnershipQrAuthPage() {
-	const [scannedValue] = useState<string | null>(null);
+	const [scannedValue, setScannedValue] = useState<string | null>(null);
 
 	// TODO: expo-camera가 포함된 개발 빌드를 설치한 뒤 아래 import와 함께 복구합니다.
 	// import {
@@ -23,9 +27,28 @@ export function PartnershipQrAuthPage() {
 
 	const handleConfirm = () => {
 		if (!scannedValue) return;
+		const groupCertification = parseGroupCertificationQr(scannedValue);
+		if (groupCertification) {
+			const published = certifyGroupParticipant(groupCertification);
+			if (!published) {
+				Alert.alert(
+					"연결 확인",
+					"인증 서버에 연결되지 않았습니다. 잠시 후 다시 시도해주세요.",
+				);
+				return;
+			}
+
+			router.replace({
+				pathname: "/(protected)/student/partnership-complete",
+				params: { benefit: "그룹 제휴" },
+			});
+			return;
+		}
+
 		const storeId = parsePartnershipStoreId(scannedValue);
 		if (!storeId) {
 			Alert.alert("QR 확인 실패", "올바른 제휴 QR 코드가 아닙니다.");
+			setScannedValue(null);
 			return;
 		}
 
@@ -71,8 +94,20 @@ export function PartnershipQrAuthPage() {
 			<View className="flex-1 items-center justify-center pb-[40px]">
 				<View className="size-[222px] rounded-[12px] border-[8px] border-primary" />
 				<Text className="mt-[30px] text-md font-semibold text-content-inverse">
-					제휴 QR 코드를 스캔해주세요
+					{scannedValue
+						? "QR 코드를 확인했습니다"
+						: "제휴 QR 코드를 스캔해주세요"}
 				</Text>
+				{scannedValue ? (
+					<Pressable
+						onPress={() => setScannedValue(null)}
+						className="mt-[12px] rounded-[8px] bg-neutral px-[20px] py-gutter"
+					>
+						<Text className="text-sm font-semibold text-content-secondary">
+							다시 스캔
+						</Text>
+					</Pressable>
+				) : null}
 			</View>
 
 			<View className="gap-[36px] rounded-t-[20px] bg-content-primary px-screen-m pb-[20px] pt-[15px]">

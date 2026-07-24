@@ -24,12 +24,12 @@ export function PartnershipCompletePage() {
 				<Ionicons name="close" size={24} />
 			</Pressable>
 
-			<View className="flex-1 items-center justify-center pb-[40px]">
-				<View className="items-center gap-[11px]">
-					<Text className="text-[25px] font-semibold leading-caption tracking-caption text-content-primary">
+			<View className="w-full flex-1 items-center justify-center px-screen-m pb-[40px]">
+				<View className="w-full items-center gap-[11px]">
+					<Text className="w-full text-center text-[25px] font-semibold leading-caption tracking-caption text-content-primary">
 						제휴인증 완료
 					</Text>
-					<Text className="text-lg font-regular leading-caption tracking-caption text-content-secondary">
+					<Text className="w-full text-center text-lg font-regular leading-caption tracking-caption text-content-secondary">
 						{benefitText} 혜택이 제공됩니다
 					</Text>
 				</View>

@@ -30,6 +30,7 @@ export function PartnershipVerificationPage() {
 	const studentProfile = studentProfileQuery.data;
 	const store = usePartnershipAuthStore((state) => state.store);
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
+	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
 	const recordUsage = usePartnershipUsageMutation();
 	const studentDetails = [
 		["학번", studentProfile?.studentNumber],
@@ -55,6 +56,7 @@ export function PartnershipVerificationPage() {
 				placeName: store.storeName,
 				partnershipContent: benefit.contents,
 				contentId: benefit.id,
+				userIds: benefit.type === "GROUP" ? groupSession?.userIds : undefined,
 			});
 			router.replace({
 				pathname: "/(protected)/student/partnership-complete",
@@ -154,9 +156,32 @@ export function PartnershipVerificationPage() {
 				</View>
 
 				<View className="mt-[6px] h-[109px] items-center justify-center rounded-[8px] bg-neutral">
-					<Text className="text-[12px] font-medium text-content-primary">
-						단체 조건이 없는 제휴입니다
-					</Text>
+					{benefit?.type === "GROUP" && groupSession ? (
+						<View className="items-center gap-gutter">
+							<Text className="text-[12px] font-medium text-content-primary">
+								{groupSession.count}/{groupSession.requiredPeople}명 인증 완료
+							</Text>
+							<View className="flex-row gap-[6px]">
+								{Array.from(
+									{ length: groupSession.requiredPeople },
+									(_, index) => (
+										<View
+											key={`verified-participant-${index + 1}`}
+											className={`size-[10px] rounded-[999px] ${
+												index < groupSession.count
+													? "bg-primary"
+													: "bg-neutral-variant"
+											}`}
+										/>
+									),
+								)}
+							</View>
+						</View>
+					) : (
+						<Text className="text-[12px] font-medium text-content-primary">
+							단체 조건이 없는 제휴입니다
+						</Text>
+					)}
 				</View>
 			</View>
 

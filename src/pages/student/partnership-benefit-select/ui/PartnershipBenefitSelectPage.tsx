@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import {
+	useGroupCertificationSessionMutation,
 	usePartnershipAuthStore,
 	usePersonalCertificationMutation,
 	useStorePartnershipQuery,
@@ -23,7 +24,11 @@ export function PartnershipBenefitSelectPage() {
 	const setSelectedBenefit = usePartnershipAuthStore(
 		(state) => state.setSelectedBenefit,
 	);
+	const setGroupSession = usePartnershipAuthStore(
+		(state) => state.setGroupSession,
+	);
 	const personalCertification = usePersonalCertificationMutation();
+	const groupCertification = useGroupCertificationSessionMutation();
 	const benefits = store?.benefits ?? [];
 	const selectedBenefit =
 		selectedIndex === null ? null : benefits[selectedIndex];
@@ -34,23 +39,37 @@ export function PartnershipBenefitSelectPage() {
 
 	const handleComplete = async () => {
 		if (!store || !selectedBenefit) return;
-		if (selectedBenefit.type !== "INDIVIDUAL") {
-			Alert.alert(
-				"다인용 혜택",
-				"다인용 혜택 인증은 다음 단계에서 연결됩니다.",
-			);
-			return;
-		}
 
 		try {
+			setSelectedBenefit(selectedBenefit);
+			if (selectedBenefit.type === "GROUP") {
+				if (!selectedBenefit.people) {
+					throw new Error("그룹 인증 인원 정보가 없습니다.");
+				}
+
+				const sessionId = await groupCertification.mutateAsync({
+					people: selectedBenefit.people,
+					storeId: store.storeId,
+					adminId: selectedBenefit.adminId,
+				});
+				setGroupSession({
+					sessionId,
+					requiredPeople: selectedBenefit.people,
+					count: 1,
+					status: "WAITING",
+					userIds: [],
+				});
+				router.push("/(protected)/student/partnership-group-certification");
+				return;
+			}
+
 			await personalCertification.mutateAsync({
 				storeId: store.storeId,
 				adminId: selectedBenefit.adminId,
 			});
-			setSelectedBenefit(selectedBenefit);
 			router.push("/(protected)/student/partnership-verification");
 		} catch {
-			Alert.alert("인증 실패", "개인 제휴 인증을 완료하지 못했습니다.");
+			Alert.alert("인증 실패", "제휴 인증을 시작하지 못했습니다.");
 		}
 	};
 
@@ -112,10 +131,16 @@ export function PartnershipBenefitSelectPage() {
 
 			<View className="mt-auto items-center pb-[4px]">
 				<MediumButton
-					disabled={selectedIndex === null || personalCertification.isPending}
+					disabled={
+						selectedIndex === null ||
+						personalCertification.isPending ||
+						groupCertification.isPending
+					}
 					onPress={handleComplete}
 				>
-					{personalCertification.isPending ? "인증 중" : "선택 완료"}
+					{personalCertification.isPending || groupCertification.isPending
+						? "인증 중"
+						: "선택 완료"}
 				</MediumButton>
 			</View>
 		</PageLayout>
