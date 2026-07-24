@@ -2,16 +2,49 @@ import type { UserBasicInfo } from "@/shared/lib/auth/authStore";
 import { type UserRole, useAuthStore } from "@/shared/lib/auth/authStore";
 import { apiInstance } from "./instance";
 import {
+	deleteAccessToken,
 	deleteRefreshToken,
 	deleteUserBasicInfo,
 	deleteUserRole,
+	getAccessToken,
 	getRefreshToken,
 	getUserBasicInfo,
 	getUserRole,
+	setAccessToken,
 	setRefreshToken,
 	setUserBasicInfo,
 	setUserRole,
 } from "./token-storage";
+
+type InitAuthResult = {
+	isLoggedIn: boolean;
+	role: UserRole | null;
+};
+
+type AccessTokenPayload = {
+	role?: UserRole;
+};
+
+let initAuthPromise: Promise<InitAuthResult> | null = null;
+let initAuthResult: InitAuthResult | null = null;
+
+function decodeAccessTokenRole(accessToken: string): UserRole | null {
+	try {
+		const payload = accessToken.split(".")[1];
+		if (!payload) return null;
+
+		const normalizedPayload = payload
+			.replace(/-/g, "+")
+			.replace(/_/g, "/")
+			.padEnd(Math.ceil(payload.length / 4) * 4, "=");
+		const decodedPayload = globalThis.atob(normalizedPayload);
+		const parsedPayload = JSON.parse(decodedPayload) as AccessTokenPayload;
+
+		return parsedPayload.role ?? null;
+	} catch {
+		return null;
+	}
+}
 
 export function getHomeRouteByRole(role: UserRole | string | null): string {
 	switch (role) {
@@ -30,12 +63,21 @@ export async function saveTokens(
 	role?: UserRole | string | null,
 	basicInfo?: UserBasicInfo | null,
 ) {
+	const resolvedRole = role
+		? (role as UserRole)
+		: decodeAccessTokenRole(accessToken);
+
 	useAuthStore.getState().setAccessToken(accessToken);
+	await setAccessToken(accessToken);
 	await setRefreshToken(refreshToken);
-	if (role) {
-		useAuthStore.getState().setRole(role as UserRole);
-		await setUserRole(role);
+	if (resolvedRole) {
+		useAuthStore.getState().setRole(resolvedRole);
+		await setUserRole(resolvedRole);
 	}
+	initAuthResult = {
+		isLoggedIn: true,
+		role: resolvedRole,
+	};
 	if (basicInfo) {
 		useAuthStore.getState().setBasicInfo(basicInfo);
 		await setUserBasicInfo(basicInfo);
@@ -47,37 +89,60 @@ export async function saveTokens(
 
 export async function clearTokens() {
 	useAuthStore.getState().clearAccessToken();
+	await deleteAccessToken();
 	await deleteRefreshToken();
 	await deleteUserRole();
+	initAuthResult = { isLoggedIn: false, role: null };
+	initAuthPromise = null;
 	await deleteUserBasicInfo();
 }
 
 /** 앱 시작 시 SecureStore의 refreshToken으로 자동 로그인 시도. 역할 포함 반환 */
-export async function initAuth(): Promise<{
-	isLoggedIn: boolean;
-	role: UserRole | null;
-}> {
+export async function initAuth(): Promise<InitAuthResult> {
+	if (initAuthResult) return initAuthResult;
+	if (initAuthPromise) return initAuthPromise;
+
+	initAuthPromise = restoreAuth();
+	initAuthResult = await initAuthPromise;
+	initAuthPromise = null;
+	return initAuthResult;
+}
+
+async function restoreAuth(): Promise<InitAuthResult> {
 	const storedRefresh = await getRefreshToken();
-	if (!storedRefresh) return { isLoggedIn: false, role: null };
+	const storedAccess = await getAccessToken();
+	if (!storedRefresh || !storedAccess) return { isLoggedIn: false, role: null };
 
 	try {
 		const res = await apiInstance.post(
 			"/auth/tokens/refresh",
 			{},
-			{ headers: { RefreshToken: storedRefresh } },
+			{
+				headers: {
+					Authorization: `Bearer ${storedAccess}`,
+					RefreshToken: storedRefresh,
+				},
+			},
 		);
 		const { newAccess, newRefresh } = res.data.result ?? {};
 		if (!newAccess || !newRefresh) return { isLoggedIn: false, role: null };
 
-		const role = (await getUserRole()) as UserRole | null;
-		const basicInfo = await getUserBasicInfo();
+		const role =
+			decodeAccessTokenRole(newAccess) ??
+			((await getUserRole()) as UserRole | null);
+    const basicInfo = await getUserBasicInfo();
 		useAuthStore.getState().setAccessToken(newAccess);
-		if (role) useAuthStore.getState().setRole(role);
-		useAuthStore.getState().setBasicInfo(basicInfo);
+		if (role) {
+			useAuthStore.getState().setRole(role);
+			await setUserRole(role);
+		}
+    useAuthStore.getState().setBasicInfo(basicInfo);
+		await setAccessToken(newAccess);
 		await setRefreshToken(newRefresh);
 
 		return { isLoggedIn: true, role };
 	} catch {
+		await deleteAccessToken();
 		await deleteRefreshToken();
 		await deleteUserRole();
 		await deleteUserBasicInfo();

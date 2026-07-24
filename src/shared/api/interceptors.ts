@@ -1,7 +1,12 @@
 import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { clearTokens } from "./auth";
 import { apiInstance } from "./instance";
-import { getRefreshToken, setRefreshToken } from "./token-storage";
+import {
+	getAccessToken,
+	getRefreshToken,
+	setAccessToken,
+	setRefreshToken,
+} from "./token-storage";
 
 const REFRESH_URL = "/auth/tokens/refresh";
 
@@ -72,7 +77,9 @@ apiInstance.interceptors.response.use(
 
 		try {
 			const storedRefresh = await getRefreshToken();
-			if (!storedRefresh) {
+			const storedAccess =
+				useAuthStore.getState().accessToken ?? (await getAccessToken());
+			if (!storedRefresh || !storedAccess) {
 				await clearTokens();
 				return Promise.reject(error);
 			}
@@ -80,13 +87,19 @@ apiInstance.interceptors.response.use(
 			const res = await apiInstance.post(
 				REFRESH_URL,
 				{},
-				{ headers: { RefreshToken: storedRefresh } },
+				{
+					headers: {
+						Authorization: `Bearer ${storedAccess}`,
+						RefreshToken: storedRefresh,
+					},
+				},
 			);
 
 			const { newAccess, newRefresh } = res.data.result ?? {};
 			if (!newAccess || !newRefresh) throw new Error("토큰 갱신 실패");
 
 			useAuthStore.getState().setAccessToken(newAccess);
+			await setAccessToken(newAccess);
 			await setRefreshToken(newRefresh);
 
 			for (const cb of refreshSubscribers) cb(newAccess);
