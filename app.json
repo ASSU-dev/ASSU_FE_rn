@@ -11,6 +11,7 @@
 		"ios": {
 			"supportsTablet": true,
 			"infoPlist": {
+				"NSCameraUsageDescription": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
 				"NSAppTransportSecurity": {
 					"NSAllowsArbitraryLoads": true
 				},
@@ -20,7 +21,10 @@
 		"android": {
 			"googleServicesFile": "./google-services.json",
 			"package": "com.ssu.assu_rn",
-			"permissions": ["android.permission.ACCESS_FINE_LOCATION"],
+			"permissions": [
+				"android.permission.ACCESS_FINE_LOCATION",
+				"android.permission.CAMERA"
+			],
 			"adaptiveIcon": {
 				"backgroundColor": "#E6F4FE",
 				"foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
@@ -39,6 +43,13 @@
 			"@react-native-firebase/app",
 			"@react-native-firebase/messaging",
 			"expo-router",
+			[
+				"expo-camera",
+				{
+					"cameraPermission": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
+					"recordAudioAndroid": false
+				}
+			],
 			"expo-document-picker",
 			[
 				"expo-splash-screen",

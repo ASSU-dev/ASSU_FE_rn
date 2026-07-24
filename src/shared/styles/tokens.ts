@@ -14,9 +14,15 @@ export const colorTokens = {
 	primaryTint: "#E5F6FE",
 	/** global.styles.css: --color-sub (blue-400) — dark 배경 위 선택 강조색 */
 	primaryOnDark: "#66A4FE",
+	/** primaryOnDark at opacity 0.1 */
+	primaryOnDarkAlpha10: "rgba(102, 164, 254, 0.1)",
+	/** primary at opacity 0.1 */
+	primaryAlpha10: "rgba(0, 104, 254, 0.1)",
 
 	/** global.styles.css: --color-neutral (gray-100) */
 	neutral: "#F4F4F5",
+	/** neutral at opacity 0.5 */
+	neutralAlpha50: "rgba(244, 244, 245, 0.5)",
 	/** global.styles.css: --color-neutral-variant (gray-300) */
 	neutralVariant: "#DBDDE1",
 
@@ -41,6 +47,10 @@ export const colorTokens = {
 	contentSecondaryAlpha30: "rgba(142, 147, 152, 0.3)",
 	/** contentPrimary at opacity 0.45 for placeholders */
 	contentPrimaryAlpha45: "rgba(4, 4, 4, 0.45)",
+	/** contentSecondary at opacity 0.2 */
+	contentSecondaryAlpha20: "rgba(142, 147, 152, 0.2)",
+	/** contentSecondary at opacity 0.5 */
+	contentSecondaryAlpha50: "rgba(142, 147, 152, 0.5)",
 	/** global.styles.css: --color-content-tertiary (gray-400) */
 	contentTertiary: "#B4B4B4",
 	/** global.styles.css: --color-content-inverse (blue-50) */

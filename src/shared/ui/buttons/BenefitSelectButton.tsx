@@ -4,6 +4,7 @@ interface Props {
 	title: string;
 	description: string;
 	isSelected: boolean;
+	dimmed?: boolean;
 	onPress: () => void;
 }
 
@@ -11,6 +12,7 @@ const BenefitSelectButton = ({
 	title,
 	description,
 	isSelected,
+	dimmed = false,
 	onPress,
 }: Props) => {
 	return (
@@ -18,6 +20,7 @@ const BenefitSelectButton = ({
 			onPress={onPress}
 			className={`
         w-[21.5625rem] py-[0.6875rem] flex flex-col items-center rounded-[0.625rem] border-[0.5px]
+        ${dimmed ? "opacity-60" : ""}
         ${
 					isSelected
 						? "border-primary bg-primary-tint"
