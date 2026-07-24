@@ -9,6 +9,7 @@ import { useForegroundMessage, useInitFcm } from "@/features/device-token";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
+import { useStompLifecycle } from "@/shared/lib/stomp/useStompLifecycle";
 import "@/shared/styles/global.styles.css";
 
 initMocks();
@@ -32,6 +33,7 @@ function FcmInitializer() {
 }
 
 export default function RootLayout() {
+	useStompLifecycle();
 	const fontsLoaded = useLoadFonts();
 	const [authReady, setAuthReady] = useState(false);
 

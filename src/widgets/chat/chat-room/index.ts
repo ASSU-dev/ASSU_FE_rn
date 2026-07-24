@@ -1,7 +1,2 @@
-export type { ChatRoomWidgetProps } from "./model/types";
-export {
-	ChatHeader,
-	ChatHeaderActions,
-	ChatMessageList,
-	ChatMessages,
-} from "./ui";
+export type { ChatHeaderActionsProps } from "./model/types";
+export { ChatRoomWidget } from "./ui";
