@@ -1,5 +1,4 @@
-import { useFormContext } from "react-hook-form";
-import { findAddressOption } from "../model/admin";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useSignupFlowUi } from "../model/flowUiContext";
 import type { SignupFormState, SignupStep } from "../model/types";
 import { AdminCredentialsStepSection } from "./sections/AdminCredentialsStepSection";
@@ -21,10 +20,10 @@ type SignupStepContentProps = {
 };
 
 export function SignupStepContent({ step }: SignupStepContentProps) {
-	const { watch } = useFormContext<SignupFormState>();
+	const { control } = useFormContext<SignupFormState>();
 	const { countdown, completeDisplayName, isVerificationError, actions } =
 		useSignupFlowUi();
-	const form = watch();
+	const form = useWatch({ control }) as SignupFormState;
 
 	switch (step) {
 		case "login1":
@@ -100,9 +99,7 @@ export function SignupStepContent({ step }: SignupStepContentProps) {
 		case "adminOrganizationInfo":
 			return (
 				<AdminOrganizationInfoStepSection
-					officeAddress={
-						findAddressOption(form.admin.officeAddressId)?.label ?? ""
-					}
+					officeAddress={form.admin.officeAddress}
 					officeAddressDetail={form.admin.officeAddressDetail}
 					onChangeOrganizationType={actions.admin.onChangeAdminOrganizationType}
 					onChangeCollege={actions.admin.onChangeAdminCollege}
@@ -126,9 +123,7 @@ export function SignupStepContent({ step }: SignupStepContentProps) {
 			return (
 				<PartnerCompanyInfoStepSection
 					partnerCompanyName={form.partner.companyName}
-					partnerOfficeAddress={
-						findAddressOption(form.partner.officeAddressId)?.label ?? ""
-					}
+					partnerOfficeAddress={form.partner.officeAddress}
 					partnerOfficeAddressDetail={form.partner.officeAddressDetail}
 					onChangePartnerCompanyName={
 						actions.partner.onChangePartnerCompanyName

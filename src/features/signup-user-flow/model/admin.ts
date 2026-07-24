@@ -2,7 +2,6 @@ import {
 	ADMIN_COLLEGE_OPTIONS,
 	ADMIN_DEPARTMENT_OPTIONS,
 } from "./data/adminOptions";
-import { PARTNER_ADDRESS_OPTIONS } from "./data/partnerAddressOptions";
 import type { SignupAdminFormState } from "./types";
 
 export function findAdminCollegeOption(value: string | null) {
@@ -90,12 +89,4 @@ export function getAdminCompletionName(admin: SignupAdminFormState) {
 	}
 
 	return "";
-}
-
-export function findAddressOption(value: string | null) {
-	if (!value) {
-		return null;
-	}
-
-	return PARTNER_ADDRESS_OPTIONS.find((item) => item.id === value) ?? null;
 }

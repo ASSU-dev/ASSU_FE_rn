@@ -186,8 +186,12 @@ export function useSignupUserFlow() {
 		setSectionField("partner", "password", password);
 	const setPartnerCompanyName = (companyName: string) =>
 		setSectionField("partner", "companyName", companyName);
-	const setPartnerOfficeAddress = ({ id }: AddressSearchItem) =>
-		setSectionField("partner", "officeAddressId", id);
+	const setPartnerOfficeAddress = ({ id, label }: AddressSearchItem) =>
+		updateSection("partner", (partner) => ({
+			...partner,
+			officeAddressId: id,
+			officeAddress: label,
+		}));
 	const setPartnerOfficeAddressDetail = (officeAddressDetail: string) =>
 		setSectionField("partner", "officeAddressDetail", officeAddressDetail);
 	const selectPartnerBusinessRegistrationMock = () =>
@@ -209,6 +213,7 @@ export function useSignupUserFlow() {
 		resetField("admin.collegeId", { defaultValue: null });
 		resetField("admin.departmentId", { defaultValue: null });
 		resetField("admin.officeAddressId", { defaultValue: null });
+		resetField("admin.officeAddress", { defaultValue: "" });
 		resetField("admin.officeAddressDetail", { defaultValue: "" });
 		resetField("admin.sealFileName", { defaultValue: "" });
 	};
@@ -221,8 +226,12 @@ export function useSignupUserFlow() {
 		const selectedDepartment = findAdminDepartmentOption(value);
 		setSectionField("admin", "departmentId", selectedDepartment?.value ?? null);
 	};
-	const setAdminOfficeAddress = ({ id }: AddressSearchItem) =>
-		setSectionField("admin", "officeAddressId", id);
+	const setAdminOfficeAddress = ({ id, label }: AddressSearchItem) =>
+		updateSection("admin", (admin) => ({
+			...admin,
+			officeAddressId: id,
+			officeAddress: label,
+		}));
 	const setAdminOfficeAddressDetail = (officeAddressDetail: string) =>
 		setSectionField("admin", "officeAddressDetail", officeAddressDetail);
 	const selectAdminSealMock = () =>
