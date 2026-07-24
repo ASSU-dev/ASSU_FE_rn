@@ -21,8 +21,8 @@ export function useStudentLoginAction() {
 				});
 				assertSuccess(response, "로그인에 실패했습니다.");
 
-				const { tokens, role } = response.result;
-				const homeRoute = await completeLogin(tokens ?? {}, role);
+				const { tokens, role, basicInfo } = response.result;
+				const homeRoute = await completeLogin(tokens ?? {}, role, basicInfo);
 				setWebViewVisible(false);
 				router.replace(homeRoute as never);
 			} catch (error) {

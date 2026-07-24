@@ -2,6 +2,10 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
+import { useCommonLoginAction } from "./useCommonLoginAction";
+import { usePartnerSignupAction } from "./usePartnerSignupAction";
+import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
+import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
@@ -96,7 +100,18 @@ export function useSignupFlowController() {
 		onFailure: handleSignupFailure,
 	});
 
+	const { signup: handlePartnerSignup } = usePartnerSignupAction({
+		form,
+		onSuccess: goNext,
+		onFailure: handleSignupFailure,
+	});
+
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
+	const { handlePressLogin, isPending: isCommonLoginPending } =
+		useCommonLoginAction({
+			email: form.auth.email,
+			password: form.auth.password,
+		});
 
 	const sendIdentityVerificationCode = () => sendVerificationCode();
 
@@ -161,7 +176,7 @@ export function useSignupFlowController() {
 			},
 			onBottomButtonPress: async () => {
 				if (step === "complete") {
-					router.replace(getHomeRouteByRole("STUDENT") as never);
+					router.replace(getHomeRouteByRole(form.role) as never);
 					return;
 				}
 				if (step === "identity" && FORCE_PHONE_VERIFICATION_BYPASS) {
@@ -173,14 +188,20 @@ export function useSignupFlowController() {
 					await handleStudentSignup();
 					return;
 				}
+				if (step === "partnerBusinessRegistration") {
+					await handlePartnerSignup();
+					return;
+				}
 				goNext();
 			},
 		}),
 		[
 			buttonLabel,
 			currentProgressIndex,
+			form.role,
 			goNext,
 			goTo,
+			handlePartnerSignup,
 			handleStudentSignup,
 			isBottomDisabled,
 			progress,
@@ -198,7 +219,8 @@ export function useSignupFlowController() {
 			password: form.auth.password,
 			onChangeEmail: setAuthEmail,
 			onChangePassword: setAuthPassword,
-			onPressLogin: () => console.log("로그인 성공"),
+			onPressLogin: handlePressLogin,
+			isLoginPending: isCommonLoginPending,
 			onPressLmsLogin: handlePressLmsLogin,
 			onPressSignup: () => goTo("identity"),
 		}),
@@ -206,7 +228,9 @@ export function useSignupFlowController() {
 			form.auth.email,
 			form.auth.password,
 			goTo,
+			handlePressLogin,
 			handlePressLmsLogin,
+			isCommonLoginPending,
 			setAuthEmail,
 			setAuthPassword,
 		],

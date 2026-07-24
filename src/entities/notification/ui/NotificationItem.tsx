@@ -1,20 +1,24 @@
 import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
-import { formatTimeAgo } from "../lib/formatTimeAgo";
 import type { Notification } from "../model/types";
 
 interface NotificationItemProps {
 	notification: Notification;
+	onPress?: () => void;
 }
 
-export function NotificationItem({ notification }: NotificationItemProps) {
-	const { category, message, createdAt, isRead } = notification;
+export function NotificationItem({
+	notification,
+	onPress,
+}: NotificationItemProps) {
+	const { title, messagePreview, timeAgo, read } = notification;
 
 	return (
-		<View
+		<Pressable
+			onPress={onPress}
 			className={`flex-row items-center gap-1 px-screen-m py-gutter ${
-				isRead ? "bg-canvas" : "bg-primary-tint"
+				read ? "bg-canvas" : "bg-primary-tint"
 			}`}
 		>
 			<View className="h-[50px] w-[50px] items-center justify-center">
@@ -27,16 +31,16 @@ export function NotificationItem({ notification }: NotificationItemProps) {
 			<View className="flex-1 gap-1">
 				<View className="flex-row items-center justify-between">
 					<Text className="text-sm font-regular text-content-secondary">
-						{category}
+						{title}
 					</Text>
 					<Text className="text-sm font-semibold text-content-secondary">
-						{formatTimeAgo(createdAt)}
+						{timeAgo}
 					</Text>
 				</View>
 				<Text className="text-5 font-medium text-content-primary">
-					{message}
+					{messagePreview}
 				</Text>
 			</View>
-		</View>
+		</Pressable>
 	);
 }

@@ -9,6 +9,7 @@ type LoginFormScreenProps = {
 	onChangeEmail: (value: string) => void;
 	onChangePassword: (value: string) => void;
 	onPressLogin: () => void;
+	isLoginPending?: boolean;
 	onPressLmsLogin: () => void;
 	onPressSignup: () => void;
 };
@@ -19,6 +20,7 @@ export function LoginFormScreen({
 	onChangeEmail,
 	onChangePassword,
 	onPressLogin,
+	isLoginPending = false,
 	onPressLmsLogin,
 	onPressSignup,
 }: LoginFormScreenProps) {
@@ -44,7 +46,9 @@ export function LoginFormScreen({
 						secureTextEntry
 					/>
 				</View>
-				<MediumButton onPress={onPressLogin}>Login</MediumButton>
+				<MediumButton onPress={onPressLogin} disabled={isLoginPending}>
+					Login
+				</MediumButton>
 			</View>
 
 			<View className="mt-[35px] gap-[25px]">

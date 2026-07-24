@@ -16,6 +16,7 @@ export interface AccountProfileHeaderProps {
 	subtitle?: string;
 	profileImage?: ImageSource;
 	avatarSize?: number;
+	onProfileImagePress?: () => void;
 }
 
 export interface AccountMenuItemProps {

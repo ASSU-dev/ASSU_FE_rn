@@ -10,7 +10,6 @@ export type {
 } from "./model/types";
 export {
 	ChatRoomItem,
-	ChatRoomList,
 	MessageBubble,
 	MessageItem,
 	MessageTime,
