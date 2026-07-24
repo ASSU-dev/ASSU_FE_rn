@@ -8,6 +8,7 @@ import "@/shared/api";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
+import { useStompLifecycle } from "@/shared/lib/stomp/useStompLifecycle";
 import "@/shared/styles/global.styles.css";
 
 initMocks();
@@ -24,6 +25,7 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+	useStompLifecycle();
 	const fontsLoaded = useLoadFonts();
 	const [authReady, setAuthReady] = useState(false);
 

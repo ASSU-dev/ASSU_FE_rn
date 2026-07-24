@@ -1,25 +1,29 @@
 import type { ImageSource } from "expo-image";
 
 export interface ChatRoomItemProps {
-	id: string;
-	profileImage: string;
-	roomName: string;
-	lastMessage: string;
-	unreadCount?: number;
+	roomId?: number;
+	opponentId?: number;
+	opponentName?: string;
+	opponentProfileImage?: string;
+	lastMessage?: string;
+	unreadMessagesCount?: number;
 	onPress?: () => void;
 }
 
 export interface Message {
-	id: string;
-	text: string;
-	senderId: string;
-	/** "HH:mm" 포맷 */
-	sentAt: string;
+	messageId?: number;
+	message?: string;
+	/** ISO 8601 형식 */
+	sendTime?: string;
+	unreadCountForSender?: number;
+	isRead?: boolean;
+	isMyMessage?: boolean;
+	messageType?: "TEXT" | "PROPOSAL" | "SYSTEM" | "GUIDE";
 }
 
 export interface MessageItemProps {
 	message: Message;
-	isMine: boolean;
+	isMyMessage: boolean;
 	/** received 메시지일 때만 필요 */
 	profileImage?: ImageSource;
 }

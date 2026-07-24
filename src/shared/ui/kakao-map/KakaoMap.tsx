@@ -1,4 +1,6 @@
 import {
+	type ComponentProps,
+	type ElementRef,
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
