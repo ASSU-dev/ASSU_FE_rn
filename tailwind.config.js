@@ -18,6 +18,9 @@ module.exports = {
 
 				// 배경 색상
 				canvas: "var(--color-canvas)",
+				overlay: "var(--color-overlay)",
+				"overlay-strong": "var(--color-overlay-strong)",
+				"handle-on-dark": "var(--color-handle-on-dark)",
 
 				// 상태별 색상
 				danger: "var(--color-danger)",
@@ -27,6 +30,7 @@ module.exports = {
 				"content-secondary": "var(--color-content-secondary)",
 				"content-tertiary": "var(--color-content-tertiary)",
 				"content-inverse": "var(--color-content-inverse)",
+				"content-primary-alpha-45": "var(--color-content-primary-alpha-45)",
 			},
 			// 폰트 크기
 			fontSize: {

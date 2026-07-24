@@ -14,7 +14,7 @@ export function InquiryItem({ inquiry }: InquiryItemProps) {
 	return (
 		<Pressable
 			onPress={() => router.push(`/customer-service/${inquiry.id}`)}
-			className="border-b border-gray-200 flex-row items-center justify-between py-[16px] w-full"
+			className="border-b border-neutral-variant flex-row items-center justify-between py-[16px] w-full"
 		>
 			{/* Left: Title */}
 			<View className="flex-1">

@@ -5,7 +5,7 @@ export function useFocusBorder() {
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	return {
 		borderColor: (field: string) =>
-			focusedField === field ? colorTokens.primary : "#e0e0e0",
+			focusedField === field ? colorTokens.primary : colorTokens.neutralVariant,
 		onFocus: (field: string) => () => setFocusedField(field),
 		onBlur: () => setFocusedField(null),
 	};

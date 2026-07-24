@@ -1,8 +1,25 @@
 import { useState } from "react";
 
-export function useMonthNavigator(initialMonth: number) {
-	const [month, setMonth] = useState(initialMonth);
-	const handlePrev = () => setMonth((m) => (m === 1 ? 12 : m - 1));
-	const handleNext = () => setMonth((m) => (m === 12 ? 1 : m + 1));
-	return { month, setMonth, handlePrev, handleNext };
+interface MonthNavigatorState {
+	year: number;
+	month: number;
+}
+
+export function useMonthNavigator(initialYear: number, initialMonth: number) {
+	const [state, setState] = useState<MonthNavigatorState>({
+		year: initialYear,
+		month: initialMonth,
+	});
+
+	const handlePrev = () =>
+		setState(({ year, month }) =>
+			month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 },
+		);
+
+	const handleNext = () =>
+		setState(({ year, month }) =>
+			month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 },
+		);
+
+	return { year: state.year, month: state.month, handlePrev, handleNext };
 }

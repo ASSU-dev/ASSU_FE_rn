@@ -38,3 +38,4 @@ export type {
 // ssuAuth
 export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
 export { apiInstance } from "./instance";
+export type { BaseResponse } from "./types";

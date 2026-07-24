@@ -25,7 +25,10 @@ export function UnderlineField({
 				placeholder={placeholder}
 				placeholderTextColor={colorTokens.contentSecondary}
 				className="text-[17px] text-content-primary px-[15px] py-[8px]"
-				style={{ borderBottomWidth: 0.5, borderBottomColor: "#e0e0e0" }}
+				style={{
+					borderBottomWidth: 0.5,
+					borderBottomColor: colorTokens.neutralVariant,
+				}}
 			/>
 		</View>
 	);

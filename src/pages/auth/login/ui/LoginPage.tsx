@@ -9,7 +9,7 @@ export function LoginPage() {
 				className="rounded-lg bg-primary px-4 py-3"
 				onPress={() => router.push("/")}
 			>
-				<Text className="text-sm font-semibold text-white">
+				<Text className="text-sm font-semibold text-content-inverse">
 					허브로 돌아가기
 				</Text>
 			</Pressable>

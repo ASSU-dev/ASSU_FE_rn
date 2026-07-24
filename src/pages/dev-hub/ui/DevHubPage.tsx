@@ -15,7 +15,7 @@ export function DevHubPage() {
 				className="mb-3 items-center rounded-lg bg-primary py-4"
 				onPress={() => router.push("/(protected)/student/(tabs)/home")}
 			>
-				<Text className="text-sm font-semibold text-white">
+				<Text className="text-sm font-semibold text-content-inverse">
 					학생 홈으로 이동
 				</Text>
 			</Pressable>
@@ -24,7 +24,7 @@ export function DevHubPage() {
 				className="mb-3 items-center rounded-lg bg-primary py-4"
 				onPress={() => router.push("/(protected)/admin/(tabs)/home")}
 			>
-				<Text className="text-sm font-semibold text-white">
+				<Text className="text-sm font-semibold text-content-inverse">
 					관리자 홈으로 이동
 				</Text>
 			</Pressable>
@@ -33,7 +33,7 @@ export function DevHubPage() {
 				className="mb-6 items-center rounded-lg bg-primary py-4"
 				onPress={() => router.push("/(protected)/partner/(tabs)/home")}
 			>
-				<Text className="text-sm font-semibold text-white">
+				<Text className="text-sm font-semibold text-content-inverse">
 					제휴업체 홈으로 이동
 				</Text>
 			</Pressable>
