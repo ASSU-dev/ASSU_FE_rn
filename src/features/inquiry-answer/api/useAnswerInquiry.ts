@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createInquiry, inquiryQueryKeys } from "@/entities/inquiry";
-import type { InquiryFormData } from "../model/types";
+import { answerInquiry, inquiryQueryKeys } from "@/entities/inquiry";
 
-export function useSubmitInquiry() {
+export function useAnswerInquiry(inquiryId: string) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: InquiryFormData) => createInquiry(data),
+		mutationFn: (answer: string) => answerInquiry(inquiryId, { answer }),
 		onSuccess: () =>
 			queryClient.invalidateQueries({ queryKey: inquiryQueryKeys.all }),
 	});
