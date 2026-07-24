@@ -29,6 +29,18 @@ export async function deleteUserRole() {
 	await SecureStore.deleteItemAsync(USER_ROLE_KEY);
 }
 
+const FCM_TOKEN_KEY = "fcmDeviceToken";
+
+export async function setFcmDeviceToken(token: string) {
+	await SecureStore.setItemAsync(FCM_TOKEN_KEY, token);
+}
+
+export async function getFcmDeviceToken() {
+	return SecureStore.getItemAsync(FCM_TOKEN_KEY);
+}
+
+export async function deleteFcmDeviceToken() {
+	await SecureStore.deleteItemAsync(FCM_TOKEN_KEY);
 export async function setUserBasicInfo(basicInfo: UserBasicInfo) {
 	await SecureStore.setItemAsync(
 		USER_BASIC_INFO_KEY,

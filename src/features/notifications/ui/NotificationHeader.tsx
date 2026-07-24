@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 
-export function AlarmCenterHeader() {
+export function NotificationHeader() {
 	return (
 		<View className="flex-row items-center gap-5 px-screen-m pt-7 pb-4">
 			<Pressable hitSlop={8} onPress={() => router.back()}>

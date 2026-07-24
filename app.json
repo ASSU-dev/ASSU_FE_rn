@@ -18,6 +18,8 @@
 			}
 		},
 		"android": {
+			"googleServicesFile": "./google-services.json",
+			"package": "com.ssu.assu_rn",
 			"permissions": ["android.permission.ACCESS_FINE_LOCATION"],
 			"adaptiveIcon": {
 				"backgroundColor": "#E6F4FE",
@@ -34,6 +36,8 @@
 			"favicon": "./src/shared/assets/images/favicon.png"
 		},
 		"plugins": [
+			"@react-native-firebase/app",
+			"@react-native-firebase/messaging",
 			"expo-router",
 			"expo-document-picker",
 			[
