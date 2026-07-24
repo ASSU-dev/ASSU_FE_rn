@@ -111,7 +111,11 @@ export function AdminHomePage() {
 			className="flex-1 bg-neutral"
 			contentContainerClassName="px-6 pb-6"
 		>
-			<AdminHeaderSection onNotificationPress={noop} />
+			<AdminHeaderSection
+				onNotificationPress={() =>
+					router.push("/(protected)/admin/notification-center")
+				}
+			/>
 
 			<PageTitle title="숭실대학교 총학생회" />
 

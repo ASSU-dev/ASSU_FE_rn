@@ -1,6 +1,11 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useAccountSessionActions } from "@/features/account-session-management";
+import {
+	ProfileImageActionSheet,
+	useProfileImageEditor,
+} from "@/features/profile-image-management";
 import { PageLayout } from "@/shared/ui/layout";
 import {
 	type AccountMenuItemProps,
@@ -10,6 +15,8 @@ import {
 
 export function PartnerProfilePage() {
 	const router = useRouter();
+	const profileImageEditor = useProfileImageEditor();
+	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
@@ -18,6 +25,16 @@ export function PartnerProfilePage() {
 			onPress: () => router.push("../notification-settings"),
 		},
 		{ label: "계정관리", iconName: "user" },
+		{
+			label: "로그아웃",
+			iconName: "exitRight",
+			onPress: accountSession.requestLogout,
+		},
+		{
+			label: "회원 탈퇴",
+			iconName: "user",
+			onPress: accountSession.requestWithdrawal,
+		},
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
@@ -42,11 +59,21 @@ export function PartnerProfilePage() {
 				<AccountProfileHeader
 					name="역전할머니맥주 숭실대점"
 					subtitle="사업 수정"
+					profileImage={profileImageEditor.imageSource}
+					onProfileImagePress={profileImageEditor.open}
 				/>
 
 				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
 				<AccountMenuSection title="고객센터" items={customerServiceItems} />
 			</View>
+			<ProfileImageActionSheet
+				visible={profileImageEditor.isOpen}
+				hasImage={profileImageEditor.hasImage}
+				isPending={profileImageEditor.isPending}
+				onSelectImage={profileImageEditor.selectImage}
+				onDeleteImage={profileImageEditor.removeImage}
+				onClose={profileImageEditor.close}
+			/>
 		</PageLayout>
 	);
 }

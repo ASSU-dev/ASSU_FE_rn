@@ -1,6 +1,11 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useAccountSessionActions } from "@/features/account-session-management";
+import {
+	ProfileImageActionSheet,
+	useProfileImageEditor,
+} from "@/features/profile-image-management";
 import { PageLayout } from "@/shared/ui/layout";
 import {
 	type AccountMenuItemProps,
@@ -10,6 +15,8 @@ import {
 
 export function AdminProfilePage() {
 	const router = useRouter();
+	const profileImageEditor = useProfileImageEditor();
+	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
@@ -17,8 +24,16 @@ export function AdminProfilePage() {
 			iconName: "bell",
 			onPress: () => router.push("../notification-settings"),
 		},
-		{ label: "계정관리", iconName: "user" },
-		{ label: "대기중인 제휴 계약서", iconName: "list" },
+		{
+			label: "계정관리",
+			iconName: "user",
+			onPress: () => router.push("../account-management"),
+		},
+		{
+			label: "대기중인 제휴 계약서",
+			iconName: "list",
+			onPress: () => router.push("../pending-contracts"),
+		},
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
@@ -40,11 +55,24 @@ export function AdminProfilePage() {
 			}}
 		>
 			<View className="gap-8">
-				<AccountProfileHeader name="숭실대학교 총학생회" subtitle="사업 수정" />
+				<AccountProfileHeader
+					name="숭실대학교 총학생회"
+					subtitle="사업 수정"
+					profileImage={profileImageEditor.imageSource}
+					onProfileImagePress={profileImageEditor.open}
+				/>
 
 				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
 				<AccountMenuSection title="고객센터" items={customerServiceItems} />
 			</View>
+			<ProfileImageActionSheet
+				visible={profileImageEditor.isOpen}
+				hasImage={profileImageEditor.hasImage}
+				isPending={profileImageEditor.isPending}
+				onSelectImage={profileImageEditor.selectImage}
+				onDeleteImage={profileImageEditor.removeImage}
+				onClose={profileImageEditor.close}
+			/>
 		</PageLayout>
 	);
 }

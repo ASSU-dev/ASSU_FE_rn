@@ -1,6 +1,13 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { formatProfileSubtitle } from "@/entities/user/lib/formatProfileSubtitle";
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
+import { useAccountSessionActions } from "@/features/account-session-management";
+import {
+	ProfileImageActionSheet,
+	useProfileImageEditor,
+} from "@/features/profile-image-management";
 import { PageLayout } from "@/shared/ui/layout";
 import {
 	type AccountMenuItemProps,
@@ -10,6 +17,9 @@ import {
 
 export function StudentProfilePage() {
 	const router = useRouter();
+	const basicInfo = useUserBasicInfo();
+	const profileImageEditor = useProfileImageEditor();
+	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
@@ -17,7 +27,16 @@ export function StudentProfilePage() {
 			iconName: "writing",
 			onPress: () => router.push("../my-reviews"),
 		},
-		{ label: "로그아웃", iconName: "exitRight" },
+		{
+			label: "로그아웃",
+			iconName: "exitRight",
+			onPress: accountSession.requestLogout,
+		},
+		{
+			label: "회원 탈퇴",
+			iconName: "user",
+			onPress: accountSession.requestWithdrawal,
+		},
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
@@ -37,21 +56,27 @@ export function StudentProfilePage() {
 	return (
 		<PageLayout
 			scrollable
-			contentContainerStyle={{
-				paddingHorizontal: 24,
-				paddingTop: 28,
-				paddingBottom: 120,
-			}}
+			contentContainerClassName="px-screen-m pt-[28px] pb-[120px]"
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name="김승실"
-					subtitle="숭실대학교 IT대학 글로벌미디어학부"
+					name={basicInfo?.name ?? "사용자"}
+					subtitle={formatProfileSubtitle(basicInfo)}
+					profileImage={profileImageEditor.imageSource}
+					onProfileImagePress={profileImageEditor.open}
 				/>
 
 				<AccountMenuSection title="나의 계정 설정" items={myAccountItems} />
 				<AccountMenuSection title="고객센터" items={customerServiceItems} />
 			</View>
+			<ProfileImageActionSheet
+				visible={profileImageEditor.isOpen}
+				hasImage={profileImageEditor.hasImage}
+				isPending={profileImageEditor.isPending}
+				onSelectImage={profileImageEditor.selectImage}
+				onDeleteImage={profileImageEditor.removeImage}
+				onClose={profileImageEditor.close}
+			/>
 		</PageLayout>
 	);
 }
