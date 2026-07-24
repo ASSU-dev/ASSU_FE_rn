@@ -19,7 +19,11 @@ export function PartnerProfilePage() {
 	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
-		{ label: "알림설정", iconName: "bell" },
+		{
+			label: "알림설정",
+			iconName: "bell",
+			onPress: () => router.push("../notification-settings"),
+		},
 		{ label: "계정관리", iconName: "user" },
 		{
 			label: "로그아웃",

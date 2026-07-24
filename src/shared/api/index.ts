@@ -2,6 +2,13 @@ import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
 export type {
+	BaseResponseNotificationSettingsResponseDTO,
+	NotificationSettingsResponseDTO,
+	NotificationSettingsResponseDTOSettings,
+} from "./_generated/auth/getSettings";
+// getSettings
+export { getAssuApi as getGetSettingsApi } from "./_generated/auth/getSettings";
+export type {
 	BaseResponseMapStringObject,
 	List1Params,
 } from "./_generated/auth/list_1";
@@ -132,6 +139,8 @@ export type {
 } from "./_generated/auth/ssuAuth";
 // ssuAuth
 export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
+// toggle
+export { getAssuApi as getToggleApi } from "./_generated/auth/toggle";
 // unregister
 export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
 export type { UnblockParams } from "./_generated/auth/unblock";

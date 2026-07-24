@@ -1,5 +1,5 @@
-import { AdminNotificationSettingsPage } from "@/pages/admin/notification-settings";
+import { NotificationSettingsPage } from "@/pages/admin/profile/notification-settings";
 
 export default function AdminNotificationSettingsScreen() {
-	return <AdminNotificationSettingsPage />;
+	return <NotificationSettingsPage />;
 }
