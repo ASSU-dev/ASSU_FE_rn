@@ -2,6 +2,11 @@ import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
 export type {
+	BaseResponseVoid,
+	EmailVerificationCheckRequestDTO,
+} from "./_generated/auth/checkEmailAvailability";
+// checkEmailAvailability
+export { getAssuApi as getCheckEmailAvailabilityApi } from "./_generated/auth/checkEmailAvailability";
 	BaseResponseBlockMemberDTO,
 	BlockMemberDTO,
 	BlockMemberRequestDTO,
@@ -75,6 +80,22 @@ export type {
 } from "./_generated/auth/refreshToken";
 // refreshToken
 export { getAssuApi as getRefreshTokenApi } from "./_generated/auth/refreshToken";
+export type {
+	AdminSignUpRequestDTO,
+	CommonAuthPayloadDTO,
+	CommonInfoPayloadDTO,
+	SelectedPlacePayload,
+	SignupAdminBody,
+} from "./_generated/auth/signupAdmin";
+// signupAdmin
+export {
+	CommonAuthPayloadDTODepartment,
+	CommonAuthPayloadDTOMajor,
+	CommonAuthPayloadDTOUniversity,
+	getAssuApi as getSignupAdminApi,
+	SignUpResponseDTORole,
+	SignUpResponseDTOStatus,
+} from "./_generated/auth/signupAdmin";
 export type {
 	BaseResponseSignUpResponseDTO,
 	SignUpResponseDTO,
