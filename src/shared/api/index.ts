@@ -2,6 +2,14 @@ import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
 export type {
+	BaseResponsePageResponseDTOInquiryResponseDTO,
+	InquiryResponseDTO,
+	ListParams,
+	PageResponseDTOInquiryResponseDTO,
+} from "./_generated/auth/list";
+// list
+export { getAssuApi as getListApi, ListStatus } from "./_generated/auth/list";
+export type {
 	BaseResponseLoginResponseDTO,
 	LoginResponseDTO,
 } from "./_generated/auth/loginStudent";
