@@ -19,18 +19,20 @@ export function AdminProfilePage() {
 	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
-		{ label: "알림설정", iconName: "bell" },
-		{ label: "계정관리", iconName: "user" },
-		{ label: "대기중인 제휴 계약서", iconName: "list" },
 		{
-			label: "로그아웃",
-			iconName: "exitRight",
-			onPress: accountSession.requestLogout,
+			label: "알림설정",
+			iconName: "bell",
+			onPress: () => router.push("../notification-settings"),
 		},
 		{
-			label: "회원 탈퇴",
+			label: "계정관리",
 			iconName: "user",
-			onPress: accountSession.requestWithdrawal,
+			onPress: () => router.push("../account-management"),
+		},
+		{
+			label: "대기중인 제휴 계약서",
+			iconName: "list",
+			onPress: () => router.push("../pending-contracts"),
 		},
 	];
 

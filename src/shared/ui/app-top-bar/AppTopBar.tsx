@@ -18,9 +18,9 @@ export function AppTopBar({
 	return (
 		<View className="relative flex-row items-center justify-center px-screen-m py-4 mt-3">
 			<Pressable
-				hitSlop={8}
+				hitSlop={4}
 				onPress={onBack ?? (() => router.back())}
-				className="absolute left-6"
+				className="absolute left-gutter z-10 h-12 w-12 items-center justify-center"
 			>
 				<BackArrowIcon
 					width={24}
