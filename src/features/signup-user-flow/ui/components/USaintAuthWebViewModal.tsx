@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 
@@ -17,6 +17,30 @@ export function USaintAuthWebViewModal({
 }: USaintAuthWebViewModalProps) {
 	const processedRef = useRef(false);
 
+	useEffect(() => {
+		if (!visible) return;
+		processedRef.current = false;
+	}, [visible]);
+
+	const processAuthUrl = (url: string) => {
+		if (processedRef.current) return;
+
+		try {
+			const parsedUrl = new URL(url);
+			const sToken = parsedUrl.searchParams.get("sToken");
+			const sIdno = parsedUrl.searchParams.get("sIdno");
+
+			if (!sToken || !sIdno) return;
+
+			processedRef.current = true;
+			Promise.resolve(onVerifySuccess({ sToken, sIdno })).finally(() => {
+				processedRef.current = false;
+			});
+		} catch {
+			// Ignore non-standard intermediate WebView URLs.
+		}
+	};
+
 	return (
 		<Modal
 			visible={visible}
@@ -25,7 +49,7 @@ export function USaintAuthWebViewModal({
 		>
 			<View className="flex-1 bg-canvas">
 				<View className="flex-row items-center justify-between border-b border-content-tertiary px-screen-m pb-3 pt-14">
-					<Text className="text-[18px] font-semibold text-content-primary">
+					<Text className="text-xl font-semibold text-content-primary">
 						LMS 인증
 					</Text>
 					<Pressable
@@ -34,7 +58,7 @@ export function USaintAuthWebViewModal({
 							onClose();
 						}}
 					>
-						<Text className="text-[16px] font-medium text-primary">닫기</Text>
+						<Text className="text-md font-medium text-primary">닫기</Text>
 					</Pressable>
 				</View>
 
@@ -45,21 +69,8 @@ export function USaintAuthWebViewModal({
 					domStorageEnabled
 					javaScriptEnabled
 					onNavigationStateChange={(navState) => {
-						if (processedRef.current || navState.loading) return;
-						if (!navState.url.includes("saint.ssu.ac.kr")) return;
-
-						try {
-							const parsedUrl = new URL(navState.url);
-							const sToken = parsedUrl.searchParams.get("sToken");
-							const sIdno = parsedUrl.searchParams.get("sIdno");
-
-							if (!sToken || !sIdno) return;
-
-							processedRef.current = true;
-							onVerifySuccess({ sToken, sIdno });
-						} catch {
-							// URL 파싱 실패 시 무시
-						}
+						if (navState.loading) return;
+						processAuthUrl(navState.url);
 					}}
 				/>
 			</View>

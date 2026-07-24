@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
-import type { SignupFormState } from "@/features/signup-user-flow/model/types";
+import type { SignupFormState } from "../../model/types";
 import { AgreementFooter } from "../components/AgreementFooter";
 import { FileUploadButton } from "../components/FileUploadButton";
 import { AdminStepLayout } from "../layout/AdminStepLayout";

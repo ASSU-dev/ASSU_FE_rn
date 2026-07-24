@@ -17,7 +17,7 @@ export function InquiryList() {
 	if (isError) {
 		return (
 			<View className="flex-1 items-center justify-center gap-2">
-				<Text className="text-base font-semibold text-red-500">
+				<Text className="text-base font-semibold text-danger">
 					문의 목록을 불러오는데 실패했습니다.
 				</Text>
 				<Text className="text-sm text-content-secondary">

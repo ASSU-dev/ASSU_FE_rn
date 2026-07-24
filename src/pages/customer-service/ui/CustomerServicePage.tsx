@@ -79,9 +79,9 @@ export function CustomerServicePage() {
 							}}
 						>
 							{isPending ? (
-								<ActivityIndicator color="#FFFFFF" />
+								<ActivityIndicator color={colorTokens.contentInverse} />
 							) : (
-								<Text className="text-[20px] font-bold text-white">
+								<Text className="text-[20px] font-bold text-content-inverse">
 									작성하기
 								</Text>
 							)}

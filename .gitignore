@@ -49,7 +49,11 @@ app-example
 CLAUDE.md
 CONVENTION.md
 
+# codex
+.codex/
+.codexignore
+
 .omc/
 
+node_modules
 troubles/
-

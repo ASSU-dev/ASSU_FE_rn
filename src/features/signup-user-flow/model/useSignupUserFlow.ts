@@ -226,7 +226,7 @@ export function useSignupUserFlow() {
 	const setAdminOfficeAddressDetail = (officeAddressDetail: string) =>
 		setSectionField("admin", "officeAddressDetail", officeAddressDetail);
 	const selectAdminSealMock = () =>
-		setSectionField("admin", "sealFileName", "IMG.127");
+		setSectionField("admin", "sealFileName", "인감등록.jpg");
 
 	const setAgreePrivacy = (checked: boolean) => {
 		updateSection("agreements", (agreements) =>

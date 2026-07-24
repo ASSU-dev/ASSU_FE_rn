@@ -1,19 +1,24 @@
 import { router } from "expo-router";
 import { Pressable, ScrollView, Text } from "react-native";
+import { useStudentStampQuery } from "@/entities/user/api/useStudentStampQuery";
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
 import { PartnerRankingList } from "@/widgets/partner-ranking/ui/PartnerRankingList";
 import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
 
 export function StudentHomePage() {
-	const userStampCount = 4;
-	const userName = "김숭실";
+	const basicInfo = useUserBasicInfo();
+	const { data: stampData } = useStudentStampQuery();
+	const userStampCount = stampData?.stamp ?? 0;
+	const userName = basicInfo?.name ?? "사용자";
+
 	return (
-		<ScrollView className="flex-1 bg-white px-5 pt-10">
+		<ScrollView className="flex-1 bg-canvas px-5 pt-10">
 			<Pressable
 				className="rounded-lg bg-primary px-4 py-3"
 				onPress={() => router.push("/")}
 			>
-				<Text className="text-sm font-semibold text-white">
+				<Text className="text-sm font-semibold text-content-inverse">
 					허브로 돌아가기
 				</Text>
 			</Pressable>
