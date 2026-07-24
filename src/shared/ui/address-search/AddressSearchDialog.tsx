@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { Modal, View } from "react-native";
+import { Modal, Text, View } from "react-native";
 import { SearchBar } from "@/shared/ui/SearchBar";
 import { AddressSearchOptionRow } from "./AddressSearchOptionRow";
 import type { AddressSearchItem } from "./types";
@@ -7,36 +6,28 @@ import type { AddressSearchItem } from "./types";
 type AddressSearchDialogProps = {
 	visible: boolean;
 	items: AddressSearchItem[];
+	query: string;
 	selectedItemId?: string | null;
 	placeholder?: string;
+	isLoading?: boolean;
 	onClose: () => void;
 	onSelectItem: (item: AddressSearchItem) => void;
+	onQueryChange: (query: string) => void;
 };
 
 export function AddressSearchDialog({
 	visible,
 	items,
+	query,
 	selectedItemId,
 	placeholder = "예 ) 상도로 360로",
+	isLoading = false,
 	onClose,
 	onSelectItem,
+	onQueryChange,
 }: AddressSearchDialogProps) {
-	const [query, setQuery] = useState("");
-
-	useEffect(() => {
-		if (visible) {
-			setQuery("");
-		}
-	}, [visible]);
-
-	const filteredItems = useMemo(() => {
-		const normalizedQuery = query.trim();
-		if (normalizedQuery.length === 0) {
-			return items;
-		}
-
-		return items.filter((item) => item.label.includes(normalizedQuery));
-	}, [items, query]);
+	const showEmptyState =
+		!isLoading && query.trim().length > 0 && items.length === 0;
 
 	return (
 		<Modal visible={visible} animationType="slide" onRequestClose={onClose}>
@@ -44,7 +35,7 @@ export function AddressSearchDialog({
 				<SearchBar
 					mode="active"
 					value={query}
-					onChangeText={setQuery}
+					onChangeText={onQueryChange}
 					onBack={onClose}
 					autoFocus
 					placeholder={placeholder}
@@ -52,18 +43,21 @@ export function AddressSearchDialog({
 				/>
 
 				<View className="mt-[14px] px-screen-m">
-					{filteredItems.map((item, index) => (
-						<AddressSearchOptionRow
-							key={item.id}
-							label={item.label}
-							selected={selectedItemId === item.id}
-							showDivider={index < filteredItems.length - 1}
-							onPress={() => {
-								onSelectItem(item);
-								setQuery("");
-							}}
-						/>
-					))}
+					{showEmptyState ? (
+						<Text className="mt-[40px] text-center font-regular text-[14px] leading-[1.5] text-content-secondary">
+							검색 결과가 없어요
+						</Text>
+					) : (
+						items.map((item, index) => (
+							<AddressSearchOptionRow
+								key={item.id}
+								label={item.label}
+								selected={selectedItemId === item.id}
+								showDivider={index < items.length - 1}
+								onPress={() => onSelectItem(item)}
+							/>
+						))
+					)}
 				</View>
 			</View>
 		</Modal>

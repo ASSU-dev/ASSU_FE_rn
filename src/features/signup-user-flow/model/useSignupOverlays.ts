@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { usePlaceAddressSearch } from "@/features/map-search";
+import { useDebounce } from "@/shared/lib/hooks/useDebounce";
 import type { AddressSearchItem } from "@/shared/ui/address-search/types";
-import { PARTNER_ADDRESS_OPTIONS } from "./data/partnerAddressOptions";
 
 type AddressSearchTarget = "partner" | "admin" | null;
 
@@ -23,6 +24,17 @@ export function useSignupOverlays({
 	const [isAddressSearchVisible, setAddressSearchVisible] = useState(false);
 	const [addressSearchTarget, setAddressSearchTarget] =
 		useState<AddressSearchTarget>(null);
+	const [addressQuery, setAddressQuery] = useState("");
+	const debouncedAddressQuery = useDebounce(addressQuery, 300);
+
+	const { data: addressItems = [], isFetching: isAddressSearchLoading } =
+		usePlaceAddressSearch(debouncedAddressQuery.trim());
+
+	const closeAddressSearch = () => {
+		setAddressSearchVisible(false);
+		setAddressSearchTarget(null);
+		setAddressQuery("");
+	};
 
 	return {
 		resendSheet: {
@@ -36,31 +48,32 @@ export function useSignupOverlays({
 		},
 		addressSearch: {
 			visible: isAddressSearchVisible,
-			items: PARTNER_ADDRESS_OPTIONS,
+			items: addressItems,
+			isLoading: isAddressSearchLoading,
+			query: addressQuery,
+			onQueryChange: setAddressQuery,
 			selectedItemId:
 				addressSearchTarget === "admin"
 					? adminOfficeAddressId
 					: partnerOfficeAddressId,
 			openForPartner: () => {
 				setAddressSearchTarget("partner");
+				setAddressQuery("");
 				setAddressSearchVisible(true);
 			},
 			openForAdmin: () => {
 				setAddressSearchTarget("admin");
+				setAddressQuery("");
 				setAddressSearchVisible(true);
 			},
-			close: () => {
-				setAddressSearchVisible(false);
-				setAddressSearchTarget(null);
-			},
+			close: closeAddressSearch,
 			selectItem: (item: AddressSearchItem) => {
 				if (addressSearchTarget === "admin") {
 					onSelectAdminOfficeAddress(item);
 				} else {
 					onSelectPartnerOfficeAddress(item);
 				}
-				setAddressSearchVisible(false);
-				setAddressSearchTarget(null);
+				closeAddressSearch();
 			},
 		},
 	};

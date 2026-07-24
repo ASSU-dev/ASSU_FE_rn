@@ -122,9 +122,12 @@ export function SignupUserFlowWidget() {
 					<AddressSearchDialog
 						visible={overlays.addressSearch.visible}
 						items={overlays.addressSearch.items}
+						query={overlays.addressSearch.query}
+						isLoading={overlays.addressSearch.isLoading}
 						selectedItemId={overlays.addressSearch.selectedItemId}
 						onClose={overlays.addressSearch.close}
 						onSelectItem={overlays.addressSearch.selectItem}
+						onQueryChange={overlays.addressSearch.onQueryChange}
 					/>
 				</View>
 			</SignupFlowUiProvider>

@@ -26,6 +26,7 @@ export function toPartnerSignupPayload(form: SignupFormState) {
 		phone: form.identity.phone,
 		companyName: form.partner.companyName,
 		officeAddressId: form.partner.officeAddressId,
+		officeAddress: form.partner.officeAddress,
 		officeAddressDetail: form.partner.officeAddressDetail,
 		businessRegistrationFileName: form.partner.businessRegistrationFileName,
 		agreements: {
@@ -45,6 +46,7 @@ export function toAdminSignupPayload(form: SignupFormState) {
 		collegeId: form.admin.collegeId,
 		departmentId: form.admin.departmentId,
 		officeAddressId: form.admin.officeAddressId,
+		officeAddress: form.admin.officeAddress,
 		officeAddressDetail: form.admin.officeAddressDetail,
 		sealFileName: form.admin.sealFileName,
 		displayName: getAdminCompletionName(form.admin),
