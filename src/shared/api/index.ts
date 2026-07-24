@@ -2,18 +2,6 @@ import "./interceptors";
 
 export type { ApiError, ApiResponse } from "@/shared/types/api";
 export type {
-	BaseResponseNotificationSettingsResponseDTO,
-	NotificationSettingsResponseDTO,
-	NotificationSettingsResponseDTOSettings,
-} from "./_generated/auth/getSettings";
-// getSettings
-export { getAssuApi as getGetSettingsApi } from "./_generated/auth/getSettings";
-export type {
-	BaseResponseMapStringObject,
-	List1Params,
-} from "./_generated/auth/list_1";
-// list_1
-export { getAssuApi as getList_1Api } from "./_generated/auth/list_1";
 	BaseResponseBlockMemberDTO,
 	BlockMemberDTO,
 	BlockMemberRequestDTO,
@@ -26,6 +14,13 @@ export type {
 } from "./_generated/auth/checkBlock";
 // checkBlock
 export { getAssuApi as getCheckBlockApi } from "./_generated/auth/checkBlock";
+export type {
+	BaseResponseVoid,
+	BaseResponseVoidResult,
+	EmailVerificationCheckRequestDTO,
+} from "./_generated/auth/checkEmailAvailability";
+// checkEmailAvailability
+export { getAssuApi as getCheckEmailAvailabilityApi } from "./_generated/auth/checkEmailAvailability";
 export type {
 	BaseResponseCreateChatRoomResponseDTO,
 	CreateChatRoomRequestDTO,
@@ -53,11 +48,19 @@ export type {
 // getChatRoomList
 export { getAssuApi as getGetChatRoomListApi } from "./_generated/auth/getChatRoomList";
 export type {
+	BaseResponseNotificationSettingsResponseDTO,
+	NotificationSettingsResponseDTO,
+	NotificationSettingsResponseDTOSettings,
+} from "./_generated/auth/getSettings";
+// getSettings
+export { getAssuApi as getGetSettingsApi } from "./_generated/auth/getSettings";
+export type {
 	BaseResponseLeaveChattingRoomResponseDTO,
 	LeaveChattingRoomResponseDTO,
 } from "./_generated/auth/leaveChattingRoom";
 // leaveChattingRoom
 export { getAssuApi as getLeaveChattingRoomApi } from "./_generated/auth/leaveChattingRoom";
+export type {
 	BaseResponsePageResponseDTOInquiryResponseDTO,
 	InquiryResponseDTO,
 	ListParams,
@@ -65,6 +68,12 @@ export { getAssuApi as getLeaveChattingRoomApi } from "./_generated/auth/leaveCh
 } from "./_generated/auth/list";
 // list
 export { getAssuApi as getListApi, ListStatus } from "./_generated/auth/list";
+export type {
+	BaseResponseMapStringObject,
+	List1Params,
+} from "./_generated/auth/list_1";
+// list_1
+export { getAssuApi as getList_1Api } from "./_generated/auth/list_1";
 export type { CommonLoginRequestDTO } from "./_generated/auth/loginCommon";
 export { getAssuApi as getLoginCommonApi } from "./_generated/auth/loginCommon";
 export type {
@@ -98,6 +107,7 @@ export type {
 } from "./_generated/auth/register";
 // register
 export { getAssuApi as getRegisterApi } from "./_generated/auth/register";
+export type {
 	AdminSignUpRequestDTO,
 	SignupAdminBody,
 } from "./_generated/auth/signupAdmin";
@@ -141,10 +151,10 @@ export type {
 export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
 // toggle
 export { getAssuApi as getToggleApi } from "./_generated/auth/toggle";
-// unregister
-export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
 export type { UnblockParams } from "./_generated/auth/unblock";
 // unblock
 export { getAssuApi as getUnblockApi } from "./_generated/auth/unblock";
+// unregister
+export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
 export { apiInstance } from "./instance";
 export type { BaseResponse } from "./types";

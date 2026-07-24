@@ -55,6 +55,8 @@ export async function getFcmDeviceToken() {
 
 export async function deleteFcmDeviceToken() {
 	await SecureStore.deleteItemAsync(FCM_TOKEN_KEY);
+}
+
 export async function setUserBasicInfo(basicInfo: UserBasicInfo) {
 	await SecureStore.setItemAsync(
 		USER_BASIC_INFO_KEY,
