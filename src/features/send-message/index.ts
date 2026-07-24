@@ -1,1 +1,1 @@
-export { ChatMessageComposer } from "./ui";
+export { ChatMessageComposer } from "./ui/ChatMessageComposer";

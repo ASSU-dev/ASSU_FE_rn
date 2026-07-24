@@ -1,14 +1,18 @@
+import type { UserBasicInfo } from "@/shared/lib/auth/authStore";
 import { type UserRole, useAuthStore } from "@/shared/lib/auth/authStore";
 import { apiInstance } from "./instance";
 import {
 	deleteAccessToken,
 	deleteRefreshToken,
+	deleteUserBasicInfo,
 	deleteUserRole,
 	getAccessToken,
 	getRefreshToken,
+	getUserBasicInfo,
 	getUserRole,
 	setAccessToken,
 	setRefreshToken,
+	setUserBasicInfo,
 	setUserRole,
 } from "./token-storage";
 
@@ -57,6 +61,7 @@ export async function saveTokens(
 	accessToken: string,
 	refreshToken: string,
 	role?: UserRole | string | null,
+	basicInfo?: UserBasicInfo | null,
 ) {
 	const resolvedRole = role
 		? (role as UserRole)
@@ -73,6 +78,13 @@ export async function saveTokens(
 		isLoggedIn: true,
 		role: resolvedRole,
 	};
+	if (basicInfo) {
+		useAuthStore.getState().setBasicInfo(basicInfo);
+		await setUserBasicInfo(basicInfo);
+	} else {
+		useAuthStore.getState().setBasicInfo(null);
+		await deleteUserBasicInfo();
+	}
 }
 
 export async function clearTokens() {
@@ -82,6 +94,7 @@ export async function clearTokens() {
 	await deleteUserRole();
 	initAuthResult = { isLoggedIn: false, role: null };
 	initAuthPromise = null;
+	await deleteUserBasicInfo();
 }
 
 /** 앱 시작 시 SecureStore의 refreshToken으로 자동 로그인 시도. 역할 포함 반환 */
@@ -117,11 +130,13 @@ async function restoreAuth(): Promise<InitAuthResult> {
 		const role =
 			decodeAccessTokenRole(newAccess) ??
 			((await getUserRole()) as UserRole | null);
+    const basicInfo = await getUserBasicInfo();
 		useAuthStore.getState().setAccessToken(newAccess);
 		if (role) {
 			useAuthStore.getState().setRole(role);
 			await setUserRole(role);
 		}
+    useAuthStore.getState().setBasicInfo(basicInfo);
 		await setAccessToken(newAccess);
 		await setRefreshToken(newRefresh);
 
@@ -130,6 +145,7 @@ async function restoreAuth(): Promise<InitAuthResult> {
 		await deleteAccessToken();
 		await deleteRefreshToken();
 		await deleteUserRole();
+		await deleteUserBasicInfo();
 		return { isLoggedIn: false, role: null };
 	}
 }
