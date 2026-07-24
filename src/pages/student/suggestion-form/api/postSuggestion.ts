@@ -1,10 +1,29 @@
+import type {
+	BaseResponse,
+	WriteSuggestionRequestDto,
+	WriteSuggestionResponseDto,
+} from "@/entities/suggestion";
+import { apiInstance } from "@/shared/api/instance";
+
 export type PostSuggestionPayload = {
 	target: string;
 	storeName: string;
 	desiredBenefit: string;
 };
 
-// TODO: 백엔드 API 연동 시 실제 엔드포인트로 교체
 export async function postSuggestion(
-	_payload: PostSuggestionPayload,
-): Promise<void> {}
+	payload: PostSuggestionPayload,
+): Promise<WriteSuggestionResponseDto> {
+	const body: WriteSuggestionRequestDto = {
+		adminId: Number(payload.target),
+		storeName: payload.storeName,
+		benefit: payload.desiredBenefit,
+	};
+	if (__DEV__) console.log("[postSuggestion] 요청:", body);
+	const res = await apiInstance.post<BaseResponse<WriteSuggestionResponseDto>>(
+		"/suggestion",
+		body,
+	);
+	if (__DEV__) console.log("[postSuggestion] 응답:", res.data.result);
+	return res.data.result;
+}

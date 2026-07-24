@@ -18,7 +18,7 @@ export function MessageBubble({ text, variant }: MessageBubbleProps) {
 			<Text
 				className={[
 					"font-light text-[14px]",
-					isSent ? "text-white" : "text-content-primary",
+					isSent ? "text-content-inverse" : "text-content-primary",
 				].join(" ")}
 			>
 				{text}

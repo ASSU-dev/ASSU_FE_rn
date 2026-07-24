@@ -95,7 +95,7 @@ export function ServiceBenefitFields({ index }: Props) {
 								onPress={() => setShowItemInput(true)}
 								className="bg-primary rounded-full px-[10px] py-[4px]"
 							>
-								<Text className="text-[11px] text-white">+ 추가</Text>
+								<Text className="text-[11px] text-content-inverse">+ 추가</Text>
 							</Pressable>
 						)}
 					</View>

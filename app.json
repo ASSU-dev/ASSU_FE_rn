@@ -9,9 +9,16 @@
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
 		"ios": {
-			"supportsTablet": true
+			"supportsTablet": true,
+			"infoPlist": {
+				"NSAppTransportSecurity": {
+					"NSAllowsArbitraryLoads": true
+				},
+				"NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 표시하기 위해 위치 권한이 필요합니다."
+			}
 		},
 		"android": {
+			"permissions": ["android.permission.ACCESS_FINE_LOCATION"],
 			"adaptiveIcon": {
 				"backgroundColor": "#E6F4FE",
 				"foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",

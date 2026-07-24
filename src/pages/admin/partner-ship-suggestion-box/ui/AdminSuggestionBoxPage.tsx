@@ -1,8 +1,15 @@
 // 관리자 제휴 건의함 페이지 — 건의 건수 + 건의 카드 목록
 
 import { router } from "expo-router";
-import { useCallback, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { useCallback } from "react";
+import {
+	ActivityIndicator,
+	FlatList,
+	Pressable,
+	Text,
+	View,
+} from "react-native";
+import { useSuggestionList } from "@/features/admin-suggestion-list";
 import {
 	ReportSuggestionDialog,
 	useReportSuggestion,
@@ -11,10 +18,6 @@ import { BackArrowIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
-import {
-	mockEmptySuggestions,
-	mockSuggestions,
-} from "../model/mockSuggestions";
 import { SuggestionBoxEmptyState } from "./SuggestionBoxEmptyState";
 import { SuggestionCard } from "./SuggestionCard";
 
@@ -27,9 +30,12 @@ const listContentStyle = {
 } as const;
 
 export function AdminSuggestionBoxPage() {
-	// DEV ONLY
-	const [isEmpty, setIsEmpty] = useState(false);
-	const suggestions = isEmpty ? mockEmptySuggestions : mockSuggestions;
+	const {
+		data: suggestions = [],
+		isLoading,
+		isError,
+		error,
+	} = useSuggestionList();
 	const count = suggestions.length;
 
 	const reportState = useReportSuggestion();
@@ -61,14 +67,7 @@ export function AdminSuggestionBoxPage() {
 							제휴건의함
 						</Text>
 					</View>
-					<Pressable
-						onPress={() => setIsEmpty((v) => !v)}
-						className="bg-neutral-variant rounded-sm px-[6px] py-[2px]"
-					>
-						<Text className="text-[10px] font-medium text-content-secondary">
-							{isEmpty ? "돌아가기" : "빈화면"}
-						</Text>
-					</Pressable>
+					<View className="w-6" />
 				</View>
 
 				<View className="px-screen-m gap-screen-m mt-screen-m">
@@ -79,7 +78,17 @@ export function AdminSuggestionBoxPage() {
 					</Text>
 				</View>
 
-				{count === 0 ? (
+				{isLoading ? (
+					<View className="flex-1 items-center justify-center">
+						<ActivityIndicator />
+					</View>
+				) : isError ? (
+					<View className="flex-1 items-center justify-center px-screen-m">
+						<Text className="text-center text-sm text-danger">
+							{String(error)}
+						</Text>
+					</View>
+				) : count === 0 ? (
 					<SuggestionBoxEmptyState />
 				) : (
 					<FlatList

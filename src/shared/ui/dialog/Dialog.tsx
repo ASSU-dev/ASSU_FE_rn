@@ -24,7 +24,7 @@ export function Dialog({ visible, onDismiss, children }: DialogProps) {
 		>
 			<View
 				className="flex-1 justify-center"
-				style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
+				style={{ backgroundColor: colorTokens.overlay }}
 			>
 				<View
 					className="bg-canvas rounded-lg p-6"
