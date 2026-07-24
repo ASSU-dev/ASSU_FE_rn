@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { useAccountSessionActions } from "@/features/account-session-management";
 import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { Dialog } from "@/shared/ui/dialog";
 import { PageLayout } from "@/shared/ui/layout";
@@ -11,6 +12,7 @@ import {
 
 export function AdminAccountManagementPage() {
 	const router = useRouter();
+	const accountSession = useAccountSessionActions();
 	const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
 
 	const items: AccountMenuItemProps[] = [
@@ -19,7 +21,11 @@ export function AdminAccountManagementPage() {
 			iconName: "ban",
 			onPress: () => router.push("/(protected)/admin/blocked-partners"),
 		},
-		{ label: "로그아웃", iconName: "exitRight" },
+		{
+			label: "로그아웃",
+			iconName: "exitRight",
+			onPress: accountSession.requestLogout,
+		},
 		{
 			label: "회원탈퇴",
 			iconName: "user",
