@@ -55,7 +55,7 @@ export function AdminStoreCard({ store, onActionPress }: AdminStoreCardProps) {
 					className={`rounded-lg px-[10px] py-[5px] ${isPartner ? "bg-primary" : "bg-primary-tint"}`}
 				>
 					<Text
-						className={`text-center font-regular text-[11px] leading-caption tracking-caption ${isPartner ? "text-white" : "text-primary"}`}
+						className={`text-center font-regular text-[11px] leading-caption tracking-caption ${isPartner ? "text-content-inverse" : "text-primary"}`}
 					>
 						{isPartner ? "제휴 계약서 보기" : "문의하기"}
 					</Text>

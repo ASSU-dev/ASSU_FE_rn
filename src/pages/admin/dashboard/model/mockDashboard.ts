@@ -2,6 +2,7 @@
 import type { DashboardData } from "./types";
 
 export const mockDashboardData: DashboardData = {
+	adminName: "숭실대학교 총학생회",
 	stats: {
 		appCertified: 5010,
 		newJoined: 74,
@@ -22,6 +23,7 @@ export const mockDashboardData: DashboardData = {
 };
 
 export const mockEmptyDashboardData: DashboardData = {
+	adminName: "숭실대학교 총학생회",
 	stats: {
 		appCertified: 0,
 		newJoined: 0,

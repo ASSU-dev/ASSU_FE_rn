@@ -10,7 +10,7 @@ export const PartnerItem = ({ rank, name }: PartnerItemProps) => {
 			<Text className="assu-main font-bold w-7 text-base">{rank}</Text>
 
 			<Text
-				className="text-slate-800 text-base font-medium flex-1"
+				className="text-content-primary text-base font-medium flex-1"
 				numberOfLines={1}
 				ellipsizeMode="tail"
 			>

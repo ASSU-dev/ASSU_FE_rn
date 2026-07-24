@@ -26,9 +26,7 @@ export const PartnerRankingList = () => {
 							<PartnerItem key={item.id} rank={i * 2 + 1} name={item.name} />
 						))}
 					</View>
-
 					<View className="w-px border-l border-black mx-2" />
-
 					<View className="flex-1">
 						{right.map((item, i) => (
 							<PartnerItem key={item.id} rank={i * 2 + 2} name={item.name} />

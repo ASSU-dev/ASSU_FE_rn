@@ -19,7 +19,7 @@ export function StudentHomePage() {
 				onPress={() => router.push("/")}
 			>
 				<Text className="text-sm font-semibold text-content-inverse">
-					홈으로 돌아가기
+					허브로 돌아가기
 				</Text>
 			</Pressable>
 			<Text className="text-2xl font-bold mb-3">안녕하세요, {userName}님!</Text>

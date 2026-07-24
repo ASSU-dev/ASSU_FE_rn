@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { View } from "react-native";
-import type { SignupFormState } from "@/features/signup-user-flow/model/types";
+import type { SignupFormState } from "../../model/types";
 import { AgreementFooter } from "../components/AgreementFooter";
 import { FileUploadButton } from "../components/FileUploadButton";
 import { SignupStepTitle } from "../SignupStepTitle";

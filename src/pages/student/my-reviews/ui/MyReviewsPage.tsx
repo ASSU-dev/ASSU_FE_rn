@@ -1,6 +1,12 @@
 import { useCallback, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
-import { ReviewCard } from "@/entities/review";
+import {
+	ActivityIndicator,
+	FlatList,
+	Pressable,
+	Text,
+	View,
+} from "react-native";
+import { ReviewCard, useStudentReviews } from "@/entities/review";
 import { SortArrowDownIcon } from "@/shared/assets/icons";
 import {
 	type SortOrder,
@@ -11,7 +17,6 @@ import { AppTopBar } from "@/shared/ui/app-top-bar";
 import { DarkSelectBottomSheet } from "@/shared/ui/bottom-sheet";
 import { SmallButton } from "@/shared/ui/buttons/ActionButton";
 import { PageLayout } from "@/shared/ui/layout";
-import { mockReviews } from "../model/mockReviews";
 import type { Review } from "../model/types";
 
 const SORT_ITEMS: { label: string; value: SortOrder }[] = [
@@ -27,11 +32,13 @@ const listContentStyle = {
 
 export function MyReviewsPage() {
 	const [isSortSheetVisible, setSortSheetVisible] = useState(false);
+	const { data, isLoading, isError, error } = useStudentReviews();
 	const {
 		sort,
 		setSort,
 		sortedItems: sortedReviews,
-	} = useSortedByDate(mockReviews);
+	} = useSortedByDate(data?.reviews ?? []);
+	const count = data?.totalElements ?? sortedReviews.length;
 
 	const renderItem = useCallback(
 		({ item }: { item: Review }) => (
@@ -55,9 +62,7 @@ export function MyReviewsPage() {
 				{/* 서브헤더 */}
 				<View className="flex-row items-center justify-between px-screen-m pt-[20px] pb-[16px]">
 					<Text className="text-sm font-medium text-content-primary">
-						작성한 리뷰가{" "}
-						<Text className="text-primary">{sortedReviews.length}</Text>건
-						있어요
+						작성한 리뷰가 <Text className="text-primary">{count}</Text>건 있어요
 					</Text>
 					<Pressable
 						onPress={() => setSortSheetVisible(true)}
@@ -76,7 +81,17 @@ export function MyReviewsPage() {
 				</View>
 
 				{/* 리뷰 목록 또는 빈 상태 */}
-				{sortedReviews.length === 0 ? (
+				{isLoading ? (
+					<View className="flex-1 items-center justify-center">
+						<ActivityIndicator />
+					</View>
+				) : isError ? (
+					<View className="flex-1 items-center justify-center px-screen-m">
+						<Text className="text-center text-sm text-danger">
+							{String(error)}
+						</Text>
+					</View>
+				) : sortedReviews.length === 0 ? (
 					<View className="absolute inset-0 items-center justify-center gap-7">
 						<View className="items-center gap-1.5">
 							<Text className="text-base font-medium text-content-primary">
