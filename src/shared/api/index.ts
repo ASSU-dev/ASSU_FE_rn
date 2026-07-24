@@ -46,6 +46,13 @@ export type {
 } from "./_generated/auth/leaveChattingRoom";
 // leaveChattingRoom
 export { getAssuApi as getLeaveChattingRoomApi } from "./_generated/auth/leaveChattingRoom";
+	BaseResponsePageResponseDTOInquiryResponseDTO,
+	InquiryResponseDTO,
+	ListParams,
+	PageResponseDTOInquiryResponseDTO,
+} from "./_generated/auth/list";
+// list
+export { getAssuApi as getListApi, ListStatus } from "./_generated/auth/list";
 export type {
 	BaseResponseLoginResponseDTO,
 	LoginResponseDTO,

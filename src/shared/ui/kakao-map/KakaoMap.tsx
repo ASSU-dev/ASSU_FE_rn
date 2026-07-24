@@ -9,12 +9,10 @@ import {
 	useState,
 } from "react";
 import { StyleSheet } from "react-native";
-import WebView from "react-native-webview";
-
-type WebViewProps = ComponentProps<typeof WebView>;
-type WebViewMessageEvent = Parameters<
-	NonNullable<WebViewProps["onMessage"]>
->[0];
+import WebView, {
+	type WebViewMessageEvent,
+	type WebViewProps,
+} from "react-native-webview";
 
 import { colorTokens } from "@/shared/styles/tokens";
 

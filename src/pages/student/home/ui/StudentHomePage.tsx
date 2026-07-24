@@ -1,12 +1,17 @@
 import { router } from "expo-router";
 import { Pressable, ScrollView, Text } from "react-native";
+import { useStudentStampQuery } from "@/entities/user/api/useStudentStampQuery";
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
 import { PartnerRankingList } from "@/widgets/partner-ranking/ui/PartnerRankingList";
 import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
 
 export function StudentHomePage() {
-	const userStampCount = 4;
-	const userName = "김숭실";
+	const basicInfo = useUserBasicInfo();
+	const { data: stampData } = useStudentStampQuery();
+	const userStampCount = stampData?.stamp ?? 0;
+	const userName = basicInfo?.name ?? "사용자";
+
 	return (
 		<ScrollView className="flex-1 bg-canvas px-5 pt-10">
 			<Pressable
