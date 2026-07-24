@@ -5,6 +5,8 @@ import {
 	CommonAuthPayloadDTODepartment,
 	CommonAuthPayloadDTOMajor,
 	CommonAuthPayloadDTOUniversity,
+	type PartnerSignUpRequestDTO,
+	type SignupPartnerBody,
 } from "@/shared/api";
 import { findAddressOption, getAdminCompletionName } from "./admin";
 import type { SignupFormState } from "./types";
@@ -143,6 +145,55 @@ export async function toAdminSignupBody(form: SignupFormState) {
 
 	return {
 		request,
-		signImage: await createMockAdminSealImage(),
+		signImage: (await createMockAdminSealImage()) as unknown as Blob,
 	};
+}
+
+type PartnerLicenseFile = {
+	uri: string;
+	name: string;
+	type: string;
+};
+
+async function createMockPartnerLicenseImage(): Promise<PartnerLicenseFile> {
+	const [asset] = await Asset.loadAsync(
+		require("@/shared/assets/images/icon.png"),
+	);
+
+	return {
+		uri: asset.localUri ?? asset.uri,
+		name: "partner-license.jpg",
+		type: "image/jpeg",
+	};
+}
+
+export async function toPartnerSignupBody(form: SignupFormState) {
+	const addressOption = findAddressOption(form.partner.officeAddressId);
+	const request: PartnerSignUpRequestDTO = {
+		phoneNumber: form.identity.phone || "01012345678",
+		marketingAgree: form.agreements.agreeMarketing,
+		locationAgree: form.agreements.agreePrivacy,
+		commonAuth: {
+			email: form.partner.email,
+			password: form.partner.password,
+			university: CommonAuthPayloadDTOUniversity.SSU,
+		},
+		commonInfo: {
+			name: form.partner.companyName || form.profile.name,
+			detailAddress: form.partner.officeAddressDetail,
+			selectedPlace: {
+				placeId: form.partner.officeAddressId || "mock-partner-place-id",
+				name: addressOption?.label || form.partner.companyName,
+				address: addressOption?.label || "서울시 동작구 상도로 369",
+				roadAddress: addressOption?.label || "서울시 동작구 상도로 369",
+				latitude: 37.4959,
+				longitude: 126.9567,
+			},
+		},
+	};
+
+	return {
+		request,
+		licenseImage: (await createMockPartnerLicenseImage()) as unknown as Blob,
+	} satisfies SignupPartnerBody;
 }

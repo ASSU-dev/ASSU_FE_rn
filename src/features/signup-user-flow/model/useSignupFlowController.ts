@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
 import { useCommonLoginAction } from "./useCommonLoginAction";
+import { usePartnerSignupAction } from "./usePartnerSignupAction";
 import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
 import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
@@ -99,15 +100,18 @@ export function useSignupFlowController() {
 		onFailure: handleSignupFailure,
 	});
 
-	const { signup: handleAdminSignup } = useAdminSignupAction({
+	const { signup: handlePartnerSignup } = usePartnerSignupAction({
 		form,
 		onSuccess: goNext,
 		onFailure: handleSignupFailure,
 	});
-	const { checkEmailAvailability } = useAdminEmailAvailabilityAction();
 
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
-	const { login: handlePressCommonLogin } = useCommonLoginAction();
+	const { handlePressLogin, isPending: isCommonLoginPending } =
+		useCommonLoginAction({
+			email: form.auth.email,
+			password: form.auth.password,
+		});
 
 	const sendIdentityVerificationCode = () => sendVerificationCode();
 
@@ -184,16 +188,8 @@ export function useSignupFlowController() {
 					await handleStudentSignup();
 					return;
 				}
-				if (step === "adminCredentials") {
-					const isEmailAvailable = await checkEmailAvailability(
-						form.admin.email,
-					);
-					if (!isEmailAvailable) return;
-					goNext();
-					return;
-				}
-				if (step === "adminSealRegistration") {
-					await handleAdminSignup();
+				if (step === "partnerBusinessRegistration") {
+					await handlePartnerSignup();
 					return;
 				}
 				goNext();
@@ -202,12 +198,10 @@ export function useSignupFlowController() {
 		[
 			buttonLabel,
 			currentProgressIndex,
-			checkEmailAvailability,
-			handleAdminSignup,
-			form.admin.email,
 			form.role,
 			goNext,
 			goTo,
+			handlePartnerSignup,
 			handleStudentSignup,
 			isBottomDisabled,
 			progress,
@@ -225,11 +219,8 @@ export function useSignupFlowController() {
 			password: form.auth.password,
 			onChangeEmail: setAuthEmail,
 			onChangePassword: setAuthPassword,
-			onPressLogin: () =>
-				handlePressCommonLogin({
-					email: form.auth.email,
-					password: form.auth.password,
-				}),
+			onPressLogin: handlePressLogin,
+			isLoginPending: isCommonLoginPending,
 			onPressLmsLogin: handlePressLmsLogin,
 			onPressSignup: () => goTo("identity"),
 		}),
@@ -237,8 +228,9 @@ export function useSignupFlowController() {
 			form.auth.email,
 			form.auth.password,
 			goTo,
-			handlePressCommonLogin,
+			handlePressLogin,
 			handlePressLmsLogin,
+			isCommonLoginPending,
 			setAuthEmail,
 			setAuthPassword,
 		],
