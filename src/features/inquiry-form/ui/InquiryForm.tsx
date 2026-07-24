@@ -96,7 +96,7 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 					)}
 				/>
 				{errors.title && (
-					<Text className="text-xs text-red-500">{errors.title.message}</Text>
+					<Text className="text-xs text-danger">{errors.title.message}</Text>
 				)}
 			</View>
 
@@ -127,7 +127,7 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 					)}
 				/>
 				{errors.content && (
-					<Text className="text-xs text-red-500">{errors.content.message}</Text>
+					<Text className="text-xs text-danger">{errors.content.message}</Text>
 				)}
 			</View>
 
@@ -156,7 +156,7 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 					)}
 				/>
 				{errors.email && (
-					<Text className="text-xs text-red-500">{errors.email.message}</Text>
+					<Text className="text-xs text-danger">{errors.email.message}</Text>
 				)}
 			</View>
 

@@ -75,7 +75,9 @@ export const SummaryCard = memo(
 						>
 							<Text
 								className={`text-center font-semibold ${
-									isAffiliated ? "text-sm text-white" : "text-xs text-primary"
+									isAffiliated
+										? "text-sm text-content-inverse"
+										: "text-xs text-primary"
 								}`}
 							>
 								{actionLabel}

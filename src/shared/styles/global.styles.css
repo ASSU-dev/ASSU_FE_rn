@@ -42,6 +42,12 @@
 
 	/* Background Colors - Primitive 참조 */
 	--color-canvas: var(--white);
+	--color-overlay: rgba(0, 0, 0, 0.3);
+	--color-overlay-strong: rgba(0, 0, 0, 0.4);
+	--color-handle-on-dark: rgba(235, 235, 245, 0.3);
+	--color-overlay: rgba(0, 0, 0, 0.3);
+	--color-overlay-strong: rgba(0, 0, 0, 0.4);
+	--color-handle-on-dark: rgba(235, 235, 245, 0.3);
 
 	/* State Colors - Primitive 참조 */
 	--color-danger: var(--red-500);
@@ -51,6 +57,8 @@
 	--color-content-secondary: var(--gray-500);
 	--color-content-tertiary: var(--gray-400);
 	--color-content-inverse: var(--blue-50);
+	--color-content-primary-alpha-45: rgba(4, 4, 4, 0.45);
+	--color-content-primary-alpha-45: rgba(4, 4, 4, 0.45);
 
 	/* Font Sizes */
 	--font-size-sm: 13px;
@@ -134,6 +142,12 @@
 
 	/* Background Colors - Primitive 참조 */
 	--color-canvas: var(--white);
+	--color-overlay: rgba(0, 0, 0, 0.3);
+	--color-overlay-strong: rgba(0, 0, 0, 0.4);
+	--color-handle-on-dark: rgba(235, 235, 245, 0.3);
+	--color-overlay: rgba(0, 0, 0, 0.3);
+	--color-overlay-strong: rgba(0, 0, 0, 0.4);
+	--color-handle-on-dark: rgba(235, 235, 245, 0.3);
 
 	/* State Colors - Primitive 참조 */
 	--color-danger: var(--red-500);
@@ -143,6 +157,8 @@
 	--color-content-secondary: var(--gray-500);
 	--color-content-tertiary: var(--gray-400);
 	--color-content-inverse: var(--blue-50);
+	--color-content-primary-alpha-45: rgba(4, 4, 4, 0.45);
+	--color-content-primary-alpha-45: rgba(4, 4, 4, 0.45);
 
 	/* Font Sizes */
 	--font-size-sm: 13px;

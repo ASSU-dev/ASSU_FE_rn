@@ -27,7 +27,7 @@ export function ProposalCompleteView({ contractId }: Props) {
 				</Text>
 
 				<Pressable
-					className="bg-[#f4f4f5] rounded-lg px-[10px] py-[10px] mt-[11px]"
+					className="bg-neutral rounded-lg px-[10px] py-[10px] mt-[11px]"
 					onPress={() =>
 						router.push({
 							pathname: "/(protected)/partnership-contract/[id]",

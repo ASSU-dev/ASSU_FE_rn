@@ -1,4 +1,5 @@
 import { getHomeRouteByRole, saveTokens } from "@/shared/api/auth";
+import type { UserBasicInfo } from "@/shared/lib/auth/authStore";
 
 interface Tokens {
 	accessToken?: string;
@@ -8,6 +9,7 @@ interface Tokens {
 export async function completeLogin(
 	tokens: Tokens,
 	role?: string | null,
+	basicInfo?: UserBasicInfo | null,
 ): Promise<string> {
 	if (!tokens.accessToken || !tokens.refreshToken) {
 		throw new Error("로그인 토큰을 받지 못했습니다.");

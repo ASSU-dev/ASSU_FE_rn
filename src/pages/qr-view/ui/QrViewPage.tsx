@@ -63,7 +63,7 @@ export function QrViewPage() {
 
 				{/* QR 코드 */}
 				<ViewShot ref={viewShotRef} options={{ format: "png", quality: 1 }}>
-					<View className="p-3 bg-white">
+					<View className="p-3 bg-canvas">
 						<QRCode value={qrValue} size={200} />
 					</View>
 				</ViewShot>

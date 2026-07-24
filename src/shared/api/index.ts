@@ -14,6 +14,12 @@ export {
 	LoginResponseDTOStatus,
 } from "./_generated/auth/loginStudent";
 export type {
+	BaseResponseReadMessageResponseDTO,
+	ReadMessageResponseDTO,
+} from "./_generated/auth/readMessage";
+// readMessage
+export { getAssuApi as getReadMessageApi } from "./_generated/auth/readMessage";
+export type {
 	BaseResponseRefreshResponseDTO,
 	RefreshResponseDTO,
 } from "./_generated/auth/refreshToken";
@@ -61,4 +67,8 @@ export type {
 } from "./_generated/auth/ssuAuth";
 // ssuAuth
 export { getAssuApi as getSsuAuthApi } from "./_generated/auth/ssuAuth";
+export type { UnblockParams } from "./_generated/auth/unblock";
+// unblock
+export { getAssuApi as getUnblockApi } from "./_generated/auth/unblock";
 export { apiInstance } from "./instance";
+export type { BaseResponse } from "./types";
