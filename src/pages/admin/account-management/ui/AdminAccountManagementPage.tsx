@@ -13,7 +13,13 @@ import {
 export function AdminAccountManagementPage() {
 	const router = useRouter();
 	const accountSession = useAccountSessionActions();
+	const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 	const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
+
+	const handleLogout = () => {
+		setIsLogoutOpen(false);
+		accountSession.executeLogout();
+	};
 
 	const items: AccountMenuItemProps[] = [
 		{
@@ -24,7 +30,7 @@ export function AdminAccountManagementPage() {
 		{
 			label: "로그아웃",
 			iconName: "exitRight",
-			onPress: accountSession.requestLogout,
+			onPress: () => setIsLogoutOpen(true),
 		},
 		{
 			label: "회원탈퇴",
@@ -41,6 +47,26 @@ export function AdminAccountManagementPage() {
 					<AccountMenuItem key={item.label} {...item} />
 				))}
 			</View>
+
+			<Dialog visible={isLogoutOpen} onDismiss={() => setIsLogoutOpen(false)}>
+				<Dialog.Title>로그아웃하시겠습니까?</Dialog.Title>
+				<Dialog.Content>
+					<Text className="text-sm text-content-secondary">
+						로그아웃하면 로그인 화면으로 이동합니다.
+					</Text>
+				</Dialog.Content>
+				<Dialog.Actions>
+					<Dialog.CancelButton onPress={() => setIsLogoutOpen(false)}>
+						취소
+					</Dialog.CancelButton>
+					<Dialog.ConfirmButton
+						disabled={accountSession.isPending}
+						onPress={handleLogout}
+					>
+						로그아웃
+					</Dialog.ConfirmButton>
+				</Dialog.Actions>
+			</Dialog>
 
 			<Dialog
 				visible={isWithdrawalOpen}

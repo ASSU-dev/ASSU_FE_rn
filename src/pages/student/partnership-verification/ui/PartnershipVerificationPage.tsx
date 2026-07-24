@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Alert, Image, Pressable, Text, View } from "react-native";
+import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import {
 	usePartnershipAuthStore,
@@ -17,19 +18,31 @@ import { InfiniteNoticeMarquee } from "./InfiniteNoticeMarquee";
 
 const PROFILE_IMAGE = require("@/shared/assets/images/partnership-verification-profile.png");
 
-const STUDENT_DETAILS = [
-	["학번", "20250000"],
-	["소속", "IT 대학"],
-	["학과", "글로벌미디어학부"],
-	["과정/학기", "학사과정 재학"],
-	["학년/학기", "2학년:4학기(예정)"],
-] as const;
+const ENROLLMENT_STATUS_LABEL = {
+	ENROLLED: "재학",
+	LEAVE: "휴학",
+	GRADUATED: "졸업",
+} as const;
 
 export function PartnershipVerificationPage() {
 	const basicInfo = useUserBasicInfo();
+	const studentProfileQuery = useStudentProfileQuery();
+	const studentProfile = studentProfileQuery.data;
 	const store = usePartnershipAuthStore((state) => state.store);
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
 	const recordUsage = usePartnershipUsageMutation();
+	const studentDetails = [
+		["학번", studentProfile?.studentNumber],
+		["소속", studentProfile?.department ?? basicInfo?.department],
+		["학과", studentProfile?.major ?? basicInfo?.major],
+		[
+			"과정/학기",
+			studentProfile?.enrollmentStatus
+				? ENROLLMENT_STATUS_LABEL[studentProfile.enrollmentStatus]
+				: undefined,
+		],
+		["학년/학기", studentProfile?.yearSemester],
+	] as const;
 
 	const handleComplete = async () => {
 		if (!store || !benefit) return;
@@ -81,40 +94,34 @@ export function PartnershipVerificationPage() {
 							resizeMode="cover"
 						/>
 						<Text className="text-md font-bold text-content-primary">
-							{basicInfo?.name ?? "조영찬"}
+							{studentProfile?.name ?? basicInfo?.name ?? "사용자"}
 						</Text>
 					</View>
 
 					<View className="flex-1">
-						{STUDENT_DETAILS.map(([label, fallback], index) => {
-							const value =
-								label === "소속"
-									? (basicInfo?.department ?? fallback)
-									: label === "학과"
-										? (basicInfo?.major ?? fallback)
-										: fallback;
-
-							return (
-								<View
-									key={label}
-									className={`h-[37px] flex-row items-center justify-between px-[12px] ${
-										index === 0 ? "" : "border-t"
-									}`}
-									style={
-										index === 0
-											? undefined
-											: { borderColor: colorTokens.contentSecondaryAlpha20 }
-									}
+						{studentDetails.map(([label, value], index) => (
+							<View
+								key={label}
+								className={`h-[37px] flex-row items-center justify-between px-[12px] ${
+									index === 0 ? "" : "border-t"
+								}`}
+								style={
+									index === 0
+										? undefined
+										: { borderColor: colorTokens.contentSecondaryAlpha20 }
+								}
+							>
+								<Text className="text-[12px] font-medium text-content-primary">
+									{label}
+								</Text>
+								<Text
+									className="ml-[8px] flex-1 text-right text-[12px] font-semibold text-primary"
+									numberOfLines={1}
 								>
-									<Text className="text-[12px] font-medium text-content-primary">
-										{label}
-									</Text>
-									<Text className="text-[12px] font-semibold text-primary">
-										{value}
-									</Text>
-								</View>
-							);
-						})}
+									{value ?? "-"}
+								</Text>
+							</View>
+						))}
 					</View>
 				</View>
 
@@ -125,8 +132,8 @@ export function PartnershipVerificationPage() {
 					</Text>
 				</View>
 
-				<View className="mt-[6px] h-[84px] flex-row items-center justify-between rounded-[8px] border-2 border-primary bg-primary-tint px-[14px]">
-					<View className="gap-[2px]">
+				<View className="mt-[6px] min-h-[84px] flex-row items-start rounded-[8px] border-2 border-primary bg-primary-tint px-[14px] py-[12px]">
+					<View className="min-w-0 flex-1 gap-[2px] pr-[10px]">
 						<Text className="text-sm font-medium text-content-primary">
 							{benefit?.contents ?? "선택한 제휴 혜택"}
 						</Text>
@@ -134,7 +141,7 @@ export function PartnershipVerificationPage() {
 							{benefit?.goods.join(", ") || "개인 혜택"}
 						</Text>
 					</View>
-					<Text className="text-[14px] font-semibold text-content-primary">
+					<Text className="max-w-[110px] shrink self-start text-right text-[14px] font-semibold text-content-primary">
 						{benefit?.manager ?? "학생회"}
 					</Text>
 				</View>

@@ -19,7 +19,7 @@ const BenefitSelectButton = ({
 		<Pressable
 			onPress={onPress}
 			className={`
-        w-[21.5625rem] py-[0.6875rem] flex flex-col items-center rounded-[0.625rem] border-[0.5px]
+        w-full max-w-[21.5625rem] px-gutter py-[0.6875rem] flex flex-col items-center rounded-[0.625rem] border-[0.5px]
         ${dimmed ? "opacity-60" : ""}
         ${
 					isSelected
@@ -29,6 +29,7 @@ const BenefitSelectButton = ({
       `}
 		>
 			<Text
+				numberOfLines={2}
 				className={`
           self-stretch text-center text-[0.875rem] leading-[1.6875rem] tracking-[0.01563rem] font-semibold
           ${isSelected ? "text-primary" : "text-content-primary"}
@@ -37,6 +38,7 @@ const BenefitSelectButton = ({
 				{title}
 			</Text>
 			<Text
+				numberOfLines={3}
 				className={`
           self-stretch text-center text-[0.875rem] leading-[1.3125rem] tracking-[-0.02rem] font-regular
           ${isSelected ? "text-primary" : "text-content-secondary"}
