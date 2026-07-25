@@ -7,14 +7,12 @@ import type {
 import { usePartnershipAuthStore } from "../model/usePartnershipAuthStore";
 
 export function buildGroupCertificationQrValue(
-	adminId: number,
-	sessionId: number,
+	payload: Omit<GroupCertificationQrPayload, "type" | "version">,
 ): string {
 	return JSON.stringify({
 		type: "ASSU_GROUP_CERTIFICATION",
 		version: 1,
-		adminId,
-		sessionId,
+		...payload,
 	} satisfies GroupCertificationQrPayload);
 }
 
@@ -28,8 +26,19 @@ export function parseGroupCertificationQr(
 			parsed.version !== 1 ||
 			!Number.isSafeInteger(parsed.adminId) ||
 			!Number.isSafeInteger(parsed.sessionId) ||
+			!Number.isSafeInteger(parsed.storeId) ||
+			!Number.isSafeInteger(parsed.contentId) ||
+			!Number.isSafeInteger(parsed.requiredPeople) ||
 			(parsed.adminId ?? 0) <= 0 ||
-			(parsed.sessionId ?? 0) <= 0
+			(parsed.sessionId ?? 0) <= 0 ||
+			(parsed.storeId ?? 0) <= 0 ||
+			(parsed.contentId ?? 0) <= 0 ||
+			(parsed.requiredPeople ?? 0) <= 0 ||
+			typeof parsed.storeName !== "string" ||
+			typeof parsed.adminName !== "string" ||
+			typeof parsed.partnershipContent !== "string" ||
+			!Array.isArray(parsed.goods) ||
+			!parsed.goods.every((goodsName) => typeof goodsName === "string")
 		) {
 			return null;
 		}
@@ -47,10 +56,19 @@ export function certifyGroupParticipant({
 	adminId: number;
 	sessionId: number;
 }): boolean {
-	return stompManager.publish(
+	const published = stompManager.publish(
 		"/app/certify",
 		JSON.stringify({ adminId, sessionId }),
 	);
+	if (__DEV__) {
+		console.log("[GROUP CERT PUBLISH]", {
+			destination: "/app/certify",
+			adminId,
+			sessionId,
+			published,
+		});
+	}
+	return published;
 }
 
 export function useGroupCertificationProgress(sessionId: number | null) {
@@ -64,30 +82,54 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 	useEffect(() => {
 		if (sessionId === null) return;
 
-		return stompManager.subscribeToTopic(
-			`/certification/progress/${sessionId}`,
-			(message) => {
-				try {
-					const progress = JSON.parse(
-						message.body,
-					) as GroupCertificationProgressMessage;
-					const count = Number.isSafeInteger(progress.count)
-						? progress.count
-						: 0;
+		const destination = `/certification/progress/${sessionId}`;
+		if (__DEV__) {
+			console.log("[GROUP CERT SUBSCRIBE]", { destination, sessionId });
+		}
 
-					if (
-						typeof progress.type === "string" &&
-						progress.type.toLowerCase() === "completed"
-					) {
-						completeGroupSession(count, progress.userIds ?? []);
-						return;
+		return stompManager.subscribeToTopic(destination, (message) => {
+			if (__DEV__) {
+				console.log("[GROUP CERT PROGRESS RAW]", {
+					sessionId,
+					body: message.body,
+				});
+			}
+
+			try {
+				const progress = JSON.parse(
+					message.body,
+				) as GroupCertificationProgressMessage;
+				const count = Number.isSafeInteger(progress.count) ? progress.count : 0;
+				const progressType =
+					typeof progress.type === "string" ? progress.type.toLowerCase() : "";
+
+				if (progressType === "expired") {
+					if (__DEV__) {
+						console.log("[GROUP CERT EXPIRED]", {
+							sessionId,
+							count,
+							message: progress.message,
+							userIds: progress.userIds ?? [],
+						});
 					}
-
-					setGroupProgress(count);
-				} catch {
-					// 알 수 없는 메시지는 현재 세션 상태를 변경하지 않습니다.
+					return;
 				}
-			},
-		);
+
+				if (progressType === "completed") {
+					completeGroupSession(count, progress.userIds ?? []);
+					return;
+				}
+
+				setGroupProgress(count);
+			} catch (error) {
+				if (__DEV__) {
+					console.log("[GROUP CERT PROGRESS ERROR]", {
+						sessionId,
+						body: message.body,
+						error,
+					});
+				}
+			}
+		});
 	}, [completeGroupSession, sessionId, setGroupProgress]);
 }

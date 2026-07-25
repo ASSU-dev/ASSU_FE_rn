@@ -58,6 +58,7 @@ export function PartnershipBenefitSelectPage() {
 					count: 1,
 					status: "WAITING",
 					userIds: [],
+					role: "REPRESENTATIVE",
 				});
 				router.push("/(protected)/student/partnership-group-certification");
 				return;

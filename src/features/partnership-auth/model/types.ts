@@ -33,6 +33,7 @@ export interface GroupCertificationSession {
 	count: number;
 	status: "WAITING" | "COMPLETED";
 	userIds: number[];
+	role: "REPRESENTATIVE" | "PARTICIPANT";
 }
 
 export interface GroupCertificationProgressMessage {
@@ -47,4 +48,11 @@ export interface GroupCertificationQrPayload {
 	version: 1;
 	adminId: number;
 	sessionId: number;
+	storeId: number;
+	storeName: string;
+	contentId: number;
+	adminName: string;
+	partnershipContent: string;
+	goods: string[];
+	requiredPeople: number;
 }

@@ -49,15 +49,19 @@ export function PartnershipVerificationPage() {
 		if (!store || !benefit) return;
 
 		try {
-			await recordUsage.mutateAsync({
-				storeId: store.storeId,
-				adminId: benefit.adminId,
-				adminName: benefit.manager,
-				placeName: store.storeName,
-				partnershipContent: benefit.contents,
-				contentId: benefit.id,
-				userIds: benefit.type === "GROUP" ? groupSession?.userIds : undefined,
-			});
+			const isGroupParticipant =
+				benefit.type === "GROUP" && groupSession?.role === "PARTICIPANT";
+			if (!isGroupParticipant) {
+				await recordUsage.mutateAsync({
+					storeId: store.storeId,
+					adminId: benefit.adminId,
+					adminName: benefit.manager,
+					placeName: store.storeName,
+					partnershipContent: benefit.contents,
+					contentId: benefit.id,
+					userIds: benefit.type === "GROUP" ? groupSession?.userIds : undefined,
+				});
+			}
 			router.replace({
 				pathname: "/(protected)/student/partnership-complete",
 				params: { benefit: benefit.contents },
@@ -82,7 +86,7 @@ export function PartnershipVerificationPage() {
 			</View>
 
 			<View
-				className="mx-screen-m mt-[24px] h-[500px] rounded-[12px] border px-[17px] py-[16px]"
+				className="mx-screen-m mt-[24px] min-h-[500px] rounded-[12px] border px-[17px] py-[16px]"
 				style={{
 					backgroundColor: colorTokens.neutralAlpha50,
 					borderColor: colorTokens.contentSecondary,
@@ -155,27 +159,38 @@ export function PartnershipVerificationPage() {
 					</Text>
 				</View>
 
-				<View className="mt-[6px] h-[109px] items-center justify-center rounded-[8px] bg-neutral">
+				<View className="mt-[6px] min-h-[109px] items-center justify-center rounded-[8px] bg-neutral py-gutter">
 					{benefit?.type === "GROUP" && groupSession ? (
 						<View className="items-center gap-gutter">
-							<Text className="text-[12px] font-medium text-content-primary">
-								{groupSession.count}/{groupSession.requiredPeople}명 인증 완료
-							</Text>
-							<View className="flex-row gap-[6px]">
+							<View className="flex-row items-center gap-[12px]">
 								{Array.from(
 									{ length: groupSession.requiredPeople },
 									(_, index) => (
-										<View
+										<Ionicons
 											key={`verified-participant-${index + 1}`}
-											className={`size-[10px] rounded-[999px] ${
+											name="person"
+											size={37}
+											color={
 												index < groupSession.count
-													? "bg-primary"
-													: "bg-neutral-variant"
-											}`}
+													? colorTokens.primary
+													: colorTokens.primaryOnDark
+											}
+											style={
+												index < groupSession.count
+													? undefined
+													: { opacity: 0.5 }
+											}
 										/>
 									),
 								)}
 							</View>
+							<Text className="text-[12px] font-medium text-content-primary">
+								{groupSession.requiredPeople - groupSession.count > 0
+									? `총 ${groupSession.requiredPeople}명 중 ${
+											groupSession.requiredPeople - groupSession.count
+										}명 검증 필요`
+									: `총 ${groupSession.requiredPeople}명 인증 완료`}
+							</Text>
 						</View>
 					) : (
 						<Text className="text-[12px] font-medium text-content-primary">

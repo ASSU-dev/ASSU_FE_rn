@@ -12,17 +12,25 @@ import { PageLayout } from "@/shared/ui/layout";
 
 export function PartnershipGroupCertificationPage() {
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
+	const store = usePartnershipAuthStore((state) => state.store);
 	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
 	const sessionId = groupSession?.sessionId ?? null;
 	useGroupCertificationProgress(sessionId);
 
 	const qrValue = useMemo(() => {
-		if (!benefit || !groupSession) return null;
-		return buildGroupCertificationQrValue(
-			benefit.adminId,
-			groupSession.sessionId,
-		);
-	}, [benefit, groupSession]);
+		if (!benefit || !store || !groupSession) return null;
+		return buildGroupCertificationQrValue({
+			adminId: benefit.adminId,
+			sessionId: groupSession.sessionId,
+			storeId: store.storeId,
+			storeName: store.storeName,
+			contentId: benefit.id,
+			adminName: benefit.manager,
+			partnershipContent: benefit.contents,
+			goods: benefit.goods,
+			requiredPeople: groupSession.requiredPeople,
+		});
+	}, [benefit, groupSession, store]);
 
 	useEffect(() => {
 		if (groupSession?.status === "COMPLETED") {

@@ -4,14 +4,14 @@ import {
 	CameraView,
 	useCameraPermissions,
 } from "expo-camera";
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-	certifyGroupParticipant,
 	parseGroupCertificationQr,
 	parsePartnershipStoreId,
+	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
@@ -20,28 +20,117 @@ export function PartnershipQrAuthPage() {
 	const insets = useSafeAreaInsets();
 	const [permission, requestPermission] = useCameraPermissions();
 	const [scannedValue, setScannedValue] = useState<string | null>(null);
+	const setStore = usePartnershipAuthStore((state) => state.setStore);
+	const setSelectedBenefit = usePartnershipAuthStore(
+		(state) => state.setSelectedBenefit,
+	);
+	const setGroupSession = usePartnershipAuthStore(
+		(state) => state.setGroupSession,
+	);
+	const isScanLockedRef = useRef(false);
+	const cameraAreaRef = useRef<View>(null);
+	const scanFrameRef = useRef<View>(null);
+	const scanFrameBoundsRef = useRef<{
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null>(null);
 
-	const handleBarcodeScanned = ({ data }: BarcodeScanningResult) => {
-		setScannedValue((currentValue) => currentValue ?? data);
+	const resetScanner = useCallback(() => {
+		isScanLockedRef.current = false;
+		setScannedValue(null);
+	}, []);
+
+	useFocusEffect(
+		useCallback(() => {
+			resetScanner();
+		}, [resetScanner]),
+	);
+
+	const measureScanFrame = useCallback(() => {
+		cameraAreaRef.current?.measureInWindow((cameraX, cameraY) => {
+			scanFrameRef.current?.measureInWindow((x, y, width, height) => {
+				scanFrameBoundsRef.current = {
+					x: x - cameraX,
+					y: y - cameraY,
+					width,
+					height,
+				};
+			});
+		});
+	}, []);
+
+	const handleBarcodeScanned = ({
+		data,
+		bounds,
+		cornerPoints,
+	}: BarcodeScanningResult) => {
+		if (isScanLockedRef.current) return;
+
+		const scanFrame = scanFrameBoundsRef.current;
+		if (!scanFrame) return;
+
+		const barcodeCenter =
+			cornerPoints.length > 0
+				? cornerPoints.reduce(
+						(center, point) => ({
+							x: center.x + point.x / cornerPoints.length,
+							y: center.y + point.y / cornerPoints.length,
+						}),
+						{ x: 0, y: 0 },
+					)
+				: {
+						x: bounds.origin.x + bounds.size.width / 2,
+						y: bounds.origin.y + bounds.size.height / 2,
+					};
+		const isInsideScanFrame =
+			barcodeCenter.x >= scanFrame.x &&
+			barcodeCenter.x <= scanFrame.x + scanFrame.width &&
+			barcodeCenter.y >= scanFrame.y &&
+			barcodeCenter.y <= scanFrame.y + scanFrame.height;
+
+		if (!isInsideScanFrame) return;
+
+		isScanLockedRef.current = true;
+		if (__DEV__) {
+			console.log("[QR SCANNED]", { data });
+		}
+		setScannedValue(data);
 	};
 
 	const handleConfirm = () => {
 		if (!scannedValue) return;
+		if (__DEV__) {
+			console.log("[QR CONFIRM]", { scannedValue });
+		}
 		const groupCertification = parseGroupCertificationQr(scannedValue);
 		if (groupCertification) {
-			const published = certifyGroupParticipant(groupCertification);
-			if (!published) {
-				Alert.alert(
-					"연결 확인",
-					"인증 서버에 연결되지 않았습니다. 잠시 후 다시 시도해주세요.",
-				);
-				return;
-			}
-
-			router.replace({
-				pathname: "/(protected)/student/partnership-complete",
-				params: { benefit: "그룹 제휴" },
+			const benefit = {
+				id: groupCertification.contentId,
+				adminId: groupCertification.adminId,
+				manager: groupCertification.adminName,
+				contents: groupCertification.partnershipContent,
+				goods: groupCertification.goods,
+				people: groupCertification.requiredPeople,
+				cost: null,
+				type: "GROUP",
+			} as const;
+			setStore({
+				storeId: groupCertification.storeId,
+				storeName: groupCertification.storeName,
+				benefits: [benefit],
 			});
+			setSelectedBenefit(benefit);
+			setGroupSession({
+				sessionId: groupCertification.sessionId,
+				requiredPeople: groupCertification.requiredPeople,
+				count: 0,
+				status: "WAITING",
+				userIds: [],
+				role: "PARTICIPANT",
+			});
+			router.replace("/(protected)/student/partnership-group-participant");
 			return;
 		}
 
@@ -59,7 +148,7 @@ export function PartnershipQrAuthPage() {
 	};
 
 	return (
-		<View className="flex-1 bg-content-primary">
+		<View ref={cameraAreaRef} className="flex-1 bg-content-primary">
 			{permission?.granted ? (
 				<CameraView
 					style={StyleSheet.absoluteFillObject}
@@ -92,7 +181,11 @@ export function PartnershipQrAuthPage() {
 			</View>
 
 			<View className="flex-1 items-center justify-center pb-[40px]">
-				<View className="size-[222px] rounded-[12px] border-[8px] border-primary" />
+				<View
+					ref={scanFrameRef}
+					onLayout={measureScanFrame}
+					className="size-[222px] rounded-[12px] border-[8px] border-primary"
+				/>
 				{permission?.granted ? (
 					<>
 						<Text className="mt-[30px] text-md font-semibold text-content-inverse">
@@ -102,7 +195,7 @@ export function PartnershipQrAuthPage() {
 						</Text>
 						{scannedValue ? (
 							<Pressable
-								onPress={() => setScannedValue(null)}
+								onPress={resetScanner}
 								className="mt-[12px] rounded-[8px] bg-neutral px-[20px] py-gutter"
 							>
 								<Text className="text-sm font-semibold text-content-secondary">
