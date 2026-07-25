@@ -1,7 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
+import {
+	type BarcodeScanningResult,
+	CameraView,
+	useCameraPermissions,
+} from "expo-camera";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
 	certifyGroupParticipant,
 	parseGroupCertificationQr,
@@ -11,19 +17,13 @@ import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 export function PartnershipQrAuthPage() {
+	const insets = useSafeAreaInsets();
+	const [permission, requestPermission] = useCameraPermissions();
 	const [scannedValue, setScannedValue] = useState<string | null>(null);
 
-	// TODO: expo-camera가 포함된 개발 빌드를 설치한 뒤 아래 import와 함께 복구합니다.
-	// import {
-	// 	type BarcodeScanningResult,
-	// 	CameraView,
-	// 	useCameraPermissions,
-	// } from "expo-camera";
-	//
-	// const [permission, requestPermission] = useCameraPermissions();
-	// const handleBarcodeScanned = ({ data }: BarcodeScanningResult) => {
-	// 	if (!scannedValue) setScannedValue(data);
-	// };
+	const handleBarcodeScanned = ({ data }: BarcodeScanningResult) => {
+		setScannedValue((currentValue) => currentValue ?? data);
+	};
 
 	const handleConfirm = () => {
 		if (!scannedValue) return;
@@ -60,14 +60,14 @@ export function PartnershipQrAuthPage() {
 
 	return (
 		<View className="flex-1 bg-content-primary">
-			{/* TODO: expo-camera 네이티브 모듈 설치 후 이 영역을 복구합니다.
-			<CameraView
-				className="absolute inset-0"
-				facing="back"
-				barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-				onBarcodeScanned={scannedValue ? undefined : handleBarcodeScanned}
-			/>
-			*/}
+			{permission?.granted ? (
+				<CameraView
+					style={StyleSheet.absoluteFillObject}
+					facing="back"
+					barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+					onBarcodeScanned={scannedValue ? undefined : handleBarcodeScanned}
+				/>
+			) : null}
 
 			<View
 				className="absolute inset-0 bg-overlay-strong"
@@ -93,24 +93,49 @@ export function PartnershipQrAuthPage() {
 
 			<View className="flex-1 items-center justify-center pb-[40px]">
 				<View className="size-[222px] rounded-[12px] border-[8px] border-primary" />
-				<Text className="mt-[30px] text-md font-semibold text-content-inverse">
-					{scannedValue
-						? "QR 코드를 확인했습니다"
-						: "제휴 QR 코드를 스캔해주세요"}
-				</Text>
-				{scannedValue ? (
-					<Pressable
-						onPress={() => setScannedValue(null)}
-						className="mt-[12px] rounded-[8px] bg-neutral px-[20px] py-gutter"
-					>
-						<Text className="text-sm font-semibold text-content-secondary">
-							다시 스캔
+				{permission?.granted ? (
+					<>
+						<Text className="mt-[30px] text-md font-semibold text-content-inverse">
+							{scannedValue
+								? "QR 코드를 확인했습니다"
+								: "제휴 QR 코드를 스캔해주세요"}
 						</Text>
-					</Pressable>
-				) : null}
+						{scannedValue ? (
+							<Pressable
+								onPress={() => setScannedValue(null)}
+								className="mt-[12px] rounded-[8px] bg-neutral px-[20px] py-gutter"
+							>
+								<Text className="text-sm font-semibold text-content-secondary">
+									다시 스캔
+								</Text>
+							</Pressable>
+						) : null}
+					</>
+				) : permission ? (
+					<View className="mt-[30px] items-center gap-gutter px-screen-m">
+						<Text className="text-center text-md font-semibold text-content-inverse">
+							QR 인증을 위해 카메라 권한이 필요합니다
+						</Text>
+						<Pressable
+							onPress={() => requestPermission()}
+							className="rounded-[8px] bg-neutral px-[20px] py-gutter"
+						>
+							<Text className="text-sm font-semibold text-content-secondary">
+								카메라 권한 허용
+							</Text>
+						</Pressable>
+					</View>
+				) : (
+					<Text className="mt-[30px] text-md font-semibold text-content-inverse">
+						카메라를 준비하고 있습니다
+					</Text>
+				)}
 			</View>
 
-			<View className="gap-[36px] rounded-t-[20px] bg-content-primary px-screen-m pb-[20px] pt-[15px]">
+			<View
+				className="gap-[36px] rounded-t-[20px] bg-content-primary px-screen-m pt-[15px]"
+				style={{ paddingBottom: insets.bottom + 20 }}
+			>
 				<View className="items-center gap-gutter">
 					<View className="h-[5px] w-[36px] rounded-[999px] bg-handle-on-dark" />
 					<View className="w-full">
