@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { useAccountSessionActions } from "@/features/account-session-management";
 import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { Dialog } from "@/shared/ui/dialog";
 import { PageLayout } from "@/shared/ui/layout";
@@ -11,7 +12,14 @@ import {
 
 export function AdminAccountManagementPage() {
 	const router = useRouter();
+	const accountSession = useAccountSessionActions();
+	const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 	const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
+
+	const handleLogout = () => {
+		setIsLogoutOpen(false);
+		accountSession.executeLogout();
+	};
 
 	const items: AccountMenuItemProps[] = [
 		{
@@ -19,7 +27,11 @@ export function AdminAccountManagementPage() {
 			iconName: "ban",
 			onPress: () => router.push("/(protected)/admin/blocked-partners"),
 		},
-		{ label: "로그아웃", iconName: "exitRight" },
+		{
+			label: "로그아웃",
+			iconName: "exitRight",
+			onPress: () => setIsLogoutOpen(true),
+		},
 		{
 			label: "회원탈퇴",
 			iconName: "user",
@@ -35,6 +47,26 @@ export function AdminAccountManagementPage() {
 					<AccountMenuItem key={item.label} {...item} />
 				))}
 			</View>
+
+			<Dialog visible={isLogoutOpen} onDismiss={() => setIsLogoutOpen(false)}>
+				<Dialog.Title>로그아웃하시겠습니까?</Dialog.Title>
+				<Dialog.Content>
+					<Text className="text-sm text-content-secondary">
+						로그아웃하면 로그인 화면으로 이동합니다.
+					</Text>
+				</Dialog.Content>
+				<Dialog.Actions>
+					<Dialog.CancelButton onPress={() => setIsLogoutOpen(false)}>
+						취소
+					</Dialog.CancelButton>
+					<Dialog.ConfirmButton
+						disabled={accountSession.isPending}
+						onPress={handleLogout}
+					>
+						로그아웃
+					</Dialog.ConfirmButton>
+				</Dialog.Actions>
+			</Dialog>
 
 			<Dialog
 				visible={isWithdrawalOpen}
