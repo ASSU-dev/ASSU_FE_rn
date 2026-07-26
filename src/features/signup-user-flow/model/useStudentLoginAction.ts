@@ -13,6 +13,12 @@ export function useStudentLoginAction() {
 
 	const login = useCallback(
 		async ({ sIdno, sToken }: { sIdno: string; sToken: string }) => {
+			if (__DEV__)
+				console.log("[LMS LOGIN] auth payload received", {
+					sIdnoLength: sIdno.length,
+					sTokenLength: sToken.length,
+				});
+
 			try {
 				const response = await mutation.mutateAsync({
 					sIdno,
@@ -22,14 +28,28 @@ export function useStudentLoginAction() {
 				assertSuccess(response, "로그인에 실패했습니다.");
 
 				const { tokens, role, basicInfo } = response.result;
+				if (__DEV__)
+					console.log("[LMS LOGIN] API success", {
+						role,
+						hasAccessToken: Boolean(tokens?.accessToken),
+						hasRefreshToken: Boolean(tokens?.refreshToken),
+					});
+				if (__DEV__) console.log("[LMS LOGIN] saving session");
 				const homeRoute = await completeLogin(tokens ?? {}, role, basicInfo);
+				if (__DEV__) console.log("[LMS LOGIN] session saved", { homeRoute });
 				setWebViewVisible(false);
+				if (__DEV__) console.log("[LMS LOGIN] WebView close requested");
 				router.replace(homeRoute as never);
+				if (__DEV__) console.log("[LMS LOGIN] navigation requested");
 			} catch (error) {
-				Alert.alert(
-					"로그인 실패",
-					error instanceof Error ? error.message : "로그인에 실패했습니다.",
-				);
+				const errorMessage =
+					error instanceof Error ? error.message : "로그인에 실패했습니다.";
+				if (__DEV__)
+					console.log("[LMS LOGIN] post-auth failure", {
+						name: error instanceof Error ? error.name : "UnknownError",
+						message: errorMessage,
+					});
+				Alert.alert("로그인 실패", errorMessage);
 			}
 		},
 		[mutation],

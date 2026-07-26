@@ -7,7 +7,10 @@ import {
 	View,
 } from "react-native";
 import { useMyPartnerships } from "@/entities/partnership";
+import { useReviewDraftStore } from "@/features/review-management";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { createCurrentMonthMockBenefit } from "../model/mockBenefits";
+import type { ReviewBenefitItem } from "../model/types";
 import { useMonthNavigator } from "../model/useMonthNavigator";
 import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
@@ -23,12 +26,31 @@ export function StudentSuggestionPage() {
 		now.getFullYear(),
 		now.getMonth() + 1,
 	);
+	const beginReview = useReviewDraftStore((state) => state.beginReview);
 
 	const { data, isLoading, isError, error } = useMyPartnerships(year, month);
 
-	const details = data?.details ?? [];
-	const count = data?.serviceCount ?? 0;
+	const apiDetails = data?.details ?? [];
+	const isCurrentMonth =
+		year === now.getFullYear() && month === now.getMonth() + 1;
+	const shouldShowCurrentMonthMock =
+		__DEV__ &&
+		!isLoading &&
+		!isError &&
+		isCurrentMonth &&
+		apiDetails.length === 0;
+	const details = shouldShowCurrentMonthMock
+		? [createCurrentMonthMockBenefit(now)]
+		: apiDetails;
+	const count = shouldShowCurrentMonthMock
+		? details.length
+		: (data?.serviceCount ?? details.length);
 	const displayBenefits = details.slice(0, COLLAPSED_LIMIT);
+
+	const handleReviewPress = (benefit: ReviewBenefitItem) => {
+		beginReview(benefit, { isMock: benefit.isMock });
+		router.push("/(protected)/student/review/rating");
+	};
 
 	return (
 		<PageLayout contentContainerClassName="flex-1">
@@ -44,7 +66,9 @@ export function StudentSuggestionPage() {
 						{count > COLLAPSED_LIMIT && (
 							<Pressable
 								onPress={() =>
-									router.push(`/(protected)/student/benefit-all?month=${month}`)
+									router.push(
+										`/(protected)/student/benefit-all?year=${year}&month=${month}`,
+									)
 								}
 							>
 								<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">
@@ -67,7 +91,10 @@ export function StudentSuggestionPage() {
 						<BenefitEmptyState />
 					</View>
 				) : (
-					<BenefitList benefits={displayBenefits} />
+					<BenefitList
+						benefits={displayBenefits}
+						onReviewPress={handleReviewPress}
+					/>
 				)}
 			</ScrollView>
 			<SuggestionSection />

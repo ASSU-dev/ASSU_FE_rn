@@ -11,6 +11,7 @@ export { default as CloseIcon } from "./close-icon.svg";
 export { default as ExitRightIcon } from "./exit-right-icon.svg";
 export { default as FolderIcon } from "./folder-icon.svg";
 export { default as HeadphoneIcon } from "./headphone-icon.svg";
+export { default as ImageFillIcon } from "./image-fill.svg";
 export { default as ImageUploadIcon } from "./image-upload-icon.svg";
 export { default as InfoFillIcon } from "./info-fill-icon.svg";
 export { default as InfoIcon } from "./info-icon.svg";

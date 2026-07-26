@@ -8,7 +8,7 @@ import {
 	type PartnerSignUpRequestDTO,
 	type SignupPartnerBody,
 } from "@/shared/api";
-import { findAddressOption, getAdminCompletionName } from "./admin";
+import { getAdminCompletionName } from "./admin";
 import type { SignupFormState } from "./types";
 
 export function toStudentSignupPayload(form: SignupFormState) {
@@ -119,7 +119,6 @@ async function createMockAdminSealImage(): Promise<AdminSealFile> {
 }
 
 export async function toAdminSignupBody(form: SignupFormState) {
-	const addressOption = findAddressOption(form.admin.officeAddressId);
 	const request: AdminSignUpRequestDTO = {
 		phoneNumber: form.identity.phone || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
@@ -136,9 +135,9 @@ export async function toAdminSignupBody(form: SignupFormState) {
 			detailAddress: form.admin.officeAddressDetail,
 			selectedPlace: {
 				placeId: form.admin.officeAddressId || "mock-admin-place-id",
-				name: addressOption?.label || getAdminCompletionName(form.admin),
-				address: addressOption?.label || "서울시 동작구 상도로 369",
-				roadAddress: addressOption?.label || "서울시 동작구 상도로 369",
+				name: form.admin.officeAddress || getAdminCompletionName(form.admin),
+				address: form.admin.officeAddress || "서울시 동작구 상도로 369",
+				roadAddress: form.admin.officeAddress || "서울시 동작구 상도로 369",
 				latitude: 37.4959,
 				longitude: 126.9567,
 			},
@@ -170,7 +169,6 @@ async function createMockPartnerLicenseImage(): Promise<PartnerLicenseFile> {
 }
 
 export async function toPartnerSignupBody(form: SignupFormState) {
-	const addressOption = findAddressOption(form.partner.officeAddressId);
 	const request: PartnerSignUpRequestDTO = {
 		phoneNumber: form.identity.phone || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
@@ -185,9 +183,9 @@ export async function toPartnerSignupBody(form: SignupFormState) {
 			detailAddress: form.partner.officeAddressDetail,
 			selectedPlace: {
 				placeId: form.partner.officeAddressId || "mock-partner-place-id",
-				name: addressOption?.label || form.partner.companyName,
-				address: addressOption?.label || "서울시 동작구 상도로 369",
-				roadAddress: addressOption?.label || "서울시 동작구 상도로 369",
+				name: form.partner.officeAddress || form.partner.companyName,
+				address: form.partner.officeAddress || "서울시 동작구 상도로 369",
+				roadAddress: form.partner.officeAddress || "서울시 동작구 상도로 369",
 				latitude: 37.4959,
 				longitude: 126.9567,
 			},

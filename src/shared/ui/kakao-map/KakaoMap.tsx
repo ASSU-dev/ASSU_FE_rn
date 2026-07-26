@@ -1,6 +1,4 @@
 import {
-	type ComponentProps,
-	type ElementRef,
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
@@ -15,6 +13,7 @@ import WebView, {
 } from "react-native-webview";
 
 import { colorTokens } from "@/shared/styles/tokens";
+import { partnerMarkerSvg } from "./partnerMarkerSvg";
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
 	return {
@@ -31,6 +30,10 @@ type KakaoMapProps = {
 	myLocation?: { lat: number; lng: number } | null;
 	heading?: number | null;
 	markers?: KakaoMapMarker[];
+	partnerMarkersEnabled?: boolean;
+	selectedMarkerId?: string | null;
+	onMarkerPress?: (markerId: string) => void;
+	onMapPress?: () => void;
 };
 
 export type KakaoMapHandle = {
@@ -42,20 +45,30 @@ export type KakaoMapMarker = {
 	name: string;
 	latitude: number;
 	longitude: number;
+	hasPartner?: boolean;
 };
 
 const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 
- export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(                                                                     
-        function KakaoMap(                                                                                                               
-                { initialCenter = SOONGSIL, myLocation, heading, markers = [] },                                                         
-                ref,                                                                                                                     
-        ) {                                                                                                                              
-                const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();                                                             
-                const webViewRef = useRef<WebView>(null);                                                                                
-                const prevMarkersRef = useRef<string>("");                                                                               
-                const [isMapReady, setIsMapReady] = useState(false);                                                                     
-                const webViewSource = useMemo<KakaoWebViewSource | null>(() => {              
+export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
+	function KakaoMap(
+		{
+			initialCenter = SOONGSIL,
+			myLocation,
+			heading,
+			markers = [],
+			partnerMarkersEnabled = false,
+			selectedMarkerId,
+			onMarkerPress,
+			onMapPress,
+		},
+		ref,
+	) {
+		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
+		const webViewRef = useRef<WebView>(null);
+		const prevMarkersRef = useRef<string>("");
+		const [isMapReady, setIsMapReady] = useState(false);
+		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
 
 			return {
@@ -108,7 +121,12 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 
 		useEffect(() => {
 			if (!isMapReady) return;
-			const serializedMarkers = JSON.stringify(markers).replace(
+			const markerPayload = markers.map((marker) => ({
+				...marker,
+				isPartnerMarker: partnerMarkersEnabled && marker.hasPartner === true,
+				selected: marker.id === selectedMarkerId,
+			}));
+			const serializedMarkers = JSON.stringify(markerPayload).replace(
 				/</g,
 				"\\u003c",
 			);
@@ -118,12 +136,19 @@ const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 			webViewRef.current?.injectJavaScript(
 				`window.updateStoreMarkers(${serializedMarkers}); true;`,
 			);
-		}, [isMapReady, markers]);
+		}, [isMapReady, markers, partnerMarkersEnabled, selectedMarkerId]);
 
 		const handleMessage = (event: WebViewMessageEvent) => {
 			try {
-				const data = JSON.parse(event.nativeEvent.data) as { type: string };
+				const data = JSON.parse(event.nativeEvent.data) as {
+					type: string;
+					markerId?: string;
+				};
 				if (data.type === "MAP_READY") setIsMapReady(true);
+				if (data.type === "MARKER_PRESS" && data.markerId) {
+					onMarkerPress?.(data.markerId);
+				}
+				if (data.type === "MAP_PRESS") onMapPress?.();
 			} catch (error) {
 				if (__DEV__) {
 					console.warn(
@@ -157,6 +182,7 @@ function buildMapHtml(appKey: string): string {
 	const canvas = colorTokens.canvas;
 	const coneFill = `rgba(${r},${g},${b},0.35)`;
 	const ring = `rgba(${r},${g},${b},0.15)`;
+	const markerSvg = JSON.stringify(partnerMarkerSvg);
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -214,10 +240,55 @@ function buildMapHtml(appKey: string): string {
 
       markers.forEach(function(markerData) {
         if (typeof markerData.latitude !== 'number' || typeof markerData.longitude !== 'number') return;
-        var marker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(markerData.latitude, markerData.longitude),
-          title: markerData.name || ''
-        });
+        var position = new kakao.maps.LatLng(markerData.latitude, markerData.longitude);
+
+        if (markerData.isPartnerMarker) {
+          var selected = markerData.selected === true;
+          var container = document.createElement('button');
+          container.type = 'button';
+          container.style.cssText = 'border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;overflow:visible;';
+          container.setAttribute('aria-label', markerData.name || '제휴 가게');
+
+          var iconSize = selected ? 40 : 25;
+          var shellSize = selected ? 60 : 25;
+          var iconShell = document.createElement('div');
+          iconShell.style.cssText = 'width:' + shellSize + 'px;height:' + shellSize + 'px;display:flex;align-items:center;justify-content:center;';
+          var icon = document.createElement('div');
+          icon.style.cssText = 'width:' + iconSize + 'px;height:' + iconSize + 'px;filter:drop-shadow(0 2px 4px rgba(0,104,254,0.35));transition:width 0.15s ease,height 0.15s ease;';
+          icon.innerHTML = ${markerSvg};
+          var svg = icon.querySelector('svg');
+          if (svg) {
+            svg.setAttribute('width', String(iconSize));
+            svg.setAttribute('height', String(iconSize));
+          }
+          iconShell.appendChild(icon);
+          container.appendChild(iconShell);
+
+          if (selected && markerData.name) {
+            var label = document.createElement('span');
+            label.textContent = markerData.name;
+            label.style.cssText = 'margin-top:2px;color:${primary};font-size:12px;font-weight:600;line-height:16px;white-space:nowrap;text-shadow:0 1px 2px ${canvas};';
+            container.appendChild(label);
+          }
+
+          container.addEventListener('click', function(event) {
+            event.stopPropagation();
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MARKER_PRESS', markerId: String(markerData.id) }));
+          });
+
+          var overlay = new kakao.maps.CustomOverlay({
+            position: position,
+            content: container,
+            xAnchor: 0.5,
+            yAnchor: selected ? 0.35 : 0.5,
+            zIndex: selected ? 20 : 5
+          });
+          overlay.setMap(map);
+          storeMarkers.push(overlay);
+          return;
+        }
+
+        var marker = new kakao.maps.Marker({ position: position, title: markerData.name || '' });
         marker.setMap(map);
         storeMarkers.push(marker);
       });
@@ -228,6 +299,9 @@ function buildMapHtml(appKey: string): string {
       map = new kakao.maps.Map(document.getElementById('map'), {
         center: initialPos,
         level: 3
+      });
+      kakao.maps.event.addListener(map, 'click', function() {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_PRESS' }));
       });
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }

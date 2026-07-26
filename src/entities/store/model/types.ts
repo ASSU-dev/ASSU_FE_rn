@@ -8,6 +8,11 @@ export interface Store {
 
 export interface StoreMarker extends Store {
 	count?: number;
+	hasPartner: boolean;
+	rate: number;
+	benefit?: string;
+	imageUri?: string;
+	profileUrl?: string;
 }
 
 export interface StudentStoreCardData extends Store {
@@ -33,6 +38,7 @@ export interface PopularStore {
 export interface SearchResultStore {
 	id: string;
 	name: string;
+	storeId?: string;
 	imageUri?: string;
 	// student view
 	tag?: string;

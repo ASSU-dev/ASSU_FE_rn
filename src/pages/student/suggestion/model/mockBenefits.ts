@@ -1,5 +1,5 @@
 // [TEST] 목 데이터 — API 연동 전 UI 테스트용
-import type { Benefit } from "./types";
+import type { Benefit, ReviewBenefitItem } from "./types";
 
 export const MOCK_BENEFITS: Benefit[] = [
 	{
@@ -38,3 +38,27 @@ export const MOCK_BENEFITS: Benefit[] = [
 		description: "크루아상 1개를 제공받았어요!",
 	},
 ];
+
+function padDatePart(value: number): string {
+	return String(value).padStart(2, "0");
+}
+
+export function createCurrentMonthMockBenefit(now: Date): ReviewBenefitItem {
+	const month = padDatePart(now.getMonth() + 1);
+	const day = padDatePart(now.getDate());
+	const hour = padDatePart(now.getHours());
+	const minute = padDatePart(now.getMinutes());
+
+	return {
+		id: "mock-current-month-benefit",
+		storeId: 0,
+		partnerId: 0,
+		adminName: "테스트 학생회",
+		storeName: "테스트 1",
+		date: [now.getFullYear(), month, day].join("-"),
+		time: [hour, minute].join(":"),
+		description: "테스트 1에서 테스트 혜택을 제공받았어요!",
+		isReviewed: false,
+		isMock: true,
+	};
+}

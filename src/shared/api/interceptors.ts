@@ -18,23 +18,13 @@ apiInstance.interceptors.request.use((config) => {
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
-	console.log(
-		"[API REQ]",
-		config.method?.toUpperCase(),
-		config.url,
-		JSON.stringify(config.data),
-	);
+	console.log("[API REQ]", config.method?.toUpperCase(), config.url);
 	return config;
 });
 
 apiInstance.interceptors.response.use(
 	(response) => {
-		console.log(
-			"[API RES]",
-			response.status,
-			response.config.url,
-			JSON.stringify(response.data),
-		);
+		console.log("[API RES]", response.status, response.config.url);
 		return response;
 	},
 	async (error) => {
@@ -43,7 +33,8 @@ apiInstance.interceptors.response.use(
 			"[API ERR]",
 			status,
 			error.config?.url,
-			JSON.stringify(error.response?.data),
+			error.response?.data?.code,
+			error.response?.data?.message,
 		);
 
 		const originalRequest = error.config;

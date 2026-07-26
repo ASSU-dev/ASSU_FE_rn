@@ -5,6 +5,7 @@ import type { Review, ReviewImage } from "../model/types";
 
 interface Props {
 	review: Review;
+	title?: string;
 	action?: { label: string; onPress: () => void };
 }
 
@@ -40,14 +41,16 @@ function formatDate(date: Date): string {
 	return `작성일 | ${y}-${m}-${d} ${h}:${min}`;
 }
 
-export function ReviewCard({ review, action }: Props) {
+export function ReviewCard({ review, title, action }: Props) {
 	const hasImages = (review.images?.length ?? 0) > 0;
+	const reviewerTitle =
+		title ?? `${review.department} ${review.studentStatus}`.trim();
 
 	return (
-		<View className="bg-neutral rounded-sm" style={{ padding: 16 }}>
+		<View className="rounded-sm bg-neutral p-card-p">
 			<View className="flex-row items-center justify-between">
 				<Text className="text-lg font-medium text-content-primary">
-					{review.department} {review.studentStatus}
+					{reviewerTitle}
 				</Text>
 				{action && (
 					<Pressable onPress={action.onPress} hitSlop={8}>
@@ -58,28 +61,25 @@ export function ReviewCard({ review, action }: Props) {
 				)}
 			</View>
 
-			<View className="flex-row gap-[5px] mt-gutter">
+			<View className="mt-gutter flex-row gap-[5px]">
 				{[1, 2, 3, 4, 5].map((star) => (
 					<StarIcon key={star} filled={star <= review.rating} />
 				))}
 			</View>
 
-			<Text
-				className="text-sm text-content-primary mt-gutter"
-				style={{ lineHeight: 21 }}
-			>
+			<Text className="mt-gutter text-sm leading-caption text-content-primary">
 				{review.content}
 			</Text>
 
 			{hasImages && (
-				<View className="flex-row justify-between mt-gutter">
+				<View className="mt-gutter flex-row justify-between">
 					{review.images?.map((img, idx) => (
 						<ReviewImageItem key={`${idx}-${String(img)}`} source={img} />
 					))}
 				</View>
 			)}
 
-			<Text className="text-sm text-content-secondary mt-gutter">
+			<Text className="mt-gutter text-sm text-content-secondary">
 				{formatDate(review.createdAt)}
 			</Text>
 		</View>

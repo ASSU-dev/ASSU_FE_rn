@@ -37,6 +37,7 @@ export type {
 	EtcBenefitItem,
 	Partnership,
 	PartnershipContract,
+	ReviewableBenefit,
 	ServiceBenefitItem,
 	ServiceType,
 } from "./model/types";

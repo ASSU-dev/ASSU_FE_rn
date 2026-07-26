@@ -2,32 +2,62 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	Pressable,
+	ScrollView,
+	Text,
+	View,
+} from "react-native";
+import { useMyPartnerships } from "@/entities/partnership";
+import { useReviewDraftStore } from "@/features/review-management";
 import { colorTokens } from "@/shared/styles/tokens";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
-import { getMonthFromDateStr } from "../model/types";
-import { useBenefitsStore } from "../model/useBenefitsStore";
+import { createCurrentMonthMockBenefit } from "../model/mockBenefits";
+import type { ReviewBenefitItem } from "../model/types";
 import { useMonthNavigator } from "../model/useMonthNavigator";
+import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
 import { BenefitSummary } from "./BenefitSummary";
 import { MonthNavigator } from "./MonthNavigator";
 
 export function BenefitAllPage() {
-	const { month: monthParam } = useLocalSearchParams<{ month: string }>();
+	const { year: yearParam, month: monthParam } = useLocalSearchParams<{
+		year?: string;
+		month?: string;
+	}>();
 	const now = new Date();
-	const initialYear = now.getFullYear();
+	const initialYear = yearParam ? parseInt(yearParam, 10) : now.getFullYear();
 	const initialMonth = monthParam
 		? parseInt(monthParam, 10)
 		: now.getMonth() + 1;
-	const { month, handlePrev, handleNext } = useMonthNavigator(
+	const { year, month, handlePrev, handleNext } = useMonthNavigator(
 		initialYear,
 		initialMonth,
 	);
-	const benefits = useBenefitsStore((s) => s.benefits);
+	const beginReview = useReviewDraftStore((state) => state.beginReview);
+	const { data, isLoading, isError, error } = useMyPartnerships(year, month);
 
-	const benefitsForMonth = benefits.filter(
-		(b) => getMonthFromDateStr(b.date) === month,
-	);
+	const apiDetails = data?.details ?? [];
+	const isCurrentMonth =
+		year === now.getFullYear() && month === now.getMonth() + 1;
+	const shouldShowCurrentMonthMock =
+		__DEV__ &&
+		!isLoading &&
+		!isError &&
+		isCurrentMonth &&
+		apiDetails.length === 0;
+	const benefits = shouldShowCurrentMonthMock
+		? [createCurrentMonthMockBenefit(now)]
+		: apiDetails;
+	const count = shouldShowCurrentMonthMock
+		? benefits.length
+		: (data?.serviceCount ?? benefits.length);
+
+	const handleReviewPress = (benefit: ReviewBenefitItem) => {
+		beginReview(benefit, { isMock: benefit.isMock });
+		router.push("/(protected)/student/review/rating");
+	};
 
 	return (
 		<PageLayout
@@ -51,7 +81,7 @@ export function BenefitAllPage() {
 			<View className="flex-1 rounded-tl-[30px] rounded-tr-[30px] bg-canvas overflow-hidden">
 				<ScrollView
 					className="flex-1"
-					contentContainerClassName="pt-[30px] pb-[60px]"
+					contentContainerClassName="flex-grow pt-[30px] pb-[60px]"
 				>
 					<View className="px-screen-m gap-5 pb-5">
 						<MonthNavigator
@@ -59,9 +89,26 @@ export function BenefitAllPage() {
 							onPrev={handlePrev}
 							onNext={handleNext}
 						/>
-						<BenefitSummary month={month} count={benefitsForMonth.length} />
+						<BenefitSummary month={month} count={count} />
 					</View>
-					<BenefitList benefits={benefitsForMonth} />
+					{isLoading ? (
+						<View className="flex-1 items-center justify-center">
+							<ActivityIndicator />
+						</View>
+					) : isError ? (
+						<View className="flex-1 items-center justify-center">
+							<Text className="text-danger">{String(error)}</Text>
+						</View>
+					) : count === 0 ? (
+						<View className="flex-1 items-center justify-center">
+							<BenefitEmptyState />
+						</View>
+					) : (
+						<BenefitList
+							benefits={benefits}
+							onReviewPress={handleReviewPress}
+						/>
+					)}
 				</ScrollView>
 			</View>
 		</PageLayout>

@@ -9,8 +9,8 @@ import { InfoBanner } from "@/shared/ui/info";
 import { PageLayout } from "@/shared/ui/layout";
 
 import {
-	type PendingContract,
 	MOCK_PENDING_CONTRACTS,
+	type PendingContract,
 } from "../model/mockPendingContracts";
 
 interface PendingContractRowProps {
@@ -49,9 +49,8 @@ function PendingContractRow({
 export function AdminPendingContractsPage() {
 	const router = useRouter();
 	const [contracts, setContracts] = useState(MOCK_PENDING_CONTRACTS);
-	const [selectedContract, setSelectedContract] = useState<PendingContract | null>(
-		null,
-	);
+	const [selectedContract, setSelectedContract] =
+		useState<PendingContract | null>(null);
 
 	const handleDelete = () => {
 		if (!selectedContract) return;

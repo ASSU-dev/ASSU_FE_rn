@@ -1,7 +1,7 @@
 export interface PageableParams {
 	page?: number;
 	size?: number;
-	sort?: string[];
+	sort?: string;
 }
 
 export interface SortObjectDto {
@@ -46,4 +46,37 @@ export interface CheckReviewResponseDto {
 
 export interface StandardScoreResponseDto {
 	score: number;
+}
+
+export interface WriteReviewRequestDto {
+	content: string;
+	rate: number;
+	storeId: number;
+	partnerId: number;
+	partnershipUsageId: number;
+	adminName: string;
+}
+
+export interface ReviewImageFile {
+	uri: string;
+	name: string;
+	type: string;
+}
+
+export interface CreateReviewVariables {
+	request: WriteReviewRequestDto;
+	reviewImages?: ReviewImageFile[];
+}
+
+export interface WriteReviewResponseDto {
+	reviewId: number;
+	content: string;
+	rate: number;
+	createdAt: string;
+	memberId: number;
+	reviewImageUrls?: string[];
+}
+
+export interface DeleteReviewResponseDto {
+	reviewId: number;
 }

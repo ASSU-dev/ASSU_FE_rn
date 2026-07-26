@@ -7,6 +7,7 @@ import {
 	View,
 } from "react-native";
 import { ReviewCard, useStudentReviews } from "@/entities/review";
+import { useDeleteReviewAction } from "@/features/review-management";
 import { SortArrowDownIcon } from "@/shared/assets/icons";
 import {
 	type SortOrder,
@@ -33,6 +34,7 @@ const listContentStyle = {
 export function MyReviewsPage() {
 	const [isSortSheetVisible, setSortSheetVisible] = useState(false);
 	const { data, isLoading, isError, error } = useStudentReviews();
+	const { requestDelete, deletingReviewId } = useDeleteReviewAction();
 	const {
 		sort,
 		setSort,
@@ -44,10 +46,14 @@ export function MyReviewsPage() {
 		({ item }: { item: Review }) => (
 			<ReviewCard
 				review={item}
-				action={{ label: "삭제하기", onPress: () => {} }}
+				title={item.storeName}
+				action={{
+					label: deletingReviewId === item.id ? "삭제 중..." : "삭제하기",
+					onPress: () => requestDelete(item.id),
+				}}
 			/>
 		),
-		[],
+		[deletingReviewId, requestDelete],
 	);
 
 	return (
