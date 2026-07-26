@@ -1,6 +1,4 @@
 import {
-	type ComponentProps,
-	type ElementRef,
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
@@ -46,16 +44,16 @@ export type KakaoMapMarker = {
 
 const SOONGSIL = { lat: 37.4963, lng: 126.9572 };
 
- export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(                                                                     
-        function KakaoMap(                                                                                                               
-                { initialCenter = SOONGSIL, myLocation, heading, markers = [] },                                                         
-                ref,                                                                                                                     
-        ) {                                                                                                                              
-                const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();                                                             
-                const webViewRef = useRef<WebView>(null);                                                                                
-                const prevMarkersRef = useRef<string>("");                                                                               
-                const [isMapReady, setIsMapReady] = useState(false);                                                                     
-                const webViewSource = useMemo<KakaoWebViewSource | null>(() => {              
+export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
+	function KakaoMap(
+		{ initialCenter = SOONGSIL, myLocation, heading, markers = [] },
+		ref,
+	) {
+		const appKey = process.env.EXPO_PUBLIC_KAKAO_JS_KEY?.trim();
+		const webViewRef = useRef<WebView>(null);
+		const prevMarkersRef = useRef<string>("");
+		const [isMapReady, setIsMapReady] = useState(false);
+		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
 
 			return {

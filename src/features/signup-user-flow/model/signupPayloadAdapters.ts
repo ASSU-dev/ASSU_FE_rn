@@ -8,7 +8,7 @@ import {
 	type PartnerSignUpRequestDTO,
 	type SignupPartnerBody,
 } from "@/shared/api";
-import { findAddressOption, getAdminCompletionName } from "./admin";
+import { getAdminCompletionName } from "./admin";
 import type { SignupFormState } from "./types";
 
 export function toStudentSignupPayload(form: SignupFormState) {
@@ -119,7 +119,7 @@ async function createMockAdminSealImage(): Promise<AdminSealFile> {
 }
 
 export async function toAdminSignupBody(form: SignupFormState) {
-	const addressOption = findAddressOption(form.admin.officeAddressId);
+	const addressOption = { label: form.admin.officeAddress };
 	const request: AdminSignUpRequestDTO = {
 		phoneNumber: form.identity.phone || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
@@ -170,7 +170,7 @@ async function createMockPartnerLicenseImage(): Promise<PartnerLicenseFile> {
 }
 
 export async function toPartnerSignupBody(form: SignupFormState) {
-	const addressOption = findAddressOption(form.partner.officeAddressId);
+	const addressOption = { label: form.partner.officeAddress };
 	const request: PartnerSignUpRequestDTO = {
 		phoneNumber: form.identity.phone || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,

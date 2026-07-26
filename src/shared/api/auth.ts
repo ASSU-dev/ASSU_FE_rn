@@ -130,13 +130,13 @@ async function restoreAuth(): Promise<InitAuthResult> {
 		const role =
 			decodeAccessTokenRole(newAccess) ??
 			((await getUserRole()) as UserRole | null);
-    const basicInfo = await getUserBasicInfo();
+		const basicInfo = await getUserBasicInfo();
 		useAuthStore.getState().setAccessToken(newAccess);
 		if (role) {
 			useAuthStore.getState().setRole(role);
 			await setUserRole(role);
 		}
-    useAuthStore.getState().setBasicInfo(basicInfo);
+		useAuthStore.getState().setBasicInfo(basicInfo);
 		await setAccessToken(newAccess);
 		await setRefreshToken(newRefresh);
 

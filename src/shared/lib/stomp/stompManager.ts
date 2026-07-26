@@ -5,6 +5,7 @@ import { useAuthStore } from "@/shared/lib/auth/authStore";
 
 export class StompManager {
 	private client: Client;
+	private receiptSequence = 0;
 	private subRegistry = new Map<
 		symbol,
 		{ topic: string; callback: (msg: IMessage) => void }
@@ -31,7 +32,7 @@ export class StompManager {
 		this.client.onConnect = () => {
 			console.log("[STOMP] connected");
 			for (const [key, { topic, callback }] of this.subRegistry.entries()) {
-				this.stompSubs.set(key, this.client.subscribe(topic, callback));
+				this.subscribe(key, topic, callback, "resubscribed");
 			}
 		};
 
@@ -47,6 +48,41 @@ export class StompManager {
 
 		this.client.onWebSocketError = (evt) => {
 			console.log("[STOMP WS ERR]", evt);
+		};
+
+		this.client.onWebSocketClose = (evt) => {
+			if (__DEV__) {
+				console.log("[STOMP WS CLOSE]", {
+					code: evt.code,
+					reason: evt.reason,
+					wasClean: evt.wasClean,
+				});
+			}
+		};
+
+		this.client.onUnhandledFrame = (frame) => {
+			if (__DEV__) {
+				console.log("[STOMP UNHANDLED FRAME]", {
+					command: frame.command,
+					headers: frame.headers,
+					body: frame.body,
+				});
+			}
+		};
+
+		this.client.onUnhandledMessage = (message) => {
+			if (__DEV__) {
+				console.log("[STOMP UNHANDLED MESSAGE]", {
+					headers: message.headers,
+					body: message.body,
+				});
+			}
+		};
+
+		this.client.onUnhandledReceipt = (frame) => {
+			if (__DEV__) {
+				console.log("[STOMP UNHANDLED RECEIPT]", frame.headers);
+			}
 		};
 	}
 
@@ -73,9 +109,15 @@ export class StompManager {
 	): () => void {
 		const key = Symbol();
 		this.subRegistry.set(key, { topic, callback });
+		if (__DEV__ && !this.client.connected) {
+			console.log("[STOMP SUBSCRIBE]", {
+				topic,
+				state: "queued",
+			});
+		}
 
 		if (this.client.connected) {
-			this.stompSubs.set(key, this.client.subscribe(topic, callback));
+			this.subscribe(key, topic, callback, "subscribed");
 		}
 		// 미연결 상태면 onConnect에서 subRegistry 기준으로 일괄 구독
 
@@ -87,10 +129,56 @@ export class StompManager {
 	}
 
 	// 메시지 발행
-	publish(destination: string, body: string): void {
-		if (this.client.connected) {
-			this.client.publish({ destination, body });
+	publish(destination: string, body: string): boolean {
+		if (!this.client.connected) return false;
+
+		const token = useAuthStore.getState().accessToken;
+		const receipt = this.createReceiptId("publish");
+		this.client.watchForReceipt(receipt, () => {
+			if (__DEV__) {
+				console.log("[STOMP PUBLISH RECEIPT]", { destination, receipt });
+			}
+		});
+		this.client.publish({
+			destination,
+			body,
+			headers: {
+				...(token ? { Authorization: `Bearer ${token}` } : {}),
+				"content-type": "application/json",
+				receipt,
+			},
+		});
+		return true;
+	}
+
+	private subscribe(
+		key: symbol,
+		topic: string,
+		callback: (msg: IMessage) => void,
+		state: "subscribed" | "resubscribed",
+	): void {
+		const token = useAuthStore.getState().accessToken;
+		const receipt = this.createReceiptId("subscribe");
+		this.client.watchForReceipt(receipt, () => {
+			if (__DEV__) {
+				console.log("[STOMP SUBSCRIBE RECEIPT]", { topic, receipt });
+			}
+		});
+		this.stompSubs.set(
+			key,
+			this.client.subscribe(topic, callback, {
+				...(token ? { Authorization: `Bearer ${token}` } : {}),
+				receipt,
+			}),
+		);
+		if (__DEV__) {
+			console.log("[STOMP SUBSCRIBE]", { topic, state, receipt });
 		}
+	}
+
+	private createReceiptId(operation: "publish" | "subscribe"): string {
+		this.receiptSequence += 1;
+		return `${operation}-${Date.now()}-${this.receiptSequence}`;
 	}
 }
 

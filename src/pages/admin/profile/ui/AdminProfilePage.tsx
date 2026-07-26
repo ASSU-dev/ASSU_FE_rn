@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
-import { useAccountSessionActions } from "@/features/account-session-management";
 import {
 	ProfileImageActionSheet,
 	useProfileImageEditor,
@@ -16,7 +15,6 @@ import {
 export function AdminProfilePage() {
 	const router = useRouter();
 	const profileImageEditor = useProfileImageEditor();
-	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{

@@ -18,6 +18,6 @@ export async function completeLogin(
 		throw new Error("로그인 응답에 역할 정보가 없습니다.");
 	}
 
-	await saveTokens(tokens.accessToken, tokens.refreshToken, role);
+	await saveTokens(tokens.accessToken, tokens.refreshToken, role, basicInfo);
 	return getHomeRouteByRole(role ?? null);
 }
