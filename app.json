@@ -10,12 +10,15 @@
 		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": true,
+			"bundleIdentifier": "com.ssu.assu",
+			"googleServicesFile": "./GoogleService-Info.plist",
 			"infoPlist": {
 				"NSCameraUsageDescription": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
 				"NSAppTransportSecurity": {
 					"NSAllowsArbitraryLoads": true
 				},
-				"NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 표시하기 위해 위치 권한이 필요합니다."
+				"NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 표시하기 위해 위치 권한이 필요합니다.",
+				"ITSAppUsesNonExemptEncryption": false
 			}
 		},
 		"android": {
@@ -66,7 +69,19 @@
 			"@react-native-community/datetimepicker",
 			"expo-web-browser",
 			"expo-secure-store",
-			"expo-font"
+			"expo-font",
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"useFrameworks": "static",
+						"forceStaticLinking": [
+							"RNFBApp",
+							"RNFBMessaging"
+						]
+					}
+				}
+			]
 		],
 		"experiments": {
 			"typedRoutes": true,
