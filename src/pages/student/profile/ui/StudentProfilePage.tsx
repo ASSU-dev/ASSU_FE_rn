@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { formatProfileSubtitle } from "@/entities/user/lib/formatProfileSubtitle";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { useAccountSessionActions } from "@/features/account-session-management";
@@ -18,6 +19,7 @@ import {
 export function StudentProfilePage() {
 	const router = useRouter();
 	const basicInfo = useUserBasicInfo();
+	const { data: studentProfile } = useStudentProfileQuery();
 	const profileImageEditor = useProfileImageEditor();
 	const accountSession = useAccountSessionActions();
 
@@ -60,8 +62,8 @@ export function StudentProfilePage() {
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name={basicInfo?.name ?? "사용자"}
-					subtitle={formatProfileSubtitle(basicInfo)}
+					name={studentProfile?.name ?? basicInfo?.name ?? "사용자"}
+					subtitle={formatProfileSubtitle(studentProfile ?? basicInfo)}
 					profileImage={profileImageEditor.imageSource}
 					onProfileImagePress={profileImageEditor.open}
 				/>

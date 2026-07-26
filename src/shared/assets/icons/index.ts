@@ -20,6 +20,8 @@ export { default as LocationIcon } from "./location-icon.svg";
 export { default as LoginCheckIcon } from "./login-check-icon.svg";
 export { default as LoginNoIcon } from "./login-no-icon.svg";
 export { default as Logo } from "./logo.svg";
+export { default as PartnershipGroupStatusIcon } from "./partnership-group-status.svg";
+export { default as PartnershipTicketIcon } from "./partnership-ticket.svg";
 export { default as QrIcon } from "./qr-icon.svg";
 export { default as SearchIcon } from "./search-icon.svg";
 export { default as SortArrowDownIcon } from "./sort-arrow-down.svg";

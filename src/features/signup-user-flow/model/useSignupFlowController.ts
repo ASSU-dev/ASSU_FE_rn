@@ -2,8 +2,6 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
-import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
-import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useCommonLoginAction } from "./useCommonLoginAction";
 import { usePartnerSignupAction } from "./usePartnerSignupAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";

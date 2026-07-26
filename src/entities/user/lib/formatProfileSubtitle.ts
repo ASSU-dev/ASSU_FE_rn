@@ -1,7 +1,7 @@
-import type { UserBasicInfo } from "../model/types";
+import type { StudentProfile, UserBasicInfo } from "../model/types";
 
 export function formatProfileSubtitle(
-	basicInfo: UserBasicInfo | null | undefined,
+	basicInfo: StudentProfile | UserBasicInfo | null | undefined,
 ): string | undefined {
 	const subtitle = [
 		basicInfo?.university,

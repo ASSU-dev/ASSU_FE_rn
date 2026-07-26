@@ -16,6 +16,7 @@ export type {
 export { getAssuApi as getCheckBlockApi } from "./_generated/auth/checkBlock";
 export type {
 	BaseResponseVoid,
+	BaseResponseVoidResult,
 	EmailVerificationCheckRequestDTO,
 } from "./_generated/auth/checkEmailAvailability";
 // checkEmailAvailability

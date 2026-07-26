@@ -59,6 +59,8 @@ export function useAccountSessionActions() {
 		]);
 	};
 
+	const executeLogout = () => endSession.mutate("logout");
+
 	const requestWithdrawal = () => {
 		Alert.alert(
 			"회원 탈퇴",
@@ -76,6 +78,7 @@ export function useAccountSessionActions() {
 
 	return {
 		isPending: endSession.isPending,
+		executeLogout,
 		requestLogout,
 		requestWithdrawal,
 	};
