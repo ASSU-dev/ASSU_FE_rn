@@ -22,9 +22,13 @@ type Role = "student" | "admin" | "partner";
 
 interface MapSearchPageProps {
 	userRole: Role;
+	onStorePress?: (store: SearchResultStore) => void;
 }
 
-export function MapSearchPage({ userRole: role }: MapSearchPageProps) {
+export function MapSearchPage({
+	userRole: role,
+	onStorePress,
+}: MapSearchPageProps) {
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
 	const inputRef = useRef<TextInput>(null);
@@ -85,7 +89,15 @@ export function MapSearchPage({ userRole: role }: MapSearchPageProps) {
 						data={searchResults}
 						keyExtractor={(item: SearchResultStore) => item.id}
 						renderItem={({ item }: { item: SearchResultStore }) => (
-							<SearchResultCard store={item} role={role} />
+							<SearchResultCard
+								store={item}
+								role={role}
+								onPress={
+									role === "student" && onStorePress && item.storeId
+										? () => onStorePress(item)
+										: undefined
+								}
+							/>
 						)}
 						ItemSeparatorComponent={SearchResultSeparator}
 						ListHeaderComponent={

@@ -1,17 +1,41 @@
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 
+import type { StoreMarker } from "@/entities/store";
 import { type MapViewport, useNearbyStores } from "@/features/map-search";
 import { KakaoMap, type KakaoMapHandle } from "@/shared/ui/kakao-map";
 import { useUserLocation } from "../model/useUserLocation";
 
 import { MapLocateButton } from "./MapLocateButton";
+import { MapSelectedStoreCard } from "./MapSelectedStoreCard";
 
-export function MapView() {
+interface MapViewProps {
+	partnershipMode?: boolean;
+	onStorePress?: (store: StoreMarker) => void;
+}
+
+export function MapView({
+	partnershipMode = false,
+	onStorePress,
+}: MapViewProps) {
 	const kakaoRef = useRef<KakaoMapHandle>(null);
 	const { center, myLocation, heading } = useUserLocation();
 	const viewport = center ? toViewport(center) : null;
 	const { data: nearbyStores = [] } = useNearbyStores(viewport);
+	const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
+	const mapMarkers = useMemo(
+		() =>
+			partnershipMode
+				? nearbyStores.filter((store) => store.hasPartner)
+				: nearbyStores,
+		[nearbyStores, partnershipMode],
+	);
+	const selectedStore =
+		mapMarkers.find((store) => store.id === selectedStoreId) ?? null;
+
+	useEffect(() => {
+		if (selectedStoreId && !selectedStore) setSelectedStoreId(null);
+	}, [selectedStore, selectedStoreId]);
 
 	const handleFocusToMyLocation = () => {
 		if (!myLocation) return;
@@ -26,13 +50,27 @@ export function MapView() {
 					initialCenter={center}
 					myLocation={myLocation}
 					heading={heading}
-					markers={nearbyStores}
+					markers={mapMarkers}
+					partnerMarkersEnabled={partnershipMode}
+					selectedMarkerId={selectedStoreId}
+					onMarkerPress={setSelectedStoreId}
+					onMapPress={() => setSelectedStoreId(null)}
 				/>
 			) : null}
 			<MapLocateButton
 				onPress={handleFocusToMyLocation}
 				disabled={!myLocation}
 			/>
+			{partnershipMode && selectedStore ? (
+				<View className="absolute bottom-[12px] left-[14px] right-[14px]">
+					<MapSelectedStoreCard
+						store={selectedStore}
+						onPress={
+							onStorePress ? () => onStorePress(selectedStore) : undefined
+						}
+					/>
+				</View>
+			) : null}
 		</View>
 	);
 }

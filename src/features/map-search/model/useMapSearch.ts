@@ -104,7 +104,8 @@ function pickList(value: unknown): unknown[] {
 function toSearchResultStore(value: unknown): SearchResultStore | null {
 	if (!isRecord(value)) return null;
 
-	const id = getString(value, ["id", "storeId", "placeId", "kakaoId"]);
+	const storeId = getString(value, ["storeId"]);
+	const id = storeId ?? getString(value, ["id", "placeId", "kakaoId"]);
 	const name = getString(value, ["name", "storeName", "placeName"]);
 	if (!id || !name) return null;
 	const hasPartnership =
@@ -113,6 +114,7 @@ function toSearchResultStore(value: unknown): SearchResultStore | null {
 	return {
 		id,
 		name,
+		storeId,
 		imageUri: getString(value, ["imageUri", "imageUrl", "storeImageUrl"]),
 		tag: getString(value, ["tag", "adminName", "affiliation", "category"]),
 		benefit: getString(value, [
@@ -155,6 +157,42 @@ function toAddressSearchItem(
 	};
 }
 
+function getBenefitText(value: unknown): string | undefined {
+	if (typeof value === "string" && value.trim().length > 0) return value.trim();
+	if (Array.isArray(value)) {
+		for (const item of value) {
+			const text = getBenefitText(item);
+			if (text) return text;
+		}
+		return undefined;
+	}
+	if (!isRecord(value)) return undefined;
+
+	const direct = getString(value, [
+		"benefitDescription",
+		"description",
+		"content",
+		"note",
+		"goodsName",
+	]);
+	if (direct) return direct;
+
+	const discountRate = getNumber(value, ["discountRate"]);
+	if (discountRate !== undefined) return `${discountRate}% 할인`;
+
+	return getBenefitText(value.benefits) ?? getBenefitText(value.goods);
+}
+
+function getStoreBenefit(value: UnknownRecord): string | undefined {
+	return (
+		getString(value, [
+			"benefit",
+			"benefitDescription",
+			"partnershipBenefit",
+			"description",
+		]) ?? getBenefitText(value.partnerships)
+	);
+}
 function toStoreMarker(value: unknown): StoreMarker | null {
 	if (!isRecord(value)) return null;
 
@@ -173,6 +211,23 @@ function toStoreMarker(value: unknown): StoreMarker | null {
 		latitude,
 		longitude,
 		count: getNumber(value, ["count", "usageCount"]),
+		hasPartner:
+			getBoolean(value, [
+				"hasPartner",
+				"isPartner",
+				"partner",
+				"isPartnered",
+			]) ?? false,
+		rate: getNumber(value, ["rate", "rating", "score"]) ?? 0,
+		benefit: getStoreBenefit(value),
+		imageUri: getString(value, [
+			"imageUri",
+			"imageUrl",
+			"storeImageUrl",
+			"profileImageUrl",
+			"thumbnailUrl",
+		]),
+		profileUrl: getString(value, ["profileUrl", "placeUrl"]),
 	};
 }
 

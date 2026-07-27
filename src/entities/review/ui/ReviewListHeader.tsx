@@ -1,29 +1,32 @@
-// 리뷰 목록 상단 컨트롤 행
-// 좌: 작성된 리뷰가 n건 있어요 / 우: 최신순·별점순 토글
-
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
+import { SortArrowDownIcon } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 
-export type SortType = "latest" | "oldest" | "rating";
+export type ReviewSortType = "latest" | "oldest" | "rating";
 
-const SORT_LABEL: Record<SortType, string> = {
+const SORT_LABELS: Record<ReviewSortType, string> = {
 	latest: "최신순",
 	oldest: "오래된순",
 	rating: "별점순",
 };
 
-interface Props {
+interface ReviewListHeaderProps {
 	count: number;
-	sort: SortType;
+	sort: ReviewSortType;
 	onPressSort: () => void;
+	countLabel?: string;
 }
 
-export function ReviewListHeader({ count, sort, onPressSort }: Props) {
+export function ReviewListHeader({
+	count,
+	sort,
+	onPressSort,
+	countLabel = "작성한 리뷰가",
+}: ReviewListHeaderProps) {
 	return (
 		<View className="flex-row items-center justify-between px-screen-m">
 			<Text className="text-sm font-medium text-content-primary">
-				작성된 리뷰가 <Text className="text-primary">{count}</Text>건 있어요
+				{countLabel} <Text className="text-primary">{count}</Text>건 있어요
 			</Text>
 			<Pressable
 				onPress={onPressSort}
@@ -31,11 +34,11 @@ export function ReviewListHeader({ count, sort, onPressSort }: Props) {
 				className="flex-row items-center gap-[5px]"
 			>
 				<Text className="text-sm font-medium text-content-primary">
-					{SORT_LABEL[sort]}
+					{SORT_LABELS[sort]}
 				</Text>
-				<Ionicons
-					name="chevron-down"
-					size={16}
+				<SortArrowDownIcon
+					width={20}
+					height={20}
 					color={colorTokens.contentPrimary}
 				/>
 			</Pressable>

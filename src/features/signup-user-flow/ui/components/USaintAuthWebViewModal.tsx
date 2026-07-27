@@ -22,22 +22,47 @@ export function USaintAuthWebViewModal({
 		processedRef.current = false;
 	}, [visible]);
 
-	const processAuthUrl = (url: string) => {
+	const processAuthUrl = (url: string, source: string) => {
 		if (processedRef.current) return;
 
 		try {
 			const parsedUrl = new URL(url);
-			const sToken = parsedUrl.searchParams.get("sToken");
-			const sIdno = parsedUrl.searchParams.get("sIdno");
+			const hashParams = new URLSearchParams(
+				parsedUrl.hash.replace(/^#\??/, ""),
+			);
+			const sToken =
+				parsedUrl.searchParams.get("sToken") ?? hashParams.get("sToken");
+			const sIdno =
+				parsedUrl.searchParams.get("sIdno") ?? hashParams.get("sIdno");
+
+			if (__DEV__)
+				console.log("[LMS WEBVIEW] navigation", {
+					source,
+					host: parsedUrl.host,
+					pathname: parsedUrl.pathname,
+					queryKeys: Array.from(parsedUrl.searchParams.keys()),
+					hashKeys: Array.from(hashParams.keys()),
+					hasSToken: Boolean(sToken),
+					hasSIdno: Boolean(sIdno),
+				});
 
 			if (!sToken || !sIdno) return;
 
 			processedRef.current = true;
+			if (__DEV__)
+				console.log("[LMS WEBVIEW] auth payload detected", {
+					sTokenLength: sToken.length,
+					sIdnoLength: sIdno.length,
+				});
 			Promise.resolve(onVerifySuccess({ sToken, sIdno })).finally(() => {
 				processedRef.current = false;
 			});
-		} catch {
-			// Ignore non-standard intermediate WebView URLs.
+		} catch (error) {
+			if (__DEV__)
+				console.log(
+					"[LMS WEBVIEW] URL parse skipped",
+					error instanceof Error ? error.message : "unknown error",
+				);
 		}
 	};
 
@@ -68,9 +93,15 @@ export function USaintAuthWebViewModal({
 					thirdPartyCookiesEnabled
 					domStorageEnabled
 					javaScriptEnabled
+					onShouldStartLoadWithRequest={(request) => {
+						processAuthUrl(request.url, "shouldStart");
+						return true;
+					}}
 					onNavigationStateChange={(navState) => {
-						if (navState.loading) return;
-						processAuthUrl(navState.url);
+						processAuthUrl(navState.url, "navigationState");
+					}}
+					onLoadEnd={(event) => {
+						processAuthUrl(event.nativeEvent.url, "loadEnd");
 					}}
 				/>
 			</View>

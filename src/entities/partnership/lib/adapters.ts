@@ -12,6 +12,7 @@ import type {
 	EtcBenefitItem,
 	Partnership,
 	PartnershipContract,
+	ReviewableBenefit,
 	ServiceBenefitItem,
 } from "../model/types";
 
@@ -119,15 +120,19 @@ export function toPartnerAffiliationSummary(
 	};
 }
 
-export function toPartnershipBenefit(dto: UsageDetailDto): Benefit {
+export function toPartnershipBenefit(dto: UsageDetailDto): ReviewableBenefit {
 	const [date, timePart] = dto.usedAt.split("T");
 	const time = timePart?.substring(0, 5) ?? "";
 
 	return {
 		id: dto.partnershipUsageId.toString(),
+		storeId: dto.storeId,
+		partnerId: dto.partnerId,
+		adminName: dto.adminName,
 		storeName: dto.storeName,
 		date,
 		time,
 		description: dto.benefitDescription,
+		isReviewed: dto.isReviewed,
 	};
 }

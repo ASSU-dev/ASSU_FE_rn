@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { apiInstance } from "@/shared/api/instance";
 import { toPartnershipBenefit } from "../lib/adapters";
 import type { BaseResponse, MyPartnershipDto } from "../model/api-types";
-import type { Benefit } from "../model/types";
+import type { ReviewableBenefit } from "../model/types";
 
 interface MyPartnerships {
 	serviceCount: number;
-	details: Benefit[];
+	details: ReviewableBenefit[];
 }
 
 async function fetchMyPartnerships(

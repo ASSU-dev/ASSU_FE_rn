@@ -11,6 +11,9 @@ import {
 } from "react-native";
 import {
 	ReviewCard,
+	ReviewListHeader,
+	type ReviewSortType,
+	ReviewSummary,
 	usePartnerReviewAverage,
 	usePartnerReviews,
 } from "@/entities/review";
@@ -21,10 +24,8 @@ import { DarkSelectBottomSheet } from "@/shared/ui/bottom-sheet";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import type { Review } from "../model/types";
-import { ReviewListHeader, type SortType } from "./ReviewListHeader";
-import { ReviewSummary } from "./ReviewSummary";
 
-const SORT_ITEMS: { label: string; value: SortType }[] = [
+const SORT_ITEMS: { label: string; value: ReviewSortType }[] = [
 	{ label: "최신순", value: "latest" },
 	{ label: "오래된순", value: "oldest" },
 	{ label: "별점순", value: "rating" },
@@ -37,7 +38,7 @@ const listContentStyle = {
 } as const;
 
 export function PartnerReviewPage() {
-	const [sort, setSort] = useState<SortType>("latest");
+	const [sort, setSort] = useState<ReviewSortType>("latest");
 	const [isSortSheetVisible, setSortSheetVisible] = useState(false);
 	const report = useReportReview();
 	const {
@@ -76,7 +77,6 @@ export function PartnerReviewPage() {
 				contentContainerClassName="flex-1"
 				withBottomInset
 			>
-				{/* 고정 상단 영역 */}
 				<View className="flex-row items-center px-gutter py-[12px]">
 					<Pressable onPress={() => router.back()} hitSlop={8}>
 						<BackArrowIcon
@@ -86,7 +86,7 @@ export function PartnerReviewPage() {
 						/>
 					</Pressable>
 					<View className="flex-1 items-center">
-						<Text className="text-[20px] font-semibold text-content-primary leading-caption tracking-caption">
+						<Text className="text-[20px] font-semibold leading-caption tracking-caption text-content-primary">
 							고객리뷰
 						</Text>
 					</View>
@@ -100,19 +100,19 @@ export function PartnerReviewPage() {
 					/>
 				</View>
 
-				<View className="px-screen-m mt-gutter">
+				<View className="mt-gutter px-screen-m">
 					<InfoBanner message="제휴 혜택을 이용한 사용자들의 리뷰에요" />
 				</View>
 
-				<View className="mt-[16px] pb-[16px]">
+				<View className="pb-[16px] pt-[16px]">
 					<ReviewListHeader
-						count={sortedReviews.length}
+						count={reviewPage?.totalElements ?? sortedReviews.length}
+						countLabel="작성된 리뷰가"
 						sort={sort}
 						onPressSort={() => setSortSheetVisible(true)}
 					/>
 				</View>
 
-				{/* 카드 스크롤 영역 */}
 				{isReviewsLoading ? (
 					<View className="flex-1 items-center justify-center">
 						<ActivityIndicator />

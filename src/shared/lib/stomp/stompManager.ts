@@ -5,6 +5,8 @@ import { useAuthStore } from "@/shared/lib/auth/authStore";
 
 export class StompManager {
 	private client: Client;
+	private readonly brokerUrl = ENV.STOMP_BROKER_URL.trim();
+	private readonly isBrokerUrlValid = /^wss?:\/\/\S+$/i.test(this.brokerUrl);
 	private receiptSequence = 0;
 	private subRegistry = new Map<
 		symbol,
@@ -14,7 +16,7 @@ export class StompManager {
 
 	constructor() {
 		this.client = new Client({
-			webSocketFactory: () => new WebSocket(ENV.STOMP_BROKER_URL),
+			webSocketFactory: () => new WebSocket(this.brokerUrl),
 			reconnectDelay: 5000,
 			heartbeatIncoming: 10000,
 			heartbeatOutgoing: 10000,
@@ -91,6 +93,13 @@ export class StompManager {
 	}
 
 	activate(): void {
+		if (!this.isBrokerUrlValid) {
+			console.warn(
+				"[STOMP] connection skipped: EXPO_PUBLIC_STOMP_BROKER_URL must use ws:// or wss://",
+			);
+			return;
+		}
+
 		if (!this.client.active) {
 			this.client.activate();
 		}

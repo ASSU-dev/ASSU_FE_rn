@@ -6,6 +6,13 @@ export interface Benefit {
 	description: string;
 }
 
+export interface ReviewableBenefit extends Benefit {
+	storeId: number;
+	partnerId: number;
+	adminName: string;
+	isReviewed: boolean;
+}
+
 export const SERVICE_TYPES = ["서비스 제공", "할인 혜택", "기타 혜택"] as const;
 export type ServiceType = (typeof SERVICE_TYPES)[number];
 export type BenefitCriteria = "금액" | "인원수";
