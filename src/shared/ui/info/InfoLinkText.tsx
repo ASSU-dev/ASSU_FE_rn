@@ -12,7 +12,7 @@ export function InfoLinkText({ message, onPress }: InfoLinkTextProps) {
 		<Pressable onPress={onPress} className="flex-row items-center gap-1">
 			<InfoIcon width={10} height={10} />
 			<Text
-				className="text-[11px] flex-shrink"
+				className="text-[11px] font-regular flex-shrink"
 				style={{ color: colorTokens.contentSecondary }}
 			>
 				{message}

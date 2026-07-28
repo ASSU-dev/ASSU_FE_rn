@@ -5,14 +5,6 @@ export function LoginPage() {
 	return (
 		<View className="flex-1 items-center justify-center bg-canvas">
 			<Text className="mb-4 text-content-primary font-medium">로그인</Text>
-			<Pressable
-				className="rounded-lg bg-primary px-4 py-3"
-				onPress={() => router.push("/")}
-			>
-				<Text className="text-sm font-semibold text-content-inverse">
-					허브로 돌아가기
-				</Text>
-			</Pressable>
 		</View>
 	);
 }
