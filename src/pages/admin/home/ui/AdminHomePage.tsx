@@ -6,14 +6,13 @@ import {
 	useAdminPartnerRecommend,
 	useAdminPartnerships,
 } from "@/entities/partnership";
+import { useOpenChatRoom } from "@/features/chat";
 import { BellFill, Logo } from "@/shared/assets/icons";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PageTitle } from "@/shared/ui/page-title";
 import { SummaryCard } from "@/shared/ui/summary-card";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
-
-const noop = () => {};
 
 function AdminHeaderSection({
 	onNotificationPress,
@@ -32,6 +31,7 @@ function AdminHeaderSection({
 
 function RecommendationSection() {
 	const { data } = useAdminPartnerRecommend();
+	const { openChatRoom } = useOpenChatRoom();
 	const summary = data ? toAdminAffiliationSummary(data) : null;
 
 	if (!summary) return null;
@@ -47,7 +47,9 @@ function RecommendationSection() {
 				status={summary.status}
 				dateRange={summary.dateRange}
 				actionLabel="문의하기"
-				onActionPress={noop}
+				onActionPress={() =>
+					openChatRoom({ role: "admin", targetId: summary.partnerId })
+				}
 			/>
 		</View>
 	);

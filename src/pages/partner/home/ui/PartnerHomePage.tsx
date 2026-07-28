@@ -6,6 +6,7 @@ import {
 	usePartnerAdminRecommend,
 	usePartnerPartnerships,
 } from "@/entities/partnership";
+import { useOpenChatRoom } from "@/features/chat";
 import { AppHeader } from "@/shared/ui/app-header";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
@@ -17,6 +18,7 @@ const noop = () => {};
 
 export function PartnerHomePage() {
 	const router = useRouter();
+	const { openChatRoom } = useOpenChatRoom();
 
 	const { data: partnershipsData, isError: isPartnershipsError } =
 		usePartnerPartnerships();
@@ -76,7 +78,9 @@ export function PartnerHomePage() {
 				{summaries.length > 0 && (
 					<PartnershipRecommendationWidget
 						summaries={summaries}
-						onContactPress={noop}
+						onContactPress={(adminId) =>
+							openChatRoom({ role: "partner", targetId: adminId })
+						}
 					/>
 				)}
 			</View>

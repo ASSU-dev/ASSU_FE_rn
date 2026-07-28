@@ -11,9 +11,11 @@ export interface UserBasicInfo {
 
 interface AuthState {
 	accessToken: string | null;
+	memberId: number | null;
 	role: UserRole | null;
 	basicInfo: UserBasicInfo | null;
 	setAccessToken: (token: string) => void;
+	setMemberId: (memberId: number | null) => void;
 	setRole: (role: UserRole) => void;
 	setBasicInfo: (basicInfo: UserBasicInfo | null) => void;
 	clearAccessToken: () => void;
@@ -21,11 +23,13 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
 	accessToken: null,
+	memberId: null,
 	role: null,
 	basicInfo: null,
 	setAccessToken: (token) => set({ accessToken: token }),
+	setMemberId: (memberId) => set({ memberId }),
 	setRole: (role) => set({ role }),
 	setBasicInfo: (basicInfo) => set({ basicInfo }),
 	clearAccessToken: () =>
-		set({ accessToken: null, role: null, basicInfo: null }),
+		set({ accessToken: null, memberId: null, role: null, basicInfo: null }),
 }));

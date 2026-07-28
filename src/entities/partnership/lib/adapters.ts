@@ -17,6 +17,7 @@ import type {
 } from "../model/types";
 
 export interface AdminAffiliationSummary {
+	partnerId: number;
 	title: string;
 	address: string;
 	partnerUrl?: string;
@@ -25,6 +26,7 @@ export interface AdminAffiliationSummary {
 }
 
 export interface PartnerAffiliationSummary {
+	adminId: number;
 	title: string;
 	address: string;
 }
@@ -102,6 +104,7 @@ export function toAdminAffiliationSummary(
 		Boolean,
 	);
 	return {
+		partnerId: dto.partnerId,
 		title: dto.partnerName,
 		address: addressParts.join(" "),
 		partnerUrl: dto.partnerUrl,
@@ -115,6 +118,7 @@ export function toPartnerAffiliationSummary(
 		Boolean,
 	);
 	return {
+		adminId: dto.adminId,
 		title: dto.adminName,
 		address: addressParts.join(" "),
 	};

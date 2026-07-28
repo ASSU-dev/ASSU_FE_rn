@@ -8,10 +8,11 @@ import { useChatRoomList } from "@/features/chat/model/useChatRoomList";
 import { useChatWebSocket } from "@/features/chat/model/useChatWebSocket";
 import { useBlockMutation } from "@/features/chat-block-user/api/useBlockMutation";
 import { useLeaveChattingRoomMutation } from "@/features/chat-leave-room/api/useLeaveChattingRoomMutation";
+import { useAuthStore } from "@/shared/lib/auth/authStore";
 
 // 채팅방 전체 상태·액션 통합 훅
 export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
-	const userId = 21; // TODO: useAuthStore에서 가져오기
+	const userId = useAuthStore((state) => state.memberId);
 	const queryClient = useQueryClient();
 
 	const { rooms } = useChatRoomList();
@@ -76,7 +77,7 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 	}, [roomId, queryClient, readMessage]);
 
 	// 메시지 발행
-	const { sendMessage } = useChatWebSocket(Number(roomId), () =>
+	const { sendMessage } = useChatWebSocket(Number(roomId), userId, () =>
 		readMessage(Number(roomId)),
 	);
 
@@ -84,6 +85,8 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 	const leaveMutation = useLeaveChattingRoomMutation();
 
 	function handleSend(text: string) {
+		if (!userId || !room?.opponentId) return;
+
 		updateChatCache({
 			messageId: Date.now(),
 			message: text,
@@ -92,14 +95,12 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 			messageType: "TEXT",
 			unreadCountForSender: 1,
 		});
-		if (userId && room?.opponentId) {
-			sendMessage({
-				roomId: Number(roomId),
-				senderId: userId,
-				receiverId: room.opponentId,
-				message: text,
-			});
-		}
+		sendMessage({
+			roomId: Number(roomId),
+			senderId: userId,
+			receiverId: room.opponentId,
+			message: text,
+		});
 	}
 
 	function handleBlock() {

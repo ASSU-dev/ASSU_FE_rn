@@ -3,6 +3,7 @@ import type { UserBasicInfo } from "@/shared/lib/auth/authStore";
 
 const REFRESH_TOKEN_KEY = "refreshToken";
 const ACCESS_TOKEN_KEY = "accessToken";
+const USER_MEMBER_ID_KEY = "userMemberId";
 const USER_ROLE_KEY = "userRole";
 const USER_BASIC_INFO_KEY = "userBasicInfo";
 const DEVICE_TOKEN_ID_KEY = "deviceTokenId";
@@ -17,6 +18,22 @@ export async function getAccessToken() {
 
 export async function deleteAccessToken() {
 	await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+}
+
+export async function setUserMemberId(memberId: number) {
+	await SecureStore.setItemAsync(USER_MEMBER_ID_KEY, String(memberId));
+}
+
+export async function getUserMemberId(): Promise<number | null> {
+	const value = await SecureStore.getItemAsync(USER_MEMBER_ID_KEY);
+	if (!value) return null;
+
+	const memberId = Number(value);
+	return Number.isSafeInteger(memberId) && memberId > 0 ? memberId : null;
+}
+
+export async function deleteUserMemberId() {
+	await SecureStore.deleteItemAsync(USER_MEMBER_ID_KEY);
 }
 
 export async function setRefreshToken(token: string) {

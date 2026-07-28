@@ -5,14 +5,17 @@ import {
 	deleteAccessToken,
 	deleteRefreshToken,
 	deleteUserBasicInfo,
+	deleteUserMemberId,
 	deleteUserRole,
 	getAccessToken,
 	getRefreshToken,
 	getUserBasicInfo,
+	getUserMemberId,
 	getUserRole,
 	setAccessToken,
 	setRefreshToken,
 	setUserBasicInfo,
+	setUserMemberId,
 	setUserRole,
 } from "./token-storage";
 
@@ -62,6 +65,7 @@ export async function saveTokens(
 	refreshToken: string,
 	role?: UserRole | string | null,
 	basicInfo?: UserBasicInfo | null,
+	memberId?: number | null,
 ) {
 	const resolvedRole = role
 		? (role as UserRole)
@@ -70,6 +74,17 @@ export async function saveTokens(
 	useAuthStore.getState().setAccessToken(accessToken);
 	await setAccessToken(accessToken);
 	await setRefreshToken(refreshToken);
+	if (
+		typeof memberId === "number" &&
+		Number.isSafeInteger(memberId) &&
+		memberId > 0
+	) {
+		useAuthStore.getState().setMemberId(memberId);
+		await setUserMemberId(memberId);
+	} else {
+		useAuthStore.getState().setMemberId(null);
+		await deleteUserMemberId();
+	}
 	if (resolvedRole) {
 		useAuthStore.getState().setRole(resolvedRole);
 		await setUserRole(resolvedRole);
@@ -91,6 +106,7 @@ export async function clearTokens() {
 	useAuthStore.getState().clearAccessToken();
 	await deleteAccessToken();
 	await deleteRefreshToken();
+	await deleteUserMemberId();
 	await deleteUserRole();
 	initAuthResult = { isLoggedIn: false, role: null };
 	initAuthPromise = null;
@@ -124,14 +140,26 @@ async function restoreAuth(): Promise<InitAuthResult> {
 				},
 			},
 		);
-		const { newAccess, newRefresh } = res.data.result ?? {};
+		const {
+			newAccess,
+			newRefresh,
+			memberId: refreshedMemberId,
+		} = res.data.result ?? {};
 		if (!newAccess || !newRefresh) return { isLoggedIn: false, role: null };
 
 		const role =
 			decodeAccessTokenRole(newAccess) ??
 			((await getUserRole()) as UserRole | null);
 		const basicInfo = await getUserBasicInfo();
+		const storedMemberId = await getUserMemberId();
+		const memberId =
+			typeof refreshedMemberId === "number" &&
+			Number.isSafeInteger(refreshedMemberId) &&
+			refreshedMemberId > 0
+				? refreshedMemberId
+				: storedMemberId;
 		useAuthStore.getState().setAccessToken(newAccess);
+		useAuthStore.getState().setMemberId(memberId);
 		if (role) {
 			useAuthStore.getState().setRole(role);
 			await setUserRole(role);
@@ -139,11 +167,13 @@ async function restoreAuth(): Promise<InitAuthResult> {
 		useAuthStore.getState().setBasicInfo(basicInfo);
 		await setAccessToken(newAccess);
 		await setRefreshToken(newRefresh);
+		if (memberId !== null) await setUserMemberId(memberId);
 
 		return { isLoggedIn: true, role };
 	} catch {
 		await deleteAccessToken();
 		await deleteRefreshToken();
+		await deleteUserMemberId();
 		await deleteUserRole();
 		await deleteUserBasicInfo();
 		return { isLoggedIn: false, role: null };

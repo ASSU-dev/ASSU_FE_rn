@@ -27,7 +27,7 @@ export function useStudentLoginAction() {
 				});
 				assertSuccess(response, "로그인에 실패했습니다.");
 
-				const { tokens, role, basicInfo } = response.result;
+				const { tokens, role, basicInfo, memberId } = response.result;
 				if (__DEV__)
 					console.log("[LMS LOGIN] API success", {
 						role,
@@ -35,7 +35,12 @@ export function useStudentLoginAction() {
 						hasRefreshToken: Boolean(tokens?.refreshToken),
 					});
 				if (__DEV__) console.log("[LMS LOGIN] saving session");
-				const homeRoute = await completeLogin(tokens ?? {}, role, basicInfo);
+				const homeRoute = await completeLogin(
+					tokens ?? {},
+					role,
+					basicInfo,
+					memberId,
+				);
 				if (__DEV__) console.log("[LMS LOGIN] session saved", { homeRoute });
 				setWebViewVisible(false);
 				if (__DEV__) console.log("[LMS LOGIN] WebView close requested");

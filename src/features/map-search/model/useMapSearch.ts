@@ -96,6 +96,29 @@ function pickList(value: unknown): unknown[] {
 	]) {
 		const nested = value[key];
 		if (Array.isArray(nested)) return nested;
+		if (isRecord(nested)) {
+			const nestedItems = pickList(nested);
+			if (nestedItems.length > 0) return nestedItems;
+		}
+	}
+
+	const id = getString(value, [
+		"storeId",
+		"partnerId",
+		"adminId",
+		"id",
+		"placeId",
+		"kakaoId",
+	]);
+	const name = getString(value, ["name", "storeName", "placeName"]);
+	if (id && name) return [value];
+
+	const values = Object.values(value);
+	if (
+		values.length > 0 &&
+		values.every((item) => Array.isArray(item) || isRecord(item))
+	) {
+		return values.flatMap((item) => (Array.isArray(item) ? item : [item]));
 	}
 
 	return [];
@@ -105,41 +128,47 @@ function toSearchResultStore(value: unknown): SearchResultStore | null {
 	if (!isRecord(value)) return null;
 
 	const storeId = getString(value, ["storeId"]);
-	const id = storeId ?? getString(value, ["id", "placeId", "kakaoId"]);
+	const partnerId = getString(value, ["partnerId"]);
+	const adminId = getString(value, ["adminId"]);
+	const id =
+		storeId ??
+		partnerId ??
+		adminId ??
+		getString(value, ["id", "placeId", "kakaoId"]);
 	const name = getString(value, ["name", "storeName", "placeName"]);
 	if (!id || !name) return null;
-	const hasPartnership =
-		value.partnershipId !== undefined || value.partnership !== undefined;
+	const partnershipId = getString(value, ["partnershipId"]);
 
 	return {
 		id,
 		name,
 		storeId,
+		partnerId,
+		adminId,
 		imageUri: getString(value, ["imageUri", "imageUrl", "storeImageUrl"]),
-		tag: getString(value, ["tag", "adminName", "affiliation", "category"]),
-		benefit: getString(value, [
-			"benefit",
-			"benefitDescription",
-			"partnershipBenefit",
-			"description",
-		]),
+		tag:
+			getString(value, ["tag", "adminName", "affiliation", "category"]) ??
+			getPartnershipAdminName(value.partnerships),
+		benefit: getStoreBenefit(value),
 		address: getString(value, ["address", "roadAddress", "storeAddress"]),
-		isPartner: getBoolean(value, ["isPartner", "partner"]) ?? hasPartnership,
+		rate: getNumber(value, ["rate", "rating", "score"]),
+		latitude: getNumber(value, ["latitude", "lat", "y"]),
+		longitude: getNumber(value, ["longitude", "lng", "lon", "x"]),
+		profileUrl: getString(value, ["profileUrl", "placeUrl"]),
+		phoneNumber: getString(value, ["phoneNumber", "phone"]),
+		isPartner:
+			getBoolean(value, [
+				"hasPartner",
+				"isPartnered",
+				"isPartner",
+				"partner",
+			]) ?? partnershipId !== undefined,
+		partnershipId,
 		partnershipStartDate: getString(value, [
 			"partnershipStartDate",
 			"startDate",
 		]),
 		partnershipEndDate: getString(value, ["partnershipEndDate", "endDate"]),
-	};
-}
-
-function toPlaceSearchResult(dto: PlaceSuggestionDto): SearchResultStore {
-	return {
-		id: dto.placeId,
-		name: dto.name,
-		tag: dto.category,
-		address: dto.roadAddress || dto.address,
-		isPartner: false,
 	};
 }
 
@@ -193,10 +222,30 @@ function getStoreBenefit(value: UnknownRecord): string | undefined {
 		]) ?? getBenefitText(value.partnerships)
 	);
 }
+
+function getPartnershipAdminName(value: unknown): string | undefined {
+	if (!Array.isArray(value)) return undefined;
+
+	for (const partnership of value) {
+		if (!isRecord(partnership)) continue;
+		const adminName = getString(partnership, ["adminName"]);
+		if (adminName) return adminName;
+	}
+
+	return undefined;
+}
+
 function toStoreMarker(value: unknown): StoreMarker | null {
 	if (!isRecord(value)) return null;
 
-	const id = getString(value, ["id", "storeId", "placeId", "kakaoId"]);
+	const storeId = getString(value, ["storeId"]);
+	const partnerId = getString(value, ["partnerId"]);
+	const adminId = getString(value, ["adminId"]);
+	const id =
+		storeId ??
+		partnerId ??
+		adminId ??
+		getString(value, ["id", "placeId", "kakaoId"]);
 	const name = getString(value, ["name", "storeName", "placeName"]);
 	const latitude = getNumber(value, ["latitude", "lat", "y"]);
 	const longitude = getNumber(value, ["longitude", "lng", "lon", "x"]);
@@ -207,6 +256,9 @@ function toStoreMarker(value: unknown): StoreMarker | null {
 	return {
 		id,
 		name,
+		storeId,
+		partnerId,
+		adminId,
 		address: getString(value, ["address", "roadAddress", "storeAddress"]) ?? "",
 		latitude,
 		longitude,
@@ -228,17 +280,11 @@ function toStoreMarker(value: unknown): StoreMarker | null {
 			"thumbnailUrl",
 		]),
 		profileUrl: getString(value, ["profileUrl", "placeUrl"]),
+		phoneNumber: getString(value, ["phoneNumber", "phone"]),
+		partnershipId: getString(value, ["partnershipId"]),
+		partnershipStartDate: getString(value, ["partnershipStartDate"]),
+		partnershipEndDate: getString(value, ["partnershipEndDate"]),
 	};
-}
-
-function dedupeStores(stores: SearchResultStore[]): SearchResultStore[] {
-	const seen = new Set<string>();
-	return stores.filter((store) => {
-		const key = `${store.id}:${store.name}`;
-		if (seen.has(key)) return false;
-		seen.add(key);
-		return true;
-	});
 }
 
 async function fetchNearbyRaw(viewport: MapViewport): Promise<unknown[]> {
@@ -280,43 +326,21 @@ const fetchSearchStores = async (
 ): Promise<SearchResultStore[]> => {
 	if (__DEV__)
 		console.log("[fetchSearchStores] 요청:", {
-			search: { endpoint: "/map/search", searchKeyword: query },
-			place: { endpoint: "/map/place", searchKeyword: query, limit: 10 },
+			endpoint: "/map/search",
+			searchKeyword: query,
 		});
-	const [storeSearchResult, placeSearchResult] = await Promise.allSettled([
-		apiInstance.get<BaseResponse<unknown>>("/map/search", {
-			params: { searchKeyword: query },
-		}),
-		apiInstance.get<BaseResponse<PlaceSuggestionDto[] | null>>("/map/place", {
-			params: { searchKeyword: query, limit: 10 },
-		}),
-	]);
-
-	const storeResult =
-		storeSearchResult.status === "fulfilled"
-			? storeSearchResult.value.data?.result
-			: undefined;
-	const placeResult =
-		placeSearchResult.status === "fulfilled"
-			? placeSearchResult.value.data?.result
-			: undefined;
-
-	const stores = pickList(storeResult)
+	const res = await apiInstance.get<BaseResponse<unknown>>("/map/search", {
+		params: { searchKeyword: query },
+	});
+	const stores = pickList(res.data?.result)
 		.map(toSearchResultStore)
 		.filter((store): store is SearchResultStore => store !== null);
-	const places = (Array.isArray(placeResult) ? placeResult : []).map(
-		toPlaceSearchResult,
-	);
-
-	const results = dedupeStores([...stores, ...places]);
 	if (__DEV__)
 		console.log("[fetchSearchStores] 응답:", {
-			storeCount: stores.length,
-			placeCount: places.length,
-			totalCount: results.length,
-			items: results,
+			count: stores.length,
+			items: stores,
 		});
-	return results;
+	return stores;
 };
 
 async function fetchPlaceAddresses(

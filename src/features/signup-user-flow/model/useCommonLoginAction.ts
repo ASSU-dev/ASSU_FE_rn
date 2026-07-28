@@ -18,8 +18,13 @@ export function useCommonLoginAction({ email, password }: Params) {
 			const response = await mutation.mutateAsync({ email, password });
 			assertSuccess(response, "로그인에 실패했습니다.");
 
-			const { tokens, role } = response.result;
-			const homeRoute = await completeLogin(tokens ?? {}, role);
+			const { tokens, role, basicInfo, memberId } = response.result;
+			const homeRoute = await completeLogin(
+				tokens ?? {},
+				role,
+				basicInfo,
+				memberId,
+			);
 			router.replace(homeRoute as never);
 		} catch (error) {
 			Alert.alert(

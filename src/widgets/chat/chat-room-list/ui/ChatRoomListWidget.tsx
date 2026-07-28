@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, View } from "react-native";
 import { ChatRoomItem } from "@/entities/chat";
 import { useChatListWebSocket } from "@/features/chat/model/useChatListWebSocket";
 import { useChatRoomList } from "@/features/chat/model/useChatRoomList";
+import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout";
 import { PageTitle } from "@/shared/ui/page-title";
@@ -25,7 +26,7 @@ interface ChatRoomListWidgetProps {
 
 export function ChatRoomListWidget({ userType }: ChatRoomListWidgetProps) {
 	const router = useRouter();
-	const userId = 21; // TODO: useAuthStore에서 가져오기
+	const userId = useAuthStore((state) => state.memberId);
 	const { rooms, isLoading, isError } = useChatRoomList();
 	useChatListWebSocket(userId);
 

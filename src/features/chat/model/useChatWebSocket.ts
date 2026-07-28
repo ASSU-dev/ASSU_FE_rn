@@ -18,14 +18,18 @@ export interface SendMessageParams {
 // - MESSAGE (상대방 발신): 상대 메시지 수신 → 캐시 추가 + onReceive 호출
 // - MESSAGE (내 발신): 상대가 이미 방에 있어 즉시 읽힌 경우 → 내 메시지 "1" 제거
 // - READ_RECEIPT (상대가 내 메시지 읽음): 내 메시지 "1" 제거
-export function useChatWebSocket(roomId: number, onReceive?: () => void) {
+export function useChatWebSocket(
+	roomId: number,
+	userId: number | null,
+	onReceive?: () => void,
+) {
 	const queryClient = useQueryClient();
 	// onReceive ref: 인라인 함수여도 effect 재실행 없이 최신 콜백 참조
 	const onReceiveRef = useRef(onReceive);
 	onReceiveRef.current = onReceive;
 
 	useEffect(() => {
-		const userId = 21; // TODO: useAuthStore에서 가져오기
+		if (userId === null) return;
 
 		// 내가 보낸 모든 메시지 unreadCountForSender → 0
 		function markSentMessagesRead() {
@@ -90,7 +94,7 @@ export function useChatWebSocket(roomId: number, onReceive?: () => void) {
 		);
 
 		return unsubscribe;
-	}, [roomId, queryClient]);
+	}, [roomId, userId, queryClient]);
 
 	// STOMP publish 래퍼 — 미연결 시 stompManager가 silently discard
 	const sendMessage = useCallback(
