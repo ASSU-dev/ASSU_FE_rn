@@ -2,14 +2,12 @@ import { memo } from "react";
 import { Text, View } from "react-native";
 import {
 	AffiliationSummaryCard,
-	type MOCK_PARTNER_AFFILIATION_SUMMARIES,
+	type PartnerAffiliationSummary,
 } from "@/entities/partnership";
 
-type AffiliationSummary = (typeof MOCK_PARTNER_AFFILIATION_SUMMARIES)[number];
-
 interface PartnershipRecommendationWidgetProps {
-	summaries: AffiliationSummary[];
-	onContactPress?: (title: string) => void;
+	summaries: PartnerAffiliationSummary[];
+	onContactPress?: (adminId: number) => void;
 }
 
 export const PartnershipRecommendationWidget = memo(
@@ -28,7 +26,7 @@ export const PartnershipRecommendationWidget = memo(
 							key={summary.title}
 							title={summary.title}
 							address={summary.address}
-							onPress={() => onContactPress?.(summary.title)}
+							onPress={() => onContactPress?.(summary.adminId)}
 						/>
 					))}
 				</View>

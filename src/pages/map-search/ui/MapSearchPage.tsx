@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Pressable,
 	StyleSheet,
@@ -11,6 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { PopularStore, SearchResultStore } from "@/entities/store";
+import { useOpenChatRoom } from "@/features/chat";
 import { usePopularStores, useSearchStores } from "@/features/map-search";
 import { BackArrowIcon, CloseIcon, LocationIcon } from "@/shared/assets/icons";
 import { useDebounce } from "@/shared/lib/hooks/useDebounce";
@@ -33,6 +35,7 @@ export function MapSearchPage({
 	const insets = useSafeAreaInsets();
 	const inputRef = useRef<TextInput>(null);
 	const [query, setQuery] = useState("");
+	const { openChatRoom } = useOpenChatRoom();
 	const debouncedQuery = useDebounce(query, 300);
 
 	const isSearching = debouncedQuery.trim().length > 0;
@@ -41,6 +44,23 @@ export function MapSearchPage({
 	const { data: popularStores = [] } = usePopularStores();
 	const { data: searchResults = [], isLoading: isSearchLoading } =
 		useSearchStores(debouncedQuery.trim());
+
+	const handleActionPress = (store: SearchResultStore) => {
+		if (role === "student") return;
+
+		if (store.isPartner && store.partnershipId) {
+			router.push(`/(protected)/partnership-contract/${store.partnershipId}`);
+			return;
+		}
+
+		const targetId = Number(role === "admin" ? store.partnerId : store.adminId);
+		if (!Number.isSafeInteger(targetId) || targetId <= 0) {
+			Alert.alert("채팅 연결 실패", "상대방 정보를 확인할 수 없습니다.");
+			return;
+		}
+
+		openChatRoom({ role, targetId });
+	};
 
 	return (
 		<View className="flex-1 bg-canvas">
@@ -53,17 +73,23 @@ export function MapSearchPage({
 				</Pressable>
 				<View className="flex-1 flex-row items-center gap-gutter rounded-[8px] bg-neutral p-gutter">
 					<LocationIcon width={14} height={18} />
-					<TextInput
-						ref={inputRef}
-						autoFocus
-						value={query}
-						onChangeText={setQuery}
-						className="flex-1 font-regular text-sm leading-caption tracking-caption text-content-primary"
-						placeholder="찾으시는 제휴 가게가 없나요?"
-						placeholderTextColor={colorTokens.contentSecondary}
-						returnKeyType="search"
-						style={{ padding: 0, includeFontPadding: false }}
-					/>
+					<View className="flex-1 justify-center" style={{ height: 21 }}>
+						<TextInput
+							ref={inputRef}
+							autoFocus
+							value={query}
+							onChangeText={setQuery}
+							className="w-full font-regular text-sm tracking-caption text-content-primary"
+							placeholder="찾으시는 제휴 가게가 없나요?"
+							placeholderTextColor={colorTokens.contentSecondary}
+							returnKeyType="search"
+							style={{
+								margin: 0,
+								padding: 0,
+								includeFontPadding: false,
+							}}
+						/>
+					</View>
 					{query.length > 0 && (
 						<Pressable onPress={() => setQuery("")} hitSlop={8}>
 							<CloseIcon width={16} height={16} />
@@ -96,6 +122,9 @@ export function MapSearchPage({
 									role === "student" && onStorePress && item.storeId
 										? () => onStorePress(item)
 										: undefined
+								}
+								onActionPress={
+									role !== "student" ? () => handleActionPress(item) : undefined
 								}
 							/>
 						)}

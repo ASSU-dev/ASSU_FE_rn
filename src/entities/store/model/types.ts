@@ -7,12 +7,19 @@ export interface Store {
 }
 
 export interface StoreMarker extends Store {
+	storeId?: string;
+	partnerId?: string;
+	adminId?: string;
 	count?: number;
 	hasPartner: boolean;
 	rate: number;
 	benefit?: string;
 	imageUri?: string;
 	profileUrl?: string;
+	phoneNumber?: string;
+	partnershipId?: string;
+	partnershipStartDate?: string;
+	partnershipEndDate?: string;
 }
 
 export interface StudentStoreCardData extends Store {
@@ -39,14 +46,22 @@ export interface SearchResultStore {
 	id: string;
 	name: string;
 	storeId?: string;
+	partnerId?: string;
+	adminId?: string;
 	imageUri?: string;
 	// student view
 	tag?: string;
 	benefit?: string;
 	// admin / partner view
 	address?: string;
+	rate?: number;
+	latitude?: number;
+	longitude?: number;
+	profileUrl?: string;
+	phoneNumber?: string;
 	// partner-specific
 	isPartner?: boolean;
+	partnershipId?: string;
 	partnershipStartDate?: string;
 	partnershipEndDate?: string;
 }

@@ -19,7 +19,7 @@ export const StampBoard = ({ currentCount = 0 }) => {
 				</Text>
 
 				<TouchableOpacity>
-					<Text className="text-content-tertiary text-xs mb-1">
+					<Text className="text-content-tertiary text-xs font-regular mb-1">
 						적립 내역 더보기 {">"}
 					</Text>
 				</TouchableOpacity>

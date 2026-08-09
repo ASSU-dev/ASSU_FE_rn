@@ -1,9 +1,10 @@
 import { router } from "expo-router";
-import { Pressable, ScrollView, Text } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { useStudentStampQuery } from "@/entities/user/api/useStudentStampQuery";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
+import { AssuLogoIcon } from "@/shared/assets/icons";
 import { PartnerRankingList } from "@/widgets/partner-ranking/ui/PartnerRankingList";
 import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
 
@@ -16,23 +17,23 @@ export function StudentHomePage() {
 
 	return (
 		<ScrollView className="flex-1 bg-canvas px-5 pt-10">
-			<Pressable
-				className="rounded-lg bg-primary px-4 py-3"
-				onPress={() => router.push("/")}
-			>
-				<Text className="text-sm font-semibold text-content-inverse">
-					허브로 돌아가기
-				</Text>
-			</Pressable>
+			<View className="mb-6">
+				<AssuLogoIcon width={122} height={40} />
+			</View>
+
 			<Text className="text-2xl font-bold mb-3">안녕하세요, {userName}님!</Text>
 			<Text className="text-2xl font-bold mb-6">
 				오늘은 어떤 할인을 받을까요?
 			</Text>
 
-			<QRScannerButton />
-			<StampBoard currentCount={userStampCount} />
+			<View className="gap-6">
+				<QRScannerButton />
+				<StampBoard currentCount={userStampCount} />
+			</View>
 
-			<PartnerRankingList />
+			<View className="mt-10 pb-10">
+				<PartnerRankingList />
+			</View>
 		</ScrollView>
 	);
 }

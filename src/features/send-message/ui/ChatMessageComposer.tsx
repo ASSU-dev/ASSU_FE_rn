@@ -34,7 +34,7 @@ export function ChatMessageComposer({
 					className="flex-1 font-light text-[14px] leading-[22px] text-content-primary"
 					style={{
 						paddingVertical: 0,
-						textAlignVertical: "top",
+						textAlignVertical: "center",
 						includeFontPadding: false,
 						minHeight: 22,
 						maxHeight: 220,

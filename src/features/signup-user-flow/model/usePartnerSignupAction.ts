@@ -21,9 +21,15 @@ export function usePartnerSignupAction({ form, onSuccess, onFailure }: Params) {
 			const response = await mutation.mutateAsync({ request, licenseImage });
 			assertSuccess(response, "제휴업체 회원가입에 실패했습니다.");
 
-			const { tokens, role } = response.result;
+			const { tokens, role, basicInfo, memberId } = response.result;
 			if (tokens?.accessToken && tokens.refreshToken) {
-				await saveTokens(tokens.accessToken, tokens.refreshToken, role);
+				await saveTokens(
+					tokens.accessToken,
+					tokens.refreshToken,
+					role,
+					basicInfo,
+					memberId,
+				);
 			}
 			onSuccess();
 		} catch (error) {
