@@ -26,7 +26,7 @@ export function PartnershipCompletePage() {
 
 			<View className="w-full flex-1 items-center justify-center px-screen-m pb-[40px]">
 				<View className="w-full items-center gap-[11px]">
-					<Text className="w-full text-center text-[25px] font-semibold leading-caption tracking-caption text-content-primary">
+					<Text className="w-full text-center text-[25px] font-semibold leading-[32px] tracking-caption text-content-primary">
 						제휴인증 완료
 					</Text>
 					<Text className="w-full text-center text-lg font-regular leading-caption tracking-caption text-content-secondary">
