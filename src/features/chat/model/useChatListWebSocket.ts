@@ -21,6 +21,15 @@ export function useChatListWebSocket(userId: number | null) {
 					const oldRooms: unknown[] =
 						data?.result ?? (Array.isArray(old) ? old : []);
 
+					// 새로운 채팅방이 추가된 경우
+					const roomExists = oldRooms.some(
+						(room) => (room as { roomId?: number }).roomId === dto.roomId,
+					);
+					if (!roomExists) {
+						queryClient.invalidateQueries({ queryKey: ["chatRoomList"] });
+						return old;
+					}
+
 					const updatedRooms = oldRooms.map((room) => {
 						const r = room as { roomId?: number };
 						if (r.roomId === dto.roomId) {
