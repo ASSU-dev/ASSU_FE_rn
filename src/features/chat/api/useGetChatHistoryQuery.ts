@@ -7,5 +7,6 @@ export function useGetChatHistoryQuery(roomId: number) {
 	return useQuery({
 		queryKey: ["chatMessages", roomId],
 		queryFn: () => getChatHistory(roomId),
+		staleTime: 0,
 	});
 }

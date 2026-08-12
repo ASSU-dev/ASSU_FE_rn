@@ -29,6 +29,7 @@ export function useInitFcm() {
 
 			const token = await getFcmToken();
 			if (!token) return;
+			console.log("[FCM] device token:", token);
 
 			const cachedToken = await getFcmDeviceToken();
 			if (token === cachedToken) return;
