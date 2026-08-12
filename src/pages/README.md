@@ -19,10 +19,6 @@
 
 ```text
 pages/
-├── dev-hub/
-│   ├── index.ts
-│   └── ui/
-│       └── DevHubPage.tsx
 ├── auth/
 │   ├── login/
 │   │   ├── index.ts
@@ -58,7 +54,6 @@ pages/
 ## 네이밍 규칙
 
 - 폴더명은 **라우트와 최대한 동일하게** 맞춥니다.
-  - `app/index.tsx` ↔ `pages/dev-hub/ui/DevHubPage.tsx`
   - `app/(protected)/(student)/(tabs)/home.tsx` ↔ `pages/student/home/ui/StudentHomePage.tsx`
   - `app/(auth)/login.tsx` ↔ `pages/auth/login/ui/LoginPage.tsx`
 - 컴포넌트명은 역할과 화면 의미가 드러나도록 명명합니다.
@@ -175,8 +170,6 @@ app/
 ```
 
 이 파일들은 라우트를 정의하고, 실제 화면은 `pages`에서 가져와 연결합니다.
-
-현재 `/` 개발 허브 화면도 `pages/dev-hub/ui/DevHubPage.tsx`에서 관리하고, `app/index.tsx`는 연결만 담당합니다.
 
 ## 참고
 

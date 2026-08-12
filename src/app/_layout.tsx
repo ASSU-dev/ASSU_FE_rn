@@ -14,6 +14,9 @@ import "react-native-url-polyfill/auto";
 
 initMocks();
 
+// 비로그인 상태의 진입 화면
+const REGISTER_ROUTE = "/(auth)/register";
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: { retry: 1, staleTime: 1000 * 60 },
@@ -41,9 +44,7 @@ export default function RootLayout() {
 
 	useEffect(() => {
 		initAuth().then(({ isLoggedIn, role }) => {
-			if (isLoggedIn) {
-				setInitialRoute(getHomeRouteByRole(role));
-			}
+			setInitialRoute(isLoggedIn ? getHomeRouteByRole(role) : REGISTER_ROUTE);
 			setAuthReady(true);
 		});
 	}, []);
