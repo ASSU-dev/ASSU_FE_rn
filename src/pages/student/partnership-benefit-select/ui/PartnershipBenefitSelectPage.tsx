@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import {
 	useGroupCertificationSessionMutation,
 	usePartnershipAuthStore,
@@ -93,7 +93,11 @@ export function PartnershipBenefitSelectPage() {
 				</Text>
 			</View>
 
-			<View className="mt-[61px] w-full items-center gap-[18px]">
+			<ScrollView
+				className="mt-[61px] flex-1"
+				contentContainerClassName="w-full items-center gap-[18px] pb-card-gap"
+				showsVerticalScrollIndicator={false}
+			>
 				{storeQuery.isLoading ? (
 					<Text className="text-md font-regular text-content-secondary">
 						제휴 혜택을 불러오는 중입니다
@@ -128,9 +132,9 @@ export function PartnershipBenefitSelectPage() {
 						/>
 					))
 				)}
-			</View>
+			</ScrollView>
 
-			<View className="mt-auto items-center pb-[4px]">
+			<View className="items-center pb-[4px] pt-card-gap">
 				<MediumButton
 					disabled={
 						selectedIndex === null ||
