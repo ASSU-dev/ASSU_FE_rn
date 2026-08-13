@@ -12,8 +12,9 @@ export type {
 } from "./lib/adapters";
 export {
 	toAdminAffiliationSummary,
+	toAdminPartnership,
 	toPartnerAffiliationSummary,
-	toPartnership,
+	toPartnerPartnership,
 	toPartnershipContract,
 } from "./lib/adapters";
 export type {

@@ -6,7 +6,6 @@ import type {
 	WritePartnershipResponseDTO,
 } from "../model/api-types";
 import type {
-	Benefit,
 	BenefitItem,
 	DiscountBenefitItem,
 	EtcBenefitItem,
@@ -31,17 +30,32 @@ export interface PartnerAffiliationSummary {
 	address: string;
 }
 
-export function toPartnership(dto: WritePartnershipResponseDTO): Partnership {
+function toPartnership(
+	dto: WritePartnershipResponseDTO,
+	storeName: string,
+): Partnership {
 	const firstOption = dto.options[0];
 	const benefitContent = firstOption?.note ?? firstOption?.category ?? "";
 
 	return {
 		id: dto.partnershipId.toString(),
-		storeName: dto.storeName,
+		storeName,
 		benefitContent,
 		startDate: dto.partnershipPeriodStart,
 		endDate: dto.partnershipPeriodEnd,
 	};
+}
+
+export function toAdminPartnership(
+	dto: WritePartnershipResponseDTO,
+): Partnership {
+	return toPartnership(dto, dto.storeName);
+}
+
+export function toPartnerPartnership(
+	dto: WritePartnershipResponseDTO,
+): Partnership {
+	return toPartnership(dto, dto.adminName);
 }
 
 function toBenefitItem(
@@ -98,16 +112,29 @@ export function toPartnershipContract(
 }
 
 export function toAdminAffiliationSummary(
-	dto: AdminRecommendResponseDTO,
-): AdminAffiliationSummary {
+	dto: AdminRecommendResponseDTO | null | undefined,
+): AdminAffiliationSummary | null {
+	if (
+		!dto ||
+		!Number.isSafeInteger(dto.partnerId) ||
+		dto.partnerId <= 0 ||
+		typeof dto.partnerName !== "string" ||
+		dto.partnerName.trim().length === 0
+	) {
+		return null;
+	}
+
 	const addressParts = [dto.partnerAddress, dto.partnerDetailAddress].filter(
-		Boolean,
+		(part): part is string => typeof part === "string" && part.length > 0,
 	);
 	return {
 		partnerId: dto.partnerId,
-		title: dto.partnerName,
+		title: dto.partnerName.trim(),
 		address: addressParts.join(" "),
-		partnerUrl: dto.partnerUrl,
+		partnerUrl:
+			typeof dto.partnerUrl === "string" && dto.partnerUrl.length > 0
+				? dto.partnerUrl
+				: undefined,
 	};
 }
 

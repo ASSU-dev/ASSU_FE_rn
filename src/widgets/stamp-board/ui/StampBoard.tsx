@@ -1,5 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 import { StampItem } from "@/entities/stamp/ui/StampItem";
+import { colorTokens } from "@/shared/styles/tokens";
 import { InfoLinkText } from "@/shared/ui/info";
 
 export const StampBoard = ({ currentCount = 0 }) => {
@@ -18,10 +20,15 @@ export const StampBoard = ({ currentCount = 0 }) => {
 					나의 스탬프 적립 현황
 				</Text>
 
-				<TouchableOpacity>
-					<Text className="text-content-tertiary text-xs font-regular mb-1">
-						적립 내역 더보기 {">"}
+				<TouchableOpacity className="mb-1 flex-row items-center gap-1">
+					<Text className="text-content-tertiary text-xs font-regular">
+						적립내역 더보기
 					</Text>
+					<Ionicons
+						name="chevron-forward"
+						size={10}
+						color={colorTokens.contentTertiary}
+					/>
 				</TouchableOpacity>
 			</View>
 
@@ -34,7 +41,9 @@ export const StampBoard = ({ currentCount = 0 }) => {
 					))}
 				</View>
 			</View>
-			<InfoLinkText message="스탬프 10개 적립시 기프티콘이 지급됩니다!" />
+			<View className="ml-[7px] mt-2">
+				<InfoLinkText message="스탬프 10개 적립시 기프티콘이 지급됩니다!" />
+			</View>
 		</View>
 	);
 };

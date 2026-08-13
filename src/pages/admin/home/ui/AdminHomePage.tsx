@@ -2,13 +2,13 @@ import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import {
 	toAdminAffiliationSummary,
-	toPartnership,
+	toAdminPartnership,
 	useAdminPartnerRecommend,
 	useAdminPartnerships,
 } from "@/entities/partnership";
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { useOpenChatRoom } from "@/features/chat";
 import { BellFill, Logo } from "@/shared/assets/icons";
-import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PageTitle } from "@/shared/ui/page-title";
 import { SummaryCard } from "@/shared/ui/summary-card";
@@ -30,27 +30,35 @@ function AdminHeaderSection({
 }
 
 function RecommendationSection() {
-	const { data } = useAdminPartnerRecommend();
+	const { data, isPending } = useAdminPartnerRecommend();
 	const { openChatRoom } = useOpenChatRoom();
 	const summary = data ? toAdminAffiliationSummary(data) : null;
-
-	if (!summary) return null;
 
 	return (
 		<View className="gap-2">
 			<Text className="text-lg font-medium text-content-primary">
 				🔍 제휴업체 추천
 			</Text>
-			<SummaryCard
-				title={summary.title}
-				subtitle={summary.address}
-				status={summary.status}
-				dateRange={summary.dateRange}
-				actionLabel="문의하기"
-				onActionPress={() =>
-					openChatRoom({ role: "admin", targetId: summary.partnerId })
-				}
-			/>
+			{isPending ? null : summary ? (
+				<SummaryCard
+					imageUrl={summary.partnerUrl}
+					title={summary.title}
+					subtitle={summary.address}
+					actionLabel="문의하기"
+					onActionPress={() =>
+						openChatRoom({ role: "admin", targetId: summary.partnerId })
+					}
+				/>
+			) : (
+				<View className="items-center gap-2 px-6 py-10">
+					<Text className="w-full text-center text-base font-medium text-content-primary">
+						제휴업체가 없어요
+					</Text>
+					<Text className="w-full text-center text-sm font-regular text-content-secondary">
+						제휴업체가 추가되면 여기서 확인할 수 있어요!
+					</Text>
+				</View>
+			)}
 		</View>
 	);
 }
@@ -70,40 +78,13 @@ function ManualRegistrationButton({ onPress }: { onPress: () => void }) {
 
 export function AdminHomePage() {
 	const router = useRouter();
-	const { data: partnershipsData, isError: isPartnershipsError } =
-		useAdminPartnerships();
-	const partnerships = partnershipsData?.content.map(toPartnership) ?? [];
-
-	const renderPartnershipSection = () => {
-		if (isPartnershipsError) {
-			return (
-				<EmptyState
-					title="목록을 불러오지 못했어요"
-					description={"잠시 후 다시 시도해주세요"}
-				/>
-			);
-		}
-		if (partnerships.length === 0) {
-			return (
-				<EmptyState
-					title="진행 중인 제휴가 없어요"
-					description={"제휴업체가 추가되면\n여기서 확인할 수 있어요!"}
-				/>
-			);
-		}
-		return (
-			<PartnershipListWidget
-				partnerships={partnerships}
-				maxItems={3}
-				onViewAll={() =>
-					router.push("/(protected)/admin/admin-partnership-list")
-				}
-				onPressCard={(id) =>
-					router.push(`/(protected)/partnership-contract/${id}`)
-				}
-			/>
-		);
-	};
+	const basicInfo = useUserBasicInfo();
+	const {
+		data: partnershipsData,
+		isPending: isPartnershipsPending,
+		isError: isPartnershipsError,
+	} = useAdminPartnerships();
+	const partnerships = partnershipsData?.content.map(toAdminPartnership) ?? [];
 
 	return (
 		<PageLayout
@@ -119,10 +100,23 @@ export function AdminHomePage() {
 				}
 			/>
 
-			<PageTitle title="숭실대학교 총학생회" />
+			<PageTitle title={basicInfo?.name ?? ""} />
 
 			<View className="gap-5">
-				{renderPartnershipSection()}
+				<PartnershipListWidget
+					partnerships={partnerships}
+					title="제휴업체 목록"
+					maxItems={3}
+					isLoading={isPartnershipsPending}
+					isError={isPartnershipsError}
+					emptyDescription={"제휴업체가 추가되면\n여기서 확인할 수 있어요!"}
+					onViewAll={() =>
+						router.push("/(protected)/admin/admin-partnership-list")
+					}
+					onPressCard={(id) =>
+						router.push(`/(protected)/partnership-contract/${id}`)
+					}
+				/>
 
 				<RecommendationSection />
 

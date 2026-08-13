@@ -4,7 +4,8 @@ export type {
 } from "./adapters";
 export {
 	toAdminAffiliationSummary,
+	toAdminPartnership,
 	toPartnerAffiliationSummary,
-	toPartnership,
+	toPartnerPartnership,
 	toPartnershipContract,
 } from "./adapters";

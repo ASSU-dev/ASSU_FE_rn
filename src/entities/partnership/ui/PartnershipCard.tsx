@@ -24,7 +24,6 @@ export const PartnershipCard = memo(
 			variant === "gray" ? "text-content-inverse" : "text-primary";
 		return (
 			<View className={`flex-1 rounded-lg ${bgClass} px-4 py-5`}>
-				{/* Store name */}
 				<Text className="mb-5 text-lg font-semibold text-content-primary">
 					{storeName}
 				</Text>
