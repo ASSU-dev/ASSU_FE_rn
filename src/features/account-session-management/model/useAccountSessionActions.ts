@@ -39,7 +39,7 @@ export function useAccountSessionActions() {
 		onSuccess: async () => {
 			await clearTokens();
 			queryClient.clear();
-			router.replace("/(auth)/login");
+			router.replace("/(auth)/register");
 		},
 		onError: () => {
 			Alert.alert(

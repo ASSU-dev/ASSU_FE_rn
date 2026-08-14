@@ -88,19 +88,13 @@ export function SignupUserFlowWidget() {
 					</ScrollView>
 
 					{flow.showBottomButton ? (
-						<View className="items-center pb-[33px] mt-[10px]">
-							<View
-								className={
-									flow.isBottomDisabled ? "opacity-disabled" : undefined
-								}
+						<View className="w-full pb-[33px] mt-[10px]">
+							<MediumButton
+								onPress={flow.onBottomButtonPress}
+								disabled={flow.isBottomDisabled}
 							>
-								<MediumButton
-									onPress={flow.onBottomButtonPress}
-									disabled={flow.isBottomDisabled}
-								>
-									{flow.buttonLabel}
-								</MediumButton>
-							</View>
+								{flow.buttonLabel}
+							</MediumButton>
 						</View>
 					) : null}
 
