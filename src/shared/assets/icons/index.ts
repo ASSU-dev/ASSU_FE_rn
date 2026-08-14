@@ -9,6 +9,8 @@ export { default as CheckIcon } from "./check-icon.svg";
 export { default as CheckNoneIcon } from "./check-none-icon.svg";
 export { default as CloseIcon } from "./close-icon.svg";
 export { default as ExitRightIcon } from "./exit-right-icon.svg";
+export { default as EyeIcon } from "./eye-icon.svg";
+export { default as EyeOffIcon } from "./eye-off-icon.svg";
 export { default as FolderIcon } from "./folder-icon.svg";
 export { default as HeadphoneIcon } from "./headphone-icon.svg";
 export { default as ImageFillIcon } from "./image-fill.svg";

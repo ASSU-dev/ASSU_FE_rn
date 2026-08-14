@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TextInput, View } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
+import { PasswordVisibilityToggle } from "../input/PasswordVisibilityToggle";
 import type { FormFieldAppearance, FormFieldInputProps } from "./types";
 
 //formField가 크게 두가지 버전으로 존재함.
@@ -33,6 +34,8 @@ export function FormFieldInput({
 	...props
 }: FormFieldInputProps) {
 	const [isFocused, setIsFocused] = useState(false);
+	const [isPasswordVisible, setPasswordVisible] = useState(false);
+	const isSecureText = Boolean(props.secureTextEntry);
 
 	const baseStyle = APPEARANCE_STYLES[appearance];
 
@@ -77,6 +80,7 @@ export function FormFieldInput({
 					inputStyle,
 				]}
 				placeholderTextColor={colorTokens.contentSecondary}
+				secureTextEntry={isSecureText && !isPasswordVisible}
 				onFocus={(e) => {
 					setIsFocused(true);
 					onFocus?.(e);
@@ -87,7 +91,16 @@ export function FormFieldInput({
 				}}
 			/>
 
-			{rightElement && <View className="ml-2">{rightElement}</View>}
+			{isSecureText ? (
+				<View className="ml-2">
+					<PasswordVisibilityToggle
+						visible={isPasswordVisible}
+						onPress={() => setPasswordVisible((current) => !current)}
+					/>
+				</View>
+			) : rightElement ? (
+				<View className="ml-2">{rightElement}</View>
+			) : null}
 		</View>
 	);
 }
