@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { Alert } from "react-native";
 import { useSignupMutation } from "@/features/signup-user-flow/api/useSignupMutation";
 import { StudentTokenAuthPayloadDTOUniversity } from "@/shared/api";
+import { assertSuccess } from "../lib/assertSuccess";
 
 type Params = {
 	studentAuthPayload: { sIdno: string; sToken: string } | null;
@@ -36,16 +37,7 @@ export function useStudentSignupAction({
 					university: StudentTokenAuthPayloadDTOUniversity.SSU,
 				},
 			});
-
-			if (!response.isSuccess) {
-				Alert.alert(
-					"회원가입 실패",
-					response.message ?? "회원가입에 실패했습니다.",
-					[{ text: "확인", onPress: onFailure }],
-				);
-				return;
-			}
-
+			assertSuccess(response, "회원가입에 실패했습니다.");
 			onSuccess();
 		} catch (error) {
 			Alert.alert(

@@ -22,7 +22,7 @@ export function USaintAuthWebViewModal({
 		processedRef.current = false;
 	}, [visible]);
 
-	const processAuthUrl = (url: string, source: string) => {
+	const processAuthUrl = (url: string) => {
 		if (processedRef.current) return;
 
 		try {
@@ -35,34 +35,14 @@ export function USaintAuthWebViewModal({
 			const sIdno =
 				parsedUrl.searchParams.get("sIdno") ?? hashParams.get("sIdno");
 
-			if (__DEV__)
-				console.log("[LMS WEBVIEW] navigation", {
-					source,
-					host: parsedUrl.host,
-					pathname: parsedUrl.pathname,
-					queryKeys: Array.from(parsedUrl.searchParams.keys()),
-					hashKeys: Array.from(hashParams.keys()),
-					hasSToken: Boolean(sToken),
-					hasSIdno: Boolean(sIdno),
-				});
-
 			if (!sToken || !sIdno) return;
 
 			processedRef.current = true;
-			if (__DEV__)
-				console.log("[LMS WEBVIEW] auth payload detected", {
-					sTokenLength: sToken.length,
-					sIdnoLength: sIdno.length,
-				});
 			Promise.resolve(onVerifySuccess({ sToken, sIdno })).finally(() => {
 				processedRef.current = false;
 			});
-		} catch (error) {
-			if (__DEV__)
-				console.log(
-					"[LMS WEBVIEW] URL parse skipped",
-					error instanceof Error ? error.message : "unknown error",
-				);
+		} catch {
+			return;
 		}
 	};
 
@@ -94,14 +74,14 @@ export function USaintAuthWebViewModal({
 					domStorageEnabled
 					javaScriptEnabled
 					onShouldStartLoadWithRequest={(request) => {
-						processAuthUrl(request.url, "shouldStart");
+						processAuthUrl(request.url);
 						return true;
 					}}
 					onNavigationStateChange={(navState) => {
-						processAuthUrl(navState.url, "navigationState");
+						processAuthUrl(navState.url);
 					}}
 					onLoadEnd={(event) => {
-						processAuthUrl(event.nativeEvent.url, "loadEnd");
+						processAuthUrl(event.nativeEvent.url);
 					}}
 				/>
 			</View>
