@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import {
-	toPartnership,
+	toAdminPartnership,
 	toPartnershipContract,
 	useAdminPartnerships,
 	usePartnershipDetail,
@@ -52,7 +52,7 @@ export function PartnerListPage() {
 	);
 
 	const { data: partnershipsData } = useAdminPartnerships();
-	const partnerships = partnershipsData?.content.map(toPartnership) ?? [];
+	const partnerships = partnershipsData?.content.map(toAdminPartnership) ?? [];
 
 	const { data: detailData } = usePartnershipDetail(selectedContractId);
 	const selectedContract = detailData

@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import {
-	toPartnership,
+	toPartnerPartnership,
 	toPartnershipContract,
 	usePartnerPartnerships,
 	usePartnershipDetail,
@@ -30,7 +30,7 @@ function InfoBox() {
 		<View className="flex-row items-center gap-2 rounded-lg bg-neutral px-4 py-3 mt-6">
 			<InfoFillIcon width={16} height={16} />
 			<Text className="flex-1 text-xs font-regular text-content-secondary">
-				총학생회와 제휴를 체결한 단체 목록이에요
+				제휴를 체결한 학생회 목록이에요
 			</Text>
 		</View>
 	);
@@ -52,7 +52,8 @@ export function PartnershipListPage() {
 	);
 
 	const { data: partnershipsData } = usePartnerPartnerships();
-	const partnerships = partnershipsData?.content.map(toPartnership) ?? [];
+	const partnerships =
+		partnershipsData?.content.map(toPartnerPartnership) ?? [];
 
 	const { data: detailData } = usePartnershipDetail(selectedContractId);
 	const selectedContract = detailData
@@ -73,6 +74,9 @@ export function PartnershipListPage() {
 				<CountSection count={partnerships.length} />
 				<PartnershipListContent
 					data={partnerships}
+					emptyDescription={
+						"학생회와 제휴가 체결되면\n여기서 확인할 수 있어요!"
+					}
 					onPressCard={(id) => setSelectedContractId(id)}
 				/>
 			</PageLayout>
