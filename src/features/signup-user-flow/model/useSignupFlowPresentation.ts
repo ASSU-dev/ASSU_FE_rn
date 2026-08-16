@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useEffect, useMemo } from "react";
 import { USER_TYPE } from "@/entities/user/model/types";
 import { getAdminCompletionName } from "./admin";
@@ -30,10 +31,22 @@ export function useSignupFlowPresentation() {
 		return () => clearTimeout(timer);
 	}, [goTo, step]);
 
+	useEffect(() => {
+		if (step !== "complete") {
+			return;
+		}
+
+		const timer = setTimeout(() => {
+			router.replace("/(auth)/register");
+		}, 2000);
+
+		return () => clearTimeout(timer);
+	}, [step]);
+
 	const progressSteps = flowConfig.progressSteps;
 	const currentProgressIndex = progressSteps.indexOf(step);
 	const showProgress = step !== "complete";
-	const showBottomButton = step !== "studentInput1";
+	const showBottomButton = step !== "studentInput1" && step !== "complete";
 	const isBottomDisabled =
 		step === "studentInput2"
 			? true

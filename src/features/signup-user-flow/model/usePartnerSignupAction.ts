@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { Alert } from "react-native";
 import { useSignupPartnerMutation } from "@/features/signup-user-flow/api/useSignupPartnerMutation";
-import { saveTokens } from "@/shared/api/auth";
 import { assertSuccess } from "../lib/assertSuccess";
 import { toPartnerSignupBody } from "./signupPayloadAdapters";
 import type { SignupFormState } from "./types";
@@ -20,17 +19,6 @@ export function usePartnerSignupAction({ form, onSuccess, onFailure }: Params) {
 			const { request, licenseImage } = await toPartnerSignupBody(form);
 			const response = await mutation.mutateAsync({ request, licenseImage });
 			assertSuccess(response, "제휴업체 회원가입에 실패했습니다.");
-
-			const { tokens, role, basicInfo, memberId } = response.result;
-			if (tokens?.accessToken && tokens.refreshToken) {
-				await saveTokens(
-					tokens.accessToken,
-					tokens.refreshToken,
-					role,
-					basicInfo,
-					memberId,
-				);
-			}
 			onSuccess();
 		} catch (error) {
 			Alert.alert(

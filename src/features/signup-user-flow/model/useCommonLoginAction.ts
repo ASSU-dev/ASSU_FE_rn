@@ -1,9 +1,11 @@
+import { isAxiosError } from "axios";
 import { router } from "expo-router";
 import { useCallback } from "react";
 import { Alert } from "react-native";
 import { useLoginCommonMutation } from "@/features/signup-user-flow/api/useLoginCommonMutation";
 import { assertSuccess } from "../lib/assertSuccess";
 import { completeLogin } from "../lib/auth";
+import { getLoginErrorMessage } from "../lib/getLoginErrorMessage";
 
 type Params = {
 	email: string;
@@ -27,10 +29,19 @@ export function useCommonLoginAction({ email, password }: Params) {
 			);
 			router.replace(homeRoute as never);
 		} catch (error) {
-			Alert.alert(
-				"로그인 실패",
-				error instanceof Error ? error.message : "로그인에 실패했습니다.",
-			);
+			if (
+				isAxiosError(error) &&
+				error.response?.status === 403 &&
+				error.response.data?.code === "MEMBER_4017"
+			) {
+				Alert.alert(
+					"가입 승인 대기 중",
+					"가입 승인 대기 중입니다. 백오피스 승인 후 로그인할 수 있습니다.",
+				);
+				return;
+			}
+
+			Alert.alert("로그인 실패", getLoginErrorMessage(error));
 		}
 	}, [email, mutation, password]);
 

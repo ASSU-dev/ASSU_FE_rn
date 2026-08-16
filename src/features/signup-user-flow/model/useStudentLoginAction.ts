@@ -6,6 +6,7 @@ import { StudentTokenAuthPayloadDTOUniversity } from "@/shared/api";
 import { ENV } from "@/shared/config/env";
 import { assertSuccess } from "../lib/assertSuccess";
 import { completeLogin } from "../lib/auth";
+import { getLoginErrorMessage } from "../lib/getLoginErrorMessage";
 
 export function useStudentLoginAction() {
 	const [isWebViewVisible, setWebViewVisible] = useState(false);
@@ -47,14 +48,14 @@ export function useStudentLoginAction() {
 				router.replace(homeRoute as never);
 				if (__DEV__) console.log("[LMS LOGIN] navigation requested");
 			} catch (error) {
-				const errorMessage =
-					error instanceof Error ? error.message : "로그인에 실패했습니다.";
 				if (__DEV__)
 					console.log("[LMS LOGIN] post-auth failure", {
 						name: error instanceof Error ? error.name : "UnknownError",
-						message: errorMessage,
+						message:
+							error instanceof Error ? error.message : "로그인에 실패했습니다.",
 					});
-				Alert.alert("로그인 실패", errorMessage);
+
+				Alert.alert("로그인 실패", getLoginErrorMessage(error));
 			}
 		},
 		[mutation],

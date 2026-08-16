@@ -52,7 +52,7 @@ export function AdminAccountManagementPage() {
 				<Dialog.Title>로그아웃하시겠습니까?</Dialog.Title>
 				<Dialog.Content>
 					<Text className="text-sm text-content-secondary">
-						로그아웃하면 로그인 화면으로 이동합니다.
+						로그아웃하면 회원가입 화면으로 이동합니다.
 					</Text>
 				</Dialog.Content>
 				<Dialog.Actions>

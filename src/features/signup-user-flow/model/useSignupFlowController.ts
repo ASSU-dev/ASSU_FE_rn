@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
+import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
+import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useCommonLoginAction } from "./useCommonLoginAction";
 import { usePartnerSignupAction } from "./usePartnerSignupAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
@@ -104,6 +106,13 @@ export function useSignupFlowController() {
 		onFailure: handleSignupFailure,
 	});
 
+	const { signup: handleAdminSignup } = useAdminSignupAction({
+		form,
+		onSuccess: goNext,
+		onFailure: handleSignupFailure,
+	});
+	const { checkEmailAvailability } = useAdminEmailAvailabilityAction();
+
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
 	const { handlePressLogin, isPending: isCommonLoginPending } =
 		useCommonLoginAction({
@@ -186,6 +195,18 @@ export function useSignupFlowController() {
 					await handleStudentSignup();
 					return;
 				}
+				if (step === "adminCredentials") {
+					const isEmailAvailable = await checkEmailAvailability(
+						form.admin.email,
+					);
+					if (!isEmailAvailable) return;
+					goNext();
+					return;
+				}
+				if (step === "adminSealRegistration") {
+					await handleAdminSignup();
+					return;
+				}
 				if (step === "partnerBusinessRegistration") {
 					await handlePartnerSignup();
 					return;
@@ -196,10 +217,13 @@ export function useSignupFlowController() {
 		[
 			buttonLabel,
 			currentProgressIndex,
+			checkEmailAvailability,
 			form.role,
+			form.admin.email,
 			goNext,
 			goTo,
 			handlePartnerSignup,
+			handleAdminSignup,
 			handleStudentSignup,
 			isBottomDisabled,
 			progress,
