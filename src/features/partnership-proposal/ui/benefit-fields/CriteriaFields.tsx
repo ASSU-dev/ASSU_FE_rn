@@ -71,8 +71,9 @@ export function CriteriaFields({ index }: Props) {
 								returnKeyType="done"
 								returnKeyLabel="완료"
 								textAlign="right"
-								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{ height: 36 }}
+								textAlignVertical="center"
+								className="flex-1 text-[15px] text-content-primary"
+								style={{ height: 36, paddingVertical: 0 }}
 							/>
 						)}
 					/>
@@ -101,8 +102,9 @@ export function CriteriaFields({ index }: Props) {
 								returnKeyType="done"
 								returnKeyLabel="완료"
 								textAlign="right"
+								textAlignVertical="center"
 								className="flex-1 text-[15px] text-content-primary px-[4px]"
-								style={{ height: 36 }}
+								style={{ height: 36, paddingVertical: 0 }}
 							/>
 						)}
 					/>
