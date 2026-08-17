@@ -1,5 +1,6 @@
 import { FormProvider } from "react-hook-form";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSignupFlowController } from "@/features/signup-user-flow/model/useSignupFlowController";
 import {
 	LoginFormScreen,
@@ -62,20 +63,21 @@ export function SignupUserFlowWidget() {
 		<FormProvider {...formMethods}>
 			<SignupFlowUiProvider value={flowUi}>
 				<View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
-					<ScrollView
-						className="flex-1"
+					{flow.showProgress ? (
+						<SignupProgressBar
+							progress={flow.progress}
+							segmentCount={flow.progressSteps.length}
+							currentSegment={flow.currentProgressIndex}
+							onSegmentPress={flow.onSegmentPress}
+						/>
+					) : null}
+					<KeyboardAwareScrollView
+						style={{ flex: 1 }}
 						contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
+						bottomOffset={24}
 					>
-						{flow.showProgress ? (
-							<SignupProgressBar
-								progress={flow.progress}
-								segmentCount={flow.progressSteps.length}
-								currentSegment={flow.currentProgressIndex}
-								onSegmentPress={flow.onSegmentPress}
-							/>
-						) : null}
 						<View
 							className={
 								flow.step === "complete"
@@ -85,7 +87,7 @@ export function SignupUserFlowWidget() {
 						>
 							<SignupStepContent step={flow.step} />
 						</View>
-					</ScrollView>
+					</KeyboardAwareScrollView>
 
 					{flow.showBottomButton ? (
 						<View className="w-full pb-[33px] mt-[10px]">

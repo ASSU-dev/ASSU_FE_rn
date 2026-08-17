@@ -1,25 +1,36 @@
 import type { ReactNode } from "react";
-import { ScrollView, type StyleProp, View, type ViewStyle } from "react-native";
+import {
+	ScrollView,
+	type ScrollViewProps,
+	type StyleProp,
+	View,
+	type ViewStyle,
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { type Edge, SafeAreaView } from "react-native-safe-area-context";
 
 interface PageLayoutProps {
 	children: ReactNode;
 	scrollable?: boolean;
+	keyboardAware?: boolean;
 	withTopInset?: boolean;
 	withBottomInset?: boolean;
 	className?: string;
 	contentContainerClassName?: string;
 	contentContainerStyle?: StyleProp<ViewStyle>;
+	keyboardDismissMode?: ScrollViewProps["keyboardDismissMode"];
 }
 
 export function PageLayout({
 	children,
 	scrollable = false,
+	keyboardAware = false,
 	withTopInset = true,
 	withBottomInset = false,
 	className = "flex-1 bg-canvas",
 	contentContainerClassName,
 	contentContainerStyle,
+	keyboardDismissMode,
 }: PageLayoutProps) {
 	const edges: Edge[] = [];
 
@@ -32,15 +43,20 @@ export function PageLayout({
 	}
 
 	if (scrollable) {
+		const ScrollComponent = keyboardAware
+			? KeyboardAwareScrollView
+			: ScrollView;
 		return (
 			<SafeAreaView edges={edges} className={className}>
-				<ScrollView
-					className="flex-1"
+				<ScrollComponent
+					style={{ flex: 1 }}
 					contentContainerClassName={contentContainerClassName}
 					contentContainerStyle={contentContainerStyle}
+					keyboardDismissMode={keyboardDismissMode}
+					{...(keyboardAware ? { bottomOffset: 24 } : {})}
 				>
 					{children}
-				</ScrollView>
+				</ScrollComponent>
 			</SafeAreaView>
 		);
 	}
