@@ -2,5 +2,5 @@ export type {
 	DashboardData,
 	DashboardStats,
 	InsightData,
-	MonthlyUsage,
+	UsageBar,
 } from "@/features/admin-dashboard";

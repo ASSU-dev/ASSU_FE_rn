@@ -29,7 +29,7 @@ export const PartnershipCard = memo(
 		const badgeLabelClassName = `text-sm font-regular leading-caption tracking-caption ${badgeTextClass}`;
 
 		return (
-			<View className={`flex-1 gap-5 rounded-lg ${bgClass} px-[15px] py-5`}>
+			<View className={`gap-5 rounded-lg ${bgClass} px-[15px] py-5`}>
 				<Text className="text-lg font-semibold leading-[20px] tracking-[0.25px] text-content-primary">
 					{storeName}
 				</Text>
@@ -40,7 +40,7 @@ export const PartnershipCard = memo(
 						<View className={badgeClassName}>
 							<Text className={badgeLabelClassName}>{BADGE_LABEL_CONTENT}</Text>
 						</View>
-						<Text className={`flex-1 ${bodyTextClassName}`}>
+						<Text className={`shrink ${bodyTextClassName}`}>
 							{benefitContent}
 						</Text>
 					</View>

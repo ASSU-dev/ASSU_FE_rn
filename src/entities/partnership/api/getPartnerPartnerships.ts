@@ -20,6 +20,7 @@ async function fetchPartnerPartnerships(): Promise<
 	>("/partnership/partner", {
 		params: PARTNER_PARTNERSHIP_LIST_PARAMS,
 	});
+	if (__DEV__) console.log("[fetchPartnerPartnerships] 응답:", res.data.result);
 	return res.data.result;
 }
 
