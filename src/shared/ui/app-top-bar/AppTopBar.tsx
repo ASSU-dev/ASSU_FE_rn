@@ -28,12 +28,13 @@ export function AppTopBar({
 					color={colorTokens.contentPrimary}
 				/>
 			</Pressable>
-			<Text
-				className={`flex-1 text-xl font-semibold text-content-primary ${isLeft ? "ml-3" : "text-center"}`}
+			<View
+				className={`flex-1 ${isLeft ? "items-start pl-8" : "items-center"}`}
 			>
-				{title}
-			</Text>
-			{!isLeft && <View style={{ width: 24 }} />}
+				<Text className="text-xl font-semibold text-content-primary">
+					{title}
+				</Text>
+			</View>
 		</View>
 	);
 }
