@@ -14,6 +14,7 @@ export { default as EyeIcon } from "./eye-icon.svg";
 export { default as EyeOffIcon } from "./eye-off-icon.svg";
 export { default as FolderIcon } from "./folder-icon.svg";
 export { default as HeadphoneIcon } from "./headphone-icon.svg";
+export { default as HomeIcon } from "./home-icon.svg";
 export { default as ImageFillIcon } from "./image-fill.svg";
 export { default as ImageUploadIcon } from "./image-upload-icon.svg";
 export { default as InfoFillIcon } from "./info-fill-icon.svg";

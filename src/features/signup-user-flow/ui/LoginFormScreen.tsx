@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AssuLogoIcon } from "@/shared/assets/icons";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { LoginUnderlineInput } from "@/shared/ui/input";
@@ -14,6 +15,9 @@ type LoginFormScreenProps = {
 	onPressSignup: () => void;
 };
 
+// 상태바 인셋 위에 얹는 여백 (iPhone 기준 기존 pt-[72px] 유지)
+const TOP_CONTENT_OFFSET = 24;
+
 export function LoginFormScreen({
 	email,
 	password,
@@ -24,8 +28,13 @@ export function LoginFormScreen({
 	onPressLmsLogin,
 	onPressSignup,
 }: LoginFormScreenProps) {
+	const insets = useSafeAreaInsets();
+
 	return (
-		<View className="flex-1 bg-canvas px-screen-m pt-[72px]">
+		<View
+			className="flex-1 bg-canvas px-screen-m"
+			style={{ paddingTop: insets.top + TOP_CONTENT_OFFSET }}
+		>
 			<View className="mt-[81px] items-center">
 				<AssuLogoIcon width={122} height={40} />
 			</View>

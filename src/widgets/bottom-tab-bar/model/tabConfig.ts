@@ -4,6 +4,7 @@ import type { SvgProps } from "react-native-svg";
 import type { UserType } from "@/entities/user/model/types";
 import {
 	AccountManagementIcon,
+	HomeIcon,
 	SuggestionBoxIcon,
 } from "@/shared/assets/icons";
 
@@ -35,8 +36,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "home",
 			label: "홈",
-			activeIconName: "home",
-			inactiveIconName: "home-outline",
+			Icon: HomeIcon,
 		},
 		{
 			route: "map",
@@ -59,8 +59,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "home",
 			label: "홈",
-			activeIconName: "home",
-			inactiveIconName: "home-outline",
+			Icon: HomeIcon,
 		},
 		{
 			route: "map",
@@ -90,8 +89,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "home",
 			label: "홈",
-			activeIconName: "home",
-			inactiveIconName: "home-outline",
+			Icon: HomeIcon,
 		},
 		{
 			route: "map",
