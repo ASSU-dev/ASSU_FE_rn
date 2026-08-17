@@ -1,3 +1,4 @@
+export { default as AccountManagementIcon } from "./account-management-icon.svg";
 export { default as AssuLogoIcon } from "./assu-logo-icon.svg";
 export { default as BackArrowIcon } from "./back-arrow-icon.svg";
 export { default as BanIcon } from "./ban-icon.svg";
@@ -31,6 +32,7 @@ export { default as SortArrowDownIcon } from "./sort-arrow-down.svg";
 export { default as SpeechBubbleIcon } from "./speech-bubble-icon.svg";
 export { default as StampActive } from "./stamp-active.svg";
 export { default as StampInactive } from "./stamp-inactive.svg";
+export { default as SuggestionBoxIcon } from "./suggestion-box-icon.svg";
 export { default as UploadFilesIcon } from "./upload-files-icon.svg";
 export { default as UserIcon } from "./user-icon.svg";
 export { default as WritingIcon } from "./writing-icon.svg";

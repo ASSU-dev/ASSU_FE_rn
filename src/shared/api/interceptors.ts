@@ -13,10 +13,16 @@ const REFRESH_URL = "/auth/tokens/refresh";
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
+let lastLoggedToken: string | null = null;
+
 apiInstance.interceptors.request.use((config) => {
 	const token = useAuthStore.getState().accessToken;
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
+		if (__DEV__ && token !== lastLoggedToken) {
+			lastLoggedToken = token;
+			console.log("[TOKEN]", token);
+		}
 	}
 	console.log("[API REQ]", config.method?.toUpperCase(), config.url);
 	return config;
