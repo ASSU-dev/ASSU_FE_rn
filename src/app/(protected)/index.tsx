@@ -4,5 +4,6 @@ import { useAuthStore } from "@/shared/lib/auth/authStore";
 
 export default function ProtectedIndex() {
 	const role = useAuthStore((state) => state.role);
+	if (role === null) return <Redirect href="/(auth)/login" />;
 	return <Redirect href={getHomeRouteByRole(role) as never} />;
 }

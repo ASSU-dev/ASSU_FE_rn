@@ -55,6 +55,7 @@ export function InquiryForm({
 			onSuccess: () => {
 				setSuccessMessage("문의가 등록되었습니다.");
 				reset({ title: "", content: "", email: userEmail });
+				setTimeout(() => setSuccessMessage(""), 3000);
 				setTimeout(() => onSuccess?.(), 1000);
 			},
 			onError: () => {
