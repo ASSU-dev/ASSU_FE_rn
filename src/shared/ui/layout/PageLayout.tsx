@@ -4,6 +4,7 @@ import { type Edge, SafeAreaView } from "react-native-safe-area-context";
 
 interface PageLayoutProps {
 	children: ReactNode;
+	header?: ReactNode;
 	scrollable?: boolean;
 	withTopInset?: boolean;
 	withBottomInset?: boolean;
@@ -14,6 +15,7 @@ interface PageLayoutProps {
 
 export function PageLayout({
 	children,
+	header,
 	scrollable = false,
 	withTopInset = true,
 	withBottomInset = false,
@@ -34,6 +36,7 @@ export function PageLayout({
 	if (scrollable) {
 		return (
 			<SafeAreaView edges={edges} className={className}>
+				{header}
 				<ScrollView
 					className="flex-1"
 					contentContainerClassName={contentContainerClassName}
@@ -47,6 +50,7 @@ export function PageLayout({
 
 	return (
 		<SafeAreaView edges={edges} className={className}>
+			{header}
 			<View className={contentContainerClassName} style={contentContainerStyle}>
 				{children}
 			</View>
