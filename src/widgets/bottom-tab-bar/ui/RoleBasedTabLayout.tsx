@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import { Tabs } from "expo-router";
 import { type ReactNode, useCallback, useEffect, useRef } from "react";
 import { BackHandler, Platform, ToastAndroid } from "react-native";
@@ -18,8 +19,16 @@ export function RoleBasedTabLayout({
 		null,
 	);
 	const exitConfirmRef = useRef(false);
+	const isFocused = useIsFocused();
+	const isFocusedRef = useRef(isFocused);
+
+	useEffect(() => {
+		isFocusedRef.current = isFocused;
+	}, [isFocused]);
 
 	const handleBack = useCallback(() => {
+		if (!isFocusedRef.current) return false;
+
 		if (activeRouteRef.current !== "home") {
 			navigationRef.current?.navigate("home");
 			return true;
