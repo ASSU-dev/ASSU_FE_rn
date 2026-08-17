@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import {
 	Alert,
 	FlatList,
+	Keyboard,
 	Pressable,
 	StyleSheet,
 	Text,
@@ -63,7 +64,7 @@ export function MapSearchPage({
 	};
 
 	return (
-		<View className="flex-1 bg-canvas">
+		<Pressable className="flex-1 bg-canvas" onPress={Keyboard.dismiss}>
 			<View
 				className="flex-row items-center gap-gutter bg-canvas px-card-p pb-3"
 				style={{ ...shadows.neutral, paddingTop: insets.top + 12 }}
@@ -114,6 +115,8 @@ export function MapSearchPage({
 					<FlatList
 						data={searchResults}
 						keyExtractor={(item: SearchResultStore) => item.id}
+						keyboardDismissMode="on-drag"
+						keyboardShouldPersistTaps="handled"
 						renderItem={({ item }: { item: SearchResultStore }) => (
 							<SearchResultCard
 								store={item}
@@ -159,7 +162,7 @@ export function MapSearchPage({
 					</View>
 				)
 			)}
-		</View>
+		</Pressable>
 	);
 }
 

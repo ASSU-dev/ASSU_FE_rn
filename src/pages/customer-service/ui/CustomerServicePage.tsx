@@ -48,6 +48,7 @@ export function CustomerServicePage() {
 			{/* Scrollable Content */}
 			<PageLayout
 				scrollable
+				keyboardAware
 				withTopInset={false}
 				contentContainerStyle={{
 					paddingHorizontal: 24,
