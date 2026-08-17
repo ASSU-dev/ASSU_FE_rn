@@ -24,9 +24,14 @@ interface InquiryFormProps {
 		handleSubmit: UseFormHandleSubmit<InquiryFormData>,
 		onSubmit: SubmitHandler<InquiryFormData>,
 	) => void;
+	onSuccess?: () => void;
 }
 
-export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
+export function InquiryForm({
+	userEmail,
+	onSubmitHandler,
+	onSuccess,
+}: InquiryFormProps) {
 	const { mutate } = useSubmitInquiry();
 	const [successMessage, setSuccessMessage] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -50,7 +55,7 @@ export function InquiryForm({ userEmail, onSubmitHandler }: InquiryFormProps) {
 			onSuccess: () => {
 				setSuccessMessage("문의가 등록되었습니다.");
 				reset({ title: "", content: "", email: userEmail });
-				setTimeout(() => setSuccessMessage(""), 3000);
+				setTimeout(() => onSuccess?.(), 1000);
 			},
 			onError: () => {
 				setSuccessMessage("문의 등록에 실패했습니다. 다시 시도해주세요.");

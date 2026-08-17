@@ -10,19 +10,12 @@ import { PageLayout } from "@/shared/ui/layout";
 import { TabBar } from "@/shared/ui/TabBar";
 import { InquiryList } from "./InquiryList";
 
-// Mock user data - 실제 auth 시스템 연결은 나중에
-const MOCK_USER = {
-	email: "user@example.com",
-	name: "사용자",
-};
-
 const tabs = [
 	{ id: "inquiry", label: "문의하기" },
 	{ id: "history", label: "문의내역확인" },
 ];
 
 export function CustomerServicePage() {
-	const user = MOCK_USER; // In production: const { user } = useAuth();
 	const [activeTab, setActiveTab] = useState<string>("inquiry");
 	const isPending = false;
 	const formRef = useRef<{
@@ -56,10 +49,11 @@ export function CustomerServicePage() {
 			>
 				{activeTab === "inquiry" && (
 					<InquiryForm
-						userEmail={user?.email || ""}
+						userEmail=""
 						onSubmitHandler={(handleSubmit, onSubmit) => {
 							formRef.current = { handleSubmit, onSubmit };
 						}}
+						onSuccess={() => setActiveTab("history")}
 					/>
 				)}
 				{activeTab === "history" && <InquiryList />}
