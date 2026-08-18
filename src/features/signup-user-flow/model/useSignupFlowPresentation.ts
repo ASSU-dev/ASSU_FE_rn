@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import { useEffect, useMemo } from "react";
 import { USER_TYPE } from "@/entities/user/model/types";
 import { getAdminCompletionName } from "./admin";
-import { VERIFICATION_SUCCESS_CODE } from "./flowConfig";
 import { useSignupUserFlow } from "./useSignupUserFlow";
 
 export function useSignupFlowPresentation() {
@@ -51,9 +50,8 @@ export function useSignupFlowPresentation() {
 		step === "studentInput2"
 			? true
 			: !isCurrentStepValid && step !== "complete";
-	const isVerificationError =
-		form.identity.verificationAttempted &&
-		form.identity.verificationCode !== VERIFICATION_SUCCESS_CODE;
+	// 서버 검증 실패 시에만 true. 코드를 다시 입력하면 해제된다
+	const isVerificationError = form.identity.verificationAttempted;
 	const buttonLabel = flowConfig.buttonLabelByStep[step] ?? "완료";
 	const completeDisplayName = useMemo(() => {
 		if (form.role === USER_TYPE.PARTNER) {

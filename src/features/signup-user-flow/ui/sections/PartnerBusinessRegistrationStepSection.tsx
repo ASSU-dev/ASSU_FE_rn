@@ -30,10 +30,10 @@ export function PartnerBusinessRegistrationStepSection({
 				/>
 				<Controller
 					control={control}
-					name="partner.businessRegistrationFileName"
+					name="partner.businessRegistrationFile"
 					render={({ field }) => (
 						<FileUploadButton
-							fileName={field.value}
+							fileName={field.value?.name ?? ""}
 							onPressUpload={onPressUpload}
 						/>
 					)}

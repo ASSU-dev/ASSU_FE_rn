@@ -27,10 +27,10 @@ export function AdminSealRegistrationStepSection({
 		>
 			<Controller
 				control={control}
-				name="admin.sealFileName"
+				name="admin.sealFile"
 				render={({ field }) => (
 					<FileUploadButton
-						fileName={field.value}
+						fileName={field.value?.name ?? ""}
 						onPressUpload={onPressUpload}
 						className="mt-[63px]"
 					/>
