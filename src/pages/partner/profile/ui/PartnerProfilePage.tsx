@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
-import { useAccountSessionActions } from "@/features/account-session-management";
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import {
 	ProfileImageActionSheet,
 	useProfileImageEditor,
@@ -15,8 +15,8 @@ import {
 
 export function PartnerProfilePage() {
 	const router = useRouter();
+	const basicInfo = useUserBasicInfo();
 	const profileImageEditor = useProfileImageEditor();
-	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
@@ -24,16 +24,10 @@ export function PartnerProfilePage() {
 			iconName: "bell",
 			onPress: () => router.push("../notification-settings"),
 		},
-		{ label: "계정관리", iconName: "user" },
 		{
-			label: "로그아웃",
-			iconName: "exitRight",
-			onPress: accountSession.requestLogout,
-		},
-		{
-			label: "회원 탈퇴",
+			label: "계정관리",
 			iconName: "user",
-			onPress: accountSession.requestWithdrawal,
+			onPress: () => router.push("/(protected)/partner/account-management"),
 		},
 	];
 
@@ -57,7 +51,7 @@ export function PartnerProfilePage() {
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name="역전할머니맥주 숭실대점"
+					name={basicInfo?.name ?? "제휴업체"}
 					subtitle="사업 수정"
 					profileImage={profileImageEditor.imageSource}
 					onProfileImagePress={profileImageEditor.open}

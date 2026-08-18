@@ -5,6 +5,7 @@ export type {
 	AccountProfileHeaderProps,
 } from "./model/types";
 export {
+	AccountManagementContent,
 	AccountMenuItem,
 	AccountMenuSection,
 	AccountProfileHeader,
