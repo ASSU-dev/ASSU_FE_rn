@@ -13,6 +13,11 @@ async function fetchAdminPartnerRecommend(): Promise<AdminRecommendResponseDTO |
 		const res = await apiInstance.get<BaseResponse<AdminRecommendResponseDTO>>(
 			"/admin/partner-recommend",
 		);
+		console.log("[fetchAdminPartnerRecommend] 응답:", {
+			partnerId: res.data.result?.partnerId ?? null,
+			partnerName: res.data.result?.partnerName ?? null,
+			partnerUrl: res.data.result?.partnerUrl ?? null,
+		});
 		return res.data.result ?? null;
 	} catch (error) {
 		if (
@@ -20,6 +25,7 @@ async function fetchAdminPartnerRecommend(): Promise<AdminRecommendResponseDTO |
 			error.response?.status === 404 &&
 			error.response.data.code === NO_RECOMMENDED_PARTNER_CODE
 		) {
+			console.log("[fetchAdminPartnerRecommend] 응답: 추천 제휴업체 없음");
 			return null;
 		}
 

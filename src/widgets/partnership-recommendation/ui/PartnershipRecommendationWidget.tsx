@@ -4,6 +4,7 @@ import {
 	AffiliationSummaryCard,
 	type PartnerAffiliationSummary,
 } from "@/entities/partnership";
+import { EmptyState } from "@/shared/ui/empty-state";
 
 interface PartnershipRecommendationWidgetProps {
 	summaries: PartnerAffiliationSummary[];
@@ -24,14 +25,10 @@ export const PartnershipRecommendationWidget = memo(
 				</Text>
 
 				{isLoading ? null : summaries.length === 0 ? (
-					<View className="items-center gap-2 px-6 py-10">
-						<Text className="w-full text-center text-base font-medium text-content-primary">
-							제휴중인 단체가 없어요
-						</Text>
-						<Text className="w-full text-center text-sm font-regular text-content-secondary">
-							제휴단체가 추가되면 여기서 확인할 수 있어요!
-						</Text>
-					</View>
+					<EmptyState
+						title="추천할 제휴단체가 없어요"
+						description="제휴단체가 추가되면 여기서 확인할 수 있어요!"
+					/>
 				) : (
 					<View className="flex-row gap-3">
 						{summaries.map((summary) => (

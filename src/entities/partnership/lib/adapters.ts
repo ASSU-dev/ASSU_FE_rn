@@ -140,13 +140,22 @@ export function toAdminAffiliationSummary(
 
 export function toPartnerAffiliationSummary(
 	dto: AdminLiteDTO,
-): PartnerAffiliationSummary {
+): PartnerAffiliationSummary | null {
+	if (
+		!Number.isSafeInteger(dto.adminId) ||
+		dto.adminId <= 0 ||
+		typeof dto.adminName !== "string" ||
+		dto.adminName.trim().length === 0
+	) {
+		return null;
+	}
+
 	const addressParts = [dto.adminAddress, dto.adminDetailAddress].filter(
-		Boolean,
+		(part): part is string => typeof part === "string" && part.length > 0,
 	);
 	return {
 		adminId: dto.adminId,
-		title: dto.adminName,
+		title: dto.adminName.trim(),
 		address: addressParts.join(" "),
 	};
 }

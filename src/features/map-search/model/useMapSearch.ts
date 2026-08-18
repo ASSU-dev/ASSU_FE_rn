@@ -288,18 +288,11 @@ function toStoreMarker(value: unknown): StoreMarker | null {
 }
 
 async function fetchNearbyRaw(viewport: MapViewport): Promise<unknown[]> {
-	if (__DEV__) console.log("[fetchNearbyRaw] 요청:", "/map/nearby", viewport);
 	const res = await apiInstance.get<BaseResponse<unknown>>("/map/nearby", {
 		params: viewport,
 	});
 	const responseResult = res.data?.result;
-	const result = pickList(responseResult);
-	if (__DEV__)
-		console.log("[fetchNearbyRaw] 응답:", {
-			count: result.length,
-			result: responseResult,
-		});
-	return result;
+	return pickList(responseResult);
 }
 
 const fetchPopularStores = async (): Promise<PopularStore[]> => {
@@ -374,11 +367,6 @@ async function fetchNearbyStores(
 	const markers = nearby
 		.map(toStoreMarker)
 		.filter((marker): marker is StoreMarker => marker !== null);
-	if (__DEV__)
-		console.log("[fetchNearbyStores] 응답:", {
-			count: markers.length,
-			items: markers,
-		});
 	return markers;
 }
 

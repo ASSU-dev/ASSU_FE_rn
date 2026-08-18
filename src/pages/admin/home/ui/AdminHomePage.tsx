@@ -9,6 +9,7 @@ import {
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { useOpenChatRoom } from "@/features/chat";
 import { BellFill, Logo } from "@/shared/assets/icons";
+import { EmptyState } from "@/shared/ui/empty-state";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PageTitle } from "@/shared/ui/page-title";
 import { SummaryCard } from "@/shared/ui/summary-card";
@@ -50,14 +51,10 @@ function RecommendationSection() {
 					}
 				/>
 			) : (
-				<View className="items-center gap-2 px-6 py-10">
-					<Text className="w-full text-center text-base font-medium text-content-primary">
-						제휴업체가 없어요
-					</Text>
-					<Text className="w-full text-center text-sm font-regular text-content-secondary">
-						제휴업체가 추가되면 여기서 확인할 수 있어요!
-					</Text>
-				</View>
+				<EmptyState
+					title="추천할 제휴업체가 없어요"
+					description="제휴업체가 추가되면 여기서 확인할 수 있어요!"
+				/>
 			)}
 		</View>
 	);
@@ -109,7 +106,8 @@ export function AdminHomePage() {
 					maxItems={3}
 					isLoading={isPartnershipsPending}
 					isError={isPartnershipsError}
-					emptyDescription={"제휴업체가 추가되면\n여기서 확인할 수 있어요!"}
+					emptyTitle="아직 등록된 제휴업체가 없어요"
+					emptyDescription="지금 다른업체와의 제휴를 시작해보세요!"
 					onViewAll={() =>
 						router.push("/(protected)/admin/admin-partnership-list")
 					}

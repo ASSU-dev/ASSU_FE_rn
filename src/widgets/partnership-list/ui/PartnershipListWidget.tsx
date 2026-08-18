@@ -1,6 +1,7 @@
 import { memo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { type Partnership, PartnershipCard } from "@/entities/partnership";
+import { colorTokens } from "@/shared/styles/tokens";
 import { EmptyState } from "@/shared/ui/empty-state";
 
 interface PartnershipListWidgetProps {
@@ -10,9 +11,29 @@ interface PartnershipListWidgetProps {
 	maxItems?: number;
 	isLoading?: boolean;
 	isError?: boolean;
+	emptyTitle?: string;
 	emptyDescription?: string;
 	onViewAll?: () => void;
 	onPressCard?: (id: string) => void;
+}
+
+function PartnershipListEmptyState({
+	title,
+	description,
+}: {
+	title: string;
+	description: string;
+}) {
+	return (
+		<View className="items-center justify-center gap-[6px] rounded-lg bg-canvas px-card-p py-[20px]">
+			<Text className="w-full text-center text-md font-medium leading-body text-content-primary">
+				{title}
+			</Text>
+			<Text className="w-full text-center text-[14px] font-regular leading-caption text-content-secondary">
+				{description}
+			</Text>
+		</View>
+	);
 }
 
 export const PartnershipListWidget = memo(
@@ -23,6 +44,7 @@ export const PartnershipListWidget = memo(
 		maxItems,
 		isLoading = false,
 		isError = false,
+		emptyTitle = "진행 중인 제휴가 없어요",
 		emptyDescription = "제휴업체가 추가되면\n여기서 확인할 수 있어요!",
 		onViewAll,
 		onPressCard,
@@ -31,25 +53,31 @@ export const PartnershipListWidget = memo(
 
 		return (
 			<View className="gap-2">
-				<View className="flex-row items-center justify-between">
-					<Text className="text-lg font-medium text-content-primary">
+				<View className="h-[25px] flex-row items-center justify-between">
+					<Text className="text-md font-medium leading-body text-content-primary">
 						{title}
 					</Text>
-					<Pressable onPress={onViewAll}>
-						<Text className="text-base font-regular text-content-secondary">
-							전체보기
-						</Text>
-					</Pressable>
+					{displayed.length > 0 && onViewAll ? (
+						<Pressable onPress={onViewAll}>
+							<Text className="text-base font-regular text-content-secondary">
+								전체보기
+							</Text>
+						</Pressable>
+					) : null}
 				</View>
 
-				{isLoading ? null : isError ? (
+				{isLoading ? (
+					<View className="items-center py-10">
+						<ActivityIndicator color={colorTokens.primary} />
+					</View>
+				) : isError ? (
 					<EmptyState
 						title="목록을 불러오지 못했어요"
 						description="잠시 후 다시 시도해주세요"
 					/>
 				) : displayed.length === 0 ? (
-					<EmptyState
-						title="진행 중인 제휴가 없어요"
+					<PartnershipListEmptyState
+						title={emptyTitle}
 						description={emptyDescription}
 					/>
 				) : (
