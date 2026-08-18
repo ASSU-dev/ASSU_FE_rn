@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { Text, View } from "react-native";
 
@@ -12,6 +13,7 @@ import { useSuggestionForm } from "../model";
 export function SuggestionForm() {
 	const { control, onSubmit, isValid } = useSuggestionForm();
 	const { data: targetItems = [] } = useSuggestionAdmins();
+	const [isTargetSelectOpen, setIsTargetSelectOpen] = useState(false);
 
 	return (
 		<View className="flex-1 justify-between">
@@ -22,7 +24,13 @@ export function SuggestionForm() {
 					name="target"
 					rules={{ required: "건의 대상을 선택해주세요." }}
 					render={({ field, fieldState }) => (
-						<View className="flex-row items-center gap-[50px] mb-4">
+						<View
+							className="flex-row items-center gap-[50px] mb-4"
+							style={{
+								zIndex: isTargetSelectOpen ? 1 : 0,
+								elevation: isTargetSelectOpen ? 1 : 0,
+							}}
+						>
 							<View className="w-[54px] justify-center">
 								<Text className="text-sm font-regular leading-caption tracking-caption text-content-secondary">
 									건의대상
@@ -35,6 +43,8 @@ export function SuggestionForm() {
 									onChange={(val) => field.onChange(val ?? "")}
 									placeholder="건의대상 선택"
 									errorText={fieldState.error?.message}
+									presentation="inline"
+									onOpenChange={setIsTargetSelectOpen}
 								/>
 							</View>
 						</View>

@@ -30,6 +30,9 @@ export type SelectProps = {
 	/** 드롭다운 표시 방식 */
 	presentation?: SelectPresentation;
 
+	/** 드롭다운 열림 상태 변경 콜백 */
+	onOpenChange?: (isOpen: boolean) => void;
+
 	/** 미선택 상태 텍스트 톤 */
 	placeholderTone?: SelectTextTone;
 
