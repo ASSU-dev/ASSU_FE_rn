@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Alert } from "react-native";
 import { useSignupPartnerMutation } from "@/features/signup-user-flow/api/useSignupPartnerMutation";
 import { getApiErrorMessage } from "@/shared/api";
-import { assertSuccess } from "../lib/assertSuccess";
+import { assertRequestSucceeded } from "../lib/assertSuccess";
 import { toPartnerSignupBody } from "./signupPayloadAdapters";
 import type { SignupFormState } from "./types";
 
@@ -21,7 +21,7 @@ export function usePartnerSignupAction({ form, onSuccess, onFailure }: Params) {
 		try {
 			const { request, licenseImage } = toPartnerSignupBody(form);
 			const response = await mutation.mutateAsync({ request, licenseImage });
-			assertSuccess(response, "제휴업체 회원가입에 실패했습니다.");
+			assertRequestSucceeded(response, "제휴업체 회원가입에 실패했습니다.");
 			onSuccess();
 		} catch (error) {
 			Alert.alert(

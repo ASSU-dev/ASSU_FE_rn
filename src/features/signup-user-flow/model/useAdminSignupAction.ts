@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Alert } from "react-native";
 import { apiInstance, getApiErrorMessage } from "@/shared/api";
-import { assertSuccess } from "../lib/assertSuccess";
+import { assertRequestSucceeded } from "../lib/assertSuccess";
 import { toAdminSignupBody } from "./signupPayloadAdapters";
 import type { SignupFormState } from "./types";
 
@@ -26,7 +26,7 @@ export function useAdminSignupAction({ form, onSuccess, onFailure }: Params) {
 					"Content-Type": "multipart/form-data",
 				},
 			});
-			assertSuccess(response.data, "관리자 회원가입에 실패했습니다.");
+			assertRequestSucceeded(response.data, "관리자 회원가입에 실패했습니다.");
 			onSuccess();
 		} catch (error) {
 			Alert.alert(

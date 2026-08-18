@@ -5,7 +5,7 @@ import {
 	getApiErrorMessage,
 	StudentTokenAuthPayloadDTOUniversity,
 } from "@/shared/api";
-import { assertSuccess } from "../lib/assertSuccess";
+import { assertRequestSucceeded } from "../lib/assertSuccess";
 
 const DUPLICATE_ACCOUNT_MESSAGE = { 409: "이미 존재하는 계정입니다." };
 
@@ -42,7 +42,7 @@ export function useStudentSignupAction({
 					university: StudentTokenAuthPayloadDTOUniversity.SSU,
 				},
 			});
-			assertSuccess(response, "회원가입에 실패했습니다.");
+			assertRequestSucceeded(response, "회원가입에 실패했습니다.");
 			onSuccess();
 		} catch (error) {
 			Alert.alert(
