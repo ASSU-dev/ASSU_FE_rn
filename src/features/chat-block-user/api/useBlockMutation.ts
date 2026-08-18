@@ -1,8 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBlockApi } from "@/shared/api";
 
 const { block } = getBlockApi();
 
 export function useBlockMutation() {
-	return useMutation({ mutationFn: block });
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: block,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["getBlockList"] });
+			queryClient.invalidateQueries({ queryKey: ["chatRoomList"] });
+		},
+	});
 }

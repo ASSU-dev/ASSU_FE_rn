@@ -1,16 +1,22 @@
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
+import {
+	useGetBlockListQuery,
+	useUnblockMutation,
+} from "@/features/chat-block-user";
+import { colorTokens } from "@/shared/styles/tokens";
 import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { Dialog } from "@/shared/ui/dialog";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { InfoBanner } from "@/shared/ui/info";
 import { PageLayout } from "@/shared/ui/layout";
 
-import {
-	type BlockedPartner,
-	MOCK_BLOCKED_PARTNERS,
-} from "../model/mockBlockedPartners";
+interface BlockedPartner {
+	id: number;
+	name: string;
+	blockedAt: string;
+}
 
 interface BlockedPartnerRowProps {
 	partner: BlockedPartner;
@@ -39,23 +45,51 @@ function BlockedPartnerRow({ partner, onPress }: BlockedPartnerRowProps) {
 }
 
 export function AdminBlockedPartnersPage() {
-	const [partners, setPartners] = useState(MOCK_BLOCKED_PARTNERS);
+	const { data, isLoading, isError } = useGetBlockListQuery();
+	const { mutate: unblock, isPending: isUnblocking } = useUnblockMutation();
 	const [selectedPartner, setSelectedPartner] = useState<BlockedPartner | null>(
 		null,
 	);
+	const partners = (data?.result ?? []).flatMap((partner) => {
+		if (
+			!Number.isSafeInteger(partner.memberId) ||
+			!partner.memberId ||
+			typeof partner.name !== "string" ||
+			partner.name.trim().length === 0
+		) {
+			return [];
+		}
+
+		return [
+			{
+				id: partner.memberId,
+				name: partner.name.trim(),
+				blockedAt: partner.blockDate ?? "-",
+			},
+		];
+	});
 
 	const handleUnblock = () => {
 		if (!selectedPartner) return;
-		setPartners((current) =>
-			current.filter((partner) => partner.id !== selectedPartner.id),
+		unblock(
+			{ opponentId: selectedPartner.id },
+			{ onSuccess: () => setSelectedPartner(null) },
 		);
-		setSelectedPartner(null);
 	};
 
 	return (
 		<PageLayout>
 			<AppTopBar title="차단 업체 관리" />
-			{partners.length === 0 ? (
+			{isLoading ? (
+				<View className="items-center py-10">
+					<ActivityIndicator color={colorTokens.primary} />
+				</View>
+			) : isError ? (
+				<EmptyState
+					title="차단 목록을 불러오지 못했어요"
+					description="잠시 후 다시 시도해주세요"
+				/>
+			) : partners.length === 0 ? (
 				<EmptyState
 					title="아직 차단된 업체가 없어요!"
 					description="채팅 탭에서 업체의 차단을 진행할 수 있어요"
@@ -93,8 +127,8 @@ export function AdminBlockedPartnersPage() {
 					<Dialog.CancelButton onPress={() => setSelectedPartner(null)}>
 						취소
 					</Dialog.CancelButton>
-					<Dialog.ConfirmButton onPress={handleUnblock}>
-						차단 해제
+					<Dialog.ConfirmButton onPress={handleUnblock} disabled={isUnblocking}>
+						{isUnblocking ? "차단 해제 중" : "차단 해제"}
 					</Dialog.ConfirmButton>
 				</Dialog.Actions>
 			</Dialog>

@@ -1,13 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-
 import { getProfileImageUri, type Message } from "@/entities/chat";
 import { useReadMessageMutation } from "@/features/chat/api/useReadMessageMutation";
 import { useChatHistory } from "@/features/chat/model/useChatHistory";
 import { useChatRoomList } from "@/features/chat/model/useChatRoomList";
 import { useChatWebSocket } from "@/features/chat/model/useChatWebSocket";
-import { useBlockMutation } from "@/features/chat-block-user/api/useBlockMutation";
+import { useBlockMutation } from "@/features/chat-block-user";
 import { useLeaveChattingRoomMutation } from "@/features/chat-leave-room/api/useLeaveChattingRoomMutation";
+import type { BaseResponseListChatRoomListResultDTO } from "@/shared/api";
 import { useAuthStore } from "@/shared/lib/auth/authStore";
 
 // 채팅방 전체 상태·액션 통합 훅
@@ -81,7 +81,7 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 		readMessage(Number(roomId)),
 	);
 
-	const blockMutation = useBlockMutation();
+	const { mutateAsync: block } = useBlockMutation();
 	const leaveMutation = useLeaveChattingRoomMutation();
 
 	function handleSend(text: string) {
@@ -103,9 +103,30 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 		});
 	}
 
-	function handleBlock() {
-		if (!room?.opponentId) return;
-		blockMutation.mutate({ opponentId: room.opponentId });
+	async function handleBlock() {
+		const opponentId = room?.opponentId;
+
+		if (!opponentId) {
+			throw new Error("차단할 대상을 찾을 수 없습니다.");
+		}
+
+		await block({ opponentId });
+		queryClient.setQueryData<BaseResponseListChatRoomListResultDTO>(
+			["chatRoomList"],
+			(old) => {
+				if (!old) return old;
+
+				return {
+					...old,
+					result: old.result?.filter(
+						(chatRoom) => chatRoom.opponentId !== opponentId,
+					),
+				};
+			},
+		);
+		queryClient.removeQueries({
+			queryKey: ["chatMessages", Number(roomId)],
+		});
 	}
 
 	function handleLeave() {

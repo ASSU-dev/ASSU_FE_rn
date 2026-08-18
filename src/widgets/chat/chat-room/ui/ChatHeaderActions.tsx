@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import { BlockUserDialog, useBlockDialog } from "@/features/chat-block-user";
 import {
@@ -27,7 +27,7 @@ export function ChatHeaderActions({
 	}
 
 	return (
-		<View className="flex-row items-center gap-3">
+		<View className="relative z-50 flex-row items-center gap-3">
 			<Pressable hitSlop={8} onPress={leaveChatRoom.open}>
 				<ExitRightIcon
 					width={24}
@@ -36,29 +36,24 @@ export function ChatHeaderActions({
 				/>
 			</Pressable>
 
-			<Pressable hitSlop={8} onPress={() => setMenuVisible(true)}>
+			<Pressable
+				hitSlop={8}
+				onPress={() => setMenuVisible((visible) => !visible)}
+			>
 				<BanIcon width={24} height={24} color={colorTokens.contentPrimary} />
 			</Pressable>
 
-			<Modal
-				visible={menuVisible}
-				transparent
-				animationType="none"
-				onRequestClose={() => setMenuVisible(false)}
-			>
-				<Pressable className="flex-1" onPress={() => setMenuVisible(false)}>
-					<View
-						className="absolute top-[30px] right-6 rounded-[8px] bg-canvas px-4 py-3"
-						style={shadows.neutral}
-					>
-						<Pressable onPress={handleMenuBlock}>
-							<Text className="text-[14px] font-regular text-content-primary">
-								차단하기
-							</Text>
-						</Pressable>
-					</View>
+			{menuVisible ? (
+				<Pressable
+					onPress={handleMenuBlock}
+					className="absolute top-[32px] right-0 z-50 rounded-[8px] bg-canvas px-4 py-3"
+					style={shadows.neutral}
+				>
+					<Text className="text-[14px] font-regular text-content-primary">
+						차단하기
+					</Text>
 				</Pressable>
-			</Modal>
+			) : null}
 
 			<LeaveChatRoomDialog state={leaveChatRoom} />
 			<BlockUserDialog partnerName={partnerName} state={blockDialog} />

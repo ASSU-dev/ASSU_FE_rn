@@ -17,6 +17,8 @@ export function BlockUserDialog({ partnerName, state }: BlockUserDialogProps) {
 		closeConfirm,
 		handleConfirm,
 		closeSuccess,
+		isSubmitting,
+		errorMessage,
 	} = state;
 	const { confirm, success } = BLOCK_USER_DIALOG;
 
@@ -28,13 +30,16 @@ export function BlockUserDialog({ partnerName, state }: BlockUserDialogProps) {
 					<Text className="text-sm text-content-secondary leading-5">
 						{confirm.body}
 					</Text>
+					{errorMessage ? (
+						<Text className="mt-2 text-sm text-danger">{errorMessage}</Text>
+					) : null}
 				</Dialog.Content>
 				<Dialog.Actions>
-					<Dialog.CancelButton onPress={closeConfirm}>
+					<Dialog.CancelButton onPress={closeConfirm} disabled={isSubmitting}>
 						{confirm.cancel}
 					</Dialog.CancelButton>
-					<Dialog.ConfirmButton onPress={handleConfirm}>
-						{confirm.confirm}
+					<Dialog.ConfirmButton onPress={handleConfirm} disabled={isSubmitting}>
+						{isSubmitting ? "차단 중" : confirm.confirm}
 					</Dialog.ConfirmButton>
 				</Dialog.Actions>
 			</Dialog>
