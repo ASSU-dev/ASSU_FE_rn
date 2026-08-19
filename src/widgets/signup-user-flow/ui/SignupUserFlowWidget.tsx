@@ -1,5 +1,6 @@
 import { FormProvider } from "react-hook-form";
 import { ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSignupFlowController } from "@/features/signup-user-flow/model/useSignupFlowController";
 import {
 	LoginFormScreen,
@@ -13,7 +14,13 @@ import { AddressSearchDialog } from "@/shared/ui/address-search";
 import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
+// 상태바/홈 인디케이터 인셋 위에 얹는 여백 (iPhone 기준 기존 pt-[72px] / pb-[41px] 유지)
+const TOP_CONTENT_OFFSET = 24;
+const BOTTOM_CONTENT_OFFSET = 8;
+const MIN_BOTTOM_INSET = 12;
+
 export function SignupUserFlowWidget() {
+	const insets = useSafeAreaInsets();
 	const {
 		formMethods,
 		flow,
@@ -61,7 +68,14 @@ export function SignupUserFlowWidget() {
 	return (
 		<FormProvider {...formMethods}>
 			<SignupFlowUiProvider value={flowUi}>
-				<View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
+				<View
+					className="flex-1 bg-canvas px-screen-m"
+					style={{
+						paddingTop: insets.top + TOP_CONTENT_OFFSET,
+						paddingBottom:
+							Math.max(insets.bottom, MIN_BOTTOM_INSET) + BOTTOM_CONTENT_OFFSET,
+					}}
+				>
 					<ScrollView
 						className="flex-1"
 						contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
@@ -88,7 +102,7 @@ export function SignupUserFlowWidget() {
 					</ScrollView>
 
 					{flow.showBottomButton ? (
-						<View className="w-full pb-[33px] mt-[10px]">
+						<View className="w-full mt-[10px]">
 							<MediumButton
 								onPress={flow.onBottomButtonPress}
 								disabled={flow.isBottomDisabled}

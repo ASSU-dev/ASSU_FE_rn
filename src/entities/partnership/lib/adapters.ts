@@ -2,6 +2,7 @@ import type {
 	AdminLiteDTO,
 	AdminRecommendResponseDTO,
 	PartnershipDetailResponseDTO,
+	SuspendedPaperResponseDTO,
 	UsageDetailDto,
 	WritePartnershipResponseDTO,
 } from "../model/api-types";
@@ -11,6 +12,7 @@ import type {
 	EtcBenefitItem,
 	Partnership,
 	PartnershipContract,
+	PendingContract,
 	ReviewableBenefit,
 	ServiceBenefitItem,
 } from "../model/types";
@@ -165,5 +167,15 @@ export function toPartnershipBenefit(dto: UsageDetailDto): ReviewableBenefit {
 		time,
 		description: dto.benefitDescription,
 		isReviewed: dto.isReviewed,
+	};
+}
+
+export function toPendingContract(
+	dto: SuspendedPaperResponseDTO,
+): PendingContract {
+	return {
+		paperId: dto.paperId,
+		partnerName: dto.partnerName,
+		proposedAt: dto.createdAt.split("T")[0] ?? dto.createdAt,
 	};
 }

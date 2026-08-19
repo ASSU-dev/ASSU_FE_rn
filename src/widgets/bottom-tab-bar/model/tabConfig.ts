@@ -1,27 +1,42 @@
 import type { Ionicons } from "@expo/vector-icons";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ComponentType } from "react";
+import type { SvgProps } from "react-native-svg";
 import type { UserType } from "@/entities/user/model/types";
+import {
+	AccountManagementIcon,
+	HomeIcon,
+	SuggestionBoxIcon,
+} from "@/shared/assets/icons";
 
 type IoniconName = ComponentProps<typeof Ionicons>["name"];
 
-/**
- * TODO: SVG 머지 후 activeIconName/inactiveIconName 필드를
- *       Icon: ComponentType<{ size: number; color: string }> 으로 교체
- */
-export interface TabItem {
-	route: string;
-	label: string;
+/** Ionicons 기반 탭 아이콘 (활성/비활성 이름 분리) */
+interface IoniconTabIcon {
 	activeIconName: IoniconName;
 	inactiveIconName: IoniconName;
+	Icon?: never;
 }
+
+/** SVG 컴포넌트 기반 탭 아이콘 (color prop으로 활성/비활성 틴트) */
+interface SvgTabIcon {
+	Icon: ComponentType<SvgProps>;
+	activeIconName?: never;
+	inactiveIconName?: never;
+}
+
+export type TabIcon = IoniconTabIcon | SvgTabIcon;
+
+export type TabItem = TabIcon & {
+	route: string;
+	label: string;
+};
 
 export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 	STUDENT: [
 		{
 			route: "home",
 			label: "홈",
-			activeIconName: "home",
-			inactiveIconName: "home-outline",
+			Icon: HomeIcon,
 		},
 		{
 			route: "map",
@@ -32,22 +47,19 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "suggestion",
 			label: "제휴건의함",
-			activeIconName: "pricetag",
-			inactiveIconName: "pricetag-outline",
+			Icon: SuggestionBoxIcon,
 		},
 		{
 			route: "profile",
 			label: "프로필",
-			activeIconName: "person",
-			inactiveIconName: "person-outline",
+			Icon: AccountManagementIcon,
 		},
 	],
 	ADMIN: [
 		{
 			route: "home",
 			label: "홈",
-			activeIconName: "home",
-			inactiveIconName: "home-outline",
+			Icon: HomeIcon,
 		},
 		{
 			route: "map",
@@ -70,16 +82,14 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "profile",
 			label: "프로필",
-			activeIconName: "person",
-			inactiveIconName: "person-outline",
+			Icon: AccountManagementIcon,
 		},
 	],
 	PARTNER: [
 		{
 			route: "home",
 			label: "홈",
-			activeIconName: "home",
-			inactiveIconName: "home-outline",
+			Icon: HomeIcon,
 		},
 		{
 			route: "map",
@@ -102,8 +112,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "profile",
 			label: "프로필",
-			activeIconName: "person",
-			inactiveIconName: "person-outline",
+			Icon: AccountManagementIcon,
 		},
 	],
 };

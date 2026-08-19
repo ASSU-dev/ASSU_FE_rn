@@ -1,4 +1,5 @@
 import { Image, Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AssuLogoIcon } from "@/shared/assets/icons";
 
 type LoginIntroScreenProps = {
@@ -14,6 +15,8 @@ export function LoginIntroScreen({
 	onPress,
 	disabled = false,
 }: LoginIntroScreenProps) {
+	const insets = useSafeAreaInsets();
+
 	return (
 		<Pressable
 			onPress={onPress}
@@ -32,7 +35,7 @@ export function LoginIntroScreen({
 			/>
 
 			{showStatusBar ? (
-				<View className="pt-[59px]">{/* status bar space */}</View>
+				<View style={{ paddingTop: insets.top }}>{/* status bar space */}</View>
 			) : null}
 
 			<View className="flex-1 items-center justify-center">
@@ -40,7 +43,10 @@ export function LoginIntroScreen({
 			</View>
 
 			{showHomeIndicator ? (
-				<View className="mb-[8px] self-center h-[5px] w-[134px] rounded-full bg-content-primary" />
+				<View
+					className="self-center h-[5px] w-[134px] rounded-full bg-content-primary"
+					style={{ marginBottom: insets.bottom + 8 }}
+				/>
 			) : null}
 		</Pressable>
 	);
