@@ -1,4 +1,7 @@
-import { useEffect } from "react";
+import { router } from "expo-router";
+import { useEffect, useRef } from "react";
+import { Alert } from "react-native";
+import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { stompManager } from "@/shared/lib/stomp/stompManager";
 import type {
 	GroupCertificationProgressMessage,
@@ -72,15 +75,19 @@ export function certifyGroupParticipant({
 }
 
 export function useGroupCertificationProgress(sessionId: number | null) {
+	const memberId = useAuthStore((state) => state.memberId);
 	const setGroupProgress = usePartnershipAuthStore(
 		(state) => state.setGroupProgress,
 	);
 	const completeGroupSession = usePartnershipAuthStore(
 		(state) => state.completeGroupSession,
 	);
+	const resetPartnershipAuth = usePartnershipAuthStore((state) => state.reset);
+	const hasHandledMismatchRef = useRef(false);
 
 	useEffect(() => {
 		if (sessionId === null) return;
+		hasHandledMismatchRef.current = false;
 
 		const destination = `/certification/progress/${sessionId}`;
 		if (__DEV__) {
@@ -115,6 +122,34 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 					return;
 				}
 
+				if (progressType === "mismatch") {
+					const userIds = progress.userIds ?? [];
+					setGroupProgress(count);
+
+					if (
+						memberId !== null &&
+						!userIds.includes(memberId) &&
+						!hasHandledMismatchRef.current
+					) {
+						hasHandledMismatchRef.current = true;
+						Alert.alert(
+							"인증 실패",
+							progress.message ?? "제휴 대상자 정보와 일치하지 않습니다.",
+							[
+								{
+									text: "확인",
+									onPress: () => {
+										resetPartnershipAuth();
+										router.replace("/(protected)/student/(tabs)/home");
+									},
+								},
+							],
+							{ cancelable: false },
+						);
+					}
+					return;
+				}
+
 				if (progressType === "completed") {
 					completeGroupSession(count, progress.userIds ?? []);
 					return;
@@ -131,5 +166,11 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 				}
 			}
 		});
-	}, [completeGroupSession, sessionId, setGroupProgress]);
+	}, [
+		completeGroupSession,
+		memberId,
+		resetPartnershipAuth,
+		sessionId,
+		setGroupProgress,
+	]);
 }
