@@ -25,8 +25,8 @@ API 명세서: `openapi/oepnapi.json`
 
 ### 제휴업체 대시보드
 
-- [x] 통계 UI 구현
-- [x] 통계 API 연동 (`GET /store/ranking/weekly`)
+- [x] ~~통계 UI 구현~~ (#193 대시보드 탭 삭제)
+- [x] ~~통계 API 연동 (`GET /store/ranking/weekly`)~~ (#193 대시보드 탭 삭제)
 - [x] 고객 리뷰 목록 API 연동 (`GET /reviews/partner`, `GET /reviews/store/{storeId}`, `GET /reviews/average`)
 
 ### 맵 (최후반 — 네이티브 전환 후 진행)
