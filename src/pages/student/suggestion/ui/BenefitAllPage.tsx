@@ -10,11 +10,9 @@ import {
 	View,
 } from "react-native";
 import { useMyPartnerships } from "@/entities/partnership";
-import { useReviewDraftStore } from "@/features/review-management";
 import { colorTokens } from "@/shared/styles/tokens";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { createCurrentMonthMockBenefit } from "../model/mockBenefits";
-import type { ReviewBenefitItem } from "../model/types";
 import { useMonthNavigator } from "../model/useMonthNavigator";
 import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
@@ -35,7 +33,6 @@ export function BenefitAllPage() {
 		initialYear,
 		initialMonth,
 	);
-	const beginReview = useReviewDraftStore((state) => state.beginReview);
 	const { data, isLoading, isError, error } = useMyPartnerships(year, month);
 
 	const apiDetails = data?.details ?? [];
@@ -53,11 +50,6 @@ export function BenefitAllPage() {
 	const count = shouldShowCurrentMonthMock
 		? benefits.length
 		: (data?.serviceCount ?? benefits.length);
-
-	const handleReviewPress = (benefit: ReviewBenefitItem) => {
-		beginReview(benefit, { isMock: benefit.isMock });
-		router.push("/(protected)/student/review/rating");
-	};
 
 	return (
 		<PageLayout
@@ -104,10 +96,7 @@ export function BenefitAllPage() {
 							<BenefitEmptyState />
 						</View>
 					) : (
-						<BenefitList
-							benefits={benefits}
-							onReviewPress={handleReviewPress}
-						/>
+						<BenefitList benefits={benefits} />
 					)}
 				</ScrollView>
 			</View>

@@ -7,10 +7,8 @@ import {
 	View,
 } from "react-native";
 import { useMyPartnerships } from "@/entities/partnership";
-import { useReviewDraftStore } from "@/features/review-management";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { createCurrentMonthMockBenefit } from "../model/mockBenefits";
-import type { ReviewBenefitItem } from "../model/types";
 import { useMonthNavigator } from "../model/useMonthNavigator";
 import { BenefitEmptyState } from "./BenefitEmptyState";
 import { BenefitList } from "./BenefitList";
@@ -26,7 +24,6 @@ export function StudentSuggestionPage() {
 		now.getFullYear(),
 		now.getMonth() + 1,
 	);
-	const beginReview = useReviewDraftStore((state) => state.beginReview);
 
 	const { data, isLoading, isError, error } = useMyPartnerships(year, month);
 
@@ -46,11 +43,6 @@ export function StudentSuggestionPage() {
 		? details.length
 		: (data?.serviceCount ?? details.length);
 	const displayBenefits = details.slice(0, COLLAPSED_LIMIT);
-
-	const handleReviewPress = (benefit: ReviewBenefitItem) => {
-		beginReview(benefit, { isMock: benefit.isMock });
-		router.push("/(protected)/student/review/rating");
-	};
 
 	return (
 		<PageLayout contentContainerClassName="flex-1">
@@ -91,10 +83,7 @@ export function StudentSuggestionPage() {
 						<BenefitEmptyState />
 					</View>
 				) : (
-					<BenefitList
-						benefits={displayBenefits}
-						onReviewPress={handleReviewPress}
-					/>
+					<BenefitList benefits={displayBenefits} />
 				)}
 			</ScrollView>
 			<SuggestionSection />

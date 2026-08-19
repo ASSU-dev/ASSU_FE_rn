@@ -6,17 +6,23 @@ import { type MapViewport, useNearbyStores } from "@/features/map-search";
 import { KakaoMap, type KakaoMapHandle } from "@/shared/ui/kakao-map";
 import { useUserLocation } from "../model/useUserLocation";
 
+import { MapContactCard } from "./MapContactCard";
 import { MapLocateButton } from "./MapLocateButton";
 import { MapSelectedStoreCard } from "./MapSelectedStoreCard";
 
 interface MapViewProps {
 	partnershipMode?: boolean;
 	onStorePress?: (store: StoreMarker) => void;
+	/** 마커 선택 시 문의 카드 노출 + 문의하기 콜백 (제휴업체 맵) */
+	onContactPress?: (store: StoreMarker) => void;
+	isContactPending?: boolean;
 }
 
 export function MapView({
 	partnershipMode = false,
 	onStorePress,
+	onContactPress,
+	isContactPending = false,
 }: MapViewProps) {
 	const kakaoRef = useRef<KakaoMapHandle>(null);
 	const { center, myLocation, heading } = useUserLocation();
@@ -68,6 +74,15 @@ export function MapView({
 						onPress={
 							onStorePress ? () => onStorePress(selectedStore) : undefined
 						}
+					/>
+				</View>
+			) : null}
+			{onContactPress && selectedStore ? (
+				<View className="absolute bottom-[12px] left-[14px] right-[14px]">
+					<MapContactCard
+						store={selectedStore}
+						onContactPress={() => onContactPress(selectedStore)}
+						isContactPending={isContactPending}
 					/>
 				</View>
 			) : null}

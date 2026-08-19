@@ -8,7 +8,7 @@ interface StatCardProps {
 
 export function StatCard({ label, count }: StatCardProps) {
 	return (
-		<View className="flex-1 bg-neutral rounded-[10px] px-gutter py-card-p gap-[8px]">
+		<View className="flex-1 bg-neutral rounded-[10px] px-[14px] py-[15px] gap-[5px]">
 			<Text className="text-md font-medium text-content-primary leading-caption tracking-caption">
 				{label}
 			</Text>
