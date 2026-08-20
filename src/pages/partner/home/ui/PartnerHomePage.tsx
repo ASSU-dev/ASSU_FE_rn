@@ -41,14 +41,16 @@ export function PartnerHomePage() {
 			withTopInset={true}
 			withBottomInset={false}
 			className="flex-1 bg-neutral"
-			contentContainerClassName="px-6 pt-[17px] pb-6"
+			contentContainerClassName="px-6 pb-6"
+			header={
+				<AppHeader
+					onNotificationPress={() =>
+						router.push("/(protected)/partner/notification-center")
+					}
+					hasNotification={false}
+				/>
+			}
 		>
-			<AppHeader
-				onNotificationPress={() =>
-					router.push("/(protected)/partner/notification-center")
-				}
-			/>
-
 			<PageTitle title={basicInfo?.name ?? ""} />
 
 			<View className="gap-5">

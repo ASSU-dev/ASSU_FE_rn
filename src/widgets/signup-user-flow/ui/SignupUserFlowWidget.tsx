@@ -1,5 +1,6 @@
 import { FormProvider } from "react-hook-form";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSignupFlowController } from "@/features/signup-user-flow/model/useSignupFlowController";
 import {
@@ -68,28 +69,22 @@ export function SignupUserFlowWidget() {
 	return (
 		<FormProvider {...formMethods}>
 			<SignupFlowUiProvider value={flowUi}>
-				<View
-					className="flex-1 bg-canvas px-screen-m"
-					style={{
-						paddingTop: insets.top + TOP_CONTENT_OFFSET,
-						paddingBottom:
-							Math.max(insets.bottom, MIN_BOTTOM_INSET) + BOTTOM_CONTENT_OFFSET,
-					}}
-				>
-					<ScrollView
-						className="flex-1"
+				<View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
+					{flow.showProgress ? (
+						<SignupProgressBar
+							progress={flow.progress}
+							segmentCount={flow.progressSteps.length}
+							currentSegment={flow.currentProgressIndex}
+							onSegmentPress={flow.onSegmentPress}
+						/>
+					) : null}
+					<KeyboardAwareScrollView
+						style={{ flex: 1 }}
 						contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
 						showsVerticalScrollIndicator={false}
 						keyboardShouldPersistTaps="handled"
+						bottomOffset={24}
 					>
-						{flow.showProgress ? (
-							<SignupProgressBar
-								progress={flow.progress}
-								segmentCount={flow.progressSteps.length}
-								currentSegment={flow.currentProgressIndex}
-								onSegmentPress={flow.onSegmentPress}
-							/>
-						) : null}
 						<View
 							className={
 								flow.step === "complete"
@@ -99,7 +94,7 @@ export function SignupUserFlowWidget() {
 						>
 							<SignupStepContent step={flow.step} />
 						</View>
-					</ScrollView>
+					</KeyboardAwareScrollView>
 
 					{flow.showBottomButton ? (
 						<View className="w-full mt-[10px]">
