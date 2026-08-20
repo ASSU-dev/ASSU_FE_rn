@@ -98,12 +98,6 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 			inactiveIconName: "location-outline",
 		},
 		{
-			route: "dashboard",
-			label: "대시보드",
-			activeIconName: "bar-chart",
-			inactiveIconName: "bar-chart-outline",
-		},
-		{
 			route: "chat",
 			label: "채팅",
 			activeIconName: "chatbubble",
