@@ -48,7 +48,6 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 
 	const { mutate: readMessage } = useReadMessageMutation();
 	// 입장: 상대방 메시지 읽음 처리 → 메세지 캐시 업데이트(readMessagesId로 캐시 unreadCountForSender: 0)
-	// 퇴장: chatRoomList invalidate → 목록 화면 복귀 시 최신 상태 반영
 	useEffect(() => {
 		readMessage(Number(roomId), {
 			onSuccess: (data) => {
@@ -71,9 +70,6 @@ export function useChatRoom(roomId: string, onLeaveSuccess: () => void) {
 				);
 			},
 		});
-		return () => {
-			queryClient.invalidateQueries({ queryKey: ["chatRoomList"] });
-		};
 	}, [roomId, queryClient, readMessage]);
 
 	// 메시지 발행
