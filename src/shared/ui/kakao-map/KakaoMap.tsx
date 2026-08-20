@@ -289,6 +289,9 @@ function buildMapHtml(appKey: string): string {
         }
 
         var marker = new kakao.maps.Marker({ position: position, title: markerData.name || '' });
+        kakao.maps.event.addListener(marker, 'click', function() {
+          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MARKER_PRESS', markerId: String(markerData.id) }));
+        });
         marker.setMap(map);
         storeMarkers.push(marker);
       });

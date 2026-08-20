@@ -1,27 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
-import type { ComponentProps } from "react";
 import { Pressable, Text } from "react-native";
 import { colorTokens } from "@/shared/styles/tokens";
+import type { TabIcon } from "../model/tabConfig";
 
-type IoniconName = ComponentProps<typeof Ionicons>["name"];
+const ICON_SIZE = 22;
 
-interface BottomTabItemProps {
+type BottomTabItemProps = TabIcon & {
 	label: string;
-	activeIconName: IoniconName;
-	inactiveIconName: IoniconName;
 	isActive: boolean;
 	onPress: () => void;
-}
+};
 
 export function BottomTabItem({
 	label,
-	activeIconName,
-	inactiveIconName,
 	isActive,
 	onPress,
+	...icon
 }: BottomTabItemProps) {
 	const color = isActive ? colorTokens.primary : colorTokens.contentTertiary;
-	const iconName = isActive ? activeIconName : inactiveIconName;
 
 	return (
 		<Pressable
@@ -29,7 +25,15 @@ export function BottomTabItem({
 			className="flex-1 items-center justify-center"
 			style={{ height: 48, paddingVertical: 7 }}
 		>
-			<Ionicons name={iconName} size={22} color={color} />
+			{icon.Icon ? (
+				<icon.Icon width={ICON_SIZE} height={ICON_SIZE} color={color} />
+			) : (
+				<Ionicons
+					name={isActive ? icon.activeIconName : icon.inactiveIconName}
+					size={ICON_SIZE}
+					color={color}
+				/>
+			)}
 			<Text className="text-xs mt-1 font-semibold" style={{ color }}>
 				{label}
 			</Text>

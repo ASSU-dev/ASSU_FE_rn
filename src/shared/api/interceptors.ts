@@ -16,10 +16,17 @@ const UPLOAD_TIMEOUT_MS = 60_000;
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
+let lastLoggedToken: string | null = null;
+
 apiInstance.interceptors.request.use((config) => {
 	const token = useAuthStore.getState().accessToken;
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
+		// 토큰 원문은 로그에 남기지 않고, 값이 바뀐 시점만 기록한다.
+		if (__DEV__ && token !== lastLoggedToken) {
+			lastLoggedToken = token;
+			console.log("[TOKEN] access token updated");
+		}
 	}
 	if (config.data instanceof FormData) {
 		config.timeout = UPLOAD_TIMEOUT_MS;

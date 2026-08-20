@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image, Pressable, Text, View } from "react-native";
 
 import type { StoreMarker } from "@/entities/store";
-import { StarIcon } from "@/shared/assets/icons/star-icon";
 import { shadows } from "@/shared/styles/shadows";
 import { colorTokens } from "@/shared/styles/tokens";
 
@@ -15,8 +14,6 @@ export function MapSelectedStoreCard({
 	store,
 	onPress,
 }: MapSelectedStoreCardProps) {
-	const filledStars = Math.max(0, Math.min(5, Math.round(store.rate)));
-
 	return (
 		<Pressable
 			onPress={onPress}
@@ -34,26 +31,19 @@ export function MapSelectedStoreCard({
 						/>
 					) : null}
 				</View>
-				<View className="max-w-[210px] gap-[8px]">
-					<View>
-						<Text
-							className="text-lg font-medium leading-[20px] tracking-[0.25px] text-content-primary"
-							numberOfLines={1}
-						>
-							{store.name}
-						</Text>
-						<Text
-							className="text-sm font-regular leading-[21px] tracking-[-0.32px] text-content-secondary"
-							numberOfLines={1}
-						>
-							{store.benefit ?? "제휴 혜택 정보를 확인해보세요"}
-						</Text>
-					</View>
-					<View className="h-[20px] flex-row items-center">
-						{[1, 2, 3, 4, 5].map((star) => (
-							<StarIcon key={star} filled={star <= filledStars} size={20} />
-						))}
-					</View>
+				<View className="max-w-[210px] justify-center gap-[10px]">
+					<Text
+						className="text-lg font-medium leading-[20px] tracking-[0.25px] text-content-primary"
+						numberOfLines={1}
+					>
+						{store.name}
+					</Text>
+					<Text
+						className="text-base font-bold leading-[22px] tracking-[-0.32px] text-content-primary"
+						numberOfLines={2}
+					>
+						{store.benefit ?? "제휴 혜택 정보를 확인해보세요"}
+					</Text>
 				</View>
 			</View>
 			<Ionicons

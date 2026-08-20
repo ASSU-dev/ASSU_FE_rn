@@ -6,18 +6,27 @@ import type {
 	WritePartnershipResponseDTO,
 } from "../model/api-types";
 
+const PARTNER_PARTNERSHIP_LIST_PARAMS = {
+	all: true,
+	page: 0,
+	size: 100,
+} as const;
+
 async function fetchPartnerPartnerships(): Promise<
 	PagedResponse<WritePartnershipResponseDTO>
 > {
 	const res = await apiInstance.get<
 		BaseResponse<PagedResponse<WritePartnershipResponseDTO>>
-	>("/partnership/partner");
+	>("/partnership/partner", {
+		params: PARTNER_PARTNERSHIP_LIST_PARAMS,
+	});
+	if (__DEV__) console.log("[fetchPartnerPartnerships] 응답:", res.data.result);
 	return res.data.result;
 }
 
 export function usePartnerPartnerships() {
 	return useQuery({
-		queryKey: ["partnership", "partner"],
+		queryKey: ["partnership", "partner", PARTNER_PARTNERSHIP_LIST_PARAMS],
 		queryFn: fetchPartnerPartnerships,
 	});
 }

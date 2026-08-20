@@ -6,19 +6,26 @@ import type {
 	WritePartnershipResponseDTO,
 } from "../model/api-types";
 
+const ADMIN_PARTNERSHIP_LIST_PARAMS = {
+	all: true,
+	page: 0,
+	size: 100,
+} as const;
+
 async function fetchAdminPartnerships(): Promise<
 	PagedResponse<WritePartnershipResponseDTO>
 > {
-	const res =
-		await apiInstance.get<
-			BaseResponse<PagedResponse<WritePartnershipResponseDTO>>
-		>("/partnership/admin");
+	const res = await apiInstance.get<
+		BaseResponse<PagedResponse<WritePartnershipResponseDTO>>
+	>("/partnership/admin", {
+		params: ADMIN_PARTNERSHIP_LIST_PARAMS,
+	});
 	return res.data.result;
 }
 
 export function useAdminPartnerships() {
 	return useQuery({
-		queryKey: ["partnership", "admin"],
+		queryKey: ["partnership", "admin", ADMIN_PARTNERSHIP_LIST_PARAMS],
 		queryFn: fetchAdminPartnerships,
 	});
 }

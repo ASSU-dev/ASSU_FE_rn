@@ -1,9 +1,8 @@
-// 개별 혜택 카드 — 가게명, 혜택 설명, 날짜, 리뷰 작성 버튼을 표시한다
-import { Pressable, Text, View } from "react-native";
+// 개별 혜택 카드 — 가게명, 혜택 설명, 날짜를 표시한다
+import { Text, View } from "react-native";
 import type { ReviewBenefitItem } from "../model/types";
 
 interface BenefitCardProps extends ReviewBenefitItem {
-	onReviewPress?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
 }
@@ -13,8 +12,6 @@ export function BenefitCard({
 	date,
 	time,
 	description,
-	isReviewed,
-	onReviewPress,
 	isFirst,
 	isLast,
 }: BenefitCardProps) {
@@ -32,24 +29,13 @@ export function BenefitCard({
 						{description}
 					</Text>
 				</View>
-				<View className="items-end gap-[5px]">
-					<View className="flex-row gap-[4px]">
-						<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">
-							{date}
-						</Text>
-						<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">
-							{time}
-						</Text>
-					</View>
-					<Pressable
-						className="bg-neutral px-gutter py-[5px] rounded-[8px]"
-						disabled={isReviewed}
-						onPress={onReviewPress}
-					>
-						<Text className="font-regular text-[11px] text-content-secondary leading-caption tracking-caption">
-							{isReviewed ? "작성완료" : "리뷰 작성하기"}
-						</Text>
-					</Pressable>
+				<View className="flex-row gap-[4px]">
+					<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">
+						{date}
+					</Text>
+					<Text className="font-regular text-sm text-content-secondary leading-caption tracking-caption">
+						{time}
+					</Text>
 				</View>
 			</View>
 		</View>
