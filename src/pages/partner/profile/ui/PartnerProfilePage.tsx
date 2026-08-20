@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { View } from "react-native";
 
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
+import { useAccountSessionActions } from "@/features/account-session-management";
 import {
 	ProfileImageActionSheet,
 	useProfileImageEditor,
@@ -17,6 +18,7 @@ export function PartnerProfilePage() {
 	const router = useRouter();
 	const basicInfo = useUserBasicInfo();
 	const profileImageEditor = useProfileImageEditor();
+	const accountSession = useAccountSessionActions();
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
@@ -28,6 +30,16 @@ export function PartnerProfilePage() {
 			label: "계정관리",
 			iconName: "user",
 			onPress: () => router.push("/(protected)/partner/account-management"),
+		},
+		{
+			label: "로그아웃",
+			iconName: "exitRight",
+			onPress: accountSession.requestLogout,
+		},
+		{
+			label: "회원 탈퇴",
+			iconName: "user",
+			onPress: accountSession.requestWithdrawal,
 		},
 	];
 

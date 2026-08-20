@@ -1,11 +1,13 @@
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { getHomeRouteByRole } from "@/shared/api/auth";
+import { pickUploadFile } from "../lib/pickUploadFile";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
 import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
 import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useCommonLoginAction } from "./useCommonLoginAction";
 import { usePartnerSignupAction } from "./usePartnerSignupAction";
+import { usePhoneVerificationAction } from "./usePhoneVerificationAction";
 import { useSignupFlowPresentation } from "./useSignupFlowPresentation";
 import { useSignupOverlays } from "./useSignupOverlays";
 import { useSignupStepActions } from "./useSignupStepActions";
@@ -28,7 +30,7 @@ export function useSignupFlowController() {
 		setPhone,
 		setVerificationCode,
 		sendVerificationCode,
-		setIdentityVerified,
+		markVerificationFailed,
 		setRole,
 		setSchool,
 		setStudentMajor,
@@ -43,11 +45,11 @@ export function useSignupFlowController() {
 		setAdminDepartment,
 		setAdminOfficeAddress,
 		setAdminOfficeAddressDetail,
-		selectAdminSealMock,
+		setAdminSealFile,
 		setPartnerCompanyName,
 		setPartnerOfficeAddress,
 		setPartnerOfficeAddressDetail,
-		selectPartnerBusinessRegistrationMock,
+		setPartnerBusinessRegistrationFile,
 		progressSteps,
 		currentProgressIndex,
 		showProgress,
@@ -120,7 +122,23 @@ export function useSignupFlowController() {
 			password: form.auth.password,
 		});
 
-	const sendIdentityVerificationCode = () => sendVerificationCode();
+	const { sendCode, verifyCode, isVerifying } = usePhoneVerificationAction({
+		onCodeSent: sendVerificationCode,
+		onVerifyFailed: markVerificationFailed,
+		onVerified: goNext,
+	});
+
+	const sendIdentityVerificationCode = () => sendCode(form.identity.phone);
+
+	const handlePickAdminSeal = useCallback(async () => {
+		const file = await pickUploadFile();
+		if (file) setAdminSealFile(file);
+	}, [setAdminSealFile]);
+
+	const handlePickPartnerBusinessRegistration = useCallback(async () => {
+		const file = await pickUploadFile();
+		if (file) setPartnerBusinessRegistrationFile(file);
+	}, [setPartnerBusinessRegistrationFile]);
 
 	const overlays = useSignupOverlays({
 		adminOfficeAddressId: form.admin.officeAddressId,
@@ -153,7 +171,7 @@ export function useSignupFlowController() {
 			setPartnerPassword,
 			setPartnerCompanyName,
 			setPartnerOfficeAddressDetail,
-			selectPartnerBusinessRegistrationMock,
+			onPickBusinessRegistration: handlePickPartnerBusinessRegistration,
 		},
 		admin: {
 			setAdminEmail,
@@ -162,7 +180,7 @@ export function useSignupFlowController() {
 			setAdminCollege,
 			setAdminDepartment,
 			setAdminOfficeAddressDetail,
-			selectAdminSealMock,
+			onPickSeal: handlePickAdminSeal,
 		},
 		agreementHandlers,
 	});
@@ -175,7 +193,7 @@ export function useSignupFlowController() {
 			currentProgressIndex,
 			showProgress,
 			showBottomButton,
-			isBottomDisabled,
+			isBottomDisabled: isBottomDisabled || isVerifying,
 			buttonLabel,
 			onSegmentPress: (segmentIndex: number) => {
 				if (segmentIndex >= currentProgressIndex) return;
@@ -186,9 +204,12 @@ export function useSignupFlowController() {
 					router.replace(getHomeRouteByRole(form.role) as never);
 					return;
 				}
-				if (step === "identity" && FORCE_PHONE_VERIFICATION_BYPASS) {
-					setIdentityVerified();
-					goNext();
+				if (step === "identity") {
+					if (FORCE_PHONE_VERIFICATION_BYPASS) {
+						goNext();
+						return;
+					}
+					await verifyCode(form.identity.phone, form.identity.verificationCode);
 					return;
 				}
 				if (step === "studentInput3") {
@@ -220,6 +241,10 @@ export function useSignupFlowController() {
 			checkEmailAvailability,
 			form.role,
 			form.admin.email,
+			form.identity.phone,
+			form.identity.verificationCode,
+			isVerifying,
+			verifyCode,
 			goNext,
 			goTo,
 			handlePartnerSignup,
@@ -228,7 +253,6 @@ export function useSignupFlowController() {
 			isBottomDisabled,
 			progress,
 			progressSteps,
-			setIdentityVerified,
 			showBottomButton,
 			showProgress,
 			step,

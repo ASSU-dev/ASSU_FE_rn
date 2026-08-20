@@ -20,7 +20,7 @@ export const PartnershipRecommendationWidget = memo(
 	}: PartnershipRecommendationWidgetProps) => {
 		return (
 			<View className="gap-2">
-				<Text className="text-lg font-medium text-content-primary">
+				<Text className="text-md font-semibold leading-[1.3] text-content-primary">
 					🔍 제휴단체 추천
 				</Text>
 
@@ -30,7 +30,7 @@ export const PartnershipRecommendationWidget = memo(
 						description="제휴단체가 추가되면 여기서 확인할 수 있어요!"
 					/>
 				) : (
-					<View className="flex-row gap-3">
+					<View className="flex-row gap-[15px]">
 						{summaries.map((summary) => (
 							<AffiliationSummaryCard
 								key={summary.adminId}

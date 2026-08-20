@@ -34,6 +34,14 @@ export interface PartnershipDetailResponseDTO {
 	options: PartnershipOptionDTO[];
 }
 
+/** GET /partnership/suspended 응답 항목 (대기 중인 제휴 계약서) */
+export interface SuspendedPaperResponseDTO {
+	paperId: number;
+	partnerName: string;
+	/** LocalDateTime, 예: "2024-01-01T09:00:00" */
+	createdAt: string;
+}
+
 export interface PagedResponse<T> {
 	content: T[];
 	totalPages: number;

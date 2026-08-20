@@ -14,8 +14,6 @@ import { PageTitle } from "@/shared/ui/page-title";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
 import { PartnershipRecommendationWidget } from "@/widgets/partnership-recommendation";
 
-const noop = () => {};
-
 export function PartnerHomePage() {
 	const router = useRouter();
 	const basicInfo = useUserBasicInfo();
@@ -43,9 +41,13 @@ export function PartnerHomePage() {
 			withTopInset={true}
 			withBottomInset={false}
 			className="flex-1 bg-neutral"
-			contentContainerClassName="px-6 pb-6"
+			contentContainerClassName="px-6 pt-[17px] pb-6"
 		>
-			<AppHeader onNotificationPress={noop} />
+			<AppHeader
+				onNotificationPress={() =>
+					router.push("/(protected)/partner/notification-center")
+				}
+			/>
 
 			<PageTitle title={basicInfo?.name ?? ""} />
 

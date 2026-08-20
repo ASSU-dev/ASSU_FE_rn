@@ -8,6 +8,9 @@ export type {
 } from "./_generated/auth/block";
 // block
 export { getAssuApi as getBlockApi } from "./_generated/auth/block";
+export type { PhoneAuthVerifyRequestDTO } from "./_generated/auth/checkAuthNumber";
+// checkAuthNumber
+export { getAssuApi as getCheckAuthNumberApi } from "./_generated/auth/checkAuthNumber";
 export type {
 	BaseResponseCheckBlockMemberDTO,
 	CheckBlockMemberDTO,
@@ -21,6 +24,9 @@ export type {
 } from "./_generated/auth/checkEmailAvailability";
 // checkEmailAvailability
 export { getAssuApi as getCheckEmailAvailabilityApi } from "./_generated/auth/checkEmailAvailability";
+export type { PhoneAuthSendRequestDTO } from "./_generated/auth/checkPhoneAvailabilityAndSendAuthNumber";
+// checkPhoneAvailabilityAndSendAuthNumber
+export { getAssuApi as getCheckPhoneAvailabilityAndSendAuthNumberApi } from "./_generated/auth/checkPhoneAvailabilityAndSendAuthNumber";
 export type {
 	BaseResponseCreateChatRoomResponseDTO,
 	CreateChatRoomRequestDTO,
@@ -156,5 +162,6 @@ export type { UnblockParams } from "./_generated/auth/unblock";
 export { getAssuApi as getUnblockApi } from "./_generated/auth/unblock";
 // unregister
 export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
+export { getApiErrorMessage } from "./apiErrorMessage";
 export { apiInstance } from "./instance";
 export type { BaseResponse } from "./types";

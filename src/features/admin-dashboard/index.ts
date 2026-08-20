@@ -3,5 +3,5 @@ export type {
 	DashboardData,
 	DashboardStats,
 	InsightData,
-	MonthlyUsage,
+	UsageBar,
 } from "./model/types";

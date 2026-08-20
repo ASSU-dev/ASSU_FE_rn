@@ -1,107 +1,110 @@
 {
-  "expo": {
-    "name": "ASSU_FE_RN",
-    "slug": "ASSU_FE_RN",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./src/shared/assets/images/icon.png",
-    "scheme": "assufern",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.ssu.assu",
-      "googleServicesFile": "./GoogleService-Info.plist",
-      "infoPlist": {
-        "NSCameraUsageDescription": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        },
-        "NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 표시하기 위해 위치 권한이 필요합니다.",
-        "ITSAppUsesNonExemptEncryption": false,
-      	"UIBackgroundModes": ["remote-notification"]
+	"expo": {
+		"name": "ASSU_FE_RN",
+		"slug": "ASSU_FE_RN",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./src/shared/assets/images/icon.png",
+		"scheme": "assufern",
+		"userInterfaceStyle": "automatic",
+		"newArchEnabled": true,
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "com.ssu.assu",
+			"googleServicesFile": "./GoogleService-Info.plist",
+			"infoPlist": {
+				"NSCameraUsageDescription": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
+				"NSAppTransportSecurity": {
+					"NSAllowsArbitraryLoads": true
+				},
+				"NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 표시하기 위해 위치 권한이 필요합니다.",
+				"ITSAppUsesNonExemptEncryption": false,
+				"UIBackgroundModes": ["remote-notification"]
 			},
 			"entitlements": {
 				"aps-environment": "production"
 			}
-    },
-    "android": {
-      "googleServicesFile": "./google-services.json",
-      "package": "com.ssu.assu_rn",
-      "permissions": [
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.CAMERA"
-      ],
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
-        "backgroundImage": "./src/shared/assets/images/android-icon-background.png",
-        "monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./src/shared/assets/images/favicon.png"
-    },
-    "plugins": [
-      "@react-native-firebase/app",
-      "@react-native-firebase/messaging",
-      "expo-router",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
-          "recordAudioAndroid": false
-        }
-      ],
-      "expo-document-picker",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./src/shared/assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
-        }
-      ],
-      "@react-native-community/datetimepicker",
-      "expo-web-browser",
-      "expo-secure-store",
-      "expo-font",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static",
-            "forceStaticLinking": [
-              "RNFBApp",
-              "RNFBMessaging"
-            ]
-          }
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
-    }
-  }
+		},
+		"android": {
+			"googleServicesFile": "./google-services.json",
+			"package": "com.ssu.assu_rn",
+			"permissions": [
+				"android.permission.ACCESS_FINE_LOCATION",
+				"android.permission.CAMERA"
+			],
+			"adaptiveIcon": {
+				"backgroundColor": "#E6F4FE",
+				"foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
+				"backgroundImage": "./src/shared/assets/images/android-icon-background.png",
+				"monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
+			},
+			"edgeToEdgeEnabled": true,
+			"predictiveBackGestureEnabled": false
+		},
+		"web": {
+			"bundler": "metro",
+			"output": "static",
+			"favicon": "./src/shared/assets/images/favicon.png"
+		},
+		"plugins": [
+			"@react-native-firebase/app",
+			"@react-native-firebase/messaging",
+			"expo-router",
+			[
+				"expo-camera",
+				{
+					"cameraPermission": "제휴 매장의 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.",
+					"recordAudioAndroid": false
+				}
+			],
+			"expo-document-picker",
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "인감 및 사업자 등록증 이미지를 업로드하기 위해 사진 접근 권한이 필요합니다."
+				}
+			],
+			[
+				"expo-splash-screen",
+				{
+					"image": "./src/shared/assets/images/splash-icon.png",
+					"imageWidth": 200,
+					"resizeMode": "contain",
+					"backgroundColor": "#ffffff",
+					"dark": {
+						"backgroundColor": "#000000"
+					}
+				}
+			],
+			"@react-native-community/datetimepicker",
+			"expo-web-browser",
+			"expo-secure-store",
+			"expo-font",
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"useFrameworks": "static",
+						"forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+					}
+				}
+			]
+		],
+		"experiments": {
+			"typedRoutes": true,
+			"reactCompiler": true
+		},
+		"extra": {
+			"router": {},
+			"eas": {
+				"projectId": "208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
+			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/208b20f1-a887-4fff-a0ac-9633a2a9ed8e"
+		}
+	}
 }

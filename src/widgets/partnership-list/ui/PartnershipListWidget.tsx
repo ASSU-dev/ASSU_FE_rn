@@ -50,6 +50,7 @@ export const PartnershipListWidget = memo(
 		onPressCard,
 	}: PartnershipListWidgetProps) => {
 		const displayed = maxItems ? partnerships.slice(0, maxItems) : partnerships;
+		const hasItems = displayed.length > 0;
 
 		return (
 			<View className="gap-2">
@@ -57,9 +58,13 @@ export const PartnershipListWidget = memo(
 					<Text className="text-md font-medium leading-body text-content-primary">
 						{title}
 					</Text>
-					{displayed.length > 0 && onViewAll ? (
-						<Pressable onPress={onViewAll}>
-							<Text className="text-base font-regular text-content-secondary">
+					{hasItems && onViewAll ? (
+						<Pressable
+							onPress={onViewAll}
+							hitSlop={8}
+							className="px-0.5 py-0.5"
+						>
+							<Text className="text-sm font-regular leading-caption tracking-caption text-content-secondary">
 								전체보기
 							</Text>
 						</Pressable>

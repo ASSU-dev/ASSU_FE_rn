@@ -103,8 +103,14 @@ export const agreementStepSchema = z.object({
 	agreeMarketing: z.boolean(),
 });
 
+export const uploadFileSchema = z.object({
+	uri: z.string().min(1),
+	name: z.string().min(1),
+	mimeType: z.string().min(1),
+});
+
 export const fileAgreementStepSchema = agreementStepSchema.extend({
-	fileName: z.string().min(1),
+	file: uploadFileSchema,
 });
 
 export type IdentityStepValues = z.infer<typeof identityStepSchema>;
