@@ -26,7 +26,11 @@ export function PartnerProfilePage() {
 			iconName: "bell",
 			onPress: () => router.push("../notification-settings"),
 		},
-		{ label: "계정관리", iconName: "user" },
+		{
+			label: "계정관리",
+			iconName: "user",
+			onPress: () => router.push("/(protected)/partner/account-management"),
+		},
 		{
 			label: "로그아웃",
 			iconName: "exitRight",
@@ -59,7 +63,7 @@ export function PartnerProfilePage() {
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name={basicInfo?.name ?? ""}
+					name={basicInfo?.name ?? "제휴업체"}
 					subtitle="사업 수정"
 					profileImage={profileImageEditor.imageSource}
 					onProfileImagePress={profileImageEditor.open}

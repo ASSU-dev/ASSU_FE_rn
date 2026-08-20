@@ -1,5 +1,5 @@
 export interface ChatHeaderActionsProps {
 	partnerName: string;
-	onBlock: () => void;
+	onBlock: () => Promise<void>;
 	onLeave: () => void;
 }

@@ -1,6 +1,8 @@
 import { memo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { type Partnership, PartnershipCard } from "@/entities/partnership";
+import { colorTokens } from "@/shared/styles/tokens";
+import { EmptyState } from "@/shared/ui/empty-state";
 
 interface PartnershipListWidgetProps {
 	partnerships: Partnership[];
@@ -15,18 +17,19 @@ interface PartnershipListWidgetProps {
 	onPressCard?: (id: string) => void;
 }
 
-interface EmptyCardProps {
+function PartnershipListEmptyState({
+	title,
+	description,
+}: {
 	title: string;
 	description: string;
-}
-
-function EmptyCard({ title, description }: EmptyCardProps) {
+}) {
 	return (
-		<View className="items-center gap-1.5 rounded-lg bg-canvas px-[15px] py-5">
-			<Text className="w-full text-center text-md font-medium leading-[1.3] text-content-primary">
+		<View className="items-center justify-center gap-[6px] rounded-lg bg-canvas px-card-p py-[20px]">
+			<Text className="w-full text-center text-md font-medium leading-body text-content-primary">
 				{title}
 			</Text>
-			<Text className="w-full text-center text-sm font-regular leading-[1.5] text-content-secondary">
+			<Text className="w-full text-center text-[14px] font-regular leading-caption text-content-secondary">
 				{description}
 			</Text>
 		</View>
@@ -51,8 +54,8 @@ export const PartnershipListWidget = memo(
 
 		return (
 			<View className="gap-2">
-				<View className="flex-row items-center justify-between">
-					<Text className="text-md font-semibold leading-[1.3] text-content-primary">
+				<View className="h-[25px] flex-row items-center justify-between">
+					<Text className="text-md font-medium leading-body text-content-primary">
 						{title}
 					</Text>
 					{hasItems && onViewAll ? (
@@ -68,13 +71,20 @@ export const PartnershipListWidget = memo(
 					) : null}
 				</View>
 
-				{isLoading ? null : isError ? (
-					<EmptyCard
+				{isLoading ? (
+					<View className="items-center py-10">
+						<ActivityIndicator color={colorTokens.primary} />
+					</View>
+				) : isError ? (
+					<EmptyState
 						title="목록을 불러오지 못했어요"
 						description="잠시 후 다시 시도해주세요"
 					/>
-				) : !hasItems ? (
-					<EmptyCard title={emptyTitle} description={emptyDescription} />
+				) : displayed.length === 0 ? (
+					<PartnershipListEmptyState
+						title={emptyTitle}
+						description={emptyDescription}
+					/>
 				) : (
 					<View className="gap-5">
 						{displayed.map((partnership) => (

@@ -13,7 +13,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ roomName, onBack, actions }: ChatHeaderProps) {
 	return (
-		<View className="relative bg-canvas flex-row items-center px-screen-m py-4 mt-3">
+		<View className="relative z-50 bg-canvas flex-row items-center px-screen-m py-4 mt-3">
 			<Pressable hitSlop={8} onPress={onBack ?? (() => router.back())}>
 				<BackArrowIcon
 					width={24}
@@ -36,7 +36,7 @@ export function ChatHeader({ roomName, onBack, actions }: ChatHeaderProps) {
 
 			<View className="flex-1" />
 
-			{actions && <View>{actions}</View>}
+			{actions && <View className="z-50">{actions}</View>}
 		</View>
 	);
 }

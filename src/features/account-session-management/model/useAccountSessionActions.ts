@@ -60,6 +60,7 @@ export function useAccountSessionActions() {
 	};
 
 	const executeLogout = () => endSession.mutate("logout");
+	const executeWithdrawal = () => endSession.mutate("withdraw");
 
 	const requestWithdrawal = () => {
 		Alert.alert(
@@ -79,6 +80,7 @@ export function useAccountSessionActions() {
 	return {
 		isPending: endSession.isPending,
 		executeLogout,
+		executeWithdrawal,
 		requestLogout,
 		requestWithdrawal,
 	};

@@ -20,6 +20,13 @@ async function fetchAdminPartnerships(): Promise<
 	>("/partnership/admin", {
 		params: ADMIN_PARTNERSHIP_LIST_PARAMS,
 	});
+
+	console.log("[fetchAdminPartnerships] 응답:", res.data);
+	console.log(
+		"[fetchAdminPartnerships] 첫 제휴업체:",
+		JSON.stringify(res.data.result.content[0] ?? null),
+	);
+
 	return res.data.result;
 }
 

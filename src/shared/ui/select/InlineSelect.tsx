@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { shadows } from "@/shared/styles/shadows";
 import { colorTokens } from "@/shared/styles/tokens";
 import type { SelectItem, SelectSize, SelectTextTone } from "./types";
@@ -25,6 +25,7 @@ type InlineSelectProps = {
 	helperText?: string;
 	errorText?: string;
 	size: SelectSize;
+	onOpenChange?: (isOpen: boolean) => void;
 	placeholderTone?: SelectTextTone;
 	optionTone?: SelectTextTone;
 	testID?: string;
@@ -41,6 +42,7 @@ export function InlineSelect({
 	helperText,
 	errorText,
 	size,
+	onOpenChange,
 	placeholderTone = "muted",
 	optionTone = "muted",
 	testID,
@@ -53,6 +55,20 @@ export function InlineSelect({
 	);
 	const getToneClassName = (tone: SelectTextTone) =>
 		tone === "default" ? "text-content-primary" : "text-content-secondary";
+	const toggleDropdown = () => {
+		const nextIsOpen = !isOpen;
+
+		if (nextIsOpen) {
+			TextInput.State.blurTextInput(TextInput.State.currentlyFocusedInput());
+		}
+
+		setIsOpen(nextIsOpen);
+		onOpenChange?.(nextIsOpen);
+	};
+	const closeDropdown = () => {
+		setIsOpen(false);
+		onOpenChange?.(false);
+	};
 
 	return (
 		<View testID={testID}>
@@ -62,41 +78,54 @@ export function InlineSelect({
 				</Text>
 			)}
 
-			<View
-				className="overflow-hidden rounded-[12px]"
-				style={{ backgroundColor: colorTokens.neutral, ...shadows.neutral }}
-			>
-				<Pressable
-					disabled={disabled || readOnly}
-					onPress={() => setIsOpen((prev) => !prev)}
-					className="flex-row items-center justify-between px-[12px] py-[12px]"
+			<View className="relative">
+				<View
+					className="overflow-hidden"
 					style={{
-						borderBottomWidth: isOpen ? 2 : 0,
-						borderBottomColor: isOpen
-							? colorTokens.neutralVariant
-							: "transparent",
-						opacity: disabled ? 0.3 : 1,
+						backgroundColor: colorTokens.neutral,
+						borderTopLeftRadius: 12,
+						borderTopRightRadius: 12,
+						borderBottomLeftRadius: isOpen ? 0 : 12,
+						borderBottomRightRadius: isOpen ? 0 : 12,
+						...shadows.neutral,
 					}}
 				>
-					<Text
-						className={`font-regular ${
-							selectedItem
-								? "text-content-primary"
-								: getToneClassName(placeholderTone)
-						}`}
-						style={{ fontSize: sizeToken.fontSize }}
+					<Pressable
+						disabled={disabled || readOnly}
+						onPress={toggleDropdown}
+						className="flex-row items-center justify-between px-[12px] py-[12px]"
+						style={{
+							opacity: disabled ? 0.3 : 1,
+						}}
 					>
-						{selectedItem?.label ?? placeholder}
-					</Text>
-					<Ionicons
-						name={isOpen ? "chevron-up" : "chevron-down"}
-						size={20}
-						color={colorTokens.contentPrimary}
-					/>
-				</Pressable>
+						<Text
+							className={`font-regular ${
+								selectedItem
+									? "text-content-primary"
+									: getToneClassName(placeholderTone)
+							}`}
+							style={{ fontSize: sizeToken.fontSize }}
+						>
+							{selectedItem?.label ?? placeholder}
+						</Text>
+						<Ionicons
+							name={isOpen ? "chevron-up" : "chevron-down"}
+							size={20}
+							color={colorTokens.contentPrimary}
+						/>
+					</Pressable>
+				</View>
 
 				{isOpen ? (
-					<View>
+					<View
+						className="absolute left-0 right-0 top-full overflow-hidden rounded-b-[12px]"
+						style={{
+							backgroundColor: colorTokens.neutral,
+							borderTopWidth: 2,
+							borderTopColor: colorTokens.neutralVariant,
+							...shadows.neutral,
+						}}
+					>
 						{items.map((item, index) => {
 							const isSelected = item.value === value;
 							const isLast = index === items.length - 1;
@@ -110,7 +139,7 @@ export function InlineSelect({
 											return;
 										}
 										onChange(item.value);
-										setIsOpen(false);
+										closeDropdown();
 									}}
 									className="flex-row items-center justify-between px-[16px] py-[14px]"
 									style={{

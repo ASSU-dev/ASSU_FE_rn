@@ -1,13 +1,14 @@
 import { useRouter } from "expo-router";
+
 import { AccountManagementContent } from "@/widgets/account-management";
 
-export function AdminAccountManagementPage() {
+export function PartnerAccountManagementPage() {
 	const router = useRouter();
 
 	return (
 		<AccountManagementContent
 			onBlockedPartnersPress={() =>
-				router.push("/(protected)/admin/blocked-partners")
+				router.push("/(protected)/partner/blocked-partners")
 			}
 		/>
 	);

@@ -30,7 +30,10 @@ export function PartnerHomePage() {
 	const { data: recommendData, isPending: isRecommendPending } =
 		usePartnerAdminRecommend();
 	const summaries =
-		recommendData?.admins.map(toPartnerAffiliationSummary) ?? [];
+		recommendData?.admins.flatMap((admin) => {
+			const summary = toPartnerAffiliationSummary(admin);
+			return summary ? [summary] : [];
+		}) ?? [];
 
 	return (
 		<PageLayout
