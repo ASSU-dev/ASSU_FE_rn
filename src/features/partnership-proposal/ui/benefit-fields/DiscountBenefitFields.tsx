@@ -28,8 +28,10 @@ export function DiscountBenefitFields({ index }: Props) {
 						placeholderTextColor={colorTokens.contentSecondary}
 						keyboardType="numeric"
 						textAlign="right"
-						className="flex-1 text-[15px] text-content-primary px-[4px]"
+						textAlignVertical="center"
+						className="flex-1 text-[15px] text-content-primary"
 						style={{
+							paddingVertical: 0,
 							borderBottomWidth: 0.5,
 							borderBottomColor: borderColor("discountRate"),
 							height: 36,

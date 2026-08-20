@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "react-native-url-polyfill/auto";
 
@@ -66,13 +67,15 @@ export default function RootLayout() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<SafeAreaProvider>
-				<FcmInitializer />
-				<Stack>
-					<Stack.Screen name="index" options={{ headerShown: false }} />
-					<Stack.Screen name="(auth)" options={{ headerShown: false }} />
-					<Stack.Screen name="(protected)" options={{ headerShown: false }} />
-				</Stack>
-				<StatusBar style="auto" />
+				<KeyboardProvider>
+					<FcmInitializer />
+					<Stack>
+						<Stack.Screen name="index" options={{ headerShown: false }} />
+						<Stack.Screen name="(auth)" options={{ headerShown: false }} />
+						<Stack.Screen name="(protected)" options={{ headerShown: false }} />
+					</Stack>
+					<StatusBar style="auto" />
+				</KeyboardProvider>
 			</SafeAreaProvider>
 		</QueryClientProvider>
 	);

@@ -13,12 +13,8 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ roomName, onBack, actions }: ChatHeaderProps) {
 	return (
-		<View className="relative flex-row items-center justify-center px-6 pt-7 pb-4">
-			<Pressable
-				hitSlop={8}
-				onPress={onBack ?? (() => router.back())}
-				className="absolute left-6"
-			>
+		<View className="relative bg-canvas flex-row items-center px-screen-m py-4 mt-3">
+			<Pressable hitSlop={8} onPress={onBack ?? (() => router.back())}>
 				<BackArrowIcon
 					width={24}
 					height={24}
@@ -26,11 +22,21 @@ export function ChatHeader({ roomName, onBack, actions }: ChatHeaderProps) {
 				/>
 			</Pressable>
 
-			<Text className="text-lg font-semibold text-content-primary">
-				{roomName}
-			</Text>
+			<View
+				className="absolute inset-0 items-center justify-center"
+				pointerEvents="none"
+			>
+				<Text
+					className="text-lg font-semibold text-content-primary"
+					style={{ includeFontPadding: false }}
+				>
+					{roomName}
+				</Text>
+			</View>
 
-			{actions && <View className="absolute right-6">{actions}</View>}
+			<View className="flex-1" />
+
+			{actions && <View>{actions}</View>}
 		</View>
 	);
 }

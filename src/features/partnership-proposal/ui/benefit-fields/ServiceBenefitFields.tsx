@@ -111,11 +111,13 @@ export function ServiceBenefitFields({ index }: Props) {
 								placeholderTextColor={colorTokens.contentSecondary}
 								returnKeyType="done"
 								autoFocus
-								className="flex-1 text-[13px] text-content-primary px-[4px]"
+								className="flex-1 text-[13px] text-content-primary"
+								textAlignVertical="center"
 								style={{
 									borderBottomWidth: 0.5,
 									borderBottomColor: borderColor("itemInput"),
-									height: 32,
+									height: 36,
+									paddingVertical: 0,
 								}}
 							/>
 							<Pressable onPress={addItem}>
