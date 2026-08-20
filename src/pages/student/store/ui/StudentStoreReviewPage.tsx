@@ -1,11 +1,4 @@
-import { router } from "expo-router";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import {
-	ReviewCard,
-	ReviewSummary,
-	useStoreReviewAverage,
-	useStoreReviews,
-} from "@/entities/review";
+import { ActivityIndicator, Text, View } from "react-native";
 import { type StoreBenefit, useStorePapers } from "@/entities/store";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
 import { InfoBanner } from "@/shared/ui/info/InfoBanner";
@@ -16,11 +9,7 @@ interface StudentStoreReviewPageProps {
 	fallbackStoreName?: string;
 }
 
-const PREVIEW_REVIEW_PARAMS = {
-	page: 1,
-	size: 2,
-	sort: "createdAt,desc",
-};
+const FALLBACK_TITLE = "제휴 혜택";
 
 export function StudentStoreReviewPage({
 	storeId,
@@ -31,22 +20,8 @@ export function StudentStoreReviewPage({
 		isLoading: isPapersLoading,
 		isError: isPapersError,
 	} = useStorePapers(storeId);
-	const {
-		data: reviewPage,
-		isLoading: isReviewsLoading,
-		isError: isReviewsError,
-	} = useStoreReviews(storeId, PREVIEW_REVIEW_PARAMS);
-	const {
-		data: averageRating,
-		isLoading: isAverageLoading,
-		isError: isAverageError,
-	} = useStoreReviewAverage(storeId);
-	const reviews = reviewPage?.reviews ?? [];
 	const storeName =
-		storePapers?.storeName ||
-		reviews[0]?.storeName ||
-		fallbackStoreName ||
-		"가게 리뷰";
+		storePapers?.storeName || fallbackStoreName || FALLBACK_TITLE;
 
 	if (storeId === null) {
 		return <InvalidStorePage />;
@@ -65,59 +40,6 @@ export function StudentStoreReviewPage({
 				isLoading={isPapersLoading}
 				isError={isPapersError}
 			/>
-
-			<View className="h-[4px] bg-neutral" />
-
-			<View className="mt-[30px] items-center">
-				{isAverageLoading ? (
-					<ActivityIndicator />
-				) : isAverageError || averageRating === undefined ? (
-					<Text className="text-sm text-danger">
-						평균 평점을 불러오지 못했습니다.
-					</Text>
-				) : (
-					<ReviewSummary
-						averageRating={averageRating}
-						totalCount={reviewPage?.totalElements ?? reviews.length}
-					/>
-				)}
-			</View>
-
-			<View className="mt-[15px] px-screen-m">
-				<InfoBanner message="제휴 혜택을 받는 숭실대 학생들의 제휴 평점이에요" />
-			</View>
-
-			<View className="mt-[18px] items-end px-screen-m">
-				<Pressable
-					onPress={() =>
-						router.push({
-							pathname: "/(protected)/student/store/[storeId]/reviews",
-							params: { storeId: String(storeId), storeName },
-						})
-					}
-					hitSlop={8}
-				>
-					<Text className="text-sm text-content-secondary">전체보기</Text>
-				</Pressable>
-			</View>
-
-			<View className="mt-[4px] gap-card-gap px-screen-m">
-				{isReviewsLoading ? (
-					<ActivityIndicator />
-				) : isReviewsError ? (
-					<Text className="text-center text-sm text-danger">
-						리뷰를 불러오지 못했습니다.
-					</Text>
-				) : reviews.length === 0 ? (
-					<Text className="py-[30px] text-center text-sm text-content-secondary">
-						아직 작성된 리뷰가 없어요.
-					</Text>
-				) : (
-					reviews.map((review) => (
-						<ReviewCard key={review.id} review={review} />
-					))
-				)}
-			</View>
 		</PageLayout>
 	);
 }
@@ -138,32 +60,68 @@ function StoreBenefitsSection({
 			<Text className="text-md font-medium text-content-primary">
 				내가 받을 제휴 혜택
 			</Text>
-			<View className="mt-[13px] gap-[8px]">
+			<View className="mt-[12px]">
+				<InfoBanner message="QR 인증 시 아래 혜택을 받을 수 있어요" />
+			</View>
+			<View className="mt-[16px] gap-card-gap">
 				{isLoading ? (
 					<ActivityIndicator size="small" />
 				) : isError ? (
-					<Text className="text-sm text-content-secondary">
+					<Text className="py-[30px] text-center text-sm text-content-secondary">
 						제휴 혜택을 불러오지 못했어요.
 					</Text>
 				) : items.length === 0 ? (
-					<Text className="text-sm text-content-secondary">
+					<Text className="py-[30px] text-center text-sm text-content-secondary">
 						현재 적용 가능한 제휴 혜택이 없어요.
 					</Text>
 				) : (
-					items.map((item) => (
-						<View key={item.id} className="flex-row items-center gap-[6px]">
-							<View className="shrink-0 rounded-[999px] bg-primary-tint px-gutter py-[2px]">
-								<Text className="font-regular text-[11px] leading-caption text-primary">
-									{item.adminName}
-								</Text>
-							</View>
-							<Text className="flex-1 text-sm leading-caption text-content-secondary">
-								{item.content}
-							</Text>
-						</View>
-					))
+					items.map((item) => <StoreBenefitCard key={item.id} item={item} />)
 				)}
 			</View>
+		</View>
+	);
+}
+
+function StoreBenefitCard({ item }: { item: StoreBenefit }) {
+	const conditions: string[] = [];
+	if (item.people !== undefined) conditions.push(`${item.people}인 이상`);
+	if (item.cost !== undefined && item.cost > 0)
+		conditions.push(`${item.cost.toLocaleString()}원 이상`);
+
+	return (
+		<View className="gap-[10px] rounded-lg border border-neutral-variant bg-canvas px-5 py-4">
+			<View className="flex-row items-center justify-between gap-[8px]">
+				<View className="shrink rounded-[999px] bg-primary-tint px-gutter py-[3px]">
+					<Text
+						className="font-medium text-[12px] leading-caption text-primary"
+						numberOfLines={1}
+					>
+						{item.adminName}
+					</Text>
+				</View>
+				{conditions.length > 0 ? (
+					<Text className="text-[11px] text-content-secondary">
+						{conditions.join(" · ")}
+					</Text>
+				) : null}
+			</View>
+			<Text className="text-base font-semibold leading-[22px] text-content-primary">
+				{item.content}
+			</Text>
+			{item.goods.length > 0 ? (
+				<View className="flex-row flex-wrap gap-[6px]">
+					{item.goods.map((goods, index) => (
+						<View
+							key={`${index}-${goods}`}
+							className="rounded-md bg-neutral px-[8px] py-[3px]"
+						>
+							<Text className="text-[11px] text-content-secondary">
+								{goods}
+							</Text>
+						</View>
+					))}
+				</View>
+			) : null}
 		</View>
 	);
 }
@@ -171,7 +129,7 @@ function StoreBenefitsSection({
 function InvalidStorePage() {
 	return (
 		<PageLayout contentContainerClassName="flex-1">
-			<AppTopBar title="가게 리뷰" />
+			<AppTopBar title={FALLBACK_TITLE} />
 			<View className="flex-1 items-center justify-center px-screen-m">
 				<Text className="text-center text-sm text-danger">
 					올바르지 않은 가게 정보입니다.

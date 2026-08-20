@@ -10,13 +10,26 @@ import {
 
 const REFRESH_URL = "/auth/tokens/refresh";
 
+/** 파일 업로드는 기본 10초로 부족해 별도 상한을 둔다 */
+const UPLOAD_TIMEOUT_MS = 60_000;
+
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
+
+let lastLoggedToken: string | null = null;
 
 apiInstance.interceptors.request.use((config) => {
 	const token = useAuthStore.getState().accessToken;
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
+		// 토큰 원문은 로그에 남기지 않고, 값이 바뀐 시점만 기록한다.
+		if (__DEV__ && token !== lastLoggedToken) {
+			lastLoggedToken = token;
+			console.log("[TOKEN] access token updated");
+		}
+	}
+	if (config.data instanceof FormData) {
+		config.timeout = UPLOAD_TIMEOUT_MS;
 	}
 	console.log("[API REQ]", config.method?.toUpperCase(), config.url);
 	return config;

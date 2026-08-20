@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { useAccountSessionActions } from "@/features/account-session-management";
 import {
 	ProfileImageActionSheet,
@@ -15,6 +16,7 @@ import {
 
 export function PartnerProfilePage() {
 	const router = useRouter();
+	const basicInfo = useUserBasicInfo();
 	const profileImageEditor = useProfileImageEditor();
 	const accountSession = useAccountSessionActions();
 
@@ -57,7 +59,7 @@ export function PartnerProfilePage() {
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name="역전할머니맥주 숭실대점"
+					name={basicInfo?.name ?? ""}
 					subtitle="사업 수정"
 					profileImage={profileImageEditor.imageSource}
 					onProfileImagePress={profileImageEditor.open}
