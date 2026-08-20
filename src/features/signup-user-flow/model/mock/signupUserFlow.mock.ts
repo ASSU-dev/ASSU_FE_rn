@@ -24,7 +24,7 @@ export const DEFAULT_SIGNUP_FORM_STATE: SignupFormState = {
 		officeAddressId: null,
 		officeAddress: "",
 		officeAddressDetail: "",
-		businessRegistrationFileName: "",
+		businessRegistrationFile: null,
 	},
 	admin: {
 		email: "",
@@ -35,7 +35,7 @@ export const DEFAULT_SIGNUP_FORM_STATE: SignupFormState = {
 		officeAddressId: null,
 		officeAddress: "",
 		officeAddressDetail: "",
-		sealFileName: "",
+		sealFile: null,
 	},
 	agreements: {
 		agreeAll: false,

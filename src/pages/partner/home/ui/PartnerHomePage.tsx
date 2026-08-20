@@ -57,9 +57,8 @@ export function PartnerHomePage() {
 					maxItems={3}
 					isLoading={isPartnershipsPending}
 					isError={isPartnershipsError}
-					emptyDescription={
-						"학생회와 제휴가 체결되면\n여기서 확인할 수 있어요!"
-					}
+					emptyTitle="아직 함께하는 제휴단체가 없어요"
+					emptyDescription="지금 제휴단체와의 제휴를 시작해보세요!"
 					onViewAll={() =>
 						router.push("/(protected)/partner/partner-partnership-list")
 					}

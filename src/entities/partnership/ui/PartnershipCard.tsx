@@ -10,6 +10,9 @@ interface PartnershipCardProps extends Partnership {
 	variant?: "white" | "gray";
 }
 
+const bodyTextClassName =
+	"text-sm font-regular leading-caption tracking-caption text-content-secondary";
+
 export const PartnershipCard = memo(
 	({
 		storeName,
@@ -22,47 +25,36 @@ export const PartnershipCard = memo(
 		const badgeBgClass = variant === "gray" ? "bg-sub" : "bg-primary-tint";
 		const badgeTextClass =
 			variant === "gray" ? "text-content-inverse" : "text-primary";
+		const badgeClassName = `flex-shrink-0 rounded-full ${badgeBgClass} px-2.5`;
+		const badgeLabelClassName = `text-sm font-regular leading-caption tracking-caption ${badgeTextClass}`;
+
 		return (
-			<View className={`flex-1 rounded-lg ${bgClass} px-4 py-5`}>
-				<Text className="mb-5 text-lg font-semibold text-content-primary">
+			<View className={`gap-5 rounded-lg ${bgClass} px-[15px] py-5`}>
+				<Text className="text-lg font-semibold leading-[20px] tracking-[0.25px] text-content-primary">
 					{storeName}
 				</Text>
 
-				{/* Benefit content row */}
-				<View className="mb-1 flex-row items-center gap-2">
-					<View
-						className={`flex-shrink-0 rounded-full ${badgeBgClass} px-2.5 py-1`}
-					>
-						<Text className={`text-sm font-regular ${badgeTextClass}`}>
-							{BADGE_LABEL_CONTENT}
-						</Text>
-					</View>
-					<View className="flex-1 justify-center">
-						<Text className="text-sm font-regular text-content-secondary">
+				<View className="gap-[3px]">
+					{/* Benefit content row */}
+					<View className="flex-row items-start gap-2">
+						<View className={badgeClassName}>
+							<Text className={badgeLabelClassName}>{BADGE_LABEL_CONTENT}</Text>
+						</View>
+						<Text className={`shrink ${bodyTextClassName}`}>
 							{benefitContent}
 						</Text>
 					</View>
-				</View>
 
-				{/* Partnership period row */}
-				<View className="flex-row items-center gap-2">
-					<View
-						className={`flex-shrink-0 rounded-full ${badgeBgClass} px-2.5 py-1`}
-					>
-						<Text className={`text-sm font-regular ${badgeTextClass}`}>
-							{BADGE_LABEL_PERIOD}
-						</Text>
-					</View>
-					<View className="flex-row items-center gap-1">
-						<Text className="text-sm font-regular text-content-secondary">
-							{formatDate(startDate)}
-						</Text>
-						<Text className="text-sm font-regular text-content-secondary">
-							~
-						</Text>
-						<Text className="text-sm font-regular text-content-secondary">
-							{formatDate(endDate)}
-						</Text>
+					{/* Partnership period row */}
+					<View className="flex-row items-center gap-2">
+						<View className={badgeClassName}>
+							<Text className={badgeLabelClassName}>{BADGE_LABEL_PERIOD}</Text>
+						</View>
+						<View className="flex-row items-center gap-1">
+							<Text className={bodyTextClassName}>{formatDate(startDate)}</Text>
+							<Text className={bodyTextClassName}>~</Text>
+							<Text className={bodyTextClassName}>{formatDate(endDate)}</Text>
+						</View>
 					</View>
 				</View>
 			</View>

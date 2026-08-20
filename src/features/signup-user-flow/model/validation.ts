@@ -60,7 +60,7 @@ export function isSignupStepValid({
 		case "adminSealRegistration":
 			return (
 				fileAgreementStepSchema.safeParse({
-					fileName: form.admin.sealFileName,
+					file: form.admin.sealFile,
 					agreeAll: form.agreements.agreeAll,
 					agreePrivacy: form.agreements.agreePrivacy,
 					agreeMarketing: form.agreements.agreeMarketing,
@@ -75,7 +75,7 @@ export function isSignupStepValid({
 		case "partnerBusinessRegistration":
 			return (
 				fileAgreementStepSchema.safeParse({
-					fileName: form.partner.businessRegistrationFileName,
+					file: form.partner.businessRegistrationFile,
 					agreeAll: form.agreements.agreeAll,
 					agreePrivacy: form.agreements.agreePrivacy,
 					agreeMarketing: form.agreements.agreeMarketing,

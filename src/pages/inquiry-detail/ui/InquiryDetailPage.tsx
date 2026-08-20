@@ -1,38 +1,20 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-	ActivityIndicator,
-	Pressable,
-	ScrollView,
-	Text,
-	View,
-} from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InquiryAnswerForm } from "@/features/inquiry-answer";
-import { BackArrowIcon } from "@/shared/assets/icons";
 import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { colorTokens } from "@/shared/styles/tokens";
+import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { useInquiryDetail } from "../api/useInquiryDetail";
 
 export function InquiryDetailPage() {
-	const router = useRouter();
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const isAdmin = useAuthStore((state) => state.role === "ADMIN");
 	const { data, isLoading, isError, error } = useInquiryDetail(id ?? "");
 
 	return (
 		<SafeAreaView edges={["top"]} className="flex-1 bg-canvas">
-			{/* Header */}
-			<View className="flex-row items-center gap-[12px] px-[24px] py-[24px]">
-				<Pressable onPress={() => router.back()} className="w-6 h-6">
-					<BackArrowIcon width={24} height={24} />
-				</Pressable>
-				<View className="flex-1 items-center">
-					<Text className="text-xl font-semibold text-content-primary">
-						문의내역
-					</Text>
-				</View>
-				<View className="w-6" />
-			</View>
+			<AppTopBar title="문의내역" />
 
 			{isLoading && (
 				<View className="flex-1 items-center justify-center">

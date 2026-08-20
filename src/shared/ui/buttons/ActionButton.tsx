@@ -10,9 +10,9 @@ const SmallButton = ({ children, ...props }: Props) => {
 	return (
 		<Pressable
 			{...props}
-			className="w-[11.4rem] h-[4.1rem] rounded-lg p-[0.625rem] justify-center items-center gap-[0.625rem] bg-neutral"
+			className="px-4 py-3 rounded-lg justify-center items-center gap-[10px] bg-neutral"
 		>
-			<Text className="text-[0.8125rem] leading-[1.3125rem] tracking-[-0.02rem] text-content-secondary font-semibold">
+			<Text className="text-[13px] leading-[21px] tracking-[-0.32px] text-content-secondary font-semibold">
 				{children}
 			</Text>
 		</Pressable>
