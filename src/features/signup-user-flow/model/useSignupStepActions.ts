@@ -25,7 +25,7 @@ type UseSignupStepActionsParams = {
 		setPartnerPassword: (value: string) => void;
 		setPartnerCompanyName: (value: string) => void;
 		setPartnerOfficeAddressDetail: (value: string) => void;
-		selectPartnerBusinessRegistrationMock: () => void;
+		onPickBusinessRegistration: () => void;
 	};
 	admin: {
 		setAdminEmail: (value: string) => void;
@@ -36,7 +36,7 @@ type UseSignupStepActionsParams = {
 		setAdminCollege: (value: string | null) => void;
 		setAdminDepartment: (value: string | null) => void;
 		setAdminOfficeAddressDetail: (value: string) => void;
-		selectAdminSealMock: () => void;
+		onPickSeal: () => void;
 	};
 	agreementHandlers: {
 		onToggleAgreeAll: () => void;
@@ -77,7 +77,7 @@ export function useSignupStepActions({
 					partner.setPartnerOfficeAddressDetail,
 				onPressPartnerOfficeAddress: overlays.openPartnerAddressSearch,
 				onPressPartnerBusinessRegistrationUpload:
-					partner.selectPartnerBusinessRegistrationMock,
+					partner.onPickBusinessRegistration,
 			},
 			admin: {
 				onChangeAdminEmail: admin.setAdminEmail,
@@ -94,7 +94,7 @@ export function useSignupStepActions({
 				onChangeAdminDepartment: admin.setAdminDepartment,
 				onChangeAdminOfficeAddressDetail: admin.setAdminOfficeAddressDetail,
 				onPressAdminOfficeAddress: overlays.openAdminAddressSearch,
-				onPressAdminSealUpload: admin.selectAdminSealMock,
+				onPressAdminSealUpload: admin.onPickSeal,
 			},
 			agreements: agreementHandlers,
 		}),

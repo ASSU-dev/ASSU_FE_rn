@@ -5,17 +5,15 @@ import { BenefitCard } from "./BenefitCard";
 
 interface BenefitListProps {
 	benefits: ReviewBenefitItem[];
-	onReviewPress: (benefit: ReviewBenefitItem) => void;
 }
 
-export function BenefitList({ benefits, onReviewPress }: BenefitListProps) {
+export function BenefitList({ benefits }: BenefitListProps) {
 	return (
 		<View>
 			{benefits.map((item, index) => (
 				<BenefitCard
 					key={item.id}
 					{...item}
-					onReviewPress={() => onReviewPress(item)}
 					isFirst={index === 0}
 					isLast={index === benefits.length - 1}
 				/>

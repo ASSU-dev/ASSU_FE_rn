@@ -25,11 +25,6 @@ export function StudentProfilePage() {
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
-			label: "내가 작성한 리뷰",
-			iconName: "writing",
-			onPress: () => router.push("../my-reviews"),
-		},
-		{
 			label: "로그아웃",
 			iconName: "exitRight",
 			onPress: accountSession.requestLogout,

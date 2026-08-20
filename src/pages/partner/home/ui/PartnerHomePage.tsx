@@ -14,8 +14,6 @@ import { PageTitle } from "@/shared/ui/page-title";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
 import { PartnershipRecommendationWidget } from "@/widgets/partnership-recommendation";
 
-const noop = () => {};
-
 export function PartnerHomePage() {
 	const router = useRouter();
 	const basicInfo = useUserBasicInfo();
@@ -41,9 +39,15 @@ export function PartnerHomePage() {
 			withBottomInset={false}
 			className="flex-1 bg-neutral"
 			contentContainerClassName="px-6 pb-6"
+			header={
+				<AppHeader
+					onNotificationPress={() =>
+						router.push("/(protected)/partner/notification-center")
+					}
+					hasNotification={false}
+				/>
+			}
 		>
-			<AppHeader onNotificationPress={noop} />
-
 			<PageTitle title={basicInfo?.name ?? ""} />
 
 			<View className="gap-5">
@@ -53,9 +57,8 @@ export function PartnerHomePage() {
 					maxItems={3}
 					isLoading={isPartnershipsPending}
 					isError={isPartnershipsError}
-					emptyDescription={
-						"학생회와 제휴가 체결되면\n여기서 확인할 수 있어요!"
-					}
+					emptyTitle="아직 함께하는 제휴단체가 없어요"
+					emptyDescription="지금 제휴단체와의 제휴를 시작해보세요!"
 					onViewAll={() =>
 						router.push("/(protected)/partner/partner-partnership-list")
 					}

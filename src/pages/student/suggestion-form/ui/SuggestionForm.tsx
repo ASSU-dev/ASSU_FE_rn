@@ -98,7 +98,7 @@ export function SuggestionForm() {
 				</View>
 			</KeyboardAwareScrollView>
 
-			{/* 입력 완료 버튼 — 고정 */}
+			{/* 입력 완료 버튼 */}
 			<View className="items-center pb-4 px-screen-m">
 				<MediumButton onPress={onSubmit} disabled={!isValid}>
 					입력 완료

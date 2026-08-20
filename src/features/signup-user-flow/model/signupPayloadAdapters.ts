@@ -1,4 +1,3 @@
-import { Asset } from "expo-asset";
 import { USER_TYPE } from "@/entities/user/model/types";
 import {
 	type AdminSignUpRequestDTO,
@@ -9,7 +8,7 @@ import {
 	type SignupPartnerBody,
 } from "@/shared/api";
 import { getAdminCompletionName } from "./admin";
-import type { SignupFormState } from "./types";
+import type { SignupFormState, SignupUploadFile } from "./types";
 
 export function toStudentSignupPayload(form: SignupFormState) {
 	return {
@@ -37,7 +36,8 @@ export function toPartnerSignupPayload(form: SignupFormState) {
 		officeAddressId: form.partner.officeAddressId,
 		officeAddress: form.partner.officeAddress,
 		officeAddressDetail: form.partner.officeAddressDetail,
-		businessRegistrationFileName: form.partner.businessRegistrationFileName,
+		businessRegistrationFileName:
+			form.partner.businessRegistrationFile?.name ?? "",
 		agreements: {
 			agreePrivacy: form.agreements.agreePrivacy,
 			agreeMarketing: form.agreements.agreeMarketing,
@@ -57,7 +57,7 @@ export function toAdminSignupPayload(form: SignupFormState) {
 		officeAddressId: form.admin.officeAddressId,
 		officeAddress: form.admin.officeAddress,
 		officeAddressDetail: form.admin.officeAddressDetail,
-		sealFileName: form.admin.sealFileName,
+		sealFileName: form.admin.sealFile?.name ?? "",
 		displayName: getAdminCompletionName(form.admin),
 		agreements: {
 			agreePrivacy: form.agreements.agreePrivacy,
@@ -100,25 +100,24 @@ function mapAdminDepartmentToMajorEnum(value: string | null) {
 	}
 }
 
-export type AdminSealFile = {
-	uri: string;
-	name: string;
-	type: string;
-};
-
-async function createMockAdminSealImage(): Promise<AdminSealFile> {
-	const [asset] = await Asset.loadAsync(
-		require("@/shared/assets/images/icon.png"),
-	);
-
+/**
+ * React Native의 FormData는 Blob 대신 { uri, name, type } 형태를 받는다.
+ * 생성된 클라이언트 타입이 Blob이라 캐스팅이 필요하다.
+ */
+function toFormDataFile(file: SignupUploadFile) {
 	return {
-		uri: asset.localUri ?? asset.uri,
-		name: "admin-seal.jpg",
-		type: "image/jpeg",
-	};
+		uri: file.uri,
+		name: file.name,
+		type: file.mimeType,
+	} as unknown as Blob;
 }
 
-export async function toAdminSignupBody(form: SignupFormState) {
+export function toAdminSignupBody(form: SignupFormState) {
+	const sealFile = form.admin.sealFile;
+	if (!sealFile) {
+		throw new Error("인감 이미지를 등록해주세요.");
+	}
+
 	const request: AdminSignUpRequestDTO = {
 		phoneNumber: form.identity.phone || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
@@ -146,29 +145,16 @@ export async function toAdminSignupBody(form: SignupFormState) {
 
 	return {
 		request,
-		signImage: (await createMockAdminSealImage()) as unknown as Blob,
+		signImage: toFormDataFile(sealFile),
 	};
 }
 
-type PartnerLicenseFile = {
-	uri: string;
-	name: string;
-	type: string;
-};
+export function toPartnerSignupBody(form: SignupFormState) {
+	const licenseFile = form.partner.businessRegistrationFile;
+	if (!licenseFile) {
+		throw new Error("사업자 등록증을 등록해주세요.");
+	}
 
-async function createMockPartnerLicenseImage(): Promise<PartnerLicenseFile> {
-	const [asset] = await Asset.loadAsync(
-		require("@/shared/assets/images/icon.png"),
-	);
-
-	return {
-		uri: asset.localUri ?? asset.uri,
-		name: "partner-license.jpg",
-		type: "image/jpeg",
-	};
-}
-
-export async function toPartnerSignupBody(form: SignupFormState) {
 	const request: PartnerSignUpRequestDTO = {
 		phoneNumber: form.identity.phone || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
@@ -194,6 +180,6 @@ export async function toPartnerSignupBody(form: SignupFormState) {
 
 	return {
 		request,
-		licenseImage: (await createMockPartnerLicenseImage()) as unknown as Blob,
+		licenseImage: toFormDataFile(licenseFile),
 	} satisfies SignupPartnerBody;
 }

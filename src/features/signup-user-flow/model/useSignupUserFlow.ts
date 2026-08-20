@@ -6,17 +6,14 @@ import type { AddressSearchItem } from "@/shared/ui/address-search";
 import { useCountdownTimer } from "../hooks/useCountdownTimer";
 import { findAdminCollegeOption, findAdminDepartmentOption } from "./admin";
 import { getNextAgreementState } from "./agreements";
-import {
-	getSignupFlowConfig,
-	getSignupFlowVariant,
-	VERIFICATION_SUCCESS_CODE,
-} from "./flowConfig";
+import { getSignupFlowConfig, getSignupFlowVariant } from "./flowConfig";
 import { DEFAULT_SIGNUP_FORM_STATE } from "./mock/signupUserFlow.mock";
 import type {
 	SignupAdminOrganizationType,
 	SignupFormState,
 	SignupIdentityFormState,
 	SignupStep,
+	SignupUploadFile,
 } from "./types";
 import { isSignupStepValid } from "./validation";
 
@@ -113,16 +110,6 @@ export function useSignupUserFlow() {
 	};
 
 	const goNext = () => {
-		if (step === "identity") {
-			if (!isCurrentStepValid) {
-				return;
-			}
-			if (form.identity.verificationCode !== VERIFICATION_SUCCESS_CODE) {
-				setSectionField("identity", "verificationAttempted", true);
-				return;
-			}
-		}
-
 		const currentIndex = flowConfig.stepOrder.indexOf(step);
 		const nextStep = flowConfig.stepOrder[currentIndex + 1];
 		if (!nextStep || !isCurrentStepValid) {
@@ -177,8 +164,9 @@ export function useSignupUserFlow() {
 		setSectionField("student", "studentId", studentId);
 	const setProfileName = (name: string) =>
 		setSectionField("profile", "name", name);
-	const setIdentityVerified = () =>
-		setSectionField("identity", "verificationCode", VERIFICATION_SUCCESS_CODE);
+	// 서버 인증번호 검증 실패 시 호출. 코드가 다시 입력되면 resetVerificationAttempt가 해제한다
+	const markVerificationFailed = () =>
+		setSectionField("identity", "verificationAttempted", true);
 
 	const setPartnerEmail = (email: string) =>
 		setSectionField("partner", "email", email);
@@ -194,12 +182,8 @@ export function useSignupUserFlow() {
 		}));
 	const setPartnerOfficeAddressDetail = (officeAddressDetail: string) =>
 		setSectionField("partner", "officeAddressDetail", officeAddressDetail);
-	const selectPartnerBusinessRegistrationMock = () =>
-		setSectionField(
-			"partner",
-			"businessRegistrationFileName",
-			"사업자등록증.jpg",
-		);
+	const setPartnerBusinessRegistrationFile = (file: SignupUploadFile) =>
+		setSectionField("partner", "businessRegistrationFile", file);
 
 	const setAdminEmail = (email: string) =>
 		setSectionField("admin", "email", email);
@@ -215,7 +199,7 @@ export function useSignupUserFlow() {
 		resetField("admin.officeAddressId", { defaultValue: null });
 		resetField("admin.officeAddress", { defaultValue: "" });
 		resetField("admin.officeAddressDetail", { defaultValue: "" });
-		resetField("admin.sealFileName", { defaultValue: "" });
+		resetField("admin.sealFile", { defaultValue: null });
 	};
 	const setAdminCollege = (value: string | null) => {
 		const selectedCollege = findAdminCollegeOption(value);
@@ -234,8 +218,8 @@ export function useSignupUserFlow() {
 		}));
 	const setAdminOfficeAddressDetail = (officeAddressDetail: string) =>
 		setSectionField("admin", "officeAddressDetail", officeAddressDetail);
-	const selectAdminSealMock = () =>
-		setSectionField("admin", "sealFileName", "인감등록.jpg");
+	const setAdminSealFile = (file: SignupUploadFile) =>
+		setSectionField("admin", "sealFile", file);
 
 	const setAgreePrivacy = (checked: boolean) => {
 		updateSection("agreements", (agreements) =>
@@ -281,7 +265,7 @@ export function useSignupUserFlow() {
 		setStudentMajor,
 		setStudentId,
 		setProfileName,
-		setIdentityVerified,
+		markVerificationFailed,
 		setPartnerEmail,
 		setPartnerPassword,
 		setAdminEmail,
@@ -291,11 +275,11 @@ export function useSignupUserFlow() {
 		setAdminDepartment,
 		setAdminOfficeAddress,
 		setAdminOfficeAddressDetail,
-		selectAdminSealMock,
+		setAdminSealFile,
 		setPartnerCompanyName,
 		setPartnerOfficeAddress,
 		setPartnerOfficeAddressDetail,
-		selectPartnerBusinessRegistrationMock,
+		setPartnerBusinessRegistrationFile,
 		setAgreePrivacy,
 		setAgreeMarketing,
 		setAgreeAll,

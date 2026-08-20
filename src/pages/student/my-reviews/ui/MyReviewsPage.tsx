@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
 	ActivityIndicator,
@@ -32,6 +33,7 @@ const listContentStyle = {
 } as const;
 
 export function MyReviewsPage() {
+	const router = useRouter();
 	const [isSortSheetVisible, setSortSheetVisible] = useState(false);
 	const { data, isLoading, isError, error } = useStudentReviews();
 	const { requestDelete, deletingReviewId } = useDeleteReviewAction();
@@ -63,7 +65,7 @@ export function MyReviewsPage() {
 				contentContainerClassName="flex-1"
 				withBottomInset
 			>
-				<AppTopBar title="내가 작성한 리뷰" titleAlign="left" />
+				<AppTopBar title="내가 작성한 리뷰" />
 
 				{/* 서브헤더 */}
 				<View className="flex-row items-center justify-between px-screen-m pt-[20px] pb-[16px]">
@@ -100,14 +102,16 @@ export function MyReviewsPage() {
 				) : sortedReviews.length === 0 ? (
 					<View className="absolute inset-0 items-center justify-center gap-7">
 						<View className="items-center gap-1.5">
-							<Text className="text-base font-medium text-content-primary">
+							<Text className="text-md font-medium text-content-primary">
 								아직 작성된 리뷰가 없어요!
 							</Text>
-							<Text className="text-sm text-content-secondary">
+							<Text className="text-base text-content-secondary">
 								제휴 리뷰를 작성하면 혜택을 받을 수 있어요.
 							</Text>
 						</View>
-						<SmallButton onPress={() => {}}>리뷰 작성하기</SmallButton>
+						<SmallButton onPress={() => router.replace("/student/suggestion")}>
+							리뷰 작성하기
+						</SmallButton>
 					</View>
 				) : (
 					<FlatList<Review>

@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 
+import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import {
 	ProfileImageActionSheet,
 	useProfileImageEditor,
@@ -14,6 +15,7 @@ import {
 
 export function AdminProfilePage() {
 	const router = useRouter();
+	const basicInfo = useUserBasicInfo();
 	const profileImageEditor = useProfileImageEditor();
 
 	const myAccountItems: AccountMenuItemProps[] = [
@@ -54,7 +56,7 @@ export function AdminProfilePage() {
 		>
 			<View className="gap-8">
 				<AccountProfileHeader
-					name="숭실대학교 총학생회"
+					name={basicInfo?.name ?? ""}
 					subtitle="사업 수정"
 					profileImage={profileImageEditor.imageSource}
 					onProfileImagePress={profileImageEditor.open}

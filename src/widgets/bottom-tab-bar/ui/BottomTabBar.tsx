@@ -37,9 +37,7 @@ export function BottomTabBar({
 			{tabs.map((tab) => (
 				<BottomTabItem
 					key={tab.route}
-					label={tab.label}
-					activeIconName={tab.activeIconName}
-					inactiveIconName={tab.inactiveIconName}
+					{...tab}
 					isActive={activeRouteName === tab.route}
 					onPress={() => onTabPress(tab.route)}
 				/>

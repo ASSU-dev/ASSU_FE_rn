@@ -55,6 +55,14 @@ export interface Partnership {
 	endDate: string; // YYYY-MM-DD
 }
 
+/** 관리자 화면의 대기 중(SUSPEND) 제휴 계약서 목록 항목 */
+export interface PendingContract {
+	paperId: number;
+	partnerName: string;
+	/** YYYY-MM-DD */
+	proposedAt: string;
+}
+
 export interface PartnershipContract {
 	id: string;
 	companyName: string; // 제휴 제안업체명
