@@ -59,6 +59,12 @@
 			],
 			"expo-document-picker",
 			[
+				"expo-image-picker",
+				{
+					"photosPermission": "인감 및 사업자 등록증 이미지를 업로드하기 위해 사진 접근 권한이 필요합니다."
+				}
+			],
+			[
 				"expo-splash-screen",
 				{
 					"image": "./src/shared/assets/images/splash-icon.png",

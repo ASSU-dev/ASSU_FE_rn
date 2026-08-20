@@ -26,6 +26,12 @@ export type SignupAdminOrganizationType =
 	| "COLLEGE_STUDENT_COUNCIL"
 	| "DEPARTMENT_STUDENT_COUNCIL";
 
+export type SignupUploadFile = {
+	uri: string;
+	name: string;
+	mimeType: string;
+};
+
 export type SignupAuthFormState = {
 	email: string;
 	password: string;
@@ -51,7 +57,7 @@ export type SignupPartnerFormState = {
 	officeAddressId: string | null;
 	officeAddress: string;
 	officeAddressDetail: string;
-	businessRegistrationFileName: string;
+	businessRegistrationFile: SignupUploadFile | null;
 };
 
 export type SignupAdminFormState = {
@@ -63,7 +69,7 @@ export type SignupAdminFormState = {
 	officeAddressId: string | null;
 	officeAddress: string;
 	officeAddressDetail: string;
-	sealFileName: string;
+	sealFile: SignupUploadFile | null;
 };
 
 export type SignupProfileState = {
