@@ -8,26 +8,11 @@ import {
 } from "@/entities/partnership";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import { useOpenChatRoom } from "@/features/chat";
-import { BellFill, Logo } from "@/shared/assets/icons";
+import { AppHeader } from "@/shared/ui/app-header";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { PageTitle } from "@/shared/ui/page-title";
 import { SummaryCard } from "@/shared/ui/summary-card";
 import { PartnershipListWidget } from "@/widgets/partnership-list";
-
-function AdminHeaderSection({
-	onNotificationPress,
-}: {
-	onNotificationPress: () => void;
-}) {
-	return (
-		<View className="flex-row items-center justify-between">
-			<Logo width={40} height={40} />
-			<Pressable onPress={onNotificationPress}>
-				<BellFill width={24} height={24} />
-			</Pressable>
-		</View>
-	);
-}
 
 function RecommendationSection() {
 	const { data, isPending } = useAdminPartnerRecommend();
@@ -93,13 +78,15 @@ export function AdminHomePage() {
 			withBottomInset={false}
 			className="flex-1 bg-neutral"
 			contentContainerClassName="px-6 pb-6"
+			header={
+				<AppHeader
+					onNotificationPress={() =>
+						router.push("/(protected)/admin/notification-center")
+					}
+					hasNotification={false}
+				/>
+			}
 		>
-			<AdminHeaderSection
-				onNotificationPress={() =>
-					router.push("/(protected)/admin/notification-center")
-				}
-			/>
-
 			<PageTitle title={basicInfo?.name ?? ""} />
 
 			<View className="gap-5">
