@@ -1,3 +1,5 @@
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
@@ -11,8 +13,14 @@ import { StampBoard } from "@/widgets/stamp-board/ui/StampBoard";
 export function StudentHomePage() {
 	const basicInfo = useUserBasicInfo();
 	const { data: studentProfile } = useStudentProfileQuery();
-	const { data: stampData } = useStudentStampQuery();
+	const { data: stampData, refetch: refetchStamp } = useStudentStampQuery();
 	const userStampCount = stampData?.stamp ?? 0;
+
+	useFocusEffect(
+		useCallback(() => {
+			void refetchStamp();
+		}, [refetchStamp]),
+	);
 	const userName = studentProfile?.name ?? basicInfo?.name ?? "사용자";
 
 	return (

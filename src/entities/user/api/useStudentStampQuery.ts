@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { apiInstance } from "@/shared/api/instance";
 import type { BaseResponse, CheckStampResponseDTO } from "../model/types";
 
+export const studentStampQueryKey = ["student", "stamp"] as const;
+
 async function fetchStudentStamp(): Promise<CheckStampResponseDTO | null> {
 	const response =
 		await apiInstance.get<BaseResponse<CheckStampResponseDTO>>(
@@ -13,7 +15,7 @@ async function fetchStudentStamp(): Promise<CheckStampResponseDTO | null> {
 
 export function useStudentStampQuery() {
 	return useQuery({
-		queryKey: ["student", "stamp"],
+		queryKey: studentStampQueryKey,
 		queryFn: fetchStudentStamp,
 	});
 }
