@@ -1,6 +1,7 @@
 import { FormProvider } from "react-hook-form";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSignupFlowController } from "@/features/signup-user-flow/model/useSignupFlowController";
 import {
 	LoginFormScreen,
