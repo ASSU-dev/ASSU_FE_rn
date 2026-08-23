@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { ReviewCard, useStudentReviews } from "@/entities/review";
 import { useDeleteReviewAction } from "@/features/review-management";
-import { SortArrowDownIcon } from "@/shared/assets/icons";
+import { SortArrowDown } from "@/shared/assets/icons";
 import {
 	type SortOrder,
 	useSortedByDate,
@@ -80,7 +80,7 @@ export function MyReviewsPage() {
 						<Text className="text-sm font-medium text-content-primary">
 							{SORT_ITEMS.find((item) => item.value === sort)?.label}
 						</Text>
-						<SortArrowDownIcon
+						<SortArrowDown
 							width={20}
 							height={20}
 							color={colorTokens.contentPrimary}

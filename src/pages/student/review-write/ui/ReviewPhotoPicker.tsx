@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 import type { ReviewImageFile } from "@/entities/review";
-import { ImageFillIcon } from "@/shared/assets/icons";
+import { ImageFill } from "@/shared/assets/icons";
 
 interface ReviewPhotoPickerProps {
 	images: ReviewImageFile[];
@@ -42,7 +42,7 @@ export function ReviewPhotoPicker({
 						accessibilityLabel="리뷰 사진 추가"
 						className="size-[100px] items-center justify-center rounded-md border border-content-secondary bg-neutral"
 					>
-						<ImageFillIcon width={24} height={24} />
+						<ImageFill width={24} height={24} />
 						<Text className="font-regular text-sm leading-caption tracking-caption text-content-secondary">
 							{images.length}/{maxImages}
 						</Text>
