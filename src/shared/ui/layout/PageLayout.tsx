@@ -50,6 +50,7 @@ export function PageLayout({
 			: ScrollView;
 		return (
 			<SafeAreaView edges={edges} className={className}>
+				{header}
 				<ScrollComponent
 					style={{ flex: 1 }}
 					contentContainerClassName={contentContainerClassName}

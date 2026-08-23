@@ -200,7 +200,7 @@ export function PartnershipVerificationPage() {
 				</View>
 			</View>
 
-			<View className="mt-auto items-center pb-[4px]">
+			<View className="mt-auto items-center px-screen-m pb-[4px]">
 				<MediumButton
 					disabled={!store || !benefit || recordUsage.isPending}
 					onPress={handleComplete}
