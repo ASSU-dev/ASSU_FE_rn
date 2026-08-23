@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"name": "ASSU_FE_RN",
+		"name": "A:SSU",
 		"slug": "ASSU_FE_RN",
 		"version": "1.0.0",
 		"orientation": "portrait",
@@ -27,7 +27,7 @@
 		},
 		"android": {
 			"googleServicesFile": "./google-services.json",
-			"package": "com.ssu.assu_rn",
+			"package": "com.ssu.assu",
 			"permissions": [
 				"android.permission.ACCESS_FINE_LOCATION",
 				"android.permission.CAMERA"
