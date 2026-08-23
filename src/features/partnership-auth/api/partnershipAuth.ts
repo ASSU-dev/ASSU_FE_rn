@@ -80,7 +80,10 @@ export async function getStorePartnerships(
 					goods: content.goods ?? [],
 					people: content.people ?? null,
 					cost: content.cost ?? null,
-					type: content.people == null ? "INDIVIDUAL" : "GROUP",
+					type:
+						typeof content.people === "number" && content.people > 1
+							? "GROUP"
+							: "INDIVIDUAL",
 				} as const,
 			];
 		}),
