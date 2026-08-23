@@ -7,6 +7,8 @@ export interface PartnershipBenefit {
 	people: number | null;
 	cost: number | null;
 	type: "INDIVIDUAL" | "GROUP";
+	startDate?: string;
+	endDate?: string;
 }
 
 export interface VerifiedPartnershipStore {
