@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { StampItem } from "@/entities/stamp/ui/StampItem";
 import { InfoLinkText } from "@/shared/ui/info";
 
@@ -13,14 +13,8 @@ export const StampBoard = ({ currentCount = 0 }) => {
 
 	return (
 		<View>
-			<View className="pt-5">
-				<Text className="text-content-primary text-lg font-bold">
-					나의 스탬프 적립 현황
-				</Text>
-			</View>
-
-			<View className="bg-neutral border-neutral-variant p-6 rounded-[24px] mt-4 ">
-				<View className="flex-row flex-wrap justify-between px-1 pt-2">
+			<View className="bg-neutral border-neutral-variant p-6 rounded-[24px] ">
+				<View className="flex-row flex-wrap justify-between px-1 pt-2 gap-1">
 					{stamps.map((stamp) => (
 						<View key={stamp.id} style={{ width: "18%", aspectRatio: 1 }}>
 							<StampItem isAchieved={stamp.position < currentCount} />
@@ -28,7 +22,7 @@ export const StampBoard = ({ currentCount = 0 }) => {
 					))}
 				</View>
 			</View>
-			<View className="ml-[7px] mt-2">
+			<View className="ml-[7px] mt-3">
 				<InfoLinkText message="스탬프 10개 적립시 기프티콘이 지급됩니다!" />
 			</View>
 		</View>
