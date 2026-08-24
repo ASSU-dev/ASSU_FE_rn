@@ -21,3 +21,4 @@ export type {
 	StorePartnership,
 	StudentStoreCardData,
 } from "./model/types";
+export { StoreListCard } from "./ui/StoreListCard";
