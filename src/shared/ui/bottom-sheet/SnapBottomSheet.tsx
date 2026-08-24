@@ -14,6 +14,8 @@ interface SnapBottomSheetProps {
 	index?: number;
 	/** 스냅 위치 변경 콜백 — full 전환 등 레이아웃 정책은 호출부가 결정 */
 	onChange?: (index: number) => void;
+	/** 컨테이너 상단에서 시트가 넘을 수 없는 한계선(px) — "100%" 스냅의 상한 */
+	topInset?: number;
 	enablePanDownToClose?: boolean;
 	backgroundStyle?: StyleProp<ViewStyle>;
 	children: ReactNode;
@@ -32,6 +34,7 @@ export const SnapBottomSheet = forwardRef<
 		snapPoints,
 		index = 0,
 		onChange,
+		topInset,
 		enablePanDownToClose = false,
 		backgroundStyle,
 		children,
@@ -44,6 +47,7 @@ export const SnapBottomSheet = forwardRef<
 			index={index}
 			snapPoints={snapPoints}
 			onChange={onChange}
+			topInset={topInset}
 			enableDynamicSizing={false}
 			enablePanDownToClose={enablePanDownToClose}
 			handleIndicatorStyle={{

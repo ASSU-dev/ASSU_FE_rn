@@ -343,7 +343,23 @@ async function fetchNearbyRaw(
 		},
 	});
 	const responseResult = res.data?.result;
-	return pickList(responseResult);
+	const list = pickList(responseResult);
+	if (__DEV__) {
+		const first = list[0] as
+			| { name?: unknown; partnerships?: unknown }
+			| undefined;
+		console.log(
+			"[fetchNearbyRaw] 필터:",
+			filter ?? "없음",
+			"→ 응답 개수:",
+			list.length,
+			"/ 첫 매장:",
+			first?.name,
+			"제휴:",
+			JSON.stringify(first?.partnerships),
+		);
+	}
+	return list;
 }
 
 const fetchPopularStores = async (): Promise<PopularStore[]> => {
