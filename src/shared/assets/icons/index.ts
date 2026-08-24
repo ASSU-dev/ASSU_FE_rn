@@ -1,4 +1,5 @@
 export { default as AccountManagementIcon } from "./account-management-icon.svg";
+export { default as AssuLogoFadedIcon } from "./assu-logo-faded.svg";
 export { default as AssuLogoIcon } from "./assu-logo-icon.svg";
 export { default as BackArrowIcon } from "./back-arrow-icon.svg";
 export { default as BanIcon } from "./ban-icon.svg";
