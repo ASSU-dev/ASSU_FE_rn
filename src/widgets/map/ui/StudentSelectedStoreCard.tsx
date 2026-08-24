@@ -54,22 +54,27 @@ export function StudentSelectedStoreCard({
 					)}
 					{tag ? (
 						<View className="absolute bottom-[5px] left-[6px] rounded-[999px] bg-neutral px-gutter py-[2px]">
-							<Text className="text-[11px] text-content-secondary">{tag}</Text>
+							<Text className="font-regular text-[11px] leading-[21px] tracking-[-0.32px] text-content-secondary">
+								{tag}
+							</Text>
 						</View>
 					) : null}
 				</View>
 
 				<View className="h-[110px] flex-1 justify-between py-[4px]">
-					<View className="gap-[5px]">
+					<View className="gap-[10px]">
 						<Text
-							className="text-sm font-medium text-content-primary"
+							className="text-sm font-bold text-content-primary"
 							numberOfLines={1}
 						>
 							{name}
 						</Text>
 
 						{(benefitLabel || benefitHighlight) && (
-							<Text className="text-md font-semibold" numberOfLines={1}>
+							<Text
+								className="text-md font-semibold tracking-[-0.32px]"
+								numberOfLines={1}
+							>
 								{benefitLabel ? (
 									<Text className="text-content-primary">{benefitLabel}</Text>
 								) : null}
@@ -81,7 +86,7 @@ export function StudentSelectedStoreCard({
 
 						{metaParts.length > 0 && (
 							<Text
-								className="text-[10px] text-content-secondary"
+								className="font-regular text-[10px] tracking-[-0.32px] text-content-secondary"
 								numberOfLines={1}
 							>
 								{metaParts.join(" • ")}

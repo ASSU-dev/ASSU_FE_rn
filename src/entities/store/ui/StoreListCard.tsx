@@ -51,14 +51,17 @@ export function StoreListCard({
 			<View className="ml-[12px] flex-1 flex-row items-start justify-between">
 				<View className="flex-1 pr-[8px]">
 					<Text
-						className="text-sm font-medium text-content-primary"
+						className="text-sm font-bold text-content-primary"
 						numberOfLines={1}
 					>
 						{name}
 					</Text>
 
 					{(benefitLabel || benefitHighlight) && (
-						<Text className="mt-[10px] text-md font-semibold" numberOfLines={1}>
+						<Text
+							className="mt-[10px] text-md font-semibold tracking-[-0.32px]"
+							numberOfLines={1}
+						>
 							{benefitLabel ? (
 								<Text className="text-content-primary">{benefitLabel}</Text>
 							) : null}
@@ -70,7 +73,7 @@ export function StoreListCard({
 
 					{metaParts.length > 0 && (
 						<Text
-							className="mt-[10px] text-[10px] text-content-secondary"
+							className="mt-[10px] font-regular text-[10px] tracking-[-0.32px] text-content-secondary"
 							numberOfLines={1}
 						>
 							{metaParts.join(" • ")}
@@ -80,7 +83,9 @@ export function StoreListCard({
 
 				{tag ? (
 					<View className="self-start rounded-[999px] bg-neutral px-gutter py-[2px]">
-						<Text className="text-[11px] text-content-secondary">{tag}</Text>
+						<Text className="font-regular text-[11px] leading-[21px] tracking-[-0.32px] text-content-secondary">
+							{tag}
+						</Text>
 					</View>
 				) : null}
 			</View>
