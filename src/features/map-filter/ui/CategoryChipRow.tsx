@@ -25,7 +25,7 @@ function CategoryChip({ config, selected, onPress }: CategoryChipProps) {
 				<ChipIcon width={12} height={12} />
 			</View>
 			<Text
-				className={`text-[14px] font-regular ${
+				className={`text-[14px] font-semibold tracking-[-0.28px] ${
 					selected ? "text-canvas" : "text-content-primary"
 				}`}
 			>
