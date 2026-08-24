@@ -61,10 +61,11 @@ export function StudentSelectedStoreCard({
 					) : null}
 				</View>
 
+				{/* 피그마 실측: 썸네일과 같은 110px 높이 + py 4px, 버튼은 justify-between으로 하단 고정 */}
 				<View className="h-[110px] flex-1 justify-between py-[4px]">
-					<View className="gap-[10px]">
+					<View className="gap-[5px]">
 						<Text
-							className="text-sm font-bold text-content-primary"
+							className="text-sm font-bold leading-[16px] text-content-primary"
 							numberOfLines={1}
 						>
 							{name}
@@ -72,7 +73,7 @@ export function StudentSelectedStoreCard({
 
 						{(benefitLabel || benefitHighlight) && (
 							<Text
-								className="text-md font-semibold tracking-[-0.32px]"
+								className="text-md font-semibold leading-[19px] tracking-[-0.32px]"
 								numberOfLines={1}
 							>
 								{benefitLabel ? (
@@ -86,7 +87,7 @@ export function StudentSelectedStoreCard({
 
 						{metaParts.length > 0 && (
 							<Text
-								className="font-regular text-[10px] tracking-[-0.32px] text-content-secondary"
+								className="font-regular text-[10px] leading-[12px] tracking-[-0.32px] text-content-secondary"
 								numberOfLines={1}
 							>
 								{metaParts.join(" • ")}
@@ -98,7 +99,7 @@ export function StudentSelectedStoreCard({
 						className="items-center justify-center rounded-[7px] bg-primary py-[10px]"
 						onPress={onCertifyPress}
 					>
-						<Text className="text-[12px] font-semibold text-content-inverse">
+						<Text className="text-[12px] font-semibold leading-[14px] tracking-[-0.32px] text-content-inverse">
 							제휴 인증하기
 						</Text>
 					</Pressable>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useWindowDimensions, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { StoreMarker } from "@/entities/store";
@@ -34,10 +34,14 @@ import { useUserLocation } from "../model/useUserLocation";
 import { MapLocateButton } from "./MapLocateButton";
 import { StudentSelectedStoreCard } from "./StudentSelectedStoreCard";
 
-const PEEK_FRACTION = 0.2;
-const HALF_FRACTION = 0.45;
+/** 매장 선택 시 최소 높이 — 핸들 + 학생회 칩 행만 노출 (피그마 실측 ≈90) */
+const SNAP_MINI = 96;
+/** 기본 peek — 칩 행 + 카드 1개 노출 (피그마 지도1 실측 ≈230) */
+const SNAP_PEEK = 230;
 /** 검색바(≈68) + 카테고리 칩 행(≈45) + 여백 — 시트 full이 칩 바로 아래에서 멈추도록 */
 const SHEET_TOP_MARGIN_BELOW_INSET = 123;
+/** 플로팅 카드/현재위치 버튼과 시트 사이 간격 */
+const SHEET_GAP = 12;
 
 interface StudentMapViewProps {
 	onStorePress?: (store: StoreMarker) => void;
@@ -52,7 +56,6 @@ export function StudentMapView({
 	const kakaoRef = useRef<KakaoMapHandle>(null);
 	const sheetRef = useRef<SnapBottomSheetRef>(null);
 	const insets = useSafeAreaInsets();
-	const { height: windowHeight } = useWindowDimensions();
 	const { center, myLocation, heading } = useUserLocation();
 	const { storeCategory, adminId, toggleAdminId } = useMapFilterStore();
 
@@ -71,10 +74,9 @@ export function StudentMapView({
 
 	const viewport = center ? toViewport(center) : null;
 	// 카테고리 필터는 지도 마커에만 적용하고, 시트 리스트는 학생회 필터만 반영한다.
-	// 카테고리 미선택 시 두 쿼리 키가 같아 요청은 한 번만 나간다.
+	// 두 필터 미선택 시 두 쿼리 키가 같아 요청은 한 번만 나간다.
 	const { data: markerStores = [] } = useNearbyStores(viewport, {
 		storeCategory: storeCategory ?? undefined,
-		adminId: adminId ?? undefined,
 	});
 	const { data: listStores = [] } = useNearbyStores(viewport, {
 		adminId: adminId ?? undefined,
@@ -110,20 +112,23 @@ export function StudentMapView({
 		[partnerMarkerStores],
 	);
 
-	const snapPoints = useMemo(
-		() => [`${PEEK_FRACTION * 100}%`, `${HALF_FRACTION * 100}%`, "100%"],
-		[],
-	);
+	// 절대 픽셀 스냅: [매장선택 최소, 기본 peek, 절반, full] — %는 topInset 보정 때문에 좌표가 어긋난다
+	const snapPoints = useMemo(() => [SNAP_MINI, SNAP_PEEK, "45%", "100%"], []);
 
 	const handleFocusToMyLocation = () => {
 		if (!myLocation) return;
 		kakaoRef.current?.panTo(myLocation.lat, myLocation.lng);
 	};
 
-	// 마커 선택 시 시트를 peek로 내려 플로팅 카드 공간을 확보한다
+	// 마커 선택 시 시트를 최소(칩 행만)로 내려 플로팅 카드 공간을 확보한다
 	const handleMarkerPress = (markerId: string) => {
 		setSelectedStoreId(markerId);
 		sheetRef.current?.snapToIndex(0);
+	};
+
+	// 지도 빈 곳 탭: 선택 카드만 닫고 시트 위치는 사용자가 둔 그대로 유지한다
+	const handleMapPress = () => {
+		setSelectedStoreId(null);
 	};
 
 	const renderStoreCard = (store: StoreMarker) => {
@@ -164,19 +169,19 @@ export function StudentMapView({
 					clusteringEnabled
 					selectedMarkerId={selectedStoreId}
 					onMarkerPress={handleMarkerPress}
-					onMapPress={() => setSelectedStoreId(null)}
+					onMapPress={handleMapPress}
 				/>
 			) : null}
 			<MapLocateButton
 				onPress={handleFocusToMyLocation}
 				disabled={!myLocation}
 				placement="bottom-left"
-				bottomOffset={windowHeight * PEEK_FRACTION + 12}
+				bottomOffset={SNAP_PEEK + SHEET_GAP}
 			/>
 			{selectedStore ? (
 				<View
 					className="absolute left-card-p right-card-p"
-					style={{ bottom: windowHeight * PEEK_FRACTION + 12 }}
+					style={{ bottom: SNAP_MINI + SHEET_GAP }}
 				>
 					<StudentSelectedStoreCard
 						name={selectedStore.name}
@@ -211,6 +216,7 @@ export function StudentMapView({
 			<SnapBottomSheet
 				ref={sheetRef}
 				snapPoints={snapPoints}
+				index={0}
 				topInset={insets.top + SHEET_TOP_MARGIN_BELOW_INSET}
 			>
 				<AdminChipRow
