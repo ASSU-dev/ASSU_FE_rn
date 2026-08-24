@@ -6,6 +6,24 @@ export interface Store {
 	longitude: number;
 }
 
+export type StoreCategory =
+	| "RESTAURANT"
+	| "CAFE"
+	| "BAR"
+	| "BEAUTY"
+	| "ENTERTAINMENT"
+	| "SPORTS"
+	| "LIVING"
+	| "HOSPITAL"
+	| "EDUCATION"
+	| "OTHERS";
+
+export interface StorePartnership {
+	adminId?: string;
+	adminName: string;
+	benefits: string[];
+}
+
 export interface StoreMarker extends Store {
 	storeId?: string;
 	partnerId?: string;
@@ -14,6 +32,8 @@ export interface StoreMarker extends Store {
 	hasPartner: boolean;
 	rate: number;
 	benefit?: string;
+	category?: StoreCategory;
+	partnerships?: StorePartnership[];
 	imageUri?: string;
 	profileUrl?: string;
 	phoneNumber?: string;

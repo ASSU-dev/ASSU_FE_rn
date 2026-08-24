@@ -1,4 +1,10 @@
 export { storeQueryKeys, useStorePapers } from "./api/useStorePapers";
+export {
+	getStoreCategoryLabel,
+	STORE_CATEGORIES,
+	STORE_CATEGORY_CONFIG_MAP,
+	type StoreCategoryConfig,
+} from "./config/categories";
 export type {
 	PaperContentResponseDto,
 	StoreBenefit,
@@ -10,6 +16,8 @@ export type {
 	PopularStore,
 	SearchResultStore,
 	Store,
+	StoreCategory,
 	StoreMarker,
+	StorePartnership,
 	StudentStoreCardData,
 } from "./model/types";
