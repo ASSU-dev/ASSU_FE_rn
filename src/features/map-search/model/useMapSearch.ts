@@ -3,8 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import type {
 	PopularStore,
 	SearchResultStore,
+	StoreCategory,
 	StoreMarker,
+	StorePartnership,
 } from "@/entities/store";
+import { STORE_CATEGORY_CONFIG_MAP } from "@/entities/store";
 import type { BaseResponse } from "@/shared/api";
 import { apiInstance } from "@/shared/api";
 import type { AddressSearchItem } from "@/shared/ui/address-search/types";
@@ -18,6 +21,12 @@ export interface MapViewport {
 	lat3: number;
 	lng4: number;
 	lat4: number;
+}
+
+/** 주변 장소 조회 필터 (STUDENT 전용 파라미터) */
+export interface NearbyStoresFilter {
+	storeCategory?: StoreCategory;
+	adminId?: string;
 }
 
 interface PlaceSuggestionDto {
@@ -223,6 +232,39 @@ function getStoreBenefit(value: UnknownRecord): string | undefined {
 	);
 }
 
+function toStoreCategory(value: unknown): StoreCategory | undefined {
+	if (typeof value !== "string") return undefined;
+	return value in STORE_CATEGORY_CONFIG_MAP
+		? (value as StoreCategory)
+		: undefined;
+}
+
+function toStorePartnerships(value: unknown): StorePartnership[] | undefined {
+	if (!Array.isArray(value)) return undefined;
+
+	const partnerships: StorePartnership[] = [];
+	for (const item of value) {
+		if (!isRecord(item)) continue;
+		const adminName = getString(item, ["adminName"]);
+		if (!adminName) continue;
+
+		const benefits = Array.isArray(item.benefits)
+			? item.benefits
+					.map((benefit) =>
+						typeof benefit === "string" ? benefit : getBenefitText(benefit),
+					)
+					.filter((benefit): benefit is string => Boolean(benefit))
+			: [];
+		partnerships.push({
+			adminId: getString(item, ["adminId"]),
+			adminName,
+			benefits,
+		});
+	}
+
+	return partnerships.length > 0 ? partnerships : undefined;
+}
+
 function getPartnershipAdminName(value: unknown): string | undefined {
 	if (!Array.isArray(value)) return undefined;
 
@@ -272,6 +314,8 @@ function toStoreMarker(value: unknown): StoreMarker | null {
 			]) ?? false,
 		rate: getNumber(value, ["rate", "rating", "score"]) ?? 0,
 		benefit: getStoreBenefit(value),
+		category: toStoreCategory(getString(value, ["category", "storeCategory"])),
+		partnerships: toStorePartnerships(value.partnerships),
 		imageUri: getString(value, [
 			"imageUri",
 			"imageUrl",
@@ -287,9 +331,16 @@ function toStoreMarker(value: unknown): StoreMarker | null {
 	};
 }
 
-async function fetchNearbyRaw(viewport: MapViewport): Promise<unknown[]> {
+async function fetchNearbyRaw(
+	viewport: MapViewport,
+	filter?: NearbyStoresFilter,
+): Promise<unknown[]> {
 	const res = await apiInstance.get<BaseResponse<unknown>>("/map/nearby", {
-		params: viewport,
+		params: {
+			...viewport,
+			storeCategory: filter?.storeCategory,
+			adminId: filter?.adminId,
+		},
 	});
 	const responseResult = res.data?.result;
 	return pickList(responseResult);
@@ -362,8 +413,9 @@ async function fetchPlaceAddresses(
 
 async function fetchNearbyStores(
 	viewport: MapViewport,
+	filter?: NearbyStoresFilter,
 ): Promise<StoreMarker[]> {
-	const nearby = await fetchNearbyRaw(viewport);
+	const nearby = await fetchNearbyRaw(viewport, filter);
 	const markers = nearby
 		.map(toStoreMarker)
 		.filter((marker): marker is StoreMarker => marker !== null);
@@ -387,10 +439,19 @@ export function useSearchStores(query: string) {
 	});
 }
 
-export function useNearbyStores(viewport: MapViewport | null) {
+export function useNearbyStores(
+	viewport: MapViewport | null,
+	filter?: NearbyStoresFilter,
+) {
 	return useQuery<StoreMarker[]>({
-		queryKey: ["map", "nearby", viewport],
-		queryFn: () => fetchNearbyStores(viewport as MapViewport),
+		queryKey: [
+			"map",
+			"nearby",
+			viewport,
+			filter?.storeCategory ?? null,
+			filter?.adminId ?? null,
+		],
+		queryFn: () => fetchNearbyStores(viewport as MapViewport, filter),
 		enabled: viewport !== null,
 		staleTime: 1000 * 60,
 	});
