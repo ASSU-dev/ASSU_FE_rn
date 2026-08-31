@@ -34,7 +34,7 @@ export function StoreListCard({
 
 	return (
 		<Pressable
-			className="flex-row items-center p-gutter"
+			className="flex-row items-center p-gutter px-4"
 			onPress={onPress}
 			disabled={!onPress}
 		>
