@@ -101,9 +101,6 @@ export function StoreDetailWidget({
 						<Text className="text-[20px] font-bold text-content-primary">
 							{MOCK_STORE_INFO.name}
 						</Text>
-						<Text className="font-medium text-sm text-content-secondary">
-							내 위치에서 {MOCK_STORE_INFO.distance}
-						</Text>
 					</View>
 
 					<View className="flex-row items-center gap-1">
@@ -111,13 +108,7 @@ export function StoreDetailWidget({
 						<Text className="font-medium text-sm text-content-primary">
 							{MOCK_STORE_INFO.address}
 						</Text>
-						<BackArrowIcon
-							width={15}
-							height={15}
-							color="#8E9398"
-							style={{ transform: [{ rotate: "-90deg" }] }}
-						/>
-						<Pressable className="flex-row items-center gap-1">
+						<Pressable className="flex-row items-center gap-1 ml-2">
 							<MapIcon width={16} height={16} />
 							<Text className="font-medium text-sm text-primary">위치</Text>
 						</Pressable>
