@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 
 import type { StoreMarker } from "@/entities/store";
-import { type MapViewport, useNearbyStores } from "@/features/map-search";
+import { useNearbyStores } from "@/features/map-search";
 import { KakaoMap, type KakaoMapHandle } from "@/shared/ui/kakao-map";
+import { toViewport } from "../model/toViewport";
 import { useUserLocation } from "../model/useUserLocation";
 
 import { MapContactCard } from "./MapContactCard";
@@ -88,20 +89,4 @@ export function MapView({
 			) : null}
 		</View>
 	);
-}
-
-function toViewport(center: { lat: number; lng: number }): MapViewport {
-	const latDelta = 0.01;
-	const lngDelta = 0.01;
-
-	return {
-		lng1: center.lng - lngDelta,
-		lat1: center.lat + latDelta,
-		lng2: center.lng + lngDelta,
-		lat2: center.lat + latDelta,
-		lng3: center.lng + lngDelta,
-		lat3: center.lat - latDelta,
-		lng4: center.lng - lngDelta,
-		lat4: center.lat - latDelta,
-	};
 }

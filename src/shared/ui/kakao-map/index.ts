@@ -1,1 +1,5 @@
-export { KakaoMap, type KakaoMapHandle } from "./KakaoMap";
+export {
+	KakaoMap,
+	type KakaoMapHandle,
+	type KakaoMapMarker,
+} from "./KakaoMap";

@@ -1,4 +1,18 @@
 export { storeQueryKeys, useStorePapers } from "./api/useStorePapers";
+export {
+	getStoreCategoryLabel,
+	STORE_CATEGORIES,
+	STORE_CATEGORY_CONFIG_MAP,
+	type StoreCategoryConfig,
+} from "./config/categories";
+export {
+	countExtraBenefits,
+	formatDistance,
+	getDistanceKm,
+	getPrimaryAdminName,
+	getPrimaryBenefit,
+	splitBenefitText,
+} from "./lib/mapDisplay";
 export type {
 	PaperContentResponseDto,
 	StoreBenefit,
@@ -10,6 +24,9 @@ export type {
 	PopularStore,
 	SearchResultStore,
 	Store,
+	StoreCategory,
 	StoreMarker,
+	StorePartnership,
 	StudentStoreCardData,
 } from "./model/types";
+export { StoreListCard } from "./ui/StoreListCard";

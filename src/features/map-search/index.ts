@@ -1,4 +1,7 @@
-export type { MapViewport } from "./model/useMapSearch";
+export type {
+	MapViewport,
+	NearbyStoresFilter,
+} from "./model/useMapSearch";
 export {
 	useNearbyStores,
 	usePlaceAddressSearch,

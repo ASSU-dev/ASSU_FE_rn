@@ -15,7 +15,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { PopularStore, SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
 import { usePopularStores, useSearchStores } from "@/features/map-search";
-import { BackArrowIcon, CloseIcon, LocationIcon } from "@/shared/assets/icons";
+import {
+	AssuLogoFadedIcon,
+	BackArrowIcon,
+	CloseIcon,
+	LocationIcon,
+} from "@/shared/assets/icons";
 import { useDebounce } from "@/shared/lib/hooks/useDebounce";
 import { shadows } from "@/shared/styles/shadows";
 import { colorTokens } from "@/shared/styles/tokens";
@@ -101,14 +106,10 @@ export function MapSearchPage({
 
 			{isSearching ? (
 				!isSearchLoading && searchResults.length === 0 ? (
-					<View className="flex-1 items-center justify-start pt-[15rem] gap-2 px-6">
-						<Text className="w-full text-center font-medium text-[16px] leading-[1.3] text-content-primary">
-							검색결과를 찾지 못했어요!
-						</Text>
-						<Text className="w-full text-center font-regular text-[14px] leading-[1.5] text-content-secondary">
-							{
-								"매장을 찾지 못해 페이지를 표시할 수 없어요.\n이용에 불편을 드려 죄송합니다."
-							}
+					<View className="flex-1 items-center justify-center gap-[8px] pb-[150px]">
+						<AssuLogoFadedIcon width={96} height={96} />
+						<Text className="text-center font-bold text-[12px] leading-[1.3] text-content-secondary">
+							검색 결과가 없습니다
 						</Text>
 					</View>
 				) : !isSearchLoading && searchResults.length > 0 ? (
