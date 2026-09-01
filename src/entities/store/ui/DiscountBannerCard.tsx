@@ -3,7 +3,7 @@ import { DefaultImageCircle } from "@/shared/assets/icons";
 
 interface DiscountBannerCardProps {
 	imageUri?: string;
-	badge: string;
+	badge?: string;
 	storeName: string;
 	onPress?: () => void;
 }
@@ -21,14 +21,16 @@ export function DiscountBannerCard({
 			style={{ width: 60 }}
 		>
 			<View className="w-full items-center" style={{ paddingTop: 12 }}>
-				<View className="absolute top-0 z-10 rounded-full border border-gray-200 bg-white px-1.5 py-0.5">
-					<Text
-						className="font-semibold text-[10px] text-primary"
-						numberOfLines={1}
-					>
-						{badge}
-					</Text>
-				</View>
+				{badge && (
+					<View className="absolute top-0 z-10 rounded-full border border-gray-200 bg-white px-1.5 py-0.5">
+						<Text
+							className="font-semibold text-[10px] text-primary"
+							numberOfLines={1}
+						>
+							{badge}
+						</Text>
+					</View>
+				)}
 				<View
 					className="overflow-hidden rounded-full bg-neutral"
 					style={{ width: 55, height: 55 }}

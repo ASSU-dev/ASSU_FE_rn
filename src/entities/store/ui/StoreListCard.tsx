@@ -62,7 +62,7 @@ export function StoreListCard({
 					{(benefitLabel || benefitHighlight) && (
 						<Text
 							className="mt-[10px] text-md font-semibold tracking-[-0.32px]"
-							numberOfLines={5}
+							numberOfLines={2}
 						>
 							{benefitLabel ? (
 								<Text className="text-content-primary">{benefitLabel}</Text>
