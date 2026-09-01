@@ -71,6 +71,8 @@ export async function saveTokens(
 		? (role as UserRole)
 		: decodeAccessTokenRole(accessToken);
 
+	// 스웨거 Authorize 등 API 수동 테스트용 — 프로덕션 빌드에서는 출력되지 않는다
+	if (__DEV__) console.log("[Auth] accessToken:", accessToken);
 	useAuthStore.getState().setAccessToken(accessToken);
 	await setAccessToken(accessToken);
 	await setRefreshToken(refreshToken);
@@ -146,6 +148,9 @@ async function restoreAuth(): Promise<InitAuthResult> {
 			memberId: refreshedMemberId,
 		} = res.data.result ?? {};
 		if (!newAccess || !newRefresh) return { isLoggedIn: false, role: null };
+
+		// 스웨거 Authorize 등 API 수동 테스트용 — 프로덕션 빌드에서는 출력되지 않는다
+		if (__DEV__) console.log("[Auth] accessToken:", newAccess);
 
 		const role =
 			decodeAccessTokenRole(newAccess) ??
