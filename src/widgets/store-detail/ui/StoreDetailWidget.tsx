@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useStorePapers } from "@/entities/store";
 import { StoreImageCarousel } from "@/entities/store/ui/StoreImageCarousel";
-import { StorePartnershipList } from "@/features/select-store-partnership/ui/StorePartnershipList";
 import { useGetStoreDetailsQuery } from "@/features/store-detail/api/useGetStoreDetailsQuery";
+import { StorePartnershipList } from "@/features/store-detail/ui/StorePartnershipList";
 import { Location, MapIcon } from "@/shared/assets/icons";
 import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
@@ -49,14 +49,15 @@ export function StoreDetailWidget({
 	const images = store?.profileUrl ? [store.profileUrl] : [];
 
 	const handleCertify = () => {
-		if (!selectedBenefit) return;
+		if (!selectedBenefit || !store) return;
 
-		if (selectedBenefit.type === "GROUP") {
-			router.push("/(protected)/student/partnership-group-certification");
-			return;
-		}
-
-		router.push("/(protected)/student/partnership-verification");
+		router.push({
+			pathname: "/(protected)/student/partnership-benefit-select",
+			params: {
+				storeId: store.storeId,
+				preSelectedContentId: Number(selectedBenefit.id),
+			},
+		});
 	};
 
 	return (

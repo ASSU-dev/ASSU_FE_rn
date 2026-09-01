@@ -175,6 +175,15 @@ export type {
 // getRecommendCarouselPartnership
 export { getAssuApi as getGetRecommendCarouselPartnershipApi } from "./_generated/student/getRecommendCarouselPartnership";
 export type {
+	BaseResponseStudentHomeResponseDTO,
+	CurationGroupDTO,
+	CurationStoreDTO,
+	FeaturedRecommendationDTO,
+	StudentHomeResponseDTO,
+} from "./_generated/student/getRecommendCuration";
+// getRecommendCuration
+export { getAssuApi as getGetRecommendCurationApi } from "./_generated/student/getRecommendCuration";
+export type {
 	BaseResponseListUsablePartnershipDTO,
 	GetUsablePartnershipParams,
 	UsablePartnershipDTO,
