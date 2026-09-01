@@ -14,7 +14,6 @@ import {
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import type { UsablePartnershipDTO } from "@/shared/api";
 import { BackArrowIcon, LocationIcon } from "@/shared/assets/icons";
-import { toAbsoluteImageUrl } from "@/shared/lib/image";
 import { shadows } from "@/shared/styles/shadows";
 
 function PartnershipStoreCard({
@@ -24,28 +23,30 @@ function PartnershipStoreCard({
 	item: UsablePartnershipDTO;
 	onPress?: () => void;
 }) {
-	let benefitLabel: string | undefined;
-	if (item.criterionType === "HEADCOUNT" && item.people) {
-		benefitLabel = `${item.people}인 이상 이용 시,`;
-	} else if (item.criterionType === "PRICE" && item.cost) {
-		benefitLabel = `${item.cost.toLocaleString()}원 이상 시,`;
-	} else {
-		benefitLabel = item.note ? item.note : "혜택";
-	}
+	const hasCondition = item.people != null || item.cost != null;
 
+	let benefitLabel: string | undefined;
 	let benefitHighlight: string | undefined;
-	if (item.criterionType === "PRICE" || item.criterionType === "HEADCOUNT") {
-		benefitHighlight = item.note ?? " 혜택";
-	} else if (item.optionType === "DISCOUNT" && item.discountRate) {
-		benefitHighlight = `${item.discountRate}% 할인`;
+
+	if (hasCondition) {
+		if (item.criterionType === "HEADCOUNT" && item.people) {
+			benefitLabel = `${item.people}인 이상 이용 시, `;
+		} else if (item.criterionType === "PRICE" && item.cost) {
+			benefitLabel = `${item.cost.toLocaleString()}원 이상 시, `;
+		}
+		if (item.criterionType === "PRICE" || item.criterionType === "HEADCOUNT") {
+			benefitHighlight = item.category ?? " 혜택";
+		} else if (item.optionType === "DISCOUNT" && item.discountRate) {
+			benefitHighlight = `${item.discountRate}% 할인`;
+		}
 	} else {
-		benefitHighlight = "";
+		benefitLabel = item.note ?? undefined;
 	}
 
 	return (
 		<StoreListCard
 			name={item.partnerName ?? ""}
-			imageUri={toAbsoluteImageUrl(item.partnerProfileUrl)}
+			imageUri={item.partnerProfileUrl ?? undefined}
 			benefitLabel={benefitLabel}
 			benefitHighlight={benefitHighlight}
 			extraBenefitCount={item.extraCount}

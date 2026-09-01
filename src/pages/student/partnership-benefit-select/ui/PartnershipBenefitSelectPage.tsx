@@ -14,8 +14,12 @@ import { PageLayout } from "@/shared/ui/layout";
 
 export function PartnershipBenefitSelectPage() {
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-	const { storeId: storeIdParam } = useLocalSearchParams<{ storeId: string }>();
+	const { storeId: storeIdParam, preSelectedContentId: preSelectedParam } =
+		useLocalSearchParams<{ storeId: string; preSelectedContentId?: string }>();
 	const storeId = Number(storeIdParam);
+	const preSelectedContentId = preSelectedParam
+		? Number(preSelectedParam)
+		: null;
 	const storeQuery = useStorePartnershipQuery(
 		Number.isSafeInteger(storeId) && storeId > 0 ? storeId : null,
 	);
@@ -36,6 +40,17 @@ export function PartnershipBenefitSelectPage() {
 	useEffect(() => {
 		if (storeQuery.data) setStore(storeQuery.data);
 	}, [setStore, storeQuery.data]);
+
+	useEffect(() => {
+		if (
+			preSelectedContentId == null ||
+			benefits.length === 0 ||
+			selectedIndex !== null
+		)
+			return;
+		const idx = benefits.findIndex((b) => b.id === preSelectedContentId);
+		if (idx !== -1) setSelectedIndex(idx);
+	}, [benefits, preSelectedContentId, selectedIndex]);
 
 	const handleComplete = async () => {
 		if (!store || !selectedBenefit) return;

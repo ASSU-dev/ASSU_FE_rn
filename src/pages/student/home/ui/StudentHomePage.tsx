@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { useStudentStampQuery } from "@/entities/user/api/useStudentStampQuery";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
+import { useGetRecommendCurationQuery } from "@/features/home/api/useGetRecommendCurationQuery";
 import { QRScannerButton } from "@/features/qr-auth/ui/QRScannerButton";
 import { Logo } from "@/shared/assets/icons";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
@@ -15,8 +16,11 @@ export function StudentHomePage() {
 	const basicInfo = useUserBasicInfo();
 	const { data: studentProfile } = useStudentProfileQuery();
 	const { data: stampData, refetch: refetchStamp } = useStudentStampQuery();
+	const { data: curationData } = useGetRecommendCurationQuery();
 	const stampCount = stampData?.stamp ?? 0;
 	const userName = studentProfile?.name ?? basicInfo?.name ?? "사용자";
+	const curationResult = curationData?.result;
+	const curationLists = curationResult?.curationLists;
 
 	useFocusEffect(
 		useCallback(() => {
@@ -56,8 +60,16 @@ export function StudentHomePage() {
 			</View>
 
 			<View className="mt-5 gap-8">
-				<HomeRecommendedSection title={`${userName}님을 위한 추천 제휴 1`} />
-				<HomeRecommendedSection title={`${userName}님을 위한 추천 제휴 2`} />
+				<HomeRecommendedSection
+					curationTitle={curationResult?.curationTitle}
+					groupTitle={curationLists?.[0]?.groupTitle}
+					stores={curationLists?.[0]?.stores}
+				/>
+				<HomeRecommendedSection
+					curationTitle={curationResult?.curationTitle}
+					groupTitle={curationLists?.[1]?.groupTitle}
+					stores={curationLists?.[1]?.stores}
+				/>
 			</View>
 		</PageLayout>
 	);
