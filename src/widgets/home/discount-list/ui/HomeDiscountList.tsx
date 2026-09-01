@@ -1,10 +1,7 @@
 import { router } from "expo-router";
 import { FlatList, View } from "react-native";
-import type { StoreCategory } from "@/entities/store";
-import { getStoreCategoryLabel } from "@/entities/store";
 import { DiscountBannerCard } from "@/entities/store/ui/DiscountBannerCard";
 import { useGetRecommendCarouselPartnershipQuery } from "@/features/home/api/useGetRecommendCarouselPartnershipQuery";
-import { toAbsoluteImageUrl } from "@/shared/lib/image";
 
 export function HomeDiscountList() {
 	const { data: response } = useGetRecommendCarouselPartnershipQuery();
@@ -26,13 +23,9 @@ export function HomeDiscountList() {
 					const storeId = item.storeId;
 					return (
 						<DiscountBannerCard
-							badge={
-								item.category
-									? getStoreCategoryLabel(item.category as StoreCategory)
-									: ""
-							}
+							badge={item.belonging}
 							storeName={item.partnerName ?? ""}
-							imageUri={toAbsoluteImageUrl(item.partnerProfileUrl)}
+							imageUri={item.partnerProfileUrl ?? undefined}
 							onPress={
 								storeId !== undefined
 									? () =>
