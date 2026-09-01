@@ -9,6 +9,7 @@ interface StoreImageCarouselProps {
 	images?: string[];
 }
 
+// 가게 상세 정보 화면 내 가게 이미지 캐러셀 컴포넌트
 export function StoreImageCarousel({ images = [] }: StoreImageCarouselProps) {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const flatListRef = useRef<FlatList>(null);

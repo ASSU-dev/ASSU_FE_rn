@@ -16,7 +16,7 @@ interface StoreListCardProps {
 	onPress?: () => void;
 }
 
-/** 지도 매장 리스트 카드 — 바텀시트/전체 리스트/검색 결과 공용 */
+/** 지도 매장 리스트 카드 — 바텀시트/전체 리스트/검색 결과 공용 + 홈 가게 조회 리스트 카드 */
 export function StoreListCard({
 	name,
 	imageUri,

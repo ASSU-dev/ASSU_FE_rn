@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import type { StoreBenefit } from "@/entities/store";
 import { CheckCircleOff, CheckCircleOn } from "@/shared/assets/icons";
+import { formatBenefit } from "../lib/formatBenefit";
 import { useMultiLineText } from "../lib/useMultiLineText";
 
 interface PartnershipSelectItemProps {
@@ -15,18 +16,7 @@ export function PartnershipSelectItem({
 	onPress,
 }: PartnershipSelectItemProps) {
 	const { isMultiLine, onTextLayout } = useMultiLineText();
-
-	const hasCondition = benefit.people != null || benefit.cost != null;
-
-	const conditionText = (() => {
-		const parts: string[] = [];
-		if (benefit.people != null) parts.push(`${benefit.people}명 이상 이용 시`);
-		if (benefit.cost != null)
-			parts.push(`${benefit.cost.toLocaleString()}원 이상 시`);
-		return parts.join(", ");
-	})();
-
-	const goodsText = benefit.goods.join(", ");
+	const { hasCondition, conditionText, goodsText } = formatBenefit(benefit);
 
 	return (
 		<Pressable

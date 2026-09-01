@@ -6,7 +6,7 @@ import type {
 	StoreBenefit,
 	StorePapers,
 	StorePapersResponseDto,
-} from "../model/api-types";
+} from "../model/api";
 
 export const storeQueryKeys = {
 	all: ["stores"] as const,

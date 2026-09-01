@@ -1,19 +1,20 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { DefaultImageMagazine, SaleTag } from "@/shared/assets/icons";
 
-interface StoreMagazineCardProps {
+interface CurationStoreCardProps {
 	profileImageUrl?: string;
 	discountContent?: string;
 	storeName?: string;
 	onPress?: () => void;
 }
 
-export function StoreMagazineCard({
+// 큐레이션 가게 카드 — 홈 화면 내 큐레이션 섹션에서 사용
+export function CurationStoreCard({
 	profileImageUrl,
 	discountContent,
 	storeName,
 	onPress,
-}: StoreMagazineCardProps) {
+}: CurationStoreCardProps) {
 	return (
 		<Pressable onPress={onPress} className="flex-1 gap-2">
 			<View

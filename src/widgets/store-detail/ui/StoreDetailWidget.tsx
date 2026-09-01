@@ -1,5 +1,4 @@
 import { router } from "expo-router";
-import { useState } from "react";
 import {
 	ActivityIndicator,
 	Pressable,
@@ -7,14 +6,13 @@ import {
 	Text,
 	View,
 } from "react-native";
-import { useStorePapers } from "@/entities/store";
 import { StoreImageCarousel } from "@/entities/store/ui/StoreImageCarousel";
-import { useGetStoreDetailsQuery } from "@/features/store-detail/api/useGetStoreDetailsQuery";
 import { StorePartnershipList } from "@/features/store-detail/ui/StorePartnershipList";
 import { Location, MapIcon } from "@/shared/assets/icons";
 import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { useStoreDetailData } from "../model/useStoreDetailData";
 
 interface StoreDetailWidgetProps {
 	storeId: number;
@@ -25,28 +23,18 @@ export function StoreDetailWidget({
 	storeId,
 	storeName: fallbackName,
 }: StoreDetailWidgetProps) {
-	const [selectedBenefitId, setSelectedBenefitId] = useState<string | null>(
-		null,
-	);
-
 	const {
-		data: storeResponse,
-		isLoading: isStoreLoading,
-		isError: isStoreError,
-	} = useGetStoreDetailsQuery(storeId);
-	const store = storeResponse?.result;
-
-	const { data: papers, isLoading: isPapersLoading } = useStorePapers(storeId);
-	const benefits = papers?.partnershipContents ?? [];
-
-	const selectedBenefit =
-		benefits.find((b) => b.id === selectedBenefitId) ?? null;
-
-	const title = store?.storeName ?? fallbackName ?? "";
-	const address = [store?.address, store?.detailAddress]
-		.filter(Boolean)
-		.join(" ");
-	const images = store?.profileUrl ? [store.profileUrl] : [];
+		store,
+		benefits,
+		selectedBenefitId,
+		setSelectedBenefitId,
+		selectedBenefit,
+		title,
+		address,
+		images,
+		isLoading,
+		isError,
+	} = useStoreDetailData({ storeId, fallbackName });
 
 	const handleViewOnMap = () => {
 		if (!store?.latitude || !store?.longitude) return;
@@ -64,7 +52,6 @@ export function StoreDetailWidget({
 
 	const handleCertify = () => {
 		if (!selectedBenefit || !store) return;
-
 		router.push({
 			pathname: "/(protected)/student/partnership-benefit-select",
 			params: {
@@ -81,11 +68,11 @@ export function StoreDetailWidget({
 			contentContainerClassName="flex-1"
 			header={<AppTopBar title={title} titleAlign="left" />}
 		>
-			{isStoreLoading || isPapersLoading ? (
+			{isLoading ? (
 				<View className="flex-1 items-center justify-center">
 					<ActivityIndicator />
 				</View>
-			) : isStoreError || !store ? (
+			) : isError ? (
 				<View className="flex-1 items-center justify-center px-screen-m">
 					<Text className="text-center text-sm text-content-secondary">
 						가게 상세 정보를 찾을 수 없습니다

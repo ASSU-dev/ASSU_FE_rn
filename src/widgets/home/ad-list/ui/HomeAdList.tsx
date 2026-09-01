@@ -1,9 +1,9 @@
 import { router } from "expo-router";
 import { ActivityIndicator, FlatList, View } from "react-native";
-import { DiscountBannerCard } from "@/entities/store/ui/DiscountBannerCard";
+import { AdBannerCard } from "@/entities/store/ui/AdBannerCard";
 import { useGetRecommendCarouselPartnershipQuery } from "@/features/home/api/useGetRecommendCarouselPartnershipQuery";
 
-export function HomeDiscountList() {
+export function HomeAdList() {
 	const { data: response, isLoading } =
 		useGetRecommendCarouselPartnershipQuery();
 	const stores = response?.result ?? [];
@@ -35,7 +35,7 @@ export function HomeDiscountList() {
 				renderItem={({ item }) => {
 					const storeId = item.storeId;
 					return (
-						<DiscountBannerCard
+						<AdBannerCard
 							badge={item.belonging}
 							storeName={item.partnerName ?? ""}
 							imageUri={item.partnerProfileUrl ?? undefined}

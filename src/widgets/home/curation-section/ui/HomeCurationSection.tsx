@@ -1,21 +1,21 @@
 import { router } from "expo-router";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import { StoreMagazineCard } from "@/entities/store/ui/StoreMagazineCard";
+import { CurationStoreCard } from "@/entities/store/ui/CurationStoreCard";
 import type { CurationStoreDTO } from "@/shared/api";
 
-interface HomeRecommendedSectionProps {
+interface HomeCurationSectionProps {
 	curationTitle?: string;
 	groupTitle?: string;
 	stores?: CurationStoreDTO[];
 	isLoading?: boolean;
 }
 
-export function HomeRecommendedSection({
+export function HomeCurationSection({
 	curationTitle,
 	groupTitle,
 	stores,
 	isLoading,
-}: HomeRecommendedSectionProps) {
+}: HomeCurationSectionProps) {
 	if (isLoading) {
 		return (
 			<View className="gap-4">
@@ -43,7 +43,7 @@ export function HomeRecommendedSection({
 				ItemSeparatorComponent={() => <View className="w-3" />}
 				renderItem={({ item }) => (
 					<View style={{ width: 180 }}>
-						<StoreMagazineCard
+						<CurationStoreCard
 							profileImageUrl={item.profileImageUrl}
 							discountContent={item.discountContent}
 							storeName={item.storeName}

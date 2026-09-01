@@ -1,19 +1,20 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { DefaultImageCircle } from "@/shared/assets/icons";
 
-interface DiscountBannerCardProps {
+interface AdBannerCardProps {
 	imageUri?: string;
 	badge?: string;
 	storeName: string;
 	onPress?: () => void;
 }
 
-export function DiscountBannerCard({
+// 광고 배너 카드 — 홈 화면 내 광고 리스트에서 사용
+export function AdBannerCard({
 	imageUri,
 	badge,
 	storeName,
 	onPress,
-}: DiscountBannerCardProps) {
+}: AdBannerCardProps) {
 	return (
 		<Pressable
 			onPress={onPress}

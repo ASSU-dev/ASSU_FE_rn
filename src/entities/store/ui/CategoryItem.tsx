@@ -8,6 +8,7 @@ interface CategoryItemProps {
 	onPress?: () => void;
 }
 
+// 카테고리 필터 아이템 — 홈 화면 내 카테고리 필터 탭에서 사용
 export function CategoryItem({
 	icon: Icon,
 	label,
