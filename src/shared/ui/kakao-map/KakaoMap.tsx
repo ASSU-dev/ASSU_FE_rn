@@ -26,6 +26,17 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 type KakaoWebViewSource = NonNullable<WebViewProps["source"]>;
 
+export type MapBounds = {
+	lng1: number;
+	lat1: number;
+	lng2: number;
+	lat2: number;
+	lng3: number;
+	lat3: number;
+	lng4: number;
+	lat4: number;
+};
+
 type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
 	myLocation?: { lat: number; lng: number } | null;
@@ -39,6 +50,8 @@ type KakaoMapProps = {
 	selectedMarkerId?: string | null;
 	onMarkerPress?: (markerId: string) => void;
 	onMapPress?: () => void;
+	/** 맵 이동/줌 완료 시 현재 표시 영역을 전달 */
+	onRegionChange?: (bounds: MapBounds) => void;
 };
 
 export type KakaoMapHandle = {
@@ -72,6 +85,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			selectedMarkerId,
 			onMarkerPress,
 			onMapPress,
+			onRegionChange,
 		},
 		ref,
 	) {
@@ -79,6 +93,9 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 		const webViewRef = useRef<WebView>(null);
 		const prevMarkersRef = useRef<string>("");
 		const [isMapReady, setIsMapReady] = useState(false);
+		const pendingPanRef = useRef<{ lat: number; lng: number } | null>(null);
+		// Set to true after the first deliberate panTo — prevents GPS re-centering from overriding it.
+		const deliberatelyPannedRef = useRef(false);
 		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
 
@@ -98,20 +115,38 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 
 		useImperativeHandle(ref, () => ({
 			panTo: (lat, lng) => {
-				webViewRef.current?.injectJavaScript(
-					`map.panTo(new kakao.maps.LatLng(${lat}, ${lng})); true;`,
-				);
+				deliberatelyPannedRef.current = true;
+				if (isMapReady) {
+					webViewRef.current?.injectJavaScript(
+						`map.panTo(new kakao.maps.LatLng(${lat}, ${lng})); true;`,
+					);
+				} else {
+					pendingPanRef.current = { lat, lng };
+				}
 			},
 		}));
 
-		// Recenter the map when returning to this tab.
+		// Re-center on GPS update — skipped after a deliberate panTo to preserve it.
+		// Also applies any panTo that was queued before the map was ready.
 		useEffect(() => {
 			if (!isMapReady) return;
-			webViewRef.current?.injectJavaScript(`
-			map.setCenter(new kakao.maps.LatLng(${initialCenter.lat}, ${initialCenter.lng}));
-			map.setLevel(3);
-			true;
-		`);
+			if (!deliberatelyPannedRef.current) {
+				webViewRef.current?.injectJavaScript(`
+				map.setCenter(new kakao.maps.LatLng(${initialCenter.lat}, ${initialCenter.lng}));
+				map.setLevel(3);
+				true;
+			`);
+			}
+			const pending = pendingPanRef.current;
+			if (pending) {
+				pendingPanRef.current = null;
+				const { lat, lng } = pending;
+				setTimeout(() => {
+					webViewRef.current?.injectJavaScript(
+						`map.panTo(new kakao.maps.LatLng(${lat}, ${lng})); true;`,
+					);
+				}, 0);
+			}
 		}, [initialCenter.lat, initialCenter.lng, isMapReady]);
 
 		// Create or move the current-location overlay.
@@ -166,10 +201,14 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				const data = JSON.parse(event.nativeEvent.data) as {
 					type: string;
 					markerId?: string;
+					bounds?: MapBounds;
 				};
 				if (data.type === "MAP_READY") setIsMapReady(true);
 				if (data.type === "MARKER_PRESS" && data.markerId) {
 					onMarkerPress?.(data.markerId);
+				}
+				if (data.type === "REGION_CHANGE" && data.bounds) {
+					onRegionChange?.(data.bounds);
 				}
 				if (data.type === "MAP_PRESS") onMapPress?.();
 			} catch (error) {
@@ -475,6 +514,21 @@ function buildMapHtml(appKey: string): string {
       // 줌 변경 시 픽셀 거리 기반 클러스터를 다시 계산한다
       kakao.maps.event.addListener(map, 'zoom_changed', function() {
         if (clusteringEnabled) renderStoreMarkers();
+      });
+      // 이동/줌 완료 시 현재 영역을 RN으로 전달 (idle = 사용자 조작 끝)
+      kakao.maps.event.addListener(map, 'idle', function() {
+        var b = map.getBounds();
+        var sw = b.getSouthWest();
+        var ne = b.getNorthEast();
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          type: 'REGION_CHANGE',
+          bounds: {
+            lng1: sw.getLng(), lat1: ne.getLat(),
+            lng2: ne.getLng(), lat2: ne.getLat(),
+            lng3: ne.getLng(), lat3: sw.getLat(),
+            lng4: sw.getLng(), lat4: sw.getLat()
+          }
+        }));
       });
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }

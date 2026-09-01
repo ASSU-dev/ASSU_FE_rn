@@ -48,6 +48,20 @@ export function StoreDetailWidget({
 		.join(" ");
 	const images = store?.profileUrl ? [store.profileUrl] : [];
 
+	const handleViewOnMap = () => {
+		if (!store?.latitude || !store?.longitude) return;
+		router.push({
+			pathname: "/(protected)/student/(tabs)/map",
+			params: {
+				preSelectStoreId: String(store.storeId),
+				preSelectLat: String(store.latitude),
+				preSelectLng: String(store.longitude),
+				preSelectName: store.storeName ?? "",
+				preSelectImageUri: store.profileUrl ?? "",
+			},
+		});
+	};
+
 	const handleCertify = () => {
 		if (!selectedBenefit || !store) return;
 
@@ -92,7 +106,10 @@ export function StoreDetailWidget({
 								<Text className="font-medium text-sm text-content-primary">
 									{address}
 								</Text>
-								<Pressable className="flex-row items-center gap-1 ml-2">
+								<Pressable
+									className="flex-row items-center gap-1 ml-2"
+									onPress={handleViewOnMap}
+								>
 									<MapIcon width={16} height={16} />
 									<Text className="font-medium text-sm text-primary">위치</Text>
 								</Pressable>

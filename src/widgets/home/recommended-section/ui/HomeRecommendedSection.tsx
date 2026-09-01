@@ -14,6 +14,8 @@ export function HomeRecommendedSection({
 	groupTitle,
 	stores,
 }: HomeRecommendedSectionProps) {
+	if (!stores || stores.length === 0) return null;
+
 	return (
 		<View className="gap-4">
 			<Text className="px-screen-m font-semibold text-lg text-content-primary">
