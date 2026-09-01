@@ -345,19 +345,44 @@ async function fetchNearbyRaw(
 	const responseResult = res.data?.result;
 	const list = pickList(responseResult);
 	if (__DEV__) {
-		const first = list[0] as
-			| { name?: unknown; partnerships?: unknown }
-			| undefined;
-		console.log(
-			"[fetchNearbyRaw] 필터:",
-			filter ?? "없음",
-			"→ 응답 개수:",
-			list.length,
-			"/ 첫 매장:",
-			first?.name,
-			"제휴:",
-			JSON.stringify(first?.partnerships),
-		);
+		const stores = list.map((item, index) => {
+			if (!isRecord(item)) {
+				return {
+					index,
+					isStoreObject: false,
+					valueType: Array.isArray(item) ? "array" : typeof item,
+				};
+			}
+
+			const hasCategory = Object.hasOwn(item, "category");
+			const hasStoreCategory = Object.hasOwn(item, "storeCategory");
+
+			return {
+				index,
+				isStoreObject: true,
+				storeId: getString(item, ["storeId", "id"]) ?? null,
+				name: getString(item, ["name", "storeName"]) ?? null,
+				hasCategory,
+				category: hasCategory ? item.category : "[FIELD_MISSING]",
+				hasStoreCategory,
+				storeCategory: hasStoreCategory
+					? item.storeCategory
+					: "[FIELD_MISSING]",
+				resolvedCategory:
+					toStoreCategory(getString(item, ["category", "storeCategory"])) ??
+					null,
+				responseKeys: Object.keys(item),
+			};
+		});
+
+		console.log("[fetchNearbyRaw] 주변 매장 응답 진단:", {
+			filter: filter ?? null,
+			responseResultType: Array.isArray(responseResult)
+				? "array"
+				: typeof responseResult,
+			storeCount: list.length,
+			stores,
+		});
 	}
 	return list;
 }
