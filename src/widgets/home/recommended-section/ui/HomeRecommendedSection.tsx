@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { StoreMagazineCard } from "@/entities/store/ui/StoreMagazineCard";
 import type { CurationStoreDTO } from "@/shared/api";
 
@@ -7,13 +7,26 @@ interface HomeRecommendedSectionProps {
 	curationTitle?: string;
 	groupTitle?: string;
 	stores?: CurationStoreDTO[];
+	isLoading?: boolean;
 }
 
 export function HomeRecommendedSection({
 	curationTitle,
 	groupTitle,
 	stores,
+	isLoading,
 }: HomeRecommendedSectionProps) {
+	if (isLoading) {
+		return (
+			<View className="gap-4">
+				<View className="mx-screen-m h-6 w-40 rounded-md bg-neutral" />
+				<View className="h-[200px] items-center justify-center">
+					<ActivityIndicator />
+				</View>
+			</View>
+		);
+	}
+
 	if (!stores || stores.length === 0) return null;
 
 	return (

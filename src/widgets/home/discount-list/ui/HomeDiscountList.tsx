@@ -1,11 +1,24 @@
 import { router } from "expo-router";
-import { FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { DiscountBannerCard } from "@/entities/store/ui/DiscountBannerCard";
 import { useGetRecommendCarouselPartnershipQuery } from "@/features/home/api/useGetRecommendCarouselPartnershipQuery";
 
 export function HomeDiscountList() {
-	const { data: response } = useGetRecommendCarouselPartnershipQuery();
+	const { data: response, isLoading } =
+		useGetRecommendCarouselPartnershipQuery();
 	const stores = response?.result ?? [];
+
+	if (isLoading && stores.length === 0) {
+		return (
+			<View>
+				<View className="h-3 bg-neutral" />
+				<View className="h-[120px] items-center justify-center">
+					<ActivityIndicator />
+				</View>
+				<View className="h-3 bg-neutral" />
+			</View>
+		);
+	}
 
 	if (stores.length === 0) return null;
 

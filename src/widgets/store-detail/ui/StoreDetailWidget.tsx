@@ -81,7 +81,7 @@ export function StoreDetailWidget({
 			contentContainerClassName="flex-1"
 			header={<AppTopBar title={title} titleAlign="left" />}
 		>
-			{isStoreLoading ? (
+			{isStoreLoading || isPapersLoading ? (
 				<View className="flex-1 items-center justify-center">
 					<ActivityIndicator />
 				</View>
@@ -129,15 +129,11 @@ export function StoreDetailWidget({
 							</Text>
 						</View>
 
-						{isPapersLoading ? (
-							<ActivityIndicator />
-						) : (
-							<StorePartnershipList
-								benefits={benefits}
-								selectedId={selectedBenefitId}
-								onSelect={setSelectedBenefitId}
-							/>
-						)}
+						<StorePartnershipList
+							benefits={benefits}
+							selectedId={selectedBenefitId}
+							onSelect={setSelectedBenefitId}
+						/>
 					</View>
 				</ScrollView>
 			)}

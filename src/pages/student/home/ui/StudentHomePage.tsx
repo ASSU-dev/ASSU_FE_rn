@@ -16,7 +16,8 @@ export function StudentHomePage() {
 	const basicInfo = useUserBasicInfo();
 	const { data: studentProfile } = useStudentProfileQuery();
 	const { data: stampData, refetch: refetchStamp } = useStudentStampQuery();
-	const { data: curationData } = useGetRecommendCurationQuery();
+	const { data: curationData, isLoading: isCurationLoading } =
+		useGetRecommendCurationQuery();
 	const stampCount = stampData?.stamp ?? 0;
 	const userName = studentProfile?.name ?? basicInfo?.name ?? "사용자";
 	const curationResult = curationData?.result;
@@ -64,11 +65,13 @@ export function StudentHomePage() {
 					curationTitle={curationResult?.curationTitle}
 					groupTitle={curationLists?.[0]?.groupTitle}
 					stores={curationLists?.[0]?.stores}
+					isLoading={isCurationLoading}
 				/>
 				<HomeRecommendedSection
 					curationTitle={curationResult?.curationTitle}
 					groupTitle={curationLists?.[1]?.groupTitle}
 					stores={curationLists?.[1]?.stores}
+					isLoading={isCurationLoading}
 				/>
 			</View>
 		</PageLayout>
