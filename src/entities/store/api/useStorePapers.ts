@@ -30,11 +30,13 @@ function toStoreBenefit(
 			typeof item.contentId === "number"
 				? String(item.contentId)
 				: `${item.adminId ?? "benefit"}-${index}`,
+		adminId: typeof item.adminId === "number" ? item.adminId : 0,
 		adminName: item.adminName?.trim() || "제휴 혜택",
 		content: paperContent || goods.join(", ") || "혜택 정보가 없습니다.",
 		goods,
 		people: typeof item.people === "number" ? item.people : undefined,
 		cost: typeof item.cost === "number" ? item.cost : undefined,
+		type: typeof item.people === "number" ? "GROUP" : "INDIVIDUAL",
 	};
 }
 

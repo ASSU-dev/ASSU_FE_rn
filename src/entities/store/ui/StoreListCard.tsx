@@ -28,7 +28,9 @@ export function StoreListCard({
 	onPress,
 }: StoreListCardProps) {
 	const metaParts = [
-		extraBenefitCount > 0 ? `외 ${extraBenefitCount}가지 제휴` : null,
+		extraBenefitCount > 0
+			? `총 ${extraBenefitCount + 1}가지 제휴`
+			: `총 1가지 제휴`,
 		distanceText ?? null,
 	].filter((part): part is string => part !== null);
 
@@ -60,7 +62,7 @@ export function StoreListCard({
 					{(benefitLabel || benefitHighlight) && (
 						<Text
 							className="mt-[10px] text-md font-semibold tracking-[-0.32px]"
-							numberOfLines={1}
+							numberOfLines={5}
 						>
 							{benefitLabel ? (
 								<Text className="text-content-primary">{benefitLabel}</Text>

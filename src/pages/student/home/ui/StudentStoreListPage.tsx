@@ -11,68 +11,49 @@ import {
 	type AdminFilterItem,
 	CategoryChipRow,
 } from "@/features/map-filter";
+import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
+import type { UsablePartnershipDTO } from "@/shared/api";
 import { BackArrowIcon, LocationIcon } from "@/shared/assets/icons";
+import { toAbsoluteImageUrl } from "@/shared/lib/image";
 import { shadows } from "@/shared/styles/shadows";
 
-interface StoreListItem {
-	id: string;
-	name: string;
-	imageUri?: string;
-	benefitLabel?: string;
-	benefitHighlight?: string;
-	extraBenefitCount?: number;
-	distanceText?: string;
-	tag?: string;
-}
+function PartnershipStoreCard({
+	item,
+	onPress,
+}: {
+	item: UsablePartnershipDTO;
+	onPress?: () => void;
+}) {
+	let benefitLabel: string | undefined;
+	if (item.criterionType === "HEADCOUNT" && item.people) {
+		benefitLabel = `${item.people}인 이상 이용 시,`;
+	} else if (item.criterionType === "PRICE" && item.cost) {
+		benefitLabel = `${item.cost.toLocaleString()}원 이상 시,`;
+	} else {
+		benefitLabel = item.note ? item.note : "혜택";
+	}
 
-// TODO: GET /students/usable API 연결 후 제거
-const MOCK_STORES: StoreListItem[] = [
-	{
-		id: "1",
-		name: "역전할머니맥주 송실대점",
-		benefitLabel: "4인이상 식사시,",
-		benefitHighlight: "음료제공",
-		extraBenefitCount: 2,
-		distanceText: "1.5km",
-		tag: "IT대 학생회",
-	},
-	{
-		id: "2",
-		name: "인쌩맥주 숭실대점",
-		benefitLabel: "4인이상 식사시,",
-		benefitHighlight: "음료제공",
-		extraBenefitCount: 2,
-		distanceText: "1.8km",
-		tag: "총학생회",
-	},
-	{
-		id: "3",
-		name: "면식당 숭실대점",
-		benefitLabel: "4인이상 식사시,",
-		benefitHighlight: "음료제공",
-		extraBenefitCount: 2,
-		distanceText: "1.8km",
-		tag: "글로벌미디어학부",
-	},
-	{
-		id: "4",
-		name: "역전할머니맥주 송실대점",
-		benefitLabel: "4인이상 식사시,",
-		benefitHighlight: "음료제공",
-		extraBenefitCount: 2,
-		distanceText: "1.5km",
-		tag: "IT대 학생회",
-	},
-	{
-		id: "5",
-		name: "면식당 숭실대점",
-		benefitLabel: "4인이상 식사시,",
-		benefitHighlight: "음료제공",
-		extraBenefitCount: 2,
-		distanceText: "1.8km",
-		tag: "글로벌미디어학부",
-	},
-];
+	let benefitHighlight: string | undefined;
+	if (item.criterionType === "PRICE" || item.criterionType === "HEADCOUNT") {
+		benefitHighlight = item.note ?? " 혜택";
+	} else if (item.optionType === "DISCOUNT" && item.discountRate) {
+		benefitHighlight = `${item.discountRate}% 할인`;
+	} else {
+		benefitHighlight = "";
+	}
+
+	return (
+		<StoreListCard
+			name={item.partnerName ?? ""}
+			imageUri={toAbsoluteImageUrl(item.partnerProfileUrl)}
+			benefitLabel={benefitLabel}
+			benefitHighlight={benefitHighlight}
+			extraBenefitCount={item.extraCount}
+			tag={item.adminName}
+			onPress={onPress}
+		/>
+	);
+}
 
 interface StudentStoreListPageProps {
 	initialCategory?: StoreCategory;
@@ -93,6 +74,13 @@ export function StudentStoreListPage({
 			suggestionAdmins.map((item) => ({ id: item.value, name: item.label })),
 		[suggestionAdmins],
 	);
+
+	const { data: response, isLoading } = useGetUsablePartnershipQuery({
+		all: true,
+		storeCategory: selectedCategory ?? undefined,
+		adminId: selectedAdminId ? Number(selectedAdminId) : undefined,
+	});
+	const stores = response?.result ?? [];
 
 	const toggleCategory = (category: StoreCategory) => {
 		setSelectedCategory((prev) => (prev === category ? null : category));
@@ -122,39 +110,60 @@ export function StudentStoreListPage({
 				</Pressable>
 			</View>
 
-			<CategoryChipRow
-				selectedCategory={selectedCategory}
-				onToggleCategory={toggleCategory}
-				withShadow={false}
-			/>
+			<View style={{ flexShrink: 0 }}>
+				<CategoryChipRow
+					selectedCategory={selectedCategory}
+					onToggleCategory={toggleCategory}
+					withShadow={false}
+				/>
 
-			<View className="h-2" />
+				<View className="h-2" />
 
-			<AdminChipRow
-				admins={admins}
-				selectedAdminId={selectedAdminId}
-				onToggleAdmin={toggleAdmin}
-			/>
+				<AdminChipRow
+					admins={admins}
+					selectedAdminId={selectedAdminId}
+					onToggleAdmin={toggleAdmin}
+				/>
 
-			<View className="h-3" />
+				<View className="h-3" />
+			</View>
 
-			<FlatList
-				data={MOCK_STORES}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => (
-					<StoreListCard
-						name={item.name}
-						imageUri={item.imageUri}
-						benefitLabel={item.benefitLabel}
-						benefitHighlight={item.benefitHighlight}
-						extraBenefitCount={item.extraBenefitCount}
-						distanceText={item.distanceText}
-						tag={item.tag}
-					/>
-				)}
-				ItemSeparatorComponent={StoreListSeparator}
-				contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
-			/>
+			{isLoading ? null : stores.length === 0 ? (
+				<View className="flex-1 items-center justify-center pb-[150px]">
+					<Text className="font-regular text-sm text-content-secondary">
+						이용 가능한 제휴 매장이 없습니다
+					</Text>
+				</View>
+			) : (
+				<FlatList
+					style={{ flex: 1 }}
+					data={stores}
+					keyExtractor={(item) => String(item.partnershipId)}
+					renderItem={({ item }) => {
+						const storeId = item.storeId;
+						return (
+							<PartnershipStoreCard
+								item={item}
+								onPress={
+									storeId !== undefined
+										? () =>
+												router.push({
+													pathname:
+														"/(protected)/student/store/[storeId]/detail",
+													params: {
+														storeId,
+														storeName: item.partnerName,
+													},
+												})
+										: undefined
+								}
+							/>
+						);
+					}}
+					ItemSeparatorComponent={StoreListSeparator}
+					contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+				/>
+			)}
 		</View>
 	);
 }

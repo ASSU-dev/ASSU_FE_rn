@@ -1,11 +1,11 @@
 import { Text, View } from "react-native";
-import type { PartnershipBenefit } from "@/features/partnership-auth/model/types";
+import type { StoreBenefit } from "@/entities/store";
 import { PartnershipSelectItem } from "./PartnershipSelectItem";
 
 interface StorePartnershipListProps {
-	benefits: PartnershipBenefit[];
-	selectedId: number | null;
-	onSelect: (id: number | null) => void;
+	benefits: StoreBenefit[];
+	selectedId: string | null;
+	onSelect: (id: string | null) => void;
 }
 
 export function StorePartnershipList({
@@ -25,9 +25,9 @@ export function StorePartnershipList({
 
 	return (
 		<View className="gap-3">
-			{benefits.map((benefit) => (
+			{benefits.map((benefit, index) => (
 				<PartnershipSelectItem
-					key={benefit.id}
+					key={`${benefit.id}-${index}`}
 					benefit={benefit}
 					isSelected={selectedId === benefit.id}
 					onPress={() =>

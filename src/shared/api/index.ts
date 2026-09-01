@@ -162,6 +162,30 @@ export type { UnblockParams } from "./_generated/auth/unblock";
 export { getAssuApi as getUnblockApi } from "./_generated/auth/unblock";
 // unregister
 export { getAssuApi as getUnregisterApi } from "./_generated/auth/unregister";
+export type {
+	BaseResponseGetStoreDetailsDTO,
+	GetStoreDetailsDTO,
+} from "./_generated/store/getStoreDetails";
+// getStoreDetails
+export { getAssuApi as getGetStoreDetailsApi } from "./_generated/store/getStoreDetails";
+export type {
+	BaseResponseListRecommendCarouselDTO,
+	RecommendCarouselDTO,
+} from "./_generated/student/getRecommendCarouselPartnership";
+// getRecommendCarouselPartnership
+export { getAssuApi as getGetRecommendCarouselPartnershipApi } from "./_generated/student/getRecommendCarouselPartnership";
+export type {
+	BaseResponseListUsablePartnershipDTO,
+	GetUsablePartnershipParams,
+	UsablePartnershipDTO,
+} from "./_generated/student/getUsablePartnership";
+// getUsablePartnership
+export {
+	GetUsablePartnershipStoreCategory,
+	getAssuApi as getGetUsablePartnershipApi,
+	UsablePartnershipDTOCriterionType,
+	UsablePartnershipDTOOptionType,
+} from "./_generated/student/getUsablePartnership";
 export { getApiErrorMessage } from "./apiErrorMessage";
 export { apiInstance } from "./instance";
 export type { BaseResponse } from "./types";

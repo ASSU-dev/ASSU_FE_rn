@@ -1,43 +1,49 @@
 import { router } from "expo-router";
 import { FlatList, View } from "react-native";
+import type { StoreCategory } from "@/entities/store";
+import { getStoreCategoryLabel } from "@/entities/store";
 import { DiscountBannerCard } from "@/entities/store/ui/DiscountBannerCard";
-
-interface DiscountStore {
-	id: string;
-	badge: string;
-	storeName: string;
-	imageUri?: string;
-}
-
-const MOCK_STORES: DiscountStore[] = Array.from({ length: 6 }, (_, i) => ({
-	id: String(i + 1),
-	badge: "50% 할인",
-	storeName: "어떠고 매장",
-}));
+import { useGetRecommendCarouselPartnershipQuery } from "@/features/home/api/useGetRecommendCarouselPartnershipQuery";
+import { toAbsoluteImageUrl } from "@/shared/lib/image";
 
 export function HomeDiscountList() {
+	const { data: response } = useGetRecommendCarouselPartnershipQuery();
+	const stores = response?.result ?? [];
+
+	if (stores.length === 0) return null;
+
 	return (
 		<View>
 			<View className="h-3 bg-neutral" />
 			<FlatList
-				data={MOCK_STORES}
+				data={stores}
 				horizontal
 				showsHorizontalScrollIndicator={false}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item, index) => `${item.storeId ?? index}-${index}`}
 				contentContainerClassName="px-5 pt-3 pb-4"
 				ItemSeparatorComponent={() => <View className="w-4" />}
-				renderItem={({ item }) => (
-					<DiscountBannerCard
-						badge={item.badge}
-						storeName={item.storeName}
-						imageUri={item.imageUri}
-						onPress={() =>
-							router.push(
-								`/(protected)/student/store/${item.id}/detail?storeName=${encodeURIComponent(item.storeName)}`,
-							)
-						}
-					/>
-				)}
+				renderItem={({ item }) => {
+					const storeId = item.storeId;
+					return (
+						<DiscountBannerCard
+							badge={
+								item.category
+									? getStoreCategoryLabel(item.category as StoreCategory)
+									: ""
+							}
+							storeName={item.partnerName ?? ""}
+							imageUri={toAbsoluteImageUrl(item.partnerProfileUrl)}
+							onPress={
+								storeId !== undefined
+									? () =>
+											router.push(
+												`/(protected)/student/store/${storeId}/detail?storeName=${encodeURIComponent(item.partnerName ?? "")}`,
+											)
+									: undefined
+							}
+						/>
+					);
+				}}
 			/>
 			<View className="h-3 bg-neutral" />
 		</View>
