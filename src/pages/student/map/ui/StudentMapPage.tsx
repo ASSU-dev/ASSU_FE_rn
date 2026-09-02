@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -11,6 +11,21 @@ const CHIP_ROW_TOP_OFFSET = 70;
 export function StudentMapPage() {
 	const insets = useSafeAreaInsets();
 	const { storeCategory, toggleStoreCategory } = useMapFilterStore();
+	const {
+		preSelectStoreId,
+		preSelectLat,
+		preSelectLng,
+		preSelectName,
+		preSelectImageUri,
+	} = useLocalSearchParams<{
+		preSelectStoreId?: string;
+		preSelectLat?: string;
+		preSelectLng?: string;
+		preSelectName?: string;
+		preSelectImageUri?: string;
+	}>();
+
+	const pinnedStoreId = preSelectStoreId ? Number(preSelectStoreId) : undefined;
 
 	return (
 		<View className="flex-1 bg-canvas">
@@ -21,8 +36,34 @@ export function StudentMapPage() {
 						params: { storeId: store.id, storeName: store.name },
 					})
 				}
-				onCertifyPress={() =>
-					router.push("/(protected)/student/partnership-auth")
+				onCertifyPress={(store) =>
+					router.push({
+						pathname: "/(protected)/student/partnership-benefit-select",
+						params: { storeId: store.id },
+					})
+				}
+				initialStoreId={preSelectStoreId}
+				initialLat={preSelectLat ? Number(preSelectLat) : undefined}
+				initialLng={preSelectLng ? Number(preSelectLng) : undefined}
+				initialStoreName={preSelectName}
+				initialStoreImageUri={preSelectImageUri}
+				onPinnedStorePress={
+					pinnedStoreId
+						? () =>
+								router.push({
+									pathname: "/(protected)/student/store/[storeId]",
+									params: { storeId: pinnedStoreId, storeName: preSelectName },
+								})
+						: undefined
+				}
+				onPinnedStoreCertifyPress={
+					pinnedStoreId
+						? () =>
+								router.push({
+									pathname: "/(protected)/student/partnership-benefit-select",
+									params: { storeId: pinnedStoreId },
+								})
+						: undefined
 				}
 			/>
 			<MapSearchBar

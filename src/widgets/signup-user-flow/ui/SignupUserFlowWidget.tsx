@@ -16,12 +16,12 @@ import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 // 상태바/홈 인디케이터 인셋 위에 얹는 여백 (iPhone 기준 기존 pt-[72px] / pb-[41px] 유지)
-const TOP_CONTENT_OFFSET = 24;
-const BOTTOM_CONTENT_OFFSET = 8;
-const MIN_BOTTOM_INSET = 12;
+const _TOP_CONTENT_OFFSET = 24;
+const _BOTTOM_CONTENT_OFFSET = 8;
+const _MIN_BOTTOM_INSET = 12;
 
 export function SignupUserFlowWidget() {
-	const insets = useSafeAreaInsets();
+	const _insets = useSafeAreaInsets();
 	const {
 		formMethods,
 		flow,

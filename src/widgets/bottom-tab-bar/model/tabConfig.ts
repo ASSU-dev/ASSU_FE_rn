@@ -5,6 +5,7 @@ import type { UserType } from "@/entities/user/model/types";
 import {
 	AccountManagementIcon,
 	HomeIcon,
+	Location,
 	SuggestionBoxIcon,
 } from "@/shared/assets/icons";
 
@@ -41,8 +42,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "map",
 			label: "맵",
-			activeIconName: "location",
-			inactiveIconName: "location-outline",
+			Icon: Location,
 		},
 		{
 			route: "suggestion",
@@ -64,8 +64,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "map",
 			label: "맵",
-			activeIconName: "location",
-			inactiveIconName: "location-outline",
+			Icon: Location,
 		},
 		{
 			route: "dashboard",
@@ -94,8 +93,7 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		{
 			route: "map",
 			label: "맵",
-			activeIconName: "location",
-			inactiveIconName: "location-outline",
+			Icon: Location,
 		},
 		{
 			route: "chat",

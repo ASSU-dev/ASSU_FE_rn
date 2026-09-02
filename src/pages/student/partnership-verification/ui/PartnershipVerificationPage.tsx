@@ -8,8 +8,8 @@ import {
 	usePartnershipUsageMutation,
 } from "@/features/partnership-auth";
 import {
-	PartnershipGroupStatusIcon,
-	PartnershipTicketIcon,
+	PartnershipGroupStatus,
+	PartnershipTicket,
 } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
@@ -132,7 +132,7 @@ export function PartnershipVerificationPage() {
 				</View>
 
 				<View className="mt-[20px] flex-row items-center gap-[4px]">
-					<PartnershipTicketIcon width={18} height={18} />
+					<PartnershipTicket width={18} height={18} />
 					<Text className="text-[12px] font-medium text-content-primary">
 						제휴 혜택
 					</Text>
@@ -153,7 +153,7 @@ export function PartnershipVerificationPage() {
 				</View>
 
 				<View className="mt-[16px] flex-row items-center gap-[2px]">
-					<PartnershipGroupStatusIcon width={20} height={11} />
+					<PartnershipGroupStatus width={20} height={11} />
 					<Text className="text-[12px] font-medium text-content-primary">
 						단체 인증 현황
 					</Text>
