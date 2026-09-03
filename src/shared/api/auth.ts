@@ -71,7 +71,6 @@ export async function saveTokens(
 		? (role as UserRole)
 		: decodeAccessTokenRole(accessToken);
 
-	if (__DEV__) console.log("[Auth] accessToken:", accessToken);
 	useAuthStore.getState().setAccessToken(accessToken);
 	await setAccessToken(accessToken);
 	await setRefreshToken(refreshToken);
@@ -147,8 +146,6 @@ async function restoreAuth(): Promise<InitAuthResult> {
 			memberId: refreshedMemberId,
 		} = res.data.result ?? {};
 		if (!newAccess || !newRefresh) return { isLoggedIn: false, role: null };
-
-		if (__DEV__) console.log("[Auth] accessToken:", newAccess);
 
 		const role =
 			decodeAccessTokenRole(newAccess) ??
