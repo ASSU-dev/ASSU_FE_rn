@@ -19,6 +19,8 @@ import {
 	useMapFilterStore,
 } from "@/features/map-filter";
 import { useNearbyStores } from "@/features/map-search";
+import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
+import type { UsablePartnershipDTO } from "@/shared/api";
 import {
 	BottomSheetFlatList,
 	SnapBottomSheet,
@@ -44,10 +46,12 @@ const SHEET_TOP_MARGIN_BELOW_INSET = 123;
 /** 플로팅 카드/현재위치 버튼과 시트 사이 간격 */
 const SHEET_GAP = 12;
 
+type StudentMapStoreTarget = Pick<StoreMarker, "id" | "name">;
+
 interface StudentMapViewProps {
-	onStorePress?: (store: StoreMarker) => void;
+	onStorePress?: (store: StudentMapStoreTarget) => void;
 	/** 매장 선택 카드의 "제휴 인증하기" 버튼 탭 */
-	onCertifyPress?: (store: StoreMarker) => void;
+	onCertifyPress?: (store: StudentMapStoreTarget) => void;
 	/** 외부에서 지정한 초기 선택 매장 */
 	initialStoreId?: string;
 	initialLat?: number;
@@ -93,13 +97,14 @@ export function StudentMapView({
 	const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
 	// 맵이 idle 이벤트를 보내기 전까지는 GPS 기반 초기 viewport 사용
 	const viewport = mapBounds ?? (center ? toViewport(center) : null);
-	// 카테고리 필터는 지도 마커에만 적용하고, 시트 리스트는 학생회 필터만 반영한다.
-	// 두 필터 미선택 시 두 쿼리 키가 같아 요청은 한 번만 나간다.
+	// 지도 마커는 현재 화면 범위와 카테고리 필터를 반영한다.
 	const { data: markerStores = [] } = useNearbyStores(viewport, {
 		storeCategory: storeCategory ?? undefined,
 	});
-	const { data: listStores = [] } = useNearbyStores(viewport, {
-		adminId: adminId ?? undefined,
+	// 시트 리스트는 지도 범위와 무관하게 이용 가능한 전체 제휴를 조회한다.
+	const { data: partnershipResponse } = useGetUsablePartnershipQuery({
+		all: true,
+		adminId: adminId ? Number(adminId) : undefined,
 	});
 	const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
 
@@ -107,10 +112,7 @@ export function StudentMapView({
 		() => markerStores.filter((store) => store.hasPartner),
 		[markerStores],
 	);
-	const partnerListStores = useMemo(
-		() => listStores.filter((store) => store.hasPartner),
-		[listStores],
-	);
+	const partnerListStores = partnershipResponse?.result ?? [];
 	const selectedStore =
 		partnerMarkerStores.find((store) => store.id === selectedStoreId) ?? null;
 
@@ -165,27 +167,49 @@ export function StudentMapView({
 		setSelectedStoreId(null);
 	};
 
-	const renderStoreCard = (store: StoreMarker) => {
-		const benefit = splitBenefitText(getPrimaryBenefit(store));
-		const distanceKm = myLocation
-			? getDistanceKm(myLocation, {
-					lat: store.latitude,
-					lng: store.longitude,
-				})
-			: null;
+	const renderPartnershipCard = (partnership: UsablePartnershipDTO) => {
+		const hasCondition = partnership.people != null || partnership.cost != null;
+		let benefitLabel: string | undefined;
+		let benefitHighlight: string | undefined;
+
+		if (hasCondition) {
+			if (partnership.criterionType === "HEADCOUNT" && partnership.people) {
+				benefitLabel = `${partnership.people}인 이상 이용 시, `;
+			} else if (partnership.criterionType === "PRICE" && partnership.cost) {
+				benefitLabel = `${partnership.cost.toLocaleString()}원 이상 시, `;
+			}
+			if (
+				partnership.criterionType === "PRICE" ||
+				partnership.criterionType === "HEADCOUNT"
+			) {
+				benefitHighlight = partnership.category ?? " 혜택";
+			} else if (
+				partnership.optionType === "DISCOUNT" &&
+				partnership.discountRate
+			) {
+				benefitHighlight = `${partnership.discountRate}% 할인`;
+			}
+		} else {
+			benefitLabel = partnership.note ?? undefined;
+		}
+
+		const store =
+			partnership.storeId !== undefined
+				? {
+						id: String(partnership.storeId),
+						name: partnership.partnerName ?? "",
+					}
+				: null;
 
 		return (
 			<StoreListCard
-				name={store.name}
-				imageUri={store.imageUri}
-				benefitLabel={benefit.label}
-				benefitHighlight={benefit.highlight}
-				extraBenefitCount={countExtraBenefits(store)}
-				distanceText={
-					distanceKm !== null ? formatDistance(distanceKm) : undefined
-				}
-				tag={getPrimaryAdminName(store)}
-				onPress={onStorePress ? () => onStorePress(store) : undefined}
+				name={partnership.partnerName ?? ""}
+				imageUri={partnership.partnerProfileUrl ?? undefined}
+				benefitLabel={benefitLabel}
+				benefitHighlight={benefitHighlight}
+				extraBenefitCount={partnership.extraCount}
+				tag={partnership.adminName}
+				onPress={store && onStorePress ? () => onStorePress(store) : undefined}
 			/>
 		);
 	};
@@ -278,14 +302,16 @@ export function StudentMapView({
 				/>
 				<BottomSheetFlatList
 					data={partnerListStores}
-					keyExtractor={(store) => store.id}
+					keyExtractor={(partnership, index) =>
+						String(partnership.partnershipId ?? partnership.storeId ?? index)
+					}
 					style={{ flex: 1 }}
 					contentContainerStyle={{
 						paddingTop: 10,
 						paddingBottom: insets.bottom + 24,
 					}}
 					ItemSeparatorComponent={StoreListSeparator}
-					renderItem={({ item }) => renderStoreCard(item)}
+					renderItem={({ item }) => renderPartnershipCard(item)}
 				/>
 			</SnapBottomSheet>
 		</View>
