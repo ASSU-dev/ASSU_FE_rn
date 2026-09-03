@@ -14,7 +14,7 @@ const DUMMY_STORES = [
 ];
 
 export const PartnerRankingList = () => {
-	const { data: stores = [], isLoading } = useTodayBestStoresQuery();
+	const { data: stores = [] } = useTodayBestStoresQuery();
 	const displayStores = stores.length > 0 ? stores : DUMMY_STORES;
 	const halfLength = Math.ceil(displayStores.length / 2);
 	const left = displayStores.slice(0, halfLength);

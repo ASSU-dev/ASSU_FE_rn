@@ -28,6 +28,17 @@ export function useUserLocation() {
 					return;
 				}
 
+				// 캐시된 최근 위치를 즉시 사용해 맵을 빠르게 표시
+				const cached = await Location.getLastKnownPositionAsync();
+				if (isActive && cached) {
+					const cachedLoc = {
+						lat: cached.coords.latitude,
+						lng: cached.coords.longitude,
+					};
+					setCenter(cachedLoc);
+					setMyLocation(cachedLoc);
+				}
+
 				const loc = await Location.getCurrentPositionAsync({});
 				if (!isActive) return;
 

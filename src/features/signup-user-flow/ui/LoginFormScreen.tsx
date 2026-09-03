@@ -17,7 +17,7 @@ type LoginFormScreenProps = {
 };
 
 // 상태바 인셋 위에 얹는 여백 (iPhone 기준 기존 pt-[72px] 유지)
-const TOP_CONTENT_OFFSET = 24;
+const _TOP_CONTENT_OFFSET = 24;
 
 export function LoginFormScreen({
 	email,
@@ -29,7 +29,7 @@ export function LoginFormScreen({
 	onPressLmsLogin,
 	onPressSignup,
 }: LoginFormScreenProps) {
-	const insets = useSafeAreaInsets();
+	const _insets = useSafeAreaInsets();
 
 	return (
 		<View className="flex-1 bg-canvas px-screen-m pt-[72px]">

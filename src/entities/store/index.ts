@@ -18,7 +18,7 @@ export type {
 	StoreBenefit,
 	StorePapers,
 	StorePapersResponseDto,
-} from "./model/api-types";
+} from "./model/api";
 export type {
 	AdminStoreCardData,
 	PopularStore,

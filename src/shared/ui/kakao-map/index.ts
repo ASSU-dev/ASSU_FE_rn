@@ -2,5 +2,5 @@ export {
 	KakaoMap,
 	type KakaoMapHandle,
 	type KakaoMapMarker,
-	type KakaoMapViewport,
+	type MapBounds,
 } from "./KakaoMap";

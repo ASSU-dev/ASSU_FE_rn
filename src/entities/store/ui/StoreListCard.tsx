@@ -16,7 +16,7 @@ interface StoreListCardProps {
 	onPress?: () => void;
 }
 
-/** 지도 매장 리스트 카드 — 바텀시트/전체 리스트/검색 결과 공용 */
+/** 지도 매장 리스트 카드 — 바텀시트/전체 리스트/검색 결과 공용 + 홈 가게 조회 리스트 카드 */
 export function StoreListCard({
 	name,
 	imageUri,
@@ -28,13 +28,15 @@ export function StoreListCard({
 	onPress,
 }: StoreListCardProps) {
 	const metaParts = [
-		extraBenefitCount > 0 ? `외 ${extraBenefitCount}가지 제휴` : null,
+		extraBenefitCount > 0
+			? `총 ${extraBenefitCount + 1}가지 제휴`
+			: `총 1가지 제휴`,
 		distanceText ?? null,
 	].filter((part): part is string => part !== null);
 
 	return (
 		<Pressable
-			className="flex-row items-center p-gutter"
+			className="flex-row items-center p-gutter px-4"
 			onPress={onPress}
 			disabled={!onPress}
 		>
@@ -60,7 +62,7 @@ export function StoreListCard({
 					{(benefitLabel || benefitHighlight) && (
 						<Text
 							className="mt-[10px] text-md font-semibold tracking-[-0.32px]"
-							numberOfLines={1}
+							numberOfLines={2}
 						>
 							{benefitLabel ? (
 								<Text className="text-content-primary">{benefitLabel}</Text>

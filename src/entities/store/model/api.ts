@@ -16,11 +16,13 @@ export interface StorePapersResponseDto {
 
 export interface StoreBenefit {
 	id: string;
+	adminId: number;
 	adminName: string;
 	content: string;
 	goods: string[];
 	people?: number;
 	cost?: number;
+	type: "INDIVIDUAL" | "GROUP";
 }
 
 export interface StorePapers {

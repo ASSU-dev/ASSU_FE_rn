@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from "react-native";
-import { SortArrowDownIcon } from "@/shared/assets/icons";
+import { SortArrowDown } from "@/shared/assets/icons";
 import { colorTokens } from "@/shared/styles/tokens";
 
 export type ReviewSortType = "latest" | "oldest" | "rating";
@@ -36,7 +36,7 @@ export function ReviewListHeader({
 				<Text className="text-sm font-medium text-content-primary">
 					{SORT_LABELS[sort]}
 				</Text>
-				<SortArrowDownIcon
+				<SortArrowDown
 					width={20}
 					height={20}
 					color={colorTokens.contentPrimary}

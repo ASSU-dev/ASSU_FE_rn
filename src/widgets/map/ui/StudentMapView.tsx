@@ -28,7 +28,7 @@ import {
 	KakaoMap,
 	type KakaoMapHandle,
 	type KakaoMapMarker,
-	type KakaoMapViewport,
+	type MapBounds,
 } from "@/shared/ui/kakao-map";
 import { toViewport } from "../model/toViewport";
 import { useUserLocation } from "../model/useUserLocation";
@@ -48,18 +48,33 @@ interface StudentMapViewProps {
 	onStorePress?: (store: StoreMarker) => void;
 	/** 매장 선택 카드의 "제휴 인증하기" 버튼 탭 */
 	onCertifyPress?: (store: StoreMarker) => void;
+	/** 외부에서 지정한 초기 선택 매장 */
+	initialStoreId?: string;
+	initialLat?: number;
+	initialLng?: number;
+	initialStoreName?: string;
+	initialStoreImageUri?: string;
+	/** nearbyStores에 초기 매장이 없을 때 플로팅 카드 탭 */
+	onPinnedStorePress?: () => void;
+	onPinnedStoreCertifyPress?: () => void;
 }
 
 export function StudentMapView({
 	onStorePress,
 	onCertifyPress,
+	initialStoreId,
+	initialLat,
+	initialLng,
+	initialStoreName,
+	initialStoreImageUri,
+	onPinnedStorePress,
+	onPinnedStoreCertifyPress,
 }: StudentMapViewProps) {
 	const kakaoRef = useRef<KakaoMapHandle>(null);
 	const sheetRef = useRef<SnapBottomSheetRef>(null);
+	const suppressNextBoundsRef = useRef(false);
 	const insets = useSafeAreaInsets();
 	const { center, myLocation, heading } = useUserLocation();
-	const [visibleViewport, setVisibleViewport] =
-		useState<KakaoMapViewport | null>(null);
 	const { storeCategory, adminId, toggleAdminId } = useMapFilterStore();
 
 	// 로그인한 학생 소속(총학/단과대/학부) 학생회만 칩으로 노출
@@ -75,7 +90,9 @@ export function StudentMapView({
 			console.log("[StudentMapView] 학생회 칩:", admins);
 	}, [admins]);
 
-	const viewport = visibleViewport ?? (center ? toViewport(center) : null);
+	const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
+	// 맵이 idle 이벤트를 보내기 전까지는 GPS 기반 초기 viewport 사용
+	const viewport = mapBounds ?? (center ? toViewport(center) : null);
 	// 카테고리 필터는 지도 마커에만 적용하고, 시트 리스트는 학생회 필터만 반영한다.
 	// 두 필터 미선택 시 두 쿼리 키가 같아 요청은 한 번만 나간다.
 	const { data: markerStores = [] } = useNearbyStores(viewport, {
@@ -98,8 +115,16 @@ export function StudentMapView({
 		partnerMarkerStores.find((store) => store.id === selectedStoreId) ?? null;
 
 	useEffect(() => {
-		if (selectedStoreId && !selectedStore) setSelectedStoreId(null);
-	}, [selectedStore, selectedStoreId]);
+		if (selectedStoreId && !selectedStore && selectedStoreId !== initialStoreId)
+			setSelectedStoreId(null);
+	}, [selectedStore, selectedStoreId, initialStoreId]);
+
+	useEffect(() => {
+		if (!initialStoreId || !initialLat || !initialLng) return;
+		setSelectedStoreId(initialStoreId);
+		sheetRef.current?.snapToIndex(0);
+		kakaoRef.current?.panTo(initialLat, initialLng);
+	}, [initialStoreId, initialLat, initialLng]);
 
 	const mapMarkers = useMemo<KakaoMapMarker[]>(
 		() =>
@@ -123,10 +148,16 @@ export function StudentMapView({
 		kakaoRef.current?.panTo(myLocation.lat, myLocation.lng);
 	};
 
-	// 마커 선택 시 시트를 최소(칩 행만)로 내려 플로팅 카드 공간을 확보한다
+	// 마커 선택 시 시트를 최소(칩 행만)로 내려 플로팅 카드 공간을 확보한다.
+	// panTo 후 발생하는 idle → onRegionChange는 억제해 불필요한 재조회를 막는다.
 	const handleMarkerPress = (markerId: string) => {
 		setSelectedStoreId(markerId);
 		sheetRef.current?.snapToIndex(0);
+		const store = partnerMarkerStores.find((s) => s.id === markerId);
+		if (store) {
+			suppressNextBoundsRef.current = true;
+			kakaoRef.current?.panTo(store.latitude, store.longitude);
+		}
 	};
 
 	// 지도 빈 곳 탭: 선택 카드만 닫고 시트 위치는 사용자가 둔 그대로 유지한다
@@ -161,44 +192,57 @@ export function StudentMapView({
 
 	return (
 		<View className="flex-1 bg-canvas">
-			{center ? (
-				<KakaoMap
-					ref={kakaoRef}
-					initialCenter={center}
-					myLocation={myLocation}
-					heading={heading}
-					markers={mapMarkers}
-					categoryMarkersEnabled
-					clusteringEnabled
-					selectedMarkerId={selectedStoreId}
-					onMarkerPress={handleMarkerPress}
-					onMapPress={handleMapPress}
-					onViewportChange={setVisibleViewport}
-				/>
-			) : null}
+			<KakaoMap
+				ref={kakaoRef}
+				initialCenter={center ?? undefined}
+				myLocation={myLocation}
+				heading={heading}
+				markers={mapMarkers}
+				categoryMarkersEnabled
+				clusteringEnabled
+				selectedMarkerId={selectedStoreId}
+				onMarkerPress={handleMarkerPress}
+				onMapPress={handleMapPress}
+				onRegionChange={(bounds) => {
+					if (suppressNextBoundsRef.current) {
+						suppressNextBoundsRef.current = false;
+						return;
+					}
+					setMapBounds((prev) =>
+						isBoundsShiftedEnough(prev, bounds) ? bounds : prev,
+					);
+				}}
+			/>
 			<MapLocateButton
 				onPress={handleFocusToMyLocation}
 				disabled={!myLocation}
 				placement="bottom-left"
 				bottomOffset={SNAP_PEEK + SHEET_GAP}
 			/>
-			{selectedStore ? (
+			{selectedStore ||
+			(selectedStoreId === initialStoreId && initialStoreName) ? (
 				<View
 					className="absolute left-card-p right-card-p"
 					style={{ bottom: SNAP_MINI + SHEET_GAP }}
 				>
 					<StudentSelectedStoreCard
-						name={selectedStore.name}
-						imageUri={selectedStore.imageUri}
+						name={selectedStore?.name ?? initialStoreName ?? ""}
+						imageUri={selectedStore?.imageUri ?? initialStoreImageUri}
 						benefitLabel={
-							splitBenefitText(getPrimaryBenefit(selectedStore)).label
+							selectedStore
+								? splitBenefitText(getPrimaryBenefit(selectedStore)).label
+								: undefined
 						}
 						benefitHighlight={
-							splitBenefitText(getPrimaryBenefit(selectedStore)).highlight
+							selectedStore
+								? splitBenefitText(getPrimaryBenefit(selectedStore)).highlight
+								: undefined
 						}
-						extraBenefitCount={countExtraBenefits(selectedStore)}
+						extraBenefitCount={
+							selectedStore ? countExtraBenefits(selectedStore) : 0
+						}
 						distanceText={
-							myLocation
+							selectedStore && myLocation
 								? formatDistance(
 										getDistanceKm(myLocation, {
 											lat: selectedStore.latitude,
@@ -207,12 +251,16 @@ export function StudentMapView({
 									)
 								: undefined
 						}
-						tag={getPrimaryAdminName(selectedStore)}
+						tag={selectedStore ? getPrimaryAdminName(selectedStore) : undefined}
 						onPress={
-							onStorePress ? () => onStorePress(selectedStore) : undefined
+							selectedStore && onStorePress
+								? () => onStorePress(selectedStore)
+								: onPinnedStorePress
 						}
 						onCertifyPress={
-							onCertifyPress ? () => onCertifyPress(selectedStore) : () => {}
+							selectedStore && onCertifyPress
+								? () => onCertifyPress(selectedStore)
+								: (onPinnedStoreCertifyPress ?? (() => {}))
 						}
 					/>
 				</View>
@@ -241,6 +289,18 @@ export function StudentMapView({
 				/>
 			</SnapBottomSheet>
 		</View>
+	);
+}
+
+/** NW 코너 기준 약 500m(≈0.005°) 이상 이동했을 때만 true — 소폭 이동 re-fetch 방지 */
+function isBoundsShiftedEnough(
+	prev: MapBounds | null,
+	next: MapBounds,
+): boolean {
+	if (!prev) return true;
+	return (
+		Math.abs(prev.lat1 - next.lat1) > 0.003 ||
+		Math.abs(prev.lng1 - next.lng1) > 0.003
 	);
 }
 

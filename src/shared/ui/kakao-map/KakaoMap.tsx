@@ -26,7 +26,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 type KakaoWebViewSource = NonNullable<WebViewProps["source"]>;
 
-export type KakaoMapViewport = {
+export type MapBounds = {
 	lng1: number;
 	lat1: number;
 	lng2: number;
@@ -37,7 +37,7 @@ export type KakaoMapViewport = {
 	lat4: number;
 };
 
-const VIEWPORT_KEYS = [
+const MAP_BOUNDS_KEYS = [
 	"lng1",
 	"lat1",
 	"lng2",
@@ -48,10 +48,10 @@ const VIEWPORT_KEYS = [
 	"lat4",
 ] as const;
 
-function isKakaoMapViewport(value: unknown): value is KakaoMapViewport {
+function isMapBounds(value: unknown): value is MapBounds {
 	if (typeof value !== "object" || value === null) return false;
 	const record = value as Record<string, unknown>;
-	return VIEWPORT_KEYS.every((key) => {
+	return MAP_BOUNDS_KEYS.every((key) => {
 		const coordinate = record[key];
 		return typeof coordinate === "number" && Number.isFinite(coordinate);
 	});
@@ -70,7 +70,8 @@ type KakaoMapProps = {
 	selectedMarkerId?: string | null;
 	onMarkerPress?: (markerId: string) => void;
 	onMapPress?: () => void;
-	onViewportChange?: (viewport: KakaoMapViewport) => void;
+	/** 맵 이동/줌 완료 시 현재 표시 영역을 전달 */
+	onRegionChange?: (bounds: MapBounds) => void;
 };
 
 export type KakaoMapHandle = {
@@ -104,7 +105,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			selectedMarkerId,
 			onMarkerPress,
 			onMapPress,
-			onViewportChange,
+			onRegionChange,
 		},
 		ref,
 	) {
@@ -112,15 +113,18 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 		const webViewRef = useRef<WebView>(null);
 		const prevMarkersRef = useRef<string>("");
 		const [isMapReady, setIsMapReady] = useState(false);
-		const viewportTrackingEnabled = onViewportChange !== undefined;
+		const boundsTrackingEnabled = onRegionChange !== undefined;
+		const pendingPanRef = useRef<{ lat: number; lng: number } | null>(null);
+		// Set to true after the first deliberate panTo — prevents GPS re-centering from overriding it.
+		const deliberatelyPannedRef = useRef(false);
 		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
 
 			return {
-				html: buildMapHtml(appKey, viewportTrackingEnabled),
+				html: buildMapHtml(appKey, boundsTrackingEnabled),
 				baseUrl: "http://localhost",
 			};
-		}, [appKey, viewportTrackingEnabled]);
+		}, [appKey, boundsTrackingEnabled]);
 
 		useEffect(() => {
 			if (appKey || !__DEV__) return;
@@ -132,20 +136,38 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 
 		useImperativeHandle(ref, () => ({
 			panTo: (lat, lng) => {
-				webViewRef.current?.injectJavaScript(
-					`map.panTo(new kakao.maps.LatLng(${lat}, ${lng})); true;`,
-				);
+				deliberatelyPannedRef.current = true;
+				if (isMapReady) {
+					webViewRef.current?.injectJavaScript(
+						`map.panTo(new kakao.maps.LatLng(${lat}, ${lng})); true;`,
+					);
+				} else {
+					pendingPanRef.current = { lat, lng };
+				}
 			},
 		}));
 
-		// Recenter the map when returning to this tab.
+		// Re-center on GPS update — skipped after a deliberate panTo to preserve it.
+		// Also applies any panTo that was queued before the map was ready.
 		useEffect(() => {
 			if (!isMapReady) return;
-			webViewRef.current?.injectJavaScript(`
-			map.setCenter(new kakao.maps.LatLng(${initialCenter.lat}, ${initialCenter.lng}));
-			map.setLevel(3);
-			true;
-		`);
+			if (!deliberatelyPannedRef.current) {
+				webViewRef.current?.injectJavaScript(`
+				map.setCenter(new kakao.maps.LatLng(${initialCenter.lat}, ${initialCenter.lng}));
+				map.setLevel(3);
+				true;
+			`);
+			}
+			const pending = pendingPanRef.current;
+			if (pending) {
+				pendingPanRef.current = null;
+				const { lat, lng } = pending;
+				setTimeout(() => {
+					webViewRef.current?.injectJavaScript(
+						`map.panTo(new kakao.maps.LatLng(${lat}, ${lng})); true;`,
+					);
+				}, 0);
+			}
 		}, [initialCenter.lat, initialCenter.lng, isMapReady]);
 
 		// Create or move the current-location overlay.
@@ -200,19 +222,16 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				const data = JSON.parse(event.nativeEvent.data) as {
 					type: string;
 					markerId?: string;
-					viewport?: unknown;
+					bounds?: unknown;
 				};
 				if (data.type === "MAP_READY") setIsMapReady(true);
 				if (data.type === "MARKER_PRESS" && data.markerId) {
 					onMarkerPress?.(data.markerId);
 				}
-				if (data.type === "MAP_PRESS") onMapPress?.();
-				if (
-					data.type === "VIEWPORT_CHANGE" &&
-					isKakaoMapViewport(data.viewport)
-				) {
-					onViewportChange?.(data.viewport);
+				if (data.type === "REGION_CHANGE" && isMapBounds(data.bounds)) {
+					onRegionChange?.(data.bounds);
 				}
+				if (data.type === "MAP_PRESS") onMapPress?.();
 			} catch (error) {
 				if (__DEV__) {
 					console.warn(
@@ -240,10 +259,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	},
 );
 
-function buildMapHtml(
-	appKey: string,
-	viewportTrackingEnabled: boolean,
-): string {
+function buildMapHtml(appKey: string, boundsTrackingEnabled: boolean): string {
 	const { r, g, b } = hexToRgb(colorTokens.primary);
 	const primary = colorTokens.primary;
 	const canvas = colorTokens.canvas;
@@ -268,7 +284,7 @@ function buildMapHtml(
   <div id="map"></div>
   <script>
     var map;
-    var viewportTrackingEnabled = ${viewportTrackingEnabled};
+    var boundsTrackingEnabled = ${boundsTrackingEnabled};
     var myLocationOverlay = null;
     var storeMarkers = [];
 
@@ -305,14 +321,14 @@ function buildMapHtml(
       cone.style.transform = 'rotate(' + heading + 'deg)';
     };
 
-    window.postViewportChange = function() {
-      if (!map || !viewportTrackingEnabled) return;
+    window.postRegionChange = function() {
+      if (!map || !boundsTrackingEnabled) return;
       var bounds = map.getBounds();
       var southWest = bounds.getSouthWest();
       var northEast = bounds.getNorthEast();
       window.ReactNativeWebView.postMessage(JSON.stringify({
-        type: 'VIEWPORT_CHANGE',
-        viewport: {
+        type: 'REGION_CHANGE',
+        bounds: {
           lng1: southWest.getLng(),
           lat1: northEast.getLat(),
           lng2: northEast.getLng(),
@@ -541,9 +557,9 @@ function buildMapHtml(
       kakao.maps.event.addListener(map, 'zoom_changed', function() {
         if (clusteringEnabled) renderStoreMarkers();
       });
-      if (viewportTrackingEnabled) {
+      if (boundsTrackingEnabled) {
         kakao.maps.event.addListener(map, 'idle', function() {
-          window.postViewportChange();
+          window.postRegionChange();
         });
       }
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));

@@ -16,13 +16,15 @@ interface AdminChipProps {
 function AdminChip({ name, selected, onPress }: AdminChipProps) {
 	return (
 		<Pressable
-			className={`h-[34px] items-center justify-center rounded-[999px] px-[12px] ${
-				selected ? "bg-primary" : "border border-neutral-variant"
+			className={`items-center justify-center rounded-[999px] px-[12px] py-1.5 ${
+				selected
+					? "bg-primary border border-primary"
+					: "border border-neutral-variant"
 			}`}
 			onPress={onPress}
 		>
 			<Text
-				className={`text-[15px] font-semibold ${
+				className={`text-[14px] font-semibold ${
 					selected ? "text-content-inverse" : "text-content-secondary"
 				}`}
 			>

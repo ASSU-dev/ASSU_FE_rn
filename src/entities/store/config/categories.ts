@@ -105,5 +105,5 @@ export const STORE_CATEGORY_CONFIG_MAP: Record<
 ) as Record<StoreCategory, StoreCategoryConfig>;
 
 export function getStoreCategoryLabel(category: StoreCategory): string {
-	return STORE_CATEGORY_CONFIG_MAP[category].label;
+	return STORE_CATEGORY_CONFIG_MAP[category]?.label ?? "";
 }
