@@ -1,4 +1,5 @@
-import { Pressable, ScrollView, Text } from "react-native";
+import { Pressable, Text } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 /** 학생회 필터 항목 — 데이터 소스 API 확정 전까지 호출부에서 주입 */
 export interface AdminFilterItem {

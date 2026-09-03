@@ -37,6 +37,26 @@ export type MapBounds = {
 	lat4: number;
 };
 
+const MAP_BOUNDS_KEYS = [
+	"lng1",
+	"lat1",
+	"lng2",
+	"lat2",
+	"lng3",
+	"lat3",
+	"lng4",
+	"lat4",
+] as const;
+
+function isMapBounds(value: unknown): value is MapBounds {
+	if (typeof value !== "object" || value === null) return false;
+	const record = value as Record<string, unknown>;
+	return MAP_BOUNDS_KEYS.every((key) => {
+		const coordinate = record[key];
+		return typeof coordinate === "number" && Number.isFinite(coordinate);
+	});
+}
+
 type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
 	myLocation?: { lat: number; lng: number } | null;
@@ -93,6 +113,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 		const webViewRef = useRef<WebView>(null);
 		const prevMarkersRef = useRef<string>("");
 		const [isMapReady, setIsMapReady] = useState(false);
+		const boundsTrackingEnabled = onRegionChange !== undefined;
 		const pendingPanRef = useRef<{ lat: number; lng: number } | null>(null);
 		// Set to true after the first deliberate panTo — prevents GPS re-centering from overriding it.
 		const deliberatelyPannedRef = useRef(false);
@@ -100,10 +121,10 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			if (!appKey) return null;
 
 			return {
-				html: buildMapHtml(appKey),
+				html: buildMapHtml(appKey, boundsTrackingEnabled),
 				baseUrl: "http://localhost",
 			};
-		}, [appKey]);
+		}, [appKey, boundsTrackingEnabled]);
 
 		useEffect(() => {
 			if (appKey || !__DEV__) return;
@@ -201,13 +222,13 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				const data = JSON.parse(event.nativeEvent.data) as {
 					type: string;
 					markerId?: string;
-					bounds?: MapBounds;
+					bounds?: unknown;
 				};
 				if (data.type === "MAP_READY") setIsMapReady(true);
 				if (data.type === "MARKER_PRESS" && data.markerId) {
 					onMarkerPress?.(data.markerId);
 				}
-				if (data.type === "REGION_CHANGE" && data.bounds) {
+				if (data.type === "REGION_CHANGE" && isMapBounds(data.bounds)) {
 					onRegionChange?.(data.bounds);
 				}
 				if (data.type === "MAP_PRESS") onMapPress?.();
@@ -238,7 +259,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	},
 );
 
-function buildMapHtml(appKey: string): string {
+function buildMapHtml(appKey: string, boundsTrackingEnabled: boolean): string {
 	const { r, g, b } = hexToRgb(colorTokens.primary);
 	const primary = colorTokens.primary;
 	const canvas = colorTokens.canvas;
@@ -263,6 +284,7 @@ function buildMapHtml(appKey: string): string {
   <div id="map"></div>
   <script>
     var map;
+    var boundsTrackingEnabled = ${boundsTrackingEnabled};
     var myLocationOverlay = null;
     var storeMarkers = [];
 
@@ -297,6 +319,26 @@ function buildMapHtml(appKey: string): string {
       var cone = document.getElementById('loc-cone');
       if (!cone || heading === null || heading === undefined) return;
       cone.style.transform = 'rotate(' + heading + 'deg)';
+    };
+
+    window.postRegionChange = function() {
+      if (!map || !boundsTrackingEnabled) return;
+      var bounds = map.getBounds();
+      var southWest = bounds.getSouthWest();
+      var northEast = bounds.getNorthEast();
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'REGION_CHANGE',
+        bounds: {
+          lng1: southWest.getLng(),
+          lat1: northEast.getLat(),
+          lng2: northEast.getLng(),
+          lat2: northEast.getLat(),
+          lng3: northEast.getLng(),
+          lat3: southWest.getLat(),
+          lng4: southWest.getLng(),
+          lat4: southWest.getLat()
+        }
+      }));
     };
 
     var CATEGORY_MARKER_SVGS = ${categorySvgsJson};
@@ -515,21 +557,11 @@ function buildMapHtml(appKey: string): string {
       kakao.maps.event.addListener(map, 'zoom_changed', function() {
         if (clusteringEnabled) renderStoreMarkers();
       });
-      // 이동/줌 완료 시 현재 영역을 RN으로 전달 (idle = 사용자 조작 끝)
-      kakao.maps.event.addListener(map, 'idle', function() {
-        var b = map.getBounds();
-        var sw = b.getSouthWest();
-        var ne = b.getNorthEast();
-        window.ReactNativeWebView.postMessage(JSON.stringify({
-          type: 'REGION_CHANGE',
-          bounds: {
-            lng1: sw.getLng(), lat1: ne.getLat(),
-            lng2: ne.getLng(), lat2: ne.getLat(),
-            lng3: ne.getLng(), lat3: sw.getLat(),
-            lng4: sw.getLng(), lat4: sw.getLat()
-          }
-        }));
-      });
+      if (boundsTrackingEnabled) {
+        kakao.maps.event.addListener(map, 'idle', function() {
+          window.postRegionChange();
+        });
+      }
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }
   </script>

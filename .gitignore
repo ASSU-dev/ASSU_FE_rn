@@ -51,6 +51,7 @@ CONVENTION.md
 
 # codex
 .codex/
+.codex-preview/
 .codexignore
 
 .omc/
