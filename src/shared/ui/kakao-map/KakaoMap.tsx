@@ -26,6 +26,37 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 
 type KakaoWebViewSource = NonNullable<WebViewProps["source"]>;
 
+export type KakaoMapViewport = {
+	lng1: number;
+	lat1: number;
+	lng2: number;
+	lat2: number;
+	lng3: number;
+	lat3: number;
+	lng4: number;
+	lat4: number;
+};
+
+const VIEWPORT_KEYS = [
+	"lng1",
+	"lat1",
+	"lng2",
+	"lat2",
+	"lng3",
+	"lat3",
+	"lng4",
+	"lat4",
+] as const;
+
+function isKakaoMapViewport(value: unknown): value is KakaoMapViewport {
+	if (typeof value !== "object" || value === null) return false;
+	const record = value as Record<string, unknown>;
+	return VIEWPORT_KEYS.every((key) => {
+		const coordinate = record[key];
+		return typeof coordinate === "number" && Number.isFinite(coordinate);
+	});
+}
+
 type KakaoMapProps = {
 	initialCenter?: { lat: number; lng: number };
 	myLocation?: { lat: number; lng: number } | null;
@@ -39,6 +70,7 @@ type KakaoMapProps = {
 	selectedMarkerId?: string | null;
 	onMarkerPress?: (markerId: string) => void;
 	onMapPress?: () => void;
+	onViewportChange?: (viewport: KakaoMapViewport) => void;
 };
 
 export type KakaoMapHandle = {
@@ -72,6 +104,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			selectedMarkerId,
 			onMarkerPress,
 			onMapPress,
+			onViewportChange,
 		},
 		ref,
 	) {
@@ -79,14 +112,15 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 		const webViewRef = useRef<WebView>(null);
 		const prevMarkersRef = useRef<string>("");
 		const [isMapReady, setIsMapReady] = useState(false);
+		const viewportTrackingEnabled = onViewportChange !== undefined;
 		const webViewSource = useMemo<KakaoWebViewSource | null>(() => {
 			if (!appKey) return null;
 
 			return {
-				html: buildMapHtml(appKey),
+				html: buildMapHtml(appKey, viewportTrackingEnabled),
 				baseUrl: "http://localhost",
 			};
-		}, [appKey]);
+		}, [appKey, viewportTrackingEnabled]);
 
 		useEffect(() => {
 			if (appKey || !__DEV__) return;
@@ -166,12 +200,19 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				const data = JSON.parse(event.nativeEvent.data) as {
 					type: string;
 					markerId?: string;
+					viewport?: unknown;
 				};
 				if (data.type === "MAP_READY") setIsMapReady(true);
 				if (data.type === "MARKER_PRESS" && data.markerId) {
 					onMarkerPress?.(data.markerId);
 				}
 				if (data.type === "MAP_PRESS") onMapPress?.();
+				if (
+					data.type === "VIEWPORT_CHANGE" &&
+					isKakaoMapViewport(data.viewport)
+				) {
+					onViewportChange?.(data.viewport);
+				}
 			} catch (error) {
 				if (__DEV__) {
 					console.warn(
@@ -199,7 +240,10 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 	},
 );
 
-function buildMapHtml(appKey: string): string {
+function buildMapHtml(
+	appKey: string,
+	viewportTrackingEnabled: boolean,
+): string {
 	const { r, g, b } = hexToRgb(colorTokens.primary);
 	const primary = colorTokens.primary;
 	const canvas = colorTokens.canvas;
@@ -224,6 +268,7 @@ function buildMapHtml(appKey: string): string {
   <div id="map"></div>
   <script>
     var map;
+    var viewportTrackingEnabled = ${viewportTrackingEnabled};
     var myLocationOverlay = null;
     var storeMarkers = [];
 
@@ -258,6 +303,26 @@ function buildMapHtml(appKey: string): string {
       var cone = document.getElementById('loc-cone');
       if (!cone || heading === null || heading === undefined) return;
       cone.style.transform = 'rotate(' + heading + 'deg)';
+    };
+
+    window.postViewportChange = function() {
+      if (!map || !viewportTrackingEnabled) return;
+      var bounds = map.getBounds();
+      var southWest = bounds.getSouthWest();
+      var northEast = bounds.getNorthEast();
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'VIEWPORT_CHANGE',
+        viewport: {
+          lng1: southWest.getLng(),
+          lat1: northEast.getLat(),
+          lng2: northEast.getLng(),
+          lat2: northEast.getLat(),
+          lng3: northEast.getLng(),
+          lat3: southWest.getLat(),
+          lng4: southWest.getLng(),
+          lat4: southWest.getLat()
+        }
+      }));
     };
 
     var CATEGORY_MARKER_SVGS = ${categorySvgsJson};
@@ -476,6 +541,11 @@ function buildMapHtml(appKey: string): string {
       kakao.maps.event.addListener(map, 'zoom_changed', function() {
         if (clusteringEnabled) renderStoreMarkers();
       });
+      if (viewportTrackingEnabled) {
+        kakao.maps.event.addListener(map, 'idle', function() {
+          window.postViewportChange();
+        });
+      }
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }
   </script>

@@ -28,6 +28,7 @@ import {
 	KakaoMap,
 	type KakaoMapHandle,
 	type KakaoMapMarker,
+	type KakaoMapViewport,
 } from "@/shared/ui/kakao-map";
 import { toViewport } from "../model/toViewport";
 import { useUserLocation } from "../model/useUserLocation";
@@ -57,6 +58,8 @@ export function StudentMapView({
 	const sheetRef = useRef<SnapBottomSheetRef>(null);
 	const insets = useSafeAreaInsets();
 	const { center, myLocation, heading } = useUserLocation();
+	const [visibleViewport, setVisibleViewport] =
+		useState<KakaoMapViewport | null>(null);
 	const { storeCategory, adminId, toggleAdminId } = useMapFilterStore();
 
 	// 로그인한 학생 소속(총학/단과대/학부) 학생회만 칩으로 노출
@@ -72,7 +75,7 @@ export function StudentMapView({
 			console.log("[StudentMapView] 학생회 칩:", admins);
 	}, [admins]);
 
-	const viewport = center ? toViewport(center) : null;
+	const viewport = visibleViewport ?? (center ? toViewport(center) : null);
 	// 카테고리 필터는 지도 마커에만 적용하고, 시트 리스트는 학생회 필터만 반영한다.
 	// 두 필터 미선택 시 두 쿼리 키가 같아 요청은 한 번만 나간다.
 	const { data: markerStores = [] } = useNearbyStores(viewport, {
@@ -170,6 +173,7 @@ export function StudentMapView({
 					selectedMarkerId={selectedStoreId}
 					onMarkerPress={handleMarkerPress}
 					onMapPress={handleMapPress}
+					onViewportChange={setVisibleViewport}
 				/>
 			) : null}
 			<MapLocateButton
