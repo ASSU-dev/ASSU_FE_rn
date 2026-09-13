@@ -10,7 +10,8 @@ import {
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 // TODO: 실제 외부 링크로 교체
-const EXTERNAL_STORE_URL = "https://assu.ssu.ac.kr";
+const EXTERNAL_STORE_URL =
+	"https://linktr.ee/focussu_partnership?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAb21jcAUTESBwZG9mAmV4dG4DYWVtAjExAHNydGMGYXBwX2lkDzU2NzA2NzM0MzM1MjQyNwABp3FupSflji-nBGJILRcIIfg_dPHDwtngHg8e_q-boHR1FOENJCqAB7IcZe1S_aem_bL4JnJqkaNZKQ45arvA67A";
 
 export function ExternalStoreLinkPage() {
 	const insets = useSafeAreaInsets();
