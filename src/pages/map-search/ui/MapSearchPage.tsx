@@ -16,7 +16,7 @@ import type { PopularStore, SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
 import { usePopularStores, useSearchStores } from "@/features/map-search";
 import {
-	AssuLogoFadedIcon,
+	AssuLogoFaded,
 	BackArrowIcon,
 	CloseIcon,
 	LocationIcon,
@@ -107,7 +107,7 @@ export function MapSearchPage({
 			{isSearching ? (
 				!isSearchLoading && searchResults.length === 0 ? (
 					<View className="flex-1 items-center justify-center gap-[8px] pb-[150px]">
-						<AssuLogoFadedIcon width={96} height={96} />
+						<AssuLogoFaded width={96} height={96} />
 						<Text className="text-center font-bold text-[12px] leading-[1.3] text-content-secondary">
 							검색 결과가 없습니다
 						</Text>
