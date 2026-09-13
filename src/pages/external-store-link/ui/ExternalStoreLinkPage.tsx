@@ -2,10 +2,10 @@ import { router } from "expo-router";
 import { Linking, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-	CheckFillIcon,
-	CloseIcon,
-	ExitRightIcon,
+	CheckBlackIcon,
+	CloseNoCircleIcon,
 	Logo,
+	TransportIcon,
 } from "@/shared/assets/icons";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
@@ -25,9 +25,9 @@ export function ExternalStoreLinkPage() {
 			className="flex-1 bg-canvas"
 			style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
 		>
-			<View className="px-[10px] py-[13px]">
+			<View className="px-8 py-8">
 				<Pressable onPress={() => router.back()} hitSlop={8}>
-					<CloseIcon width={24} height={24} />
+					<CloseNoCircleIcon width={13} height={13} />
 				</Pressable>
 			</View>
 
@@ -35,40 +35,40 @@ export function ExternalStoreLinkPage() {
 				<Logo width={96} height={40} />
 
 				<View className="items-center gap-3">
-					<Text className="text-center text-[24px] font-bold leading-[1.3] text-content-primary">
+					<Text className="text-center text-[26px] font-bold leading-[1.3] text-content-primary">
 						{"이 제휴는 외부 링크에서\n인증해요"}
 					</Text>
-					<Text className="text-center text-sm leading-[1.5] text-content-secondary">
+					<Text className="text-center text-sm leading-[1.5] text-regular text-content-secondary">
 						{
 							"해당 제휴는 외부 페이지에서 이용할 수 있어요\n지금 외부 링크로 이동할까요?"
 						}
 					</Text>
 				</View>
 
-				<View className="w-full gap-4">
+				<View className="w-full gap-4 px-4">
 					<View className="flex-row items-center gap-3">
-						<View className="h-[40px] w-[40px] items-center justify-center rounded-[8px] border border-neutral">
-							<ExitRightIcon width={20} height={20} />
+						<View className="h-[40px] w-[40px] items-center justify-center rounded-full bg-[#F7F8F8]">
+							<TransportIcon width={15} height={15} />
 						</View>
 						<View className="flex-1 gap-0.5">
-							<Text className="text-sm font-semibold text-content-primary">
+							<Text className="text-[15px] font-semibold text-content-primary">
 								외부 페이지로 이동해요
 							</Text>
-							<Text className="text-xs text-content-secondary">
+							<Text className="text-sm text-content-secondary text-regular">
 								바로 제휴 인증이 가능한 페이지로 연결됩니다
 							</Text>
 						</View>
 					</View>
 
 					<View className="flex-row items-center gap-3">
-						<View className="h-[40px] w-[40px] items-center justify-center rounded-[8px] border border-neutral">
-							<CheckFillIcon width={20} height={20} />
+						<View className="h-[40px] w-[40px] items-center justify-center rounded-full bg-[#F7F8F8]">
+							<CheckBlackIcon width={15} height={15} />
 						</View>
 						<View className="flex-1 gap-0.5">
-							<Text className="text-sm font-semibold text-content-primary">
+							<Text className="text-[15px] font-semibold text-content-primary">
 								해당 페이지에서 제휴를 받아요
 							</Text>
-							<Text className="text-xs text-content-secondary">
+							<Text className="text-sm text-content-secondary text-regular">
 								각 페이지 마다 인증 절차가 달라요
 							</Text>
 						</View>
