@@ -16,12 +16,12 @@ import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 // 상태바/홈 인디케이터 인셋 위에 얹는 여백 (iPhone 기준 기존 pt-[72px] / pb-[41px] 유지)
-const _TOP_CONTENT_OFFSET = 24;
-const _BOTTOM_CONTENT_OFFSET = 8;
-const _MIN_BOTTOM_INSET = 12;
+const TOP_CONTENT_OFFSET = 24;
+const BOTTOM_CONTENT_OFFSET = 8;
+const MIN_BOTTOM_INSET = 12;
 
 export function SignupUserFlowWidget() {
-	const _insets = useSafeAreaInsets();
+	const insets = useSafeAreaInsets();
 	const {
 		formMethods,
 		flow,
@@ -33,14 +33,7 @@ export function SignupUserFlowWidget() {
 	} = useSignupFlowController();
 
 	if (flow.step === "login1") {
-		return (
-			<LoginIntroScreen
-				showStatusBar
-				showHomeIndicator
-				onPress={() => {}}
-				disabled
-			/>
-		);
+		return <LoginIntroScreen showStatusBar onPress={() => {}} disabled />;
 	}
 
 	if (flow.step === "loginForm") {
@@ -69,7 +62,14 @@ export function SignupUserFlowWidget() {
 	return (
 		<FormProvider {...formMethods}>
 			<SignupFlowUiProvider value={flowUi}>
-				<View className="flex-1 bg-canvas px-screen-m pb-[8px] pt-[72px]">
+				<View
+					className="flex-1 bg-canvas px-screen-m"
+					style={{
+						paddingTop: insets.top + TOP_CONTENT_OFFSET,
+						paddingBottom:
+							Math.max(insets.bottom, MIN_BOTTOM_INSET) + BOTTOM_CONTENT_OFFSET,
+					}}
+				>
 					{flow.showProgress ? (
 						<SignupProgressBar
 							progress={flow.progress}

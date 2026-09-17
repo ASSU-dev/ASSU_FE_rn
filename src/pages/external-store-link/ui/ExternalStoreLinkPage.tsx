@@ -1,0 +1,94 @@
+import { router } from "expo-router";
+import { Linking, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+	CheckBlackIcon,
+	CloseNoCircleIcon,
+	Logo,
+	TransportIcon,
+} from "@/shared/assets/icons";
+import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
+
+// TODO: 실제 외부 링크로 교체
+const EXTERNAL_STORE_URL =
+	"https://linktr.ee/focussu_partnership?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAb21jcAUTESBwZG9mAmV4dG4DYWVtAjExAHNydGMGYXBwX2lkDzU2NzA2NzM0MzM1MjQyNwABp3FupSflji-nBGJILRcIIfg_dPHDwtngHg8e_q-boHR1FOENJCqAB7IcZe1S_aem_bL4JnJqkaNZKQ45arvA67A";
+
+export function ExternalStoreLinkPage() {
+	const insets = useSafeAreaInsets();
+
+	const handleOpenLink = () => {
+		Linking.openURL(EXTERNAL_STORE_URL);
+	};
+
+	return (
+		<View
+			className="flex-1 bg-canvas"
+			style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+		>
+			<View className="px-8 py-8">
+				<Pressable onPress={() => router.back()} hitSlop={8}>
+					<CloseNoCircleIcon width={13} height={13} />
+				</Pressable>
+			</View>
+
+			<View className="flex-1 items-center justify-center gap-8 px-screen-m">
+				<Logo width={96} height={40} />
+
+				<View className="items-center gap-3">
+					<Text className="text-center text-[26px] font-bold leading-[1.3] text-content-primary">
+						{"이 제휴는 외부 링크에서\n인증해요"}
+					</Text>
+					<Text className="text-center text-sm leading-[1.5] text-regular text-content-secondary">
+						{
+							"해당 제휴는 외부 페이지에서 이용할 수 있어요\n지금 외부 링크로 이동할까요?"
+						}
+					</Text>
+				</View>
+
+				<View className="w-full gap-4 px-4">
+					<View className="flex-row items-center gap-3">
+						<View className="h-[40px] w-[40px] items-center justify-center rounded-full bg-[#F7F8F8]">
+							<TransportIcon width={15} height={15} />
+						</View>
+						<View className="flex-1 gap-0.5">
+							<Text className="text-[15px] font-semibold text-content-primary">
+								외부 페이지로 이동해요
+							</Text>
+							<Text className="text-sm text-content-secondary text-regular">
+								바로 제휴 인증이 가능한 페이지로 연결됩니다
+							</Text>
+						</View>
+					</View>
+
+					<View className="flex-row items-center gap-3">
+						<View className="h-[40px] w-[40px] items-center justify-center rounded-full bg-[#F7F8F8]">
+							<CheckBlackIcon width={15} height={15} />
+						</View>
+						<View className="flex-1 gap-0.5">
+							<Text className="text-[15px] font-semibold text-content-primary">
+								해당 페이지에서 제휴를 받아요
+							</Text>
+							<Text className="text-sm text-content-secondary text-regular">
+								각 페이지 마다 인증 절차가 달라요
+							</Text>
+						</View>
+					</View>
+				</View>
+			</View>
+
+			<View className="gap-3 px-screen-m pb-8 pt-3">
+				<MediumButton onPress={handleOpenLink}>
+					외부 링크로 이동하기
+				</MediumButton>
+				<Pressable
+					onPress={() => router.back()}
+					className="w-full items-center justify-center rounded-[0.75rem] bg-neutral py-[1.12rem]"
+				>
+					<Text className="text-center text-[1.25rem] font-bold text-content-secondary">
+						취소
+					</Text>
+				</Pressable>
+			</View>
+		</View>
+	);
+}

@@ -16,7 +16,7 @@ export function CurationStoreCard({
 	onPress,
 }: CurationStoreCardProps) {
 	return (
-		<Pressable onPress={onPress} className="flex-1 gap-2">
+		<Pressable onPress={onPress} className="gap-2">
 			<View
 				className="relative w-full overflow-hidden rounded-lg bg-neutral"
 				style={{ aspectRatio: 5 / 3 }}

@@ -8,6 +8,10 @@ import { STORE_CATEGORY_CONFIG_MAP } from "@/entities/store";
 
 type UnknownRecord = Record<string, unknown>;
 
+function toLinkType(value: unknown): "EXTERNAL" | null {
+	return value === "EXTERNAL" ? "EXTERNAL" : null;
+}
+
 export function isRecord(value: unknown): value is UnknownRecord {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -134,6 +138,7 @@ export function toSearchResultStore(value: unknown): SearchResultStore | null {
 			"startDate",
 		]),
 		partnershipEndDate: getString(value, ["partnershipEndDate", "endDate"]),
+		linkType: toLinkType(value.linkType),
 	};
 }
 
@@ -270,5 +275,6 @@ export function toStoreMarker(value: unknown): StoreMarker | null {
 		partnershipId: getString(value, ["partnershipId"]),
 		partnershipStartDate: getString(value, ["partnershipStartDate"]),
 		partnershipEndDate: getString(value, ["partnershipEndDate"]),
+		linkType: toLinkType(value.linkType),
 	};
 }

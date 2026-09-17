@@ -1,4 +1,5 @@
 import { Image, Pressable, Text, View } from "react-native";
+import { DefaultImageCircle } from "@/shared/assets/icons";
 
 interface StoreListCardProps {
 	name: string;
@@ -47,7 +48,9 @@ export function StoreListCard({
 					resizeMode="cover"
 				/>
 			) : (
-				<View className="h-[81px] w-[81px] rounded-[7px] bg-neutral" />
+				<View className="h-[81px] w-[81px] items-center justify-center rounded-[7px] bg-neutral">
+					<DefaultImageCircle width={50} height={50} />
+				</View>
 			)}
 
 			<View className="ml-[12px] flex-1 flex-row items-start justify-between">

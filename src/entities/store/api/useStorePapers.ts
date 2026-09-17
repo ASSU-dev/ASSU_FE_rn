@@ -66,10 +66,14 @@ async function fetchStorePapers(storeId: number): Promise<StorePapers> {
 			endpoint,
 		);
 
-	if (!res.data.isSuccess || res.data.result == null) {
+	if (!res.data.isSuccess) {
 		throw new Error(
 			res.data.message || "가게의 제휴 혜택을 불러오지 못했습니다.",
 		);
+	}
+
+	if (res.data.result == null) {
+		return toStorePapers({ partnershipContents: [] }, storeId);
 	}
 
 	return toStorePapers(res.data.result, storeId);
