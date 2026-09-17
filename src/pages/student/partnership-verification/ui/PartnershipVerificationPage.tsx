@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Alert, Image, Pressable, Text, View } from "react-native";
+import { useProfileImageQuery } from "@/entities/user/api/useProfileImageQuery";
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import {
@@ -16,7 +17,7 @@ import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
 import { InfiniteNoticeMarquee } from "./InfiniteNoticeMarquee";
 
-const PROFILE_IMAGE = require("@/shared/assets/images/partnership-verification-profile.png");
+const DEFAULT_PROFILE = require("@/shared/assets/images/default-profile.png");
 
 const ENROLLMENT_STATUS_LABEL = {
 	ENROLLED: "재학",
@@ -26,6 +27,8 @@ const ENROLLMENT_STATUS_LABEL = {
 
 export function PartnershipVerificationPage() {
 	const basicInfo = useUserBasicInfo();
+	const profileImageQuery = useProfileImageQuery();
+	const profileImageUrl = profileImageQuery.data?.url;
 	const studentProfileQuery = useStudentProfileQuery();
 	const studentProfile = studentProfileQuery.data;
 	const store = usePartnershipAuthStore((state) => state.store);
@@ -94,11 +97,15 @@ export function PartnershipVerificationPage() {
 			>
 				<View className="flex-row gap-gutter">
 					<View className="w-[120px] items-center gap-gutter">
-						<Image
-							source={PROFILE_IMAGE}
-							className="h-[160px] w-[120px] rounded-[8px]"
-							resizeMode="cover"
-						/>
+						<View className="h-[160px] w-[120px] overflow-hidden rounded-[8px] bg-neutral">
+							<Image
+								source={
+									profileImageUrl ? { uri: profileImageUrl } : DEFAULT_PROFILE
+								}
+								className="h-full w-full"
+								resizeMode={profileImageUrl ? "cover" : "contain"}
+							/>
+						</View>
 						<Text className="text-md font-bold text-content-primary">
 							{studentProfile?.name ?? basicInfo?.name ?? "사용자"}
 						</Text>
