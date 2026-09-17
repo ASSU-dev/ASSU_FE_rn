@@ -4,14 +4,12 @@ import { AssuLogoIcon } from "@/shared/assets/icons";
 
 type LoginIntroScreenProps = {
 	showStatusBar: boolean;
-	showHomeIndicator: boolean;
 	onPress: () => void;
 	disabled?: boolean;
 };
 
 export function LoginIntroScreen({
 	showStatusBar,
-	showHomeIndicator,
 	onPress,
 	disabled = false,
 }: LoginIntroScreenProps) {
@@ -41,13 +39,6 @@ export function LoginIntroScreen({
 			<View className="flex-1 items-center justify-center">
 				<AssuLogoIcon width={122} height={40} />
 			</View>
-
-			{showHomeIndicator ? (
-				<View
-					className="self-center h-[5px] w-[134px] rounded-full bg-content-primary"
-					style={{ marginBottom: insets.bottom + 8 }}
-				/>
-			) : null}
 		</Pressable>
 	);
 }
