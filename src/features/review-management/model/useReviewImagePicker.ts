@@ -14,7 +14,8 @@ export function useReviewImagePicker() {
 
 		// iOS의 시스템 사진 선택기는 보관함 권한 없이 선택한 사진만 전달합니다.
 		if (Platform.OS !== "ios") {
-			const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+			const permission =
+				await ImagePicker.requestMediaLibraryPermissionsAsync();
 
 			if (!permission.granted) {
 				Alert.alert(
