@@ -5,8 +5,16 @@ import {
 	useCameraPermissions,
 } from "expo-camera";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useRef, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	Alert,
+	AppState,
+	Linking,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
 	parseGroupCertificationQr,
@@ -18,7 +26,7 @@ import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
 export function PartnershipQrAuthPage() {
 	const insets = useSafeAreaInsets();
-	const [permission, requestPermission] = useCameraPermissions();
+	const [permission, requestPermission, getPermission] = useCameraPermissions();
 	const [scannedValue, setScannedValue] = useState<string | null>(null);
 	const setStore = usePartnershipAuthStore((state) => state.setStore);
 	const setSelectedBenefit = usePartnershipAuthStore(
@@ -28,6 +36,7 @@ export function PartnershipQrAuthPage() {
 		(state) => state.setGroupSession,
 	);
 	const isScanLockedRef = useRef(false);
+	const hasRequestedPermissionRef = useRef(false);
 	const cameraAreaRef = useRef<View>(null);
 	const scanFrameRef = useRef<View>(null);
 	const scanFrameBoundsRef = useRef<{
@@ -47,6 +56,41 @@ export function PartnershipQrAuthPage() {
 			resetScanner();
 		}, [resetScanner]),
 	);
+
+	useEffect(() => {
+		if (
+			!permission ||
+			permission.granted ||
+			permission.status !== "undetermined" ||
+			hasRequestedPermissionRef.current
+		) {
+			return;
+		}
+
+		hasRequestedPermissionRef.current = true;
+		void requestPermission();
+	}, [permission, requestPermission]);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener("change", (nextState) => {
+			if (nextState === "active") {
+				void getPermission();
+			}
+		});
+
+		return () => subscription.remove();
+	}, [getPermission]);
+
+	const handleOpenSettings = async () => {
+		try {
+			await Linking.openSettings();
+		} catch {
+			Alert.alert(
+				"설정 열기 실패",
+				"기기 설정에서 A:SSU의 카메라 접근을 변경할 수 있습니다.",
+			);
+		}
+	};
 
 	const measureScanFrame = useCallback(() => {
 		cameraAreaRef.current?.measureInWindow((cameraX, cameraY) => {
@@ -204,17 +248,22 @@ export function PartnershipQrAuthPage() {
 							</Pressable>
 						) : null}
 					</>
+				) : permission?.status === "undetermined" ? (
+					<Text className="mt-[30px] text-md font-semibold text-content-inverse">
+						카메라 권한을 확인하고 있습니다
+					</Text>
 				) : permission ? (
 					<View className="mt-[30px] items-center gap-gutter px-screen-m">
 						<Text className="text-center text-md font-semibold text-content-inverse">
-							QR 인증을 위해 카메라 권한이 필요합니다
+							QR 코드를 스캔하려면 카메라 접근이 필요합니다.
+							{"\n"}앱 설정에서 카메라 접근을 변경할 수 있습니다.
 						</Text>
 						<Pressable
-							onPress={() => requestPermission()}
+							onPress={handleOpenSettings}
 							className="rounded-[8px] bg-neutral px-[20px] py-gutter"
 						>
 							<Text className="text-sm font-semibold text-content-secondary">
-								카메라 권한 허용
+								앱 설정 열기
 							</Text>
 						</Pressable>
 					</View>
