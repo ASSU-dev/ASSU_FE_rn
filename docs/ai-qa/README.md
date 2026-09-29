@@ -63,6 +63,66 @@
 
 스킬은 저장소의 `.agents/skills/`에 있어 팀원과 함께 버전 관리한다.
 
+### 파일 구조
+
+```text
+ASSU_FE_RN/
+├── .agents/skills/                         # Codex·Cursor가 읽는 스킬 원본
+│   ├── assu-test/SKILL.md                  # 일반 요청의 진입점
+│   ├── assu-test-design/SKILL.md           # 무엇을 테스트할지 설계
+│   └── assu-test-implementation/SKILL.md   # 승인 범위의 테스트 구현
+│
+├── .claude/skills/                         # Claude Code 호환 진입점
+│   ├── assu-test/SKILL.md
+│   ├── assu-test-design/SKILL.md
+│   └── assu-test-implementation/SKILL.md
+│
+├── docs/
+│   ├── testing-strategy.md                 # 프로젝트 테스트 정책
+│   └── ai-qa/README.md                     # 이 가이드
+│
+└── src/features/<기능>/                    # 실제 테스트 코드 위치
+    ├── model/
+    │   ├── validation.ts
+    │   └── validation.test.ts              # 순수 로직 테스트
+    ├── api/
+    │   ├── useFeatureQuery.ts
+    │   └── useFeatureQuery.test.tsx        # API 훅 테스트
+    └── ui/
+        ├── FeatureForm.tsx
+        └── FeatureForm.test.tsx            # 컴포넌트 테스트
+```
+
+테스트 파일은 별도 `tests/` 폴더에 모으지 않고, 검증 대상과 같은 FSD slice에 둔다. 그래서 기능을 수정할 때 관련 테스트를 같은 폴더에서 함께 찾을 수 있다.
+
+### 스킬이 이어지는 방식
+
+```text
+"회원가입 기능 테스트 코드 작성해줘"
+                │
+                ▼
+        assu-test/SKILL.md
+        요청 범위 확인·작업 흐름 선택
+                │
+       ┌────────┴────────┐
+       ▼                 ▼
+설계만 요청          코드 작성 요청
+       │                 │
+       ▼                 ▼
+assu-test-design   assu-test-design
+테스트 매트릭스     영향·시나리오 설계
+작성                      │
+                          ▼
+                 개발자 정책 확인·범위 승인
+                          │
+                          ▼
+              assu-test-implementation
+              같은 FSD slice에 *.test.ts(x) 작성
+                          │
+                          ▼
+                개발자가 yarn test 실행
+```
+
 | 스킬 | 파일 | 사용 시점 | 역할 |
 | --- | --- | --- | --- |
 | `assu-test` | `.agents/skills/assu-test/SKILL.md` | “테스트 코드 작성해줘”처럼 설계가 없는 일반 요청 | 분석·설계·구현 흐름을 연결하는 진입점 |
