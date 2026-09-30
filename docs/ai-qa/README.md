@@ -183,6 +183,7 @@ assu-test-design   assu-test-design
 - 네트워크·네이티브 의존성만 최소 범위로 mock한다.
 - 핵심 비즈니스 로직은 mock하지 않는다.
 - 승인되지 않은 시나리오를 임의로 추가하지 않는다.
+- `docs/ai-qa/test-dashboard.md`에 기능별 테스트 이력을 누적하고, 추가·보강한 테스트의 작성자와 날짜를 갱신한다.
 - 테스트 실행·typecheck·lint는 자동 실행하지 않고, 실행 명령만 안내한다.
 
 ## Codex·Cursor·Claude Code 호환성
