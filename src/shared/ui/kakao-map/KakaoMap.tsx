@@ -57,7 +57,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 
 			return {
 				html: buildMapHtml(appKey, boundsTrackingEnabled),
-				baseUrl: "http://localhost",
+				baseUrl: "https://localhost",
 			};
 		}, [appKey, boundsTrackingEnabled]);
 
