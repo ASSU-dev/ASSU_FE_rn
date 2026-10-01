@@ -16,6 +16,10 @@ export function useStoreDetailData({
 		null,
 	);
 
+	function toggleBenefit(id: string) {
+		setSelectedBenefitId((prev) => (prev === id ? null : id));
+	}
+
 	// 가게 상세 정보 조회
 	const {
 		data: storeResponse,
@@ -28,6 +32,7 @@ export function useStoreDetailData({
 	const { data: papers, isLoading: isPapersLoading } = useStorePapers(storeId);
 	const benefits = papers?.partnershipContents ?? [];
 
+	// 선택된 혜택 ID에 해당하는 혜택 객체 조회
 	const selectedBenefit =
 		benefits.find((b) => b.id === selectedBenefitId) ?? null;
 
@@ -44,7 +49,7 @@ export function useStoreDetailData({
 		store,
 		benefits,
 		selectedBenefitId,
-		setSelectedBenefitId,
+		toggleBenefit,
 		selectedBenefit,
 		title,
 		address,

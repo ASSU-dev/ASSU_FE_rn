@@ -28,7 +28,7 @@ export function StoreDetailWidget({
 		store,
 		benefits,
 		selectedBenefitId,
-		setSelectedBenefitId,
+		toggleBenefit,
 		selectedBenefit,
 		title,
 		address,
@@ -37,14 +37,15 @@ export function StoreDetailWidget({
 		isError,
 	} = useStoreDetailData({ storeId, fallbackName });
 
+	// 가게가 외부 링크로 연결되는 경우, 해당 페이지로 리다이렉트
 	const isExternal = store?.linkType === "EXTERNAL";
-
 	useEffect(() => {
 		if (isExternal) {
 			router.replace("/(protected)/student/external-store-link");
 		}
 	}, [isExternal]);
 
+	// 지도에서 가게 위치 확인
 	const handleViewOnMap = () => {
 		if (!store?.latitude || !store?.longitude) return;
 		router.push({
@@ -59,6 +60,7 @@ export function StoreDetailWidget({
 		});
 	};
 
+	// 제휴 인증 페이지로 이동
 	const handleCertify = () => {
 		if (!selectedBenefit || !store) return;
 		router.push({
@@ -128,7 +130,7 @@ export function StoreDetailWidget({
 						<StorePartnershipList
 							benefits={benefits}
 							selectedId={selectedBenefitId}
-							onSelect={setSelectedBenefitId}
+							onSelect={toggleBenefit}
 						/>
 					</View>
 				</ScrollView>

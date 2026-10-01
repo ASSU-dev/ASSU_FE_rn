@@ -5,7 +5,7 @@ import { PartnershipSelectItem } from "./PartnershipSelectItem";
 interface StorePartnershipListProps {
 	benefits: StoreBenefit[];
 	selectedId: string | null;
-	onSelect: (id: string | null) => void;
+	onSelect: (id: string) => void;
 }
 
 export function StorePartnershipList({
@@ -30,9 +30,7 @@ export function StorePartnershipList({
 					key={`${benefit.id}-${index}`}
 					benefit={benefit}
 					isSelected={selectedId === benefit.id}
-					onPress={() =>
-						onSelect(selectedId === benefit.id ? null : benefit.id)
-					}
+					onPress={() => onSelect(benefit.id)}
 				/>
 			))}
 		</View>
