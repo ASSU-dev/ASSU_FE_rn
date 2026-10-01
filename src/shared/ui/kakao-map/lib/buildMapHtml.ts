@@ -112,7 +112,7 @@ ${buildMarkerScript()}
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MAP_READY' }));
     }
   </script>
-  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false"></script>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false"></script>
   <script>kakao.maps.load(initMap);</script>
 </body>
 </html>`;
