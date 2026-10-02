@@ -34,11 +34,11 @@
 				"android.permission.ACCESS_FINE_LOCATION",
 				"android.permission.CAMERA"
 			],
+			"icon": "./src/shared/assets/images/icon.png",
 			"adaptiveIcon": {
-				"backgroundColor": "#E6F4FE",
-				"foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
-				"backgroundImage": "./src/shared/assets/images/android-icon-background.png",
-				"monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
+				"backgroundColor": "#FFFFFF",
+				"foregroundImage": "./src/shared/assets/images/icon.png",
+				"monochromeImage": "./src/shared/assets/images/icon.png"
 			},
 			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false
