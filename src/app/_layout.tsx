@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
+import { Linking } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -18,6 +19,20 @@ initMocks();
 
 // 비로그인 상태의 진입 화면
 const REGISTER_ROUTE = "/(auth)/register";
+
+function getVerifyStoreId(url: string | null): number | null {
+	if (!url) return null;
+	try {
+		const parsed = new URL(url);
+		const isVerify =
+			parsed.pathname === "/verify" || parsed.hostname === "verify";
+		if (!isVerify) return null;
+		const id = Number(parsed.searchParams.get("storeId"));
+		return Number.isSafeInteger(id) && id > 0 ? id : null;
+	} catch {
+		return null;
+	}
+}
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -45,10 +60,25 @@ export default function RootLayout() {
 	const hasRedirected = useRef(false);
 
 	useEffect(() => {
-		initAuth().then(({ isLoggedIn, role }) => {
+		const init = async () => {
+			const [{ isLoggedIn, role }, url] = await Promise.all([
+				initAuth(),
+				Linking.getInitialURL(),
+			]);
+
+			if (isLoggedIn && role !== "ADMIN" && role !== "PARTNER") {
+				const storeId = getVerifyStoreId(url);
+				if (storeId) {
+					setInitialRoute(`/(protected)/student/store/${storeId}/detail`);
+					setAuthReady(true);
+					return;
+				}
+			}
+
 			setInitialRoute(isLoggedIn ? getHomeRouteByRole(role) : REGISTER_ROUTE);
 			setAuthReady(true);
-		});
+		};
+		void init();
 	}, []);
 
 	// Stack이 실제로 마운트된 뒤에만 replace를 실행해야 함.
@@ -73,6 +103,7 @@ export default function RootLayout() {
 						<FcmInitializer />
 						<Stack>
 							<Stack.Screen name="index" options={{ headerShown: false }} />
+							<Stack.Screen name="verify" options={{ headerShown: false }} />
 							<Stack.Screen name="(auth)" options={{ headerShown: false }} />
 							<Stack.Screen
 								name="(protected)"
