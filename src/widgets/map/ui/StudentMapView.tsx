@@ -40,7 +40,9 @@ import {
 	type MapBounds,
 } from "@/shared/ui/kakao-map";
 import { toViewport } from "../model/toViewport";
+import { useClusterStores } from "../model/useClusterStores";
 import { useUserLocation } from "../model/useUserLocation";
+import { ClusterStoreCards } from "./ClusterStoreCards";
 import { MapLocateButton } from "./MapLocateButton";
 import { StudentSelectedStoreCard } from "./StudentSelectedStoreCard";
 
@@ -107,6 +109,7 @@ export function StudentMapView({
 	const lastSelectionRequestRef = useRef<string | null>(null);
 	const deliberatelyPannedRef = useRef(false);
 	const insets = useSafeAreaInsets();
+	const [mapHeight, setMapHeight] = useState(0);
 	const { center, myLocation, heading } = useUserLocation();
 	const { storeCategory, adminId, toggleAdminId } = useMapFilterStore();
 
@@ -186,6 +189,11 @@ export function StudentMapView({
 		}
 		return stores;
 	}, [markerStores, pinnedStore]);
+	const { clusterStores, clusterKey, openCluster, closeCluster, dismissStore } =
+		useClusterStores(
+			partnerMarkerStores,
+			JSON.stringify([storeCategory, adminId]),
+		);
 	const partnerListStores = partnershipResponse?.result ?? [];
 	useEffect(() => {
 		if (!__DEV__) return;
@@ -223,13 +231,14 @@ export function StudentMapView({
 	// 검색 선택과 지도 칩 선택이 같은 카드/시트/지도 이동 흐름을 사용한다.
 	const selectStore = useCallback(
 		(store: StoreMarker, refreshBounds: boolean) => {
+			closeCluster();
 			setSelectedStoreId(store.id);
 			sheetRef.current?.snapToIndex(0);
 			suppressNextBoundsRef.current = !refreshBounds;
 			deliberatelyPannedRef.current = true;
 			kakaoRef.current?.panTo(store.latitude, store.longitude);
 		},
-		[],
+		[closeCluster],
 	);
 
 	useEffect(() => {
@@ -262,8 +271,11 @@ export function StudentMapView({
 	// 마지막 스냅은 화면 상단까지 펼친다.
 	const snapPoints = useMemo(() => [SNAP_MINI, SNAP_PEEK, "45%", "100%"], []);
 	const handleSheetChange = useCallback(
-		(index: number) => onSheetExpandedChange(index === snapPoints.length - 1),
-		[onSheetExpandedChange, snapPoints.length],
+		(index: number) => {
+			if (index > 0) closeCluster();
+			onSheetExpandedChange(index === snapPoints.length - 1);
+		},
+		[closeCluster, onSheetExpandedChange, snapPoints.length],
 	);
 	const headerOffset = Math.max(0, headerHeight - SHEET_HANDLE_HEIGHT);
 	// 목록 크기는 고정하고 위치만 이동해 드래그 중 레이아웃 재계산을 줄인다.
@@ -284,9 +296,20 @@ export function StudentMapView({
 		if (store) selectStore(store, store.id === pinnedStore?.id);
 	};
 
-	// 지도 빈 곳 탭: 선택 카드만 닫고 시트 위치는 사용자가 둔 그대로 유지한다
+	// 지도 빈 곳 탭 시 선택 카드와 클러스터 목록을 닫고 시트 위치 유지
 	const handleMapPress = () => {
 		setSelectedStoreId(null);
+		closeCluster();
+	};
+
+	const handleClusterPress = (markerIds: string[]) => {
+		setSelectedStoreId(null);
+		openCluster(markerIds);
+		sheetRef.current?.snapToIndex(0);
+	};
+
+	const handleClusterStoreSelect = (store: StoreMarker) => {
+		selectStore(store, store.id === pinnedStore?.id);
 	};
 
 	const renderPartnershipCard = (partnership: UsablePartnershipDTO) => {
@@ -337,7 +360,10 @@ export function StudentMapView({
 	};
 
 	return (
-		<View className="flex-1 bg-canvas">
+		<View
+			className="flex-1 bg-canvas"
+			onLayout={(event) => setMapHeight(event.nativeEvent.layout.height)}
+		>
 			<KakaoMap
 				ref={kakaoRef}
 				initialCenter={center ?? undefined}
@@ -348,6 +374,7 @@ export function StudentMapView({
 				clusteringEnabled
 				selectedMarkerId={selectedStoreId}
 				onMarkerPress={handleMarkerPress}
+				onClusterPress={handleClusterPress}
 				onMapPress={handleMapPress}
 				onRegionChange={(bounds) => {
 					if (suppressNextBoundsRef.current) {
@@ -380,6 +407,7 @@ export function StudentMapView({
 					style={{ bottom: SNAP_MINI + SHEET_GAP }}
 				>
 					<StudentSelectedStoreCard
+						onClose={() => setSelectedStoreId(null)}
 						name={selectedStore?.name ?? initialStoreName ?? ""}
 						imageUri={selectedStore?.imageUri ?? initialStoreImageUri}
 						benefitLabel={
@@ -419,6 +447,17 @@ export function StudentMapView({
 					/>
 				</Animated.View>
 			) : null}
+			<ClusterStoreCards
+				key={clusterKey}
+				stores={clusterStores}
+				maxHeight={Math.max(
+					0,
+					Math.min(mapHeight / 2, mapHeight - SNAP_MINI - SHEET_GAP),
+				)}
+				bottomOffset={SNAP_MINI + SHEET_GAP}
+				onSelect={handleClusterStoreSelect}
+				onDismiss={dismissStore}
+			/>
 			<SnapBottomSheet
 				ref={sheetRef}
 				snapPoints={snapPoints}

@@ -5,6 +5,8 @@ export function buildClusterMarkerScript(): string {
 	const canvas = colorTokens.canvas;
 	return `
     var CLUSTER_RADIUS_PX = 36;
+    // 일반 지도의 최대 확대 단계
+    var MIN_MAP_LEVEL = 1;
 
     function buildClusters(items) {
       if (items.length === 0) return [];
@@ -41,12 +43,24 @@ export function buildClusterMarkerScript(): string {
 
       container.addEventListener('click', function(event) {
         event.stopPropagation();
-        map.setLevel(map.getLevel() - 1, { anchor: position });
+        kakao.maps.event.preventMap();
+        var currentLevel = map.getLevel();
+        // 확대 가능한 경우 클릭한 클러스터 위치를 기준으로 한 단계 확대함
+        if (currentLevel > MIN_MAP_LEVEL) {
+          map.setLevel(currentLevel - 1, { anchor: position });
+          return;
+        }
+        // 최대 확대 상태에서 겹친 매장만 목록으로 표시함
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+          type: 'CLUSTER_PRESS',
+          markerIds: cluster.items.map(function(item) { return String(item.id); })
+        }));
       });
 
       var overlay = new kakao.maps.CustomOverlay({
         position: position,
         content: container,
+        clickable: true,
         xAnchor: 0.5,
         yAnchor: 0.5,
         zIndex: 4

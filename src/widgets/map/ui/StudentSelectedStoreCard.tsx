@@ -1,5 +1,6 @@
 import { Image, Pressable, Text, View } from "react-native";
 
+import { CloseNoCircleIcon } from "@/shared/assets/icons";
 import { shadowNeutral } from "@/shared/styles/shadows";
 
 interface StudentSelectedStoreCardProps {
@@ -15,6 +16,8 @@ interface StudentSelectedStoreCardProps {
 	onPress?: () => void;
 	/** "제휴 인증하기" 버튼 탭 */
 	onCertifyPress: () => void;
+	/** 카드 닫기 */
+	onClose: () => void;
 }
 
 /** 지도에서 매장 선택 시 바텀시트 위에 뜨는 플로팅 카드 */
@@ -28,6 +31,7 @@ export function StudentSelectedStoreCard({
 	tag,
 	onPress,
 	onCertifyPress,
+	onClose,
 }: StudentSelectedStoreCardProps) {
 	const metaParts = [
 		extraBenefitCount > 0 ? `외 ${extraBenefitCount}가지 제휴` : null,
@@ -35,13 +39,12 @@ export function StudentSelectedStoreCard({
 	].filter((part): part is string => part !== null);
 
 	return (
-		<Pressable
-			className="rounded-[10px] bg-canvas p-gutter"
-			style={shadowNeutral}
-			onPress={onPress}
-			disabled={!onPress}
-		>
-			<View className="flex-row items-center gap-[16px]">
+		<View className="rounded-[10px] bg-canvas p-gutter" style={shadowNeutral}>
+			<Pressable
+				className="flex-row items-center gap-[16px]"
+				onPress={onPress}
+				disabled={!onPress}
+			>
 				<View>
 					{imageUri ? (
 						<Image
@@ -63,7 +66,7 @@ export function StudentSelectedStoreCard({
 
 				{/* 피그마 실측: 썸네일과 같은 110px 높이 + py 4px, 버튼은 justify-between으로 하단 고정 */}
 				<View className="h-[110px] flex-1 justify-between py-[4px]">
-					<View className="gap-[5px]">
+					<View className="gap-[5px] pr-[34px]">
 						<Text
 							className="text-sm font-bold leading-[16px] text-content-primary"
 							numberOfLines={1}
@@ -104,7 +107,15 @@ export function StudentSelectedStoreCard({
 						</Text>
 					</Pressable>
 				</View>
-			</View>
-		</Pressable>
+			</Pressable>
+			<Pressable
+				className="absolute right-0 top-0 h-[44px] w-[44px] items-center justify-center"
+				accessibilityRole="button"
+				accessibilityLabel={`${name} 카드 닫기`}
+				onPress={onClose}
+			>
+				<CloseNoCircleIcon width={9.6} height={9.6} />
+			</Pressable>
+		</View>
 	);
 }
