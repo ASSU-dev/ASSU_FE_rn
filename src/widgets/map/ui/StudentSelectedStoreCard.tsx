@@ -100,7 +100,10 @@ export function StudentSelectedStoreCard({
 
 					<Pressable
 						className="items-center justify-center rounded-[7px] bg-primary py-[10px]"
-						onPress={onCertifyPress}
+						onPress={(event) => {
+							event.stopPropagation();
+							onCertifyPress();
+						}}
 					>
 						<Text className="text-[12px] font-semibold leading-[14px] tracking-[-0.32px] text-content-inverse">
 							제휴 인증하기

@@ -308,10 +308,6 @@ export function StudentMapView({
 		sheetRef.current?.snapToIndex(0);
 	};
 
-	const handleClusterStoreSelect = (store: StoreMarker) => {
-		selectStore(store, store.id === pinnedStore?.id);
-	};
-
 	const renderPartnershipCard = (partnership: UsablePartnershipDTO) => {
 		const hasCondition = partnership.people != null || partnership.cost != null;
 		let benefitLabel: string | undefined;
@@ -450,12 +446,14 @@ export function StudentMapView({
 			<ClusterStoreCards
 				key={clusterKey}
 				stores={clusterStores}
+				myLocation={myLocation}
 				maxHeight={Math.max(
 					0,
 					Math.min(mapHeight / 2, mapHeight - SNAP_MINI - SHEET_GAP),
 				)}
 				bottomOffset={SNAP_MINI + SHEET_GAP}
-				onSelect={handleClusterStoreSelect}
+				onStorePress={onStorePress}
+				onCertifyPress={onCertifyPress}
 				onDismiss={dismissStore}
 			/>
 			<SnapBottomSheet
