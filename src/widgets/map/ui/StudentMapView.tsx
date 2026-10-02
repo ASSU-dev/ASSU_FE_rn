@@ -26,6 +26,7 @@ import {
 import { useNearbyStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import type { UsablePartnershipDTO } from "@/shared/api";
+import { ENV } from "@/shared/config/env";
 import type { LatLng } from "@/shared/types/map";
 import {
 	BottomSheetFlatList,
@@ -186,6 +187,31 @@ export function StudentMapView({
 		return stores;
 	}, [markerStores, pinnedStore]);
 	const partnerListStores = partnershipResponse?.result ?? [];
+	useEffect(() => {
+		if (!__DEV__) return;
+		console.log("[PartnershipDebug] screen data", {
+			baseURL: ENV.API_BASE_URL,
+			useMocks: ENV.USE_MOCKS,
+			storeCategory,
+			adminId,
+			admins,
+			markerCount: partnerMarkerStores.length,
+			markers: partnerMarkerStores.map(({ id, name }) => ({ id, name })),
+			listCount: partnershipResponse?.result?.length ?? 0,
+			list: partnershipResponse?.result?.map((item, index) => ({
+				key: String(item.partnershipId ?? item.storeId ?? index),
+				storeId: item.storeId,
+				name: item.partnerName,
+				adminName: item.adminName,
+			})),
+		});
+	}, [
+		adminId,
+		admins,
+		partnerMarkerStores,
+		partnershipResponse,
+		storeCategory,
+	]);
 	const selectedStore =
 		partnerMarkerStores.find((store) => store.id === selectedStoreId) ?? null;
 
