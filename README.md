@@ -40,10 +40,20 @@ src/
 - `yarn biome:lint` — Biome lint (`./src`)
 - `yarn biome:format` — Biome formatter (`./src`, write)
 - `yarn biome:fix` — Biome check + 자동 수정 (`./src`, write)
+- `yarn test` — Jest 테스트 실행
+- `yarn test:watch` — Jest 감시 모드
+- `yarn test:coverage` — 커버리지 리포트 생성
+
+## 테스트 작성
+
+- 테스트 파일은 검증 대상 파일과 같은 폴더에 `*.test.ts` 또는 `*.test.tsx`로 둡니다.
+- 비즈니스 로직은 입력과 결과를 검증하는 단위 테스트부터 작성합니다.
+- UI 테스트는 사용자에게 중요한 상호작용과 화면 상태를 검증하고, 구현 세부 사항에는 의존하지 않습니다.
+- 네트워크 요청은 실제 서버 대신 mock을 사용합니다.
+- [테스트 전략](./docs/testing-strategy.md)과 [AI 기반 테스트 작성 가이드](./docs/ai-qa/README.md)를 참고합니다.
 
 
 ## 빠른 시작
 1) 의존성: `yarn install --frozen-lockfile`
 2) 실행: `yarn start` 후 a/i/w 선택
 3) 품질 체크(권장): `yarn biome:format && yarn biome:lint && yarn typecheck`
-
