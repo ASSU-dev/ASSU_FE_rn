@@ -49,11 +49,11 @@ export function StudentSelectedStoreCard({
 					{imageUri ? (
 						<Image
 							source={{ uri: imageUri }}
-							className="h-[110px] w-[130px] rounded-[8px]"
+							className="h-[110px] w-[110px] rounded-[8px]"
 							resizeMode="cover"
 						/>
 					) : (
-						<View className="h-[110px] w-[130px] rounded-[8px] bg-neutral" />
+						<View className="h-[110px] w-[110px] rounded-[8px] bg-neutral" />
 					)}
 					{tag ? (
 						<View className="absolute bottom-[5px] left-[6px] rounded-[999px] bg-neutral px-gutter py-[2px]">
