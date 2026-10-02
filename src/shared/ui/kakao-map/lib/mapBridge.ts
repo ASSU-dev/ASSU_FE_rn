@@ -82,22 +82,37 @@ export function buildMarkersUpdate(
 
 type MapMessageCallbacks = Pick<
 	KakaoMapProps,
-	"onMarkerPress" | "onRegionChange" | "onMapPress"
+	"onMarkerPress" | "onClusterPress" | "onRegionChange" | "onMapPress"
 > & { onReady: () => void };
 
 export function handleMapMessage(
 	event: WebViewMessageEvent,
-	{ onReady, onMarkerPress, onRegionChange, onMapPress }: MapMessageCallbacks,
+	{
+		onReady,
+		onMarkerPress,
+		onClusterPress,
+		onRegionChange,
+		onMapPress,
+	}: MapMessageCallbacks,
 ): void {
 	try {
 		const data = JSON.parse(event.nativeEvent.data) as {
 			type: string;
 			markerId?: string;
+			markerIds?: unknown;
 			bounds?: unknown;
 		};
 		if (data.type === "MAP_READY") onReady();
 		if (data.type === "MARKER_PRESS" && data.markerId) {
 			onMarkerPress?.(data.markerId);
+		}
+		if (
+			data.type === "CLUSTER_PRESS" &&
+			Array.isArray(data.markerIds) &&
+			data.markerIds.length > 0 &&
+			data.markerIds.every((id): id is string => typeof id === "string")
+		) {
+			onClusterPress?.(data.markerIds);
 		}
 		if (data.type === "REGION_CHANGE" && isMapBounds(data.bounds)) {
 			onRegionChange?.(data.bounds);

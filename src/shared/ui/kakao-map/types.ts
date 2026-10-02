@@ -12,6 +12,8 @@ export type KakaoMapProps = {
 	clusteringEnabled?: boolean;
 	selectedMarkerId?: string | null;
 	onMarkerPress?: (markerId: string) => void;
+	/** 클러스터에 포함된 매장 ID 전달 */
+	onClusterPress?: (markerIds: string[]) => void;
 	onMapPress?: () => void;
 	/** 맵 이동/줌 완료 시 현재 표시 영역을 전달 */
 	onRegionChange?: (bounds: MapBounds) => void;

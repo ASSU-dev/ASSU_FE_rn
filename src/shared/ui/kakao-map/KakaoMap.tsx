@@ -39,6 +39,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			clusteringEnabled = false,
 			selectedMarkerId,
 			onMarkerPress,
+			onClusterPress,
 			onMapPress,
 			onRegionChange,
 		},
@@ -148,6 +149,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 					handleMapMessage(event, {
 						onReady: () => setIsMapReady(true),
 						onMarkerPress,
+						onClusterPress,
 						onRegionChange,
 						onMapPress,
 					})
