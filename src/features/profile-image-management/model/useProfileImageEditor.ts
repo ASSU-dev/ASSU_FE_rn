@@ -17,17 +17,6 @@ export function useProfileImageEditor() {
 
 	const selectImage = async () => {
 		try {
-			const permission =
-				await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-			if (!permission.granted) {
-				Alert.alert(
-					"사진 접근 권한 필요",
-					"프로필 사진을 선택하려면 사진 접근 권한을 허용해 주세요.",
-				);
-				return;
-			}
-
 			const result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ["images"],
 				allowsEditing: true,
