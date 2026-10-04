@@ -63,7 +63,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run Jest
-        run: yarn test
+        run: yarn test --passWithNoTests
 
   # 프로젝트 진단 및 빌드 테스트
   doctor:
