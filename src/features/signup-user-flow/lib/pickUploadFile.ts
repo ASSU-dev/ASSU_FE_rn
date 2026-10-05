@@ -1,6 +1,6 @@
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
-import { Alert, Platform } from "react-native";
+import { Alert } from "react-native";
 import type { SignupUploadFile } from "../model/types";
 
 const DOCUMENT_TYPES = ["image/*", "application/pdf"];
@@ -11,18 +11,6 @@ function buildFallbackName(mimeType: string) {
 }
 
 async function pickFromLibrary(): Promise<SignupUploadFile | null> {
-	// iOS의 시스템 사진 선택기는 보관함 권한 없이 선택한 사진만 전달합니다.
-	if (Platform.OS !== "ios") {
-		const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-		if (!permission.granted) {
-			Alert.alert(
-				"사진 접근 권한 필요",
-				"설정에서 사진 접근을 허용한 뒤 다시 시도해주세요.",
-			);
-			return null;
-		}
-	}
-
 	const result = await ImagePicker.launchImageLibraryAsync({
 		mediaTypes: ["images"],
 		quality: 0.8,
