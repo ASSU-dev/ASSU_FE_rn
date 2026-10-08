@@ -18,7 +18,7 @@ export function PartnershipNumberAuthPage() {
 	const inputRef = useRef<TextInput>(null);
 
 	const handleChangeText = (value: string) => {
-		setStoreCode(value.replace(/\D/g, "").slice(0, 2));
+		setStoreCode(value.replace(/\D/g, "").slice(0, 3));
 	};
 
 	const handleComplete = () => {
@@ -56,7 +56,7 @@ export function PartnershipNumberAuthPage() {
 						onPress={() => inputRef.current?.focus()}
 						className="mt-[61px] flex-row justify-center gap-[13px]"
 					>
-						{[0, 1].map((index) => (
+						{[0, 1, 2].map((index) => (
 							<View
 								key={index}
 								className="size-[74px] items-center justify-center rounded-[8px] bg-neutral"
@@ -71,7 +71,7 @@ export function PartnershipNumberAuthPage() {
 							value={storeCode}
 							onChangeText={handleChangeText}
 							keyboardType="number-pad"
-							maxLength={2}
+							maxLength={3}
 							autoFocus
 							caretHidden
 							className="absolute size-px opacity-0"
@@ -80,7 +80,7 @@ export function PartnershipNumberAuthPage() {
 
 					<View className="mt-auto items-center pb-[4px]">
 						<MediumButton
-							disabled={storeCode.length !== 2}
+							disabled={storeCode.length === 0}
 							onPress={handleComplete}
 						>
 							입력 완료
