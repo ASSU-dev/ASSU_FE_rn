@@ -62,7 +62,7 @@ export function PartnershipNumberAuthPage() {
 								className="size-[74px] items-center justify-center rounded-[8px] bg-neutral"
 							>
 								<Text className="text-[48px] font-medium leading-[54px] text-content-primary">
-									{storeCode[index] ?? ""}
+									{storeCode[index - (3 - storeCode.length)] ?? ""}
 								</Text>
 							</View>
 						))}
