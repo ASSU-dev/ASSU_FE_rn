@@ -42,7 +42,6 @@ import {
 import { toViewport } from "../model/toViewport";
 import { useClusterStores } from "../model/useClusterStores";
 import { useUserLocation } from "../model/useUserLocation";
-import { ClusterStoreCards } from "./ClusterStoreCards";
 import { MapLocateButton } from "./MapLocateButton";
 import { StudentSelectedStoreCard } from "./StudentSelectedStoreCard";
 
@@ -109,7 +108,6 @@ export function StudentMapView({
 	const lastSelectionRequestRef = useRef<string | null>(null);
 	const deliberatelyPannedRef = useRef(false);
 	const insets = useSafeAreaInsets();
-	const [mapHeight, setMapHeight] = useState(0);
 	const { center, myLocation, heading } = useUserLocation();
 	const { storeCategory, adminId, toggleAdminId } = useMapFilterStore();
 
@@ -189,11 +187,18 @@ export function StudentMapView({
 		}
 		return stores;
 	}, [markerStores, pinnedStore]);
-	const { clusterStores, clusterKey, openCluster, closeCluster, dismissStore } =
-		useClusterStores(
-			partnerMarkerStores,
-			JSON.stringify([storeCategory, adminId]),
-		);
+	const filterKey = JSON.stringify([storeCategory, adminId]);
+	const previousFilterKeyRef = useRef(filterKey);
+	const { clusterMarkerIds, openCluster, closeCluster } = useClusterStores(
+		partnerMarkerStores,
+		filterKey,
+	);
+	// 필터가 실제로 변경된 경우에만 이전 매장 강조와 상세 카드 제거
+	useEffect(() => {
+		if (previousFilterKeyRef.current === filterKey) return;
+		previousFilterKeyRef.current = filterKey;
+		setSelectedStoreId(null);
+	}, [filterKey]);
 	const partnerListStores = partnershipResponse?.result ?? [];
 	useEffect(() => {
 		if (!__DEV__) return;
@@ -293,7 +298,14 @@ export function StudentMapView({
 	// panTo 후 발생하는 idle → onRegionChange는 억제해 불필요한 재조회를 막는다.
 	const handleMarkerPress = (markerId: string) => {
 		const store = partnerMarkerStores.find((s) => s.id === markerId);
-		if (store) selectStore(store, store.id === pinnedStore?.id);
+		if (!store) return;
+		if (clusterMarkerIds.includes(markerId)) {
+			// 그룹 안의 매장 선택은 목록과 지도 위치를 유지하고 하단 카드만 교체함
+			setSelectedStoreId(markerId);
+			sheetRef.current?.snapToIndex(0);
+			return;
+		}
+		selectStore(store, store.id === pinnedStore?.id);
 	};
 
 	// 지도 빈 곳 탭 시 선택 카드와 클러스터 목록을 닫고 시트 위치 유지
@@ -356,10 +368,7 @@ export function StudentMapView({
 	};
 
 	return (
-		<View
-			className="flex-1 bg-canvas"
-			onLayout={(event) => setMapHeight(event.nativeEvent.layout.height)}
-		>
+		<View className="flex-1 bg-canvas">
 			<KakaoMap
 				ref={kakaoRef}
 				initialCenter={center ?? undefined}
@@ -369,8 +378,10 @@ export function StudentMapView({
 				categoryMarkersEnabled
 				clusteringEnabled
 				selectedMarkerId={selectedStoreId}
+				activeClusterMarkerIds={clusterMarkerIds}
 				onMarkerPress={handleMarkerPress}
 				onClusterPress={handleClusterPress}
+				onClusterClose={handleMapPress}
 				onMapPress={handleMapPress}
 				onRegionChange={(bounds) => {
 					if (suppressNextBoundsRef.current) {
@@ -443,19 +454,6 @@ export function StudentMapView({
 					/>
 				</Animated.View>
 			) : null}
-			<ClusterStoreCards
-				key={clusterKey}
-				stores={clusterStores}
-				myLocation={myLocation}
-				maxHeight={Math.max(
-					0,
-					Math.min(mapHeight / 2, mapHeight - SNAP_MINI - SHEET_GAP),
-				)}
-				bottomOffset={SNAP_MINI + SHEET_GAP}
-				onStorePress={onStorePress}
-				onCertifyPress={onCertifyPress}
-				onDismiss={dismissStore}
-			/>
 			<SnapBottomSheet
 				ref={sheetRef}
 				snapPoints={snapPoints}

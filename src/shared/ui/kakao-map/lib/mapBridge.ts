@@ -49,6 +49,7 @@ type MarkerOptions = Pick<
 	| "categoryMarkersEnabled"
 	| "selectedMarkerId"
 	| "clusteringEnabled"
+	| "activeClusterMarkerIds"
 >;
 
 export function buildMarkersUpdate(
@@ -58,6 +59,7 @@ export function buildMarkersUpdate(
 		categoryMarkersEnabled,
 		selectedMarkerId,
 		clusteringEnabled,
+		activeClusterMarkerIds = [],
 	}: MarkerOptions,
 ): { key: string; script: string } {
 	const markerPayload = markers.map((marker) => ({
@@ -73,16 +75,24 @@ export function buildMarkersUpdate(
 		/</g,
 		"\\u003c",
 	);
-	const injectionKey = `${serializedMarkers}|${clusteringEnabled}`;
+	const serializedOptions = JSON.stringify({
+		clustering: clusteringEnabled === true,
+		activeClusterMarkerIds,
+	}).replace(/</g, "\\u003c");
+	const injectionKey = `${serializedMarkers}|${serializedOptions}`;
 	return {
 		key: injectionKey,
-		script: `window.updateStoreMarkers(${serializedMarkers}, { clustering: ${clusteringEnabled === true} }); true;`,
+		script: `window.updateStoreMarkers(${serializedMarkers}, ${serializedOptions}); true;`,
 	};
 }
 
 type MapMessageCallbacks = Pick<
 	KakaoMapProps,
-	"onMarkerPress" | "onClusterPress" | "onRegionChange" | "onMapPress"
+	| "onMarkerPress"
+	| "onClusterPress"
+	| "onClusterClose"
+	| "onRegionChange"
+	| "onMapPress"
 > & { onReady: () => void };
 
 export function handleMapMessage(
@@ -91,6 +101,7 @@ export function handleMapMessage(
 		onReady,
 		onMarkerPress,
 		onClusterPress,
+		onClusterClose,
 		onRegionChange,
 		onMapPress,
 	}: MapMessageCallbacks,
@@ -118,6 +129,7 @@ export function handleMapMessage(
 			onRegionChange?.(data.bounds);
 		}
 		if (data.type === "MAP_PRESS") onMapPress?.();
+		if (data.type === "CLUSTER_CLOSE") onClusterClose?.();
 	} catch (error) {
 		if (__DEV__) {
 			console.warn(
