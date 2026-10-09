@@ -1,5 +1,6 @@
 import { buildCategoryMarkerScript } from "./buildCategoryMarkerScript";
 import { buildClusterMarkerScript } from "./buildClusterMarkerScript";
+import { buildClusterStoreListScript } from "./buildClusterStoreListScript";
 import { buildMarkerStateScript } from "./buildMarkerStateScript";
 import { buildPartnerMarkerScript } from "./buildPartnerMarkerScript";
 
@@ -8,6 +9,7 @@ export function buildMarkerScript(): string {
 	return [
 		buildMarkerStateScript(),
 		buildCategoryMarkerScript(),
+		buildClusterStoreListScript(),
 		buildClusterMarkerScript(),
 		buildPartnerMarkerScript(),
 	].join("\n");
