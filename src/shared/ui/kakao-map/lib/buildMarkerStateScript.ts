@@ -4,6 +4,7 @@ export function buildMarkerStateScript(): string {
     var storeMarkers = Object.create(null);
     var storeData = [];
     var clusteringEnabled = false;
+    var activeClusterMarkerIds = [];
 
     function postMarkerPress(markerId) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'MARKER_PRESS', markerId: String(markerId) }));
@@ -12,6 +13,8 @@ export function buildMarkerStateScript(): string {
     window.updateStoreMarkers = function(markers, options) {
       storeData = Array.isArray(markers) ? markers : [];
       clusteringEnabled = !!(options && options.clustering);
+      activeClusterMarkerIds = options && Array.isArray(options.activeClusterMarkerIds)
+        ? options.activeClusterMarkerIds : [];
       renderStoreMarkers();
     };
 
@@ -29,7 +32,8 @@ export function buildMarkerStateScript(): string {
       var clusterable = [];
       storeData.forEach(function(markerData) {
         if (typeof markerData.latitude !== 'number' || typeof markerData.longitude !== 'number') return;
-        if (clusteringEnabled && markerData.categoryMarker && markerData.selected !== true) {
+        if (clusteringEnabled && markerData.categoryMarker &&
+          (markerData.selected !== true || activeClusterMarkerIds.indexOf(String(markerData.id)) >= 0)) {
           clusterable.push(markerData);
         } else {
           singles.push(markerData);
@@ -45,10 +49,15 @@ export function buildMarkerStateScript(): string {
       buildClusters(clusterable).forEach(function(cluster) {
         if (cluster.items.length > 1) {
           var key = 'cluster:' + JSON.stringify(cluster.items.map(function(item) { return String(item.id); }));
-          var signature = JSON.stringify(cluster.items.map(function(item) { return [item.latitude, item.longitude]; }));
+          var signature = JSON.stringify(cluster.items.map(function(item) { return [item.latitude, item.longitude, item.name, item.category]; }));
           retainStoreMarker(nextMarkers, key, signature, function() {
             return renderClusterMarker(cluster);
           });
+          var ids = cluster.items.map(function(item) { return String(item.id); });
+          var isOpen = map.getLevel() === MIN_MAP_LEVEL && ids.length === activeClusterMarkerIds.length &&
+            ids.every(function(id) { return activeClusterMarkerIds.indexOf(id) >= 0; });
+          var selected = cluster.items.find(function(item) { return item.selected === true; });
+          nextMarkers[key].marker.updateSelection(isOpen, selected ? String(selected.id) : null);
         } else {
           singles.push(cluster.items[0]);
         }

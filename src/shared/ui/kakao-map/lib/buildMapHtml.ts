@@ -102,8 +102,15 @@ ${buildMarkerScript()}
       });
       // 줌 변경 시 픽셀 거리 기반 클러스터를 다시 계산한다
       kakao.maps.event.addListener(map, 'zoom_changed', function() {
+        // 확대 단계가 바뀌면 이전 그룹 목록과 상세 선택을 함께 닫음
+        if (activeClusterMarkerIds.length > 0) {
+          activeClusterMarkerIds = [];
+          storeData.forEach(function(item) { item.selected = false; });
+          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'CLUSTER_CLOSE' }));
+        }
         if (clusteringEnabled) renderStoreMarkers();
       });
+      kakao.maps.event.addListener(map, 'bounds_changed', repositionClusterStoreLists);
       if (boundsTrackingEnabled) {
         kakao.maps.event.addListener(map, 'idle', function() {
           window.postRegionChange();

@@ -2,7 +2,7 @@ import { colorTokens } from "@/shared/styles/tokens";
 
 /** 인접 매장 그룹화 및 클러스터 매장 수 표시 */
 export function buildClusterMarkerScript(): string {
-	const canvas = colorTokens.canvas;
+	const { canvas, primary, contentPrimary } = colorTokens;
 	return `
     var CLUSTER_RADIUS_PX = 36;
     // 일반 지도의 최대 확대 단계
@@ -35,11 +35,15 @@ export function buildClusterMarkerScript(): string {
       cluster.items.forEach(function(item) { latSum += item.latitude; lngSum += item.longitude; });
       var position = new kakao.maps.LatLng(latSum / cluster.items.length, lngSum / cluster.items.length);
 
+      var root = document.createElement('div');
+      root.style.cssText = 'position:relative;width:34px;height:34px;';
+      var storeList = null;
       var container = document.createElement('button');
       container.type = 'button';
       container.textContent = String(cluster.items.length);
-      container.style.cssText = 'border:0;width:34px;height:34px;border-radius:50%;background:${canvas};box-shadow:0 0 10px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#040404;cursor:pointer;';
+      container.style.cssText = 'border:0;width:34px;height:34px;border-radius:50%;background:${canvas};box-shadow:0 0 10px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:${contentPrimary};cursor:pointer;';
       container.setAttribute('aria-label', cluster.items.length + '개 매장');
+      root.appendChild(container);
 
       container.addEventListener('click', function(event) {
         event.stopPropagation();
@@ -59,12 +63,31 @@ export function buildClusterMarkerScript(): string {
 
       var overlay = new kakao.maps.CustomOverlay({
         position: position,
-        content: container,
+        content: root,
         clickable: true,
         xAnchor: 0.5,
         yAnchor: 0.5,
         zIndex: 4
       });
+      overlay.repositionList = function() {
+        if (storeList) positionClusterStoreList(storeList.element, position);
+      };
+      overlay.updateSelection = function(isOpen, selectedId) {
+        container.style.background = isOpen ? '${primary}' : '${canvas}';
+        container.style.color = isOpen ? '${canvas}' : '${contentPrimary}';
+        container.setAttribute('aria-expanded', String(isOpen));
+        overlay.setZIndex(isOpen ? 30 : 4);
+        // 열린 클러스터만 목록을 생성하고 선택 변경 시 기존 스크롤 위치 유지
+        if (isOpen && !storeList) {
+          storeList = createClusterStoreList(cluster.items);
+          root.appendChild(storeList.element);
+        }
+        if (storeList) {
+          storeList.element.style.display = isOpen ? 'block' : 'none';
+          storeList.updateSelection(selectedId);
+          overlay.repositionList();
+        }
+      };
       overlay.setMap(map);
       return overlay;
     }
