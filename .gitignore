@@ -44,7 +44,9 @@ app-example
 /android
 
 # claude
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/skills/**
 .claudeignore
 CLAUDE.md
 CONVENTION.md
