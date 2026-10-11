@@ -62,8 +62,7 @@
 			[
 				"expo-image-picker",
 				{
-					"microphonePermission": false,
-					"cameraPermission": false
+					"microphonePermission": false
 				}
 			],
 			[
@@ -72,7 +71,7 @@
 					"photosPermission": "QR 코드 이미지를 갤러리에 저장합니다.",
 					"savePhotosPermission": "QR 코드 이미지를 갤러리에 저장합니다.",
 					"isAccessMediaLocationEnabled": false,
-					"granularPermissions": ["photo"]
+					"granularPermissions": []
 				}
 			],
 			"expo-document-picker",
@@ -100,7 +99,8 @@
 						"forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
 					}
 				}
-			]
+			],
+			"./plugins/withBlockedAndroidPermissions"
 		],
 		"experiments": {
 			"typedRoutes": true,
