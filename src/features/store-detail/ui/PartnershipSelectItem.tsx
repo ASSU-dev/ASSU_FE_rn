@@ -42,17 +42,15 @@ export function PartnershipSelectItem({
 							{benefit.adminName}
 						</Text>
 					</View>
-					<View className="flex-1 gap-0.5">
-						<Text className="font-semibold text-sm text-content-primary">
-							{benefit.paperContent}
-						</Text>
-						{benefit.partnershipPeriod ? (
-							<Text className="font-regular text-xs text-content-tertiary">
-								{formatPartnershipPeriod(benefit.partnershipPeriod)}
-							</Text>
-						) : null}
-					</View>
+					<Text className="flex-1 font-semibold text-sm text-content-primary">
+						{benefit.paperContent}
+					</Text>
 				</View>
+				{benefit.partnershipPeriod ? (
+					<Text className="font-regular text-xs text-content-tertiary">
+						{formatPartnershipPeriod(benefit.partnershipPeriod)}
+					</Text>
+				) : null}
 			</View>
 		</Pressable>
 	);
