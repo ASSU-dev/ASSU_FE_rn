@@ -21,15 +21,19 @@ export function QrViewPage() {
 		if (saving) return;
 		setSaving(true);
 		try {
-			const { status } = await MediaLibrary.requestPermissionsAsync(
-				Platform.OS === "ios",
-			);
-			if (status !== "granted") {
-				Alert.alert(
-					"권한 필요",
-					"제휴 QR 코드를 사진 보관함에 저장하려면 사진 저장 권한을 허용해 주세요.",
+			const needsPermission =
+				Platform.OS === "ios" || Number(Platform.Version) < 29;
+			if (needsPermission) {
+				const { status } = await MediaLibrary.requestPermissionsAsync(
+					Platform.OS === "ios",
 				);
-				return;
+				if (status !== "granted") {
+					Alert.alert(
+						"권한 필요",
+						"제휴 QR 코드를 사진 보관함에 저장하려면 사진 저장 권한을 허용해 주세요.",
+					);
+					return;
+				}
 			}
 			const uri = await viewShotRef.current?.capture?.();
 			if (!uri) return;
