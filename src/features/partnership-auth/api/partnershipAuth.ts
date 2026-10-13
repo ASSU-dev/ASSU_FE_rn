@@ -15,6 +15,7 @@ interface PaperContentResponseDTO {
 	adminId?: number;
 	adminName?: string;
 	paperContent?: string;
+	partnershipPeriod?: string | null;
 	contentId?: number;
 	goods?: string[];
 	people?: number | null;
@@ -77,6 +78,7 @@ export async function getStorePartnerships(
 					adminId: content.adminId,
 					manager: content.adminName,
 					contents: content.paperContent,
+					partnershipPeriod: content.partnershipPeriod ?? undefined,
 					goods: content.goods ?? [],
 					people: content.people ?? null,
 					cost: content.cost ?? null,

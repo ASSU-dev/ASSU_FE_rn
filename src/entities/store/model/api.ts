@@ -2,6 +2,7 @@ export interface PaperContentResponseDto {
 	adminId?: number | null;
 	adminName?: string | null;
 	paperContent?: string | null;
+	partnershipPeriod?: string | null;
 	contentId?: number | null;
 	goods?: string[] | null;
 	people?: number | null;
@@ -19,6 +20,7 @@ export interface StoreBenefit {
 	adminId: number;
 	adminName: string;
 	paperContent: string;
+	partnershipPeriod?: string;
 	goods: string[];
 	people?: number;
 	cost?: number;

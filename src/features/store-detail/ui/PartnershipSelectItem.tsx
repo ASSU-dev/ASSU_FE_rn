@@ -8,6 +8,16 @@ interface PartnershipSelectItemProps {
 	onPress: () => void;
 }
 
+function formatPartnershipPeriod(period: string): string {
+	const formattedPeriod = period
+		.trim()
+		.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, "$1.$2.$3");
+
+	return /^제휴기간(?:\s|$)/.test(formattedPeriod)
+		? formattedPeriod
+		: `제휴기간 ${formattedPeriod}`;
+}
+
 export function PartnershipSelectItem({
 	benefit,
 	isSelected,
@@ -32,9 +42,16 @@ export function PartnershipSelectItem({
 							{benefit.adminName}
 						</Text>
 					</View>
-					<Text className="flex-1 font-semibold text-sm text-content-primary">
-						{benefit.paperContent}
-					</Text>
+					<View className="flex-1 gap-0.5">
+						<Text className="font-semibold text-sm text-content-primary">
+							{benefit.paperContent}
+						</Text>
+						{benefit.partnershipPeriod ? (
+							<Text className="font-regular text-xs text-content-tertiary">
+								{formatPartnershipPeriod(benefit.partnershipPeriod)}
+							</Text>
+						) : null}
+					</View>
 				</View>
 			</View>
 		</Pressable>

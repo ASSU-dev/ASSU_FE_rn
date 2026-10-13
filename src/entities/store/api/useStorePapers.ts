@@ -34,6 +34,7 @@ function toStoreBenefit(
 		adminId: typeof item.adminId === "number" ? item.adminId : 0,
 		adminName: item.adminName?.trim() || "제휴 혜택",
 		paperContent,
+		partnershipPeriod: item.partnershipPeriod?.trim() || undefined,
 		goods,
 		people: typeof item.people === "number" ? item.people : undefined,
 		cost: typeof item.cost === "number" ? item.cost : undefined,
