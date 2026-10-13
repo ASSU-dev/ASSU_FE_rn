@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { BaseResponse } from "@/shared/api";
 import { apiInstance } from "@/shared/api";
+import { ENV } from "@/shared/config/env";
 import type {
 	PaperContentResponseDto,
 	StoreBenefit,
@@ -23,7 +24,7 @@ function toStoreBenefit(
 					typeof good === "string" && good.trim().length > 0,
 			)
 		: [];
-	const paperContent = item.paperContent?.trim();
+	const paperContent = item.paperContent?.trim() ?? "";
 
 	return {
 		id:
@@ -32,7 +33,7 @@ function toStoreBenefit(
 				: `${item.adminId ?? "benefit"}-${index}`,
 		adminId: typeof item.adminId === "number" ? item.adminId : 0,
 		adminName: item.adminName?.trim() || "제휴 혜택",
-		content: paperContent || goods.join(", ") || "혜택 정보가 없습니다.",
+		paperContent,
 		goods,
 		people: typeof item.people === "number" ? item.people : undefined,
 		cost: typeof item.cost === "number" ? item.cost : undefined,
@@ -60,11 +61,24 @@ function toStorePapers(
 
 async function fetchStorePapers(storeId: number): Promise<StorePapers> {
 	const endpoint = `/store/${storeId}/papers`;
-	if (__DEV__) console.log("[fetchStorePapers] 요청:", endpoint);
+	if (__DEV__) {
+		console.log("[PartnershipDebug] store papers request", {
+			baseURL: apiInstance.defaults.baseURL,
+			endpoint,
+			storeId,
+			usingMocks: ENV.USE_MOCKS,
+		});
+	}
 	const res =
 		await apiInstance.get<BaseResponse<StorePapersResponseDto | null>>(
 			endpoint,
 		);
+	if (__DEV__) {
+		console.log("[PartnershipDebug] store papers response", {
+			status: res.status,
+			data: res.data,
+		});
+	}
 
 	if (!res.data.isSuccess) {
 		throw new Error(
@@ -72,11 +86,18 @@ async function fetchStorePapers(storeId: number): Promise<StorePapers> {
 		);
 	}
 
-	if (res.data.result == null) {
-		return toStorePapers({ partnershipContents: [] }, storeId);
+	const storePapers =
+		res.data.result == null
+			? toStorePapers({ partnershipContents: [] }, storeId)
+			: toStorePapers(res.data.result, storeId);
+	if (__DEV__) {
+		console.log("[PartnershipDebug] store papers mapped for display", {
+			storeId,
+			benefits: storePapers.partnershipContents,
+		});
 	}
 
-	return toStorePapers(res.data.result, storeId);
+	return storePapers;
 }
 
 export function useStorePapers(storeId: number | null) {
