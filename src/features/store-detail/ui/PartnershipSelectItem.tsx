@@ -36,13 +36,13 @@ export function PartnershipSelectItem({
 				<CheckCircleOff width={22} height={22} />
 			)}
 			<View className="flex-1 gap-1.5">
-				<View className="flex-row items-start gap-x-1.5">
+				<View className="flex-row items-center gap-x-12">
 					<View className="shrink-0 rounded-full bg-neutral px-2.5 py-1">
 						<Text className="font-regular text-[11px] text-content-secondary">
 							{benefit.adminName}
 						</Text>
 					</View>
-					<Text className="flex-1 font-semibold text-sm text-content-primary">
+					<Text className="flex-1 font-semibold text-xl text-content-primary">
 						{benefit.paperContent}
 					</Text>
 				</View>
