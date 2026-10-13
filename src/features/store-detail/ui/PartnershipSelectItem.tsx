@@ -37,17 +37,17 @@ export function PartnershipSelectItem({
 			)}
 			<View className="shrink-0 flex-row items-center">
 				<View className="w-[221px] gap-1">
-					<Text className="w-full font-medium text-xs leading-normal tracking-[-0.32px] text-content-primary">
+					<Text className="w-full font-medium text-sm leading-normal tracking-[-0.32px] text-content-primary">
 						{benefit.paperContent}
 					</Text>
 					{benefit.partnershipPeriod ? (
-						<Text className="w-full font-light text-[10px] leading-normal tracking-[-0.32px] text-content-secondary">
+						<Text className="w-full font-light text-xs leading-normal tracking-[-0.32px] text-content-secondary">
 							{formatPartnershipPeriod(benefit.partnershipPeriod)}
 						</Text>
 					) : null}
 				</View>
-				<View className="shrink-0 items-center justify-center rounded-full bg-neutral px-2.5 py-0.5">
-					<Text className="font-regular text-[11px] leading-[21px] tracking-[-0.32px] text-content-primary">
+				<View className="shrink-0 items-center justify-center rounded-full bg-neutral px-3.5 py-1">
+					<Text className="font-regular text-sm leading-[21px] tracking-[-0.32px] text-content-primary">
 						{benefit.adminName}
 					</Text>
 				</View>
