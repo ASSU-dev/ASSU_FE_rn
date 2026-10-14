@@ -37,8 +37,8 @@
 			"icon": "./src/shared/assets/images/icon.png",
 			"adaptiveIcon": {
 				"backgroundColor": "#FFFFFF",
-				"foregroundImage": "./src/shared/assets/images/icon.png",
-				"monochromeImage": "./src/shared/assets/images/icon.png"
+				"foregroundImage": "./src/shared/assets/images/android-icon_adaptive_fore.png",
+				"monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
 			},
 			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false
@@ -79,7 +79,7 @@
 				"expo-splash-screen",
 				{
 					"image": "./src/shared/assets/images/splash-icon.png",
-					"imageWidth": 200,
+					"imageWidth": 100,
 					"resizeMode": "contain",
 					"backgroundColor": "#ffffff",
 					"dark": {
