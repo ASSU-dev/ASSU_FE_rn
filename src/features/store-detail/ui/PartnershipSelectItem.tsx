@@ -1,8 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import type { StoreBenefit } from "@/entities/store";
 import { CheckCircleOff, CheckCircleOn } from "@/shared/assets/icons";
-import { formatBenefit } from "../lib/formatBenefit";
-import { useMultiLineText } from "../lib/useMultiLineText";
 
 interface PartnershipSelectItemProps {
 	benefit: StoreBenefit;
@@ -10,18 +8,25 @@ interface PartnershipSelectItemProps {
 	onPress: () => void;
 }
 
+function formatPartnershipPeriod(period: string): string {
+	const formattedPeriod = period
+		.trim()
+		.replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g, "$1.$2.$3");
+
+	return /^제휴기간(?:\s|$)/.test(formattedPeriod)
+		? formattedPeriod
+		: `제휴기간 ${formattedPeriod}`;
+}
+
 export function PartnershipSelectItem({
 	benefit,
 	isSelected,
 	onPress,
 }: PartnershipSelectItemProps) {
-	const { isMultiLine, onTextLayout } = useMultiLineText();
-	const { hasCondition, conditionText, goodsText } = formatBenefit(benefit);
-
 	return (
 		<Pressable
 			onPress={onPress}
-			className={`flex-row items-center bg-canvas gap-3 rounded-card border px-4 py-3 ${
+			className={`min-h-[93px] flex-row items-center justify-between rounded-[8px] border bg-canvas px-3 ${
 				isSelected ? "border-primary" : "border-neutral-variant"
 			}`}
 		>
@@ -30,50 +35,21 @@ export function PartnershipSelectItem({
 			) : (
 				<CheckCircleOff width={22} height={22} />
 			)}
-			<View className="flex-1 gap-1.5">
-				<View className="flex-row items-center gap-x-1.5">
-					<View className="shrink-0 rounded-full bg-neutral px-2.5 py-1">
-						<Text className="font-regular text-[11px] text-content-secondary">
-							{benefit.adminName}
+			<View className="shrink-0 flex-row items-center">
+				<View className="w-[221px] gap-1">
+					<Text className="w-full font-medium text-sm leading-normal tracking-[-0.32px] text-content-primary">
+						{benefit.paperContent}
+					</Text>
+					{benefit.partnershipPeriod ? (
+						<Text className="w-full font-light text-xs leading-normal tracking-[-0.32px] text-content-secondary">
+							{formatPartnershipPeriod(benefit.partnershipPeriod)}
 						</Text>
-					</View>
-					{hasCondition ? (
-						isMultiLine ? (
-							<View className="flex-1 gap-0.5">
-								<Text
-									className="font-semibold text-sm text-content-primary"
-									numberOfLines={1}
-								>
-									{conditionText}
-								</Text>
-								{goodsText.length > 0 && (
-									<Text
-										className="font-semibold text-sm text-primary"
-										numberOfLines={1}
-									>
-										{goodsText}
-									</Text>
-								)}
-							</View>
-						) : (
-							<Text
-								className="flex-1 font-semibold text-sm"
-								onTextLayout={onTextLayout}
-							>
-								<Text className="text-content-primary">
-									{conditionText}
-									{goodsText.length > 0 ? ", " : ""}
-								</Text>
-								{goodsText.length > 0 && (
-									<Text className="text-primary">{goodsText}</Text>
-								)}
-							</Text>
-						)
-					) : (
-						<Text className="flex-1 font-semibold text-sm text-content-primary">
-							{benefit.content}
-						</Text>
-					)}
+					) : null}
+				</View>
+				<View className="shrink-0 items-center justify-center rounded-full bg-neutral px-3.5 py-1">
+					<Text className="font-regular text-sm leading-[21px] tracking-[-0.32px] text-content-primary">
+						{benefit.adminName}
+					</Text>
 				</View>
 			</View>
 		</Pressable>
