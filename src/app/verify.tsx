@@ -16,7 +16,7 @@ export default function VerifyScreen() {
 			<Redirect
 				href={{
 					pathname: "/(protected)/student/store/[storeId]/detail" as never,
-					params: { storeId: storeIdNum },
+					params: { storeId: storeIdNum, fromDeepLink: "true" },
 				}}
 			/>
 		);
