@@ -1,6 +1,5 @@
 import { View } from "react-native";
 import { StampItem } from "@/entities/stamp/ui/StampItem";
-import { InfoLinkText } from "@/shared/ui/info";
 
 export const StampBoard = ({ currentCount = 0 }) => {
 	const STAMP_LIMIT = 10;
@@ -21,9 +20,6 @@ export const StampBoard = ({ currentCount = 0 }) => {
 						</View>
 					))}
 				</View>
-			</View>
-			<View className="ml-[7px] mt-3">
-				<InfoLinkText message="스탬프 10개 적립시 기프티콘이 지급됩니다!" />
 			</View>
 		</View>
 	);
