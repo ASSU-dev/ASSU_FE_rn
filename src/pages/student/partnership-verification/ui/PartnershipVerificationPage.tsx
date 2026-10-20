@@ -154,7 +154,7 @@ export function PartnershipVerificationPage() {
 							{benefit?.goods.join(", ") || "개인 혜택"}
 						</Text>
 					</View>
-					<Text className="max-w-[110px] shrink self-start text-right text-[14px] font-semibold text-content-primary">
+					<Text className="max-w-[110px] shrink self-center rounded-[999px] bg-neutral px-gutter py-[6px] text-center text-[14px] font-semibold text-content-primary">
 						{benefit?.manager ?? "학생회"}
 					</Text>
 				</View>
