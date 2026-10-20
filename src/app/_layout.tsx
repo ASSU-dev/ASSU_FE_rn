@@ -20,6 +20,14 @@ initMocks();
 // 비로그인 상태의 진입 화면
 const REGISTER_ROUTE = "/(auth)/register";
 
+function getVerifyRoute(storeId: number) {
+	return `/verify?storeId=${storeId}`;
+}
+
+function getLoginRouteWithReturnTo(returnTo: string) {
+	return `${REGISTER_ROUTE}?returnTo=${encodeURIComponent(returnTo)}`;
+}
+
 function getVerifyStoreId(url: string | null): number | null {
 	if (!url) return null;
 	try {
@@ -66,13 +74,14 @@ export default function RootLayout() {
 				Linking.getInitialURL(),
 			]);
 
-			if (isLoggedIn && role !== "ADMIN" && role !== "PARTNER") {
-				const storeId = getVerifyStoreId(url);
-				if (storeId) {
-					setInitialRoute(`/(protected)/student/store/${storeId}/detail`);
-					setAuthReady(true);
-					return;
-				}
+			const storeId = getVerifyStoreId(url);
+			if (storeId) {
+				const verifyRoute = getVerifyRoute(storeId);
+				setInitialRoute(
+					isLoggedIn ? verifyRoute : getLoginRouteWithReturnTo(verifyRoute),
+				);
+				setAuthReady(true);
+				return;
 			}
 
 			setInitialRoute(isLoggedIn ? getHomeRouteByRole(role) : REGISTER_ROUTE);
