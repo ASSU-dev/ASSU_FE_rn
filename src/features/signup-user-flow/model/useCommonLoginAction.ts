@@ -10,9 +10,10 @@ import { getLoginErrorMessage } from "../lib/getLoginErrorMessage";
 type Params = {
 	email: string;
 	password: string;
+	returnTo?: string;
 };
 
-export function useCommonLoginAction({ email, password }: Params) {
+export function useCommonLoginAction({ email, password, returnTo }: Params) {
 	const mutation = useLoginCommonMutation();
 
 	const handlePressLogin = useCallback(async () => {
@@ -26,6 +27,7 @@ export function useCommonLoginAction({ email, password }: Params) {
 				role,
 				basicInfo,
 				memberId,
+				returnTo,
 			);
 			router.replace(homeRoute as never);
 		} catch (error) {
@@ -43,7 +45,7 @@ export function useCommonLoginAction({ email, password }: Params) {
 
 			Alert.alert("로그인 실패", getLoginErrorMessage(error));
 		}
-	}, [email, mutation, password]);
+	}, [email, mutation, password, returnTo]);
 
 	return {
 		handlePressLogin,

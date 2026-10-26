@@ -8,7 +8,7 @@ import { assertSuccess } from "../lib/assertSuccess";
 import { completeLogin } from "../lib/auth";
 import { getLoginErrorMessage } from "../lib/getLoginErrorMessage";
 
-export function useStudentLoginAction() {
+export function useStudentLoginAction(returnTo?: string) {
 	const [isWebViewVisible, setWebViewVisible] = useState(false);
 	const mutation = useLoginStudentMutation();
 
@@ -41,6 +41,7 @@ export function useStudentLoginAction() {
 					role,
 					basicInfo,
 					memberId,
+					returnTo,
 				);
 				if (__DEV__) console.log("[LMS LOGIN] session saved", { homeRoute });
 				setWebViewVisible(false);
@@ -58,7 +59,7 @@ export function useStudentLoginAction() {
 				Alert.alert("로그인 실패", getLoginErrorMessage(error));
 			}
 		},
-		[mutation],
+		[mutation, returnTo],
 	);
 
 	const handlePressLmsLogin = useCallback(async () => {
