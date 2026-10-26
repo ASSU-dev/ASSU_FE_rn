@@ -174,7 +174,8 @@ export function PartnershipQrAuthPage() {
 				userIds: [],
 				role: "PARTICIPANT",
 			});
-			router.replace("/(protected)/student/partnership-group-participant");
+			router.dismissAll();
+			router.push("/(protected)/student/partnership-group-participant");
 			return;
 		}
 

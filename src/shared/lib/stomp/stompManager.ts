@@ -8,6 +8,7 @@ export class StompManager {
 	private readonly brokerUrl = ENV.STOMP_BROKER_URL.trim();
 	private readonly isBrokerUrlValid = /^wss?:\/\/\S+$/i.test(this.brokerUrl);
 	private receiptSequence = 0;
+	private connectionListeners = new Set<() => void>();
 	private subRegistry = new Map<
 		symbol,
 		{ topic: string; callback: (msg: IMessage) => void }
@@ -35,6 +36,9 @@ export class StompManager {
 			console.log("[STOMP] connected");
 			for (const [key, { topic, callback }] of this.subRegistry.entries()) {
 				this.subscribe(key, topic, callback, "resubscribed");
+			}
+			for (const listener of this.connectionListeners) {
+				listener();
 			}
 		};
 
@@ -103,6 +107,33 @@ export class StompManager {
 		if (!this.client.active) {
 			this.client.activate();
 		}
+	}
+
+	waitForConnection(timeoutMs = 10_000): Promise<boolean> {
+		if (this.client.connected) return Promise.resolve(true);
+
+		return new Promise((resolve) => {
+			let timeout: ReturnType<typeof setTimeout> | undefined;
+			let isSettled = false;
+			const listener = () => {
+				if (this.client.connected) finish(true);
+			};
+			const finish = (connected: boolean) => {
+				if (isSettled) return;
+				isSettled = true;
+				if (timeout) clearTimeout(timeout);
+				this.connectionListeners.delete(listener);
+				resolve(connected);
+			};
+
+			this.connectionListeners.add(listener);
+			timeout = setTimeout(() => finish(false), timeoutMs);
+			if (this.client.connected) {
+				finish(true);
+				return;
+			}
+			this.activate();
+		});
 	}
 
 	deactivate(): void {
