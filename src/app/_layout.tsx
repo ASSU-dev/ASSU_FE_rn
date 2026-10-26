@@ -1,5 +1,9 @@
 import "@/shared/api";
 import { useForegroundMessage, useInitFcm } from "@/features/device-token";
+import {
+	GROUP_CERTIFICATION_LINK_PATH,
+	parseGroupCertificationQr,
+} from "@/features/partnership-auth";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
@@ -42,6 +46,16 @@ function getVerifyStoreId(url: string | null): number | null {
 	}
 }
 
+function getGroupCertificationRoute(url: string | null): string | null {
+	if (!url) return null;
+	const payload = parseGroupCertificationQr(url);
+	if (!payload) return null;
+
+	return `/(protected)/${GROUP_CERTIFICATION_LINK_PATH}?payload=${encodeURIComponent(
+		JSON.stringify(payload),
+	)}`;
+}
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: { retry: 1, staleTime: 1000 * 60 },
@@ -73,6 +87,15 @@ export default function RootLayout() {
 				initAuth(),
 				Linking.getInitialURL(),
 			]);
+
+			if (isLoggedIn && role !== "ADMIN" && role !== "PARTNER") {
+				const groupCertificationRoute = getGroupCertificationRoute(url);
+				if (groupCertificationRoute) {
+					setInitialRoute(groupCertificationRoute);
+					setAuthReady(true);
+					return;
+				}
+			}
 
 			const storeId = getVerifyStoreId(url);
 			if (storeId) {

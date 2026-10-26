@@ -2,6 +2,8 @@ export { parsePartnershipStoreId } from "./api/partnershipAuth";
 export {
 	buildGroupCertificationQrValue,
 	certifyGroupParticipant,
+	GROUP_CERTIFICATION_LINK_PATH,
+	GROUP_CERTIFICATION_LINK_SCHEME,
 	parseGroupCertificationQr,
 	useGroupCertificationProgress,
 } from "./api/useGroupCertificationSocket";

@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useEffect, useRef } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import {
 	certifyGroupParticipant,
+	parseGroupCertificationQr,
 	useGroupCertificationProgress,
 	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
@@ -11,43 +12,124 @@ import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
 
 export function PartnershipGroupParticipantPage() {
+	const { payload: deepLinkPayloadParam } = useLocalSearchParams<{
+		payload: string | string[];
+	}>();
+	const deepLinkPayload = Array.isArray(deepLinkPayloadParam)
+		? deepLinkPayloadParam[0]
+		: deepLinkPayloadParam;
 	const store = usePartnershipAuthStore((state) => state.store);
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
 	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
 	const resetPartnershipAuth = usePartnershipAuthStore((state) => state.reset);
+	const setStore = usePartnershipAuthStore((state) => state.setStore);
+	const setSelectedBenefit = usePartnershipAuthStore(
+		(state) => state.setSelectedBenefit,
+	);
+	const setGroupSession = usePartnershipAuthStore(
+		(state) => state.setGroupSession,
+	);
+	const [hydratedDeepLinkPayload, setHydratedDeepLinkPayload] = useState<
+		string | null
+	>(null);
+	const isDeepLinkHydrated =
+		!deepLinkPayload || hydratedDeepLinkPayload === deepLinkPayload;
 	const hasPublishedRef = useRef(false);
+	const hasValidSessionRef = useRef(Boolean(store && benefit && groupSession));
 	const sessionId = groupSession?.sessionId ?? null;
 	useGroupCertificationProgress(sessionId);
 
 	useEffect(() => {
-		if (!benefit || !groupSession || hasPublishedRef.current) return;
+		if (!deepLinkPayload) return;
 
-		hasPublishedRef.current = true;
-		const published = certifyGroupParticipant({
-			adminId: benefit.adminId,
-			sessionId: groupSession.sessionId,
-		});
-		if (!published) {
+		hasPublishedRef.current = false;
+		const payload = parseGroupCertificationQr(deepLinkPayload);
+		if (!payload) {
 			Alert.alert(
-				"연결 확인",
-				"인증 서버에 연결되지 않았습니다. 잠시 후 다시 시도해주세요.",
+				"QR 확인 실패",
+				"다인 인증 정보를 확인할 수 없습니다. QR을 다시 발급해 주세요.",
 				[
 					{
 						text: "확인",
-						onPress: () => router.back(),
+						onPress: () =>
+							router.replace("/(protected)/student/partnership-auth"),
 					},
 				],
+				{ cancelable: false },
 			);
+			return;
 		}
-	}, [benefit, groupSession]);
+
+		const benefit = {
+			id: payload.contentId,
+			adminId: payload.adminId,
+			manager: payload.adminName,
+			contents: payload.partnershipContent,
+			goods: payload.goods,
+			people: payload.requiredPeople,
+			cost: null,
+			type: "GROUP",
+		} as const;
+
+		setStore({
+			storeId: payload.storeId,
+			storeName: payload.storeName,
+			benefits: [benefit],
+		});
+		setSelectedBenefit(benefit);
+		setGroupSession({
+			sessionId: payload.sessionId,
+			requiredPeople: payload.requiredPeople,
+			count: 0,
+			status: "WAITING",
+			userIds: [],
+			role: "PARTICIPANT",
+		});
+		setHydratedDeepLinkPayload(deepLinkPayload);
+	}, [deepLinkPayload, setGroupSession, setSelectedBenefit, setStore]);
 
 	useEffect(() => {
-		if (!store || !benefit || !groupSession) {
+		if (deepLinkPayload && !isDeepLinkHydrated) return;
+		if (!benefit || !groupSession || hasPublishedRef.current) return;
+
+		hasPublishedRef.current = true;
+		let isMounted = true;
+		void certifyGroupParticipant({
+			adminId: benefit.adminId,
+			sessionId: groupSession.sessionId,
+		}).then((published) => {
+			if (isMounted && !published) {
+				Alert.alert(
+					"연결 확인",
+					"인증 서버에 연결되지 않았습니다. 잠시 후 다시 시도해주세요.",
+					[
+						{
+							text: "확인",
+							onPress: () => router.back(),
+						},
+					],
+				);
+			}
+		});
+		return () => {
+			isMounted = false;
+		};
+	}, [benefit, deepLinkPayload, groupSession, isDeepLinkHydrated]);
+
+	useEffect(() => {
+		if (deepLinkPayload) return;
+
+		if (store && benefit && groupSession) {
+			hasValidSessionRef.current = true;
+			return;
+		}
+
+		if (!hasValidSessionRef.current) {
 			router.replace("/(protected)/student/partnership-auth");
 		}
-	}, [benefit, groupSession, store]);
+	}, [benefit, deepLinkPayload, groupSession, store]);
 
-	if (!store || !benefit || !groupSession) return null;
+	if (!isDeepLinkHydrated || !store || !benefit || !groupSession) return null;
 
 	const displayedCount = Math.min(
 		groupSession.count,
@@ -81,7 +163,7 @@ export function PartnershipGroupParticipantPage() {
 			</Pressable>
 
 			<View className="mt-[45px] items-center">
-				<Text className="text-center text-[25px] font-semibold leading-caption tracking-caption text-content-primary">
+				<Text className="text-center text-[25px] font-semibold leading-heading tracking-caption text-content-primary">
 					{store.storeName}
 				</Text>
 			</View>
