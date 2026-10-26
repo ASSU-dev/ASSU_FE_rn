@@ -6,6 +6,7 @@ import {
 	StudentTokenAuthPayloadDTOUniversity,
 } from "@/shared/api";
 import { assertRequestSucceeded } from "../lib/assertSuccess";
+import { completeLogin } from "../lib/auth";
 
 const DUPLICATE_ACCOUNT_MESSAGE = { 409: "이미 존재하는 계정입니다." };
 
@@ -43,6 +44,9 @@ export function useStudentSignupAction({
 				},
 			});
 			assertRequestSucceeded(response, "회원가입에 실패했습니다.");
+
+			const { tokens, role, basicInfo, memberId } = response.result ?? {};
+			await completeLogin(tokens ?? {}, role, basicInfo, memberId);
 			onSuccess();
 		} catch (error) {
 			Alert.alert(

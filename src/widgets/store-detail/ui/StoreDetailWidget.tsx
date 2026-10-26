@@ -18,11 +18,13 @@ import { useStoreDetailData } from "../model/useStoreDetailData";
 interface StoreDetailWidgetProps {
 	storeId: number;
 	storeName?: string;
+	onBack?: () => void;
 }
 
 export function StoreDetailWidget({
 	storeId,
 	storeName: fallbackName,
+	onBack,
 }: StoreDetailWidgetProps) {
 	const {
 		store,
@@ -75,7 +77,7 @@ export function StoreDetailWidget({
 			withTopInset
 			withBottomInset
 			contentContainerClassName="flex-1"
-			header={<AppTopBar title={title} titleAlign="left" />}
+			header={<AppTopBar title={title} titleAlign="left" onBack={onBack} />}
 		>
 			{isLoading || isExternal ? (
 				<View className="flex-1 items-center justify-center">

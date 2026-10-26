@@ -1,6 +1,6 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { getHomeRouteByRole } from "@/shared/api/auth";
+import { getPostAuthRoute } from "../lib/auth";
 import { pickUploadFile } from "../lib/pickUploadFile";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
 import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
@@ -16,6 +16,7 @@ import { useStudentSignupAction } from "./useStudentSignupAction";
 import { useStudentVerificationAction } from "./useStudentVerificationAction";
 
 export function useSignupFlowController() {
+	const { returnTo } = useLocalSearchParams<{ returnTo?: string }>();
 	const FORCE_PHONE_VERIFICATION_BYPASS = false;
 	const {
 		step,
@@ -115,11 +116,12 @@ export function useSignupFlowController() {
 	});
 	const { checkEmailAvailability } = useAdminEmailAvailabilityAction();
 
-	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction();
+	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction(returnTo);
 	const { handlePressLogin, isPending: isCommonLoginPending } =
 		useCommonLoginAction({
 			email: form.auth.email,
 			password: form.auth.password,
+			returnTo,
 		});
 
 	const { sendCode, verifyCode, isVerifying } = usePhoneVerificationAction({
@@ -201,7 +203,7 @@ export function useSignupFlowController() {
 			},
 			onBottomButtonPress: async () => {
 				if (step === "complete") {
-					router.replace(getHomeRouteByRole(form.role) as never);
+					router.replace(getPostAuthRoute(form.role, returnTo) as never);
 					return;
 				}
 				if (step === "identity") {
@@ -239,6 +241,7 @@ export function useSignupFlowController() {
 			buttonLabel,
 			currentProgressIndex,
 			checkEmailAvailability,
+			returnTo,
 			form.role,
 			form.admin.email,
 			form.identity.phone,
