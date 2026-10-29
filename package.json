@@ -13,6 +13,7 @@
 		"biome:format": "biome format . --write",
 		"icons": "node scripts/generate-icons.js",
 		"generate:api": "node scripts/generate-api.js",
+		"sync:skills": "node scripts/sync-skills.js",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage"
@@ -96,7 +97,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.3.14",
 		"@expo/ngrok": "4.1.0",
-		"@testing-library/react-native": "^14.0.1",
+		"@testing-library/react-native": "^13.3.3",
 		"@types/jest": "~29.5.14",
 		"@types/react": "~19.1.10",
 		"@types/uuid": "^11.0.0",
@@ -109,6 +110,7 @@
 		"lefthook": "^2.1.5",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"react-native-svg-transformer": "^1.5.3",
+		"react-test-renderer": "19.1.0",
 		"react-native-url-polyfill": "^3.0.0",
 		"tailwindcss": "3.4.17",
 		"typescript": "^5.9.3"
