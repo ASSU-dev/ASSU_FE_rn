@@ -9,6 +9,10 @@
 | 관리자 홈 | 높음 | 컴포넌트 | 제휴 목록 상위 3개 표시, 전체보기·상세 이동, 추천 업체 문의 시 관리자 역할과 업체 ID 전달 | `src/pages/admin/home/ui/AdminHomePage.test.tsx` | chunjaemin | 2026-10-07 |
 | 제휴업체 홈 | 높음 | 컴포넌트 | 제휴 목록 상위 3개 표시, 전체보기·상세 이동, 추천 단체 문의 시 제휴업체 역할과 관리자 ID 전달 | `src/pages/partner/home/ui/PartnerHomePage.test.tsx` | chunjaemin | 2026-10-07 |
 | 제휴 목록 위젯 | 높음 | 컴포넌트 | 최대 항목 수, 빈 목록·로딩·오류 상태, 목록이 없을 때 전체보기 숨김 | `src/widgets/partnership-list/ui/PartnershipListWidget.test.tsx` | chunjaemin | 2026-10-07 |
+| QR 매장 인식·제휴 인증 API | 높음 | 단위 | 숫자·JSON·URL·경로 QR의 매장 번호 인식과 잘못된 번호 차단, 인원 조건 2명 이상이면 단체 혜택, 불완전 혜택 제외, 개인 인증·단체 세션 생성 요청과 실패 처리 | `src/features/partnership-auth/api/partnershipAuth.test.ts` | chunjaemin | 2026-10-31 |
+| 단체 인증 QR·진행 구독 | 높음 | 단위·훅 | 단체 인증 딥링크 생성↔인식, 스킴·경로·필드 검증 실패 차단, 진행 인원 갱신·완료 처리, 정상 인증 사용자 목록에 본인이 없으면 1회 안내 후 홈 복귀 (EXPIRED 처리는 미구현으로 제외) | `src/features/partnership-auth/api/useGroupCertificationSocket.test.ts` | chunjaemin | 2026-10-31 |
+| QR 인증 화면 | 높음 | 컴포넌트 | 단체 QR은 참여자로 세션 합류, 매장 QR은 혜택 선택 이동, 잘못된 QR 안내 후 재스캔, 프레임 밖 QR 무시, 카메라 권한 거부 시 설정 안내 | `src/pages/student/partnership-qr-auth/ui/PartnershipQrAuthPage.test.tsx` | chunjaemin | 2026-10-31 |
+| 제휴 혜택 선택 | 높음 | 컴포넌트 | 개인 혜택은 개인 인증 후 확인 화면 이동, 단체 혜택은 인원 조건으로 세션 생성 후 대표자 QR 화면 이동, 인증 요청 실패 시 안내 후 이동 차단 | `src/pages/student/partnership-benefit-select/ui/PartnershipBenefitSelectPage.test.tsx` | chunjaemin | 2026-10-31 |
 
 테스트를 처음 추가하는 기능 PR에서 첫 행을 기록합니다.
 

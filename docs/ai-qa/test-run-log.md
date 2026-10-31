@@ -4,6 +4,7 @@
 
 | 날짜 | 작업/PR | 승인된 범위 | 대상 테스트 및 명령 | 시도별 결과 | 최종 결과 | 변경 파일 및 요약 | 제품 코드 수정 승인 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-10-31 | #270 | QR 제휴 인증 1~5 (QR 인식 규칙, 혜택 선택 후 개인/단체 분기, 단체 인증 진행 구독, QR 인증 화면 분기, 혜택 응답 변환·인증 요청). EXPIRED 처리 제외 | `yarn test --runTestsByPath src/features/partnership-auth/api/partnershipAuth.test.ts src/features/partnership-auth/api/useGroupCertificationSocket.test.ts src/pages/student/partnership-qr-auth/ui/PartnershipQrAuthPage.test.tsx src/pages/student/partnership-benefit-select/ui/PartnershipBenefitSelectPage.test.tsx` | 1회차 통과 | 4 suites, 50 tests 통과 | 테스트 파일 4개 추가(단위 21·단위/훅 21·컴포넌트 5·컴포넌트 3), `expo-linking` createURL·stompManager·expo-camera·expo-router 최소 mock | 해당 없음(제품 코드 변경 없음) |
 
 ## 기록 규칙
 
