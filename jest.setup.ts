@@ -12,8 +12,7 @@ jest.mock("react-native-safe-area-context", () => {
 	const frame = { x: 0, y: 0, width: 320, height: 640 };
 	// SafeAreaProvider/SafeAreaView — passthrough that renders children directly.
 	// Default native fallback renders `<RNCSafeAreaProvider />` without children in Jest.
-	const passthrough = (props: { children?: unknown }) =>
-		props.children ?? null;
+	const passthrough = (props: { children?: unknown }) => props.children ?? null;
 	return {
 		SafeAreaProvider: passthrough,
 		SafeAreaView: passthrough,
