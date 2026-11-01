@@ -4,6 +4,7 @@
 
 | 날짜 | 작업/PR | 승인된 범위 | 대상 테스트 및 명령 | 시도별 결과 | 최종 결과 | 변경 파일 및 요약 | 제품 코드 수정 승인 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-01 | `test/common-login-test` 로그인·회원가입 테스트 | 공통 이메일·학생 LMS 로그인, 학생·제휴업체·관리자 가입, 관리자 이메일 중복확인, 가입 body 변환 | 테스트 8개 파일 / `yarn test --runTestsByPath <8개 파일> --no-watchman` | 1회차 Watchman이 권한 없는 LaunchAgents 경로 접근으로 시작 전 중단 → `--no-watchman`으로 재실행 | 8 suites · 28 tests 통과 | 신규 테스트 8개(`auth`, `signupPayloadAdapters`, `useCommonLoginAction`, `useStudentLoginAction`, `useStudentSignupAction`, `usePartnerSignupAction`, `useAdminSignupAction`, `useAdminEmailAvailabilityAction`), 현황판 갱신 | 해당 없음(제품 코드 미수정) |
 
 ## 기록 규칙
 
