@@ -1,6 +1,5 @@
 import {
 	logEvent as firebaseLogEvent,
-	logScreenView as firebaseLogScreenView,
 	getAnalytics,
 	setAnalyticsCollectionEnabled,
 } from "@react-native-firebase/analytics";
@@ -43,7 +42,7 @@ export function logScreenView(screenName: string) {
 	if (!isAnalyticsEnabled) return;
 	if (__DEV__) console.log("[Analytics] screen_view:", screenName);
 	void runSafely(`화면(${screenName})`, () =>
-		firebaseLogScreenView(getAnalytics(), {
+		firebaseLogEvent(getAnalytics(), "screen_view", {
 			screen_name: screenName,
 			screen_class: screenName,
 		}),
