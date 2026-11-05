@@ -14,6 +14,14 @@
 | 학생 로그인·회원가입 | 높음 | 훅 | LMS 인증 성공 시 학생 세션·원래 인증 화면 이동, 로그인 실패 안내, 인증 누락 시 가입 차단, 가입 성공·실패 처리 | `src/features/signup-user-flow/model/useStudentLoginAction.test.tsx`, `src/features/signup-user-flow/model/useStudentSignupAction.test.tsx` | ahcgnoej | 2026-11-01 |
 | 제휴업체·관리자 회원가입 | 높음 | 단위·훅 | 역할별 payload·파일 변환, multipart 가입 요청, 파일 누락·가입 실패 안내, 성공 단계 이동 | `src/features/signup-user-flow/model/signupPayloadAdapters.test.ts`, `src/features/signup-user-flow/model/usePartnerSignupAction.test.tsx`, `src/features/signup-user-flow/model/useAdminSignupAction.test.tsx` | ahcgnoej | 2026-11-01 |
 | 관리자 회원가입 | 중간 | 훅 | 이메일 중복확인 성공 및 중복 이메일 안내 | `src/features/signup-user-flow/model/useAdminEmailAvailabilityAction.test.tsx` | ahcgnoej | 2026-11-01 |
+| 학생 지도 | 높음 | 단위 | 주변 매장 응답의 지도 마커 변환, id·이름·좌표 누락 시 마커 제외, 미정의 카테고리·제휴 여부 누락 처리 | `src/features/map-search/lib/mapSearchMappers.test.ts` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 높음 | 단위 | 매장 카드 대표 혜택·학생회, 추가 혜택 개수, 혜택 문구 조건·강조 분리, 거리 m/km 표기 | `src/entities/store/lib/mapDisplay.test.ts` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 높음 | 훅 | 위치 권한 허용 시 현재 위치, 거부 시 숭실대 기본 위치, 재요청 불가 시 설정 안내 | `src/widgets/map/model/useUserLocation.test.tsx` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 중간 | 훅 | 겹친 매장 2개 이상일 때만 묶음 목록 열기, 필터 변경·매장 감소 시 자동 닫기 | `src/widgets/map/model/useClusterStores.test.tsx` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 중간 | 단위 | 카테고리·학생회 칩 선택, 같은 칩 재탭 시 해제, 초기화 | `src/features/map-filter/model/useMapFilterStore.test.ts` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 낮음 | 훅 | 지도 범위 없으면 조회 차단, 같은 필터 이동 시 기존 마커 유지, 필터 변경 시 이전 마커 제거 | `src/features/map-search/api/useMapSearch.test.tsx` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 낮음 | 단위 | 지도 중심 좌표의 주변 조회 범위(±0.01°) 변환 | `src/widgets/map/model/toViewport.test.ts` | taegeon2 | 2026-11-01 |
+| 학생 지도 | 낮음 | 컴포넌트 | 선택 매장 카드 정보 표시, 본문 탭 시 상세 이동, 제휴 인증 탭 시 인증만 시작, 닫기 | `src/widgets/map/ui/StudentSelectedStoreCard.test.tsx` | taegeon2 | 2026-11-01 |
 
 테스트를 처음 추가하는 기능 PR에서 첫 행을 기록합니다.
 
