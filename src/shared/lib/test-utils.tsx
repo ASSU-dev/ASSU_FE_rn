@@ -1,6 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type RenderOptions, render } from "@testing-library/react-native";
 import type React from "react";
+import {
+	initialWindowMetrics,
+	SafeAreaProvider,
+} from "react-native-safe-area-context";
 
 function createTestQueryClient() {
 	return new QueryClient({
@@ -17,7 +21,9 @@ export function renderWithProviders(
 ) {
 	const queryClient = createTestQueryClient();
 	return render(
-		<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+		<SafeAreaProvider initialMetrics={initialWindowMetrics}>
+			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+		</SafeAreaProvider>,
 		options,
 	);
 }
