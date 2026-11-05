@@ -1,5 +1,9 @@
 import "@/shared/api";
 import { useForegroundMessage, useInitFcm } from "@/features/device-token";
+import {
+	GROUP_CERTIFICATION_LINK_PATH,
+	parseGroupCertificationQr,
+} from "@/features/partnership-auth";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
@@ -9,6 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
+import { Linking } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -18,6 +23,38 @@ initMocks();
 
 // 비로그인 상태의 진입 화면
 const REGISTER_ROUTE = "/(auth)/register";
+
+function getVerifyRoute(storeId: number) {
+	return `/verify?storeId=${storeId}`;
+}
+
+function getLoginRouteWithReturnTo(returnTo: string) {
+	return `${REGISTER_ROUTE}?returnTo=${encodeURIComponent(returnTo)}`;
+}
+
+function getVerifyStoreId(url: string | null): number | null {
+	if (!url) return null;
+	try {
+		const parsed = new URL(url);
+		const isVerify =
+			parsed.pathname === "/verify" || parsed.hostname === "verify";
+		if (!isVerify) return null;
+		const id = Number(parsed.searchParams.get("storeId"));
+		return Number.isSafeInteger(id) && id > 0 ? id : null;
+	} catch {
+		return null;
+	}
+}
+
+function getGroupCertificationRoute(url: string | null): string | null {
+	if (!url) return null;
+	const payload = parseGroupCertificationQr(url);
+	if (!payload) return null;
+
+	return `/(protected)/${GROUP_CERTIFICATION_LINK_PATH}?payload=${encodeURIComponent(
+		JSON.stringify(payload),
+	)}`;
+}
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -45,10 +82,35 @@ export default function RootLayout() {
 	const hasRedirected = useRef(false);
 
 	useEffect(() => {
-		initAuth().then(({ isLoggedIn, role }) => {
+		const init = async () => {
+			const [{ isLoggedIn, role }, url] = await Promise.all([
+				initAuth(),
+				Linking.getInitialURL(),
+			]);
+
+			if (isLoggedIn && role !== "ADMIN" && role !== "PARTNER") {
+				const groupCertificationRoute = getGroupCertificationRoute(url);
+				if (groupCertificationRoute) {
+					setInitialRoute(groupCertificationRoute);
+					setAuthReady(true);
+					return;
+				}
+			}
+
+			const storeId = getVerifyStoreId(url);
+			if (storeId) {
+				const verifyRoute = getVerifyRoute(storeId);
+				setInitialRoute(
+					isLoggedIn ? verifyRoute : getLoginRouteWithReturnTo(verifyRoute),
+				);
+				setAuthReady(true);
+				return;
+			}
+
 			setInitialRoute(isLoggedIn ? getHomeRouteByRole(role) : REGISTER_ROUTE);
 			setAuthReady(true);
-		});
+		};
+		void init();
 	}, []);
 
 	// Stack이 실제로 마운트된 뒤에만 replace를 실행해야 함.
@@ -73,6 +135,7 @@ export default function RootLayout() {
 						<FcmInitializer />
 						<Stack>
 							<Stack.Screen name="index" options={{ headerShown: false }} />
+							<Stack.Screen name="verify" options={{ headerShown: false }} />
 							<Stack.Screen name="(auth)" options={{ headerShown: false }} />
 							<Stack.Screen
 								name="(protected)"

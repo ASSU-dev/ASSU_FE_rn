@@ -114,7 +114,12 @@ export function toSearchResultStore(value: unknown): SearchResultStore | null {
 		storeId,
 		partnerId,
 		adminId,
-		imageUri: getString(value, ["imageUri", "imageUrl", "storeImageUrl"]),
+		imageUri: getString(value, [
+			"imageUri",
+			"imageUrl",
+			"storeImageUrl",
+			"profileUrl",
+		]),
 		tag:
 			getString(value, ["tag", "adminName", "affiliation", "category"]) ??
 			getPartnershipAdminName(value.partnerships),
@@ -269,6 +274,7 @@ export function toStoreMarker(value: unknown): StoreMarker | null {
 			"storeImageUrl",
 			"profileImageUrl",
 			"thumbnailUrl",
+			"profileUrl",
 		]),
 		profileUrl: getString(value, ["profileUrl", "placeUrl"]),
 		phoneNumber: getString(value, ["phoneNumber", "phone"]),

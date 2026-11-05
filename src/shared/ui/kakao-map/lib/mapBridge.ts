@@ -49,6 +49,7 @@ type MarkerOptions = Pick<
 	| "categoryMarkersEnabled"
 	| "selectedMarkerId"
 	| "clusteringEnabled"
+	| "activeClusterMarkerIds"
 >;
 
 export function buildMarkersUpdate(
@@ -58,6 +59,7 @@ export function buildMarkersUpdate(
 		categoryMarkersEnabled,
 		selectedMarkerId,
 		clusteringEnabled,
+		activeClusterMarkerIds = [],
 	}: MarkerOptions,
 ): { key: string; script: string } {
 	const markerPayload = markers.map((marker) => ({
@@ -73,36 +75,61 @@ export function buildMarkersUpdate(
 		/</g,
 		"\\u003c",
 	);
-	const injectionKey = `${serializedMarkers}|${clusteringEnabled}`;
+	const serializedOptions = JSON.stringify({
+		clustering: clusteringEnabled === true,
+		activeClusterMarkerIds,
+	}).replace(/</g, "\\u003c");
+	const injectionKey = `${serializedMarkers}|${serializedOptions}`;
 	return {
 		key: injectionKey,
-		script: `window.updateStoreMarkers(${serializedMarkers}, { clustering: ${clusteringEnabled === true} }); true;`,
+		script: `window.updateStoreMarkers(${serializedMarkers}, ${serializedOptions}); true;`,
 	};
 }
 
 type MapMessageCallbacks = Pick<
 	KakaoMapProps,
-	"onMarkerPress" | "onRegionChange" | "onMapPress"
+	| "onMarkerPress"
+	| "onClusterPress"
+	| "onClusterClose"
+	| "onRegionChange"
+	| "onMapPress"
 > & { onReady: () => void };
 
 export function handleMapMessage(
 	event: WebViewMessageEvent,
-	{ onReady, onMarkerPress, onRegionChange, onMapPress }: MapMessageCallbacks,
+	{
+		onReady,
+		onMarkerPress,
+		onClusterPress,
+		onClusterClose,
+		onRegionChange,
+		onMapPress,
+	}: MapMessageCallbacks,
 ): void {
 	try {
 		const data = JSON.parse(event.nativeEvent.data) as {
 			type: string;
 			markerId?: string;
+			markerIds?: unknown;
 			bounds?: unknown;
 		};
 		if (data.type === "MAP_READY") onReady();
 		if (data.type === "MARKER_PRESS" && data.markerId) {
 			onMarkerPress?.(data.markerId);
 		}
+		if (
+			data.type === "CLUSTER_PRESS" &&
+			Array.isArray(data.markerIds) &&
+			data.markerIds.length > 0 &&
+			data.markerIds.every((id): id is string => typeof id === "string")
+		) {
+			onClusterPress?.(data.markerIds);
+		}
 		if (data.type === "REGION_CHANGE" && isMapBounds(data.bounds)) {
 			onRegionChange?.(data.bounds);
 		}
 		if (data.type === "MAP_PRESS") onMapPress?.();
+		if (data.type === "CLUSTER_CLOSE") onClusterClose?.();
 	} catch (error) {
 		if (__DEV__) {
 			console.warn(

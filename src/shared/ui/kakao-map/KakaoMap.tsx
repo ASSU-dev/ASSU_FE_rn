@@ -38,7 +38,10 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			categoryMarkersEnabled = false,
 			clusteringEnabled = false,
 			selectedMarkerId,
+			activeClusterMarkerIds,
 			onMarkerPress,
+			onClusterPress,
+			onClusterClose,
 			onMapPress,
 			onRegionChange,
 		},
@@ -57,7 +60,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 
 			return {
 				html: buildMapHtml(appKey, boundsTrackingEnabled),
-				baseUrl: "http://localhost",
+				baseUrl: "https://localhost",
 			};
 		}, [appKey, boundsTrackingEnabled]);
 
@@ -120,6 +123,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 				partnerMarkersEnabled,
 				categoryMarkersEnabled,
 				selectedMarkerId,
+				activeClusterMarkerIds,
 				clusteringEnabled,
 			});
 			if (prevMarkersRef.current === key) return;
@@ -132,6 +136,7 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 			categoryMarkersEnabled,
 			clusteringEnabled,
 			selectedMarkerId,
+			activeClusterMarkerIds,
 		]);
 
 		if (!webViewSource) return null;
@@ -148,6 +153,8 @@ export const KakaoMap = forwardRef<KakaoMapHandle, KakaoMapProps>(
 					handleMapMessage(event, {
 						onReady: () => setIsMapReady(true),
 						onMarkerPress,
+						onClusterPress,
+						onClusterClose,
 						onRegionChange,
 						onMapPress,
 					})

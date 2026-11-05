@@ -3,6 +3,7 @@ export interface PartnershipBenefit {
 	adminId: number;
 	manager: string;
 	contents: string;
+	partnershipPeriod?: string;
 	goods: string[];
 	people: number | null;
 	cost: number | null;

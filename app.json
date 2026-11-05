@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "A:SSU",
 		"slug": "ASSU_FE_RN",
-		"version": "1.0.0",
+		"version": "1.0.4",
 		"orientation": "portrait",
 		"icon": "./src/shared/assets/images/icon.png",
 		"scheme": "assu-app",
@@ -34,10 +34,10 @@
 				"android.permission.ACCESS_FINE_LOCATION",
 				"android.permission.CAMERA"
 			],
+			"icon": "./src/shared/assets/images/icon.png",
 			"adaptiveIcon": {
-				"backgroundColor": "#E6F4FE",
-				"foregroundImage": "./src/shared/assets/images/android-icon-foreground.png",
-				"backgroundImage": "./src/shared/assets/images/android-icon-background.png",
+				"backgroundColor": "#FFFFFF",
+				"foregroundImage": "./src/shared/assets/images/android-icon_adaptive_fore.png",
 				"monochromeImage": "./src/shared/assets/images/android-icon-monochrome.png"
 			},
 			"edgeToEdgeEnabled": true,
@@ -59,12 +59,27 @@
 					"recordAudioAndroid": false
 				}
 			],
+			[
+				"expo-image-picker",
+				{
+					"microphonePermission": false
+				}
+			],
+			[
+				"expo-media-library",
+				{
+					"photosPermission": "QR 코드 이미지를 갤러리에 저장합니다.",
+					"savePhotosPermission": "QR 코드 이미지를 갤러리에 저장합니다.",
+					"isAccessMediaLocationEnabled": false,
+					"granularPermissions": []
+				}
+			],
 			"expo-document-picker",
 			[
 				"expo-splash-screen",
 				{
 					"image": "./src/shared/assets/images/splash-icon.png",
-					"imageWidth": 200,
+					"imageWidth": 100,
 					"resizeMode": "contain",
 					"backgroundColor": "#ffffff",
 					"dark": {
@@ -84,7 +99,8 @@
 						"forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
 					}
 				}
-			]
+			],
+			"./plugins/withBlockedAndroidPermissions"
 		],
 		"experiments": {
 			"typedRoutes": true,

@@ -20,6 +20,16 @@ async function fetchNearbyRaw(
 	viewport: MapViewport,
 	filter?: NearbyStoresFilter,
 ): Promise<unknown[]> {
+	if (__DEV__) {
+		console.log(
+			"[PartnershipDebug] nearby request",
+			JSON.stringify({
+				baseURL: apiInstance.defaults.baseURL,
+				viewport,
+				filter: filter ?? null,
+			}),
+		);
+	}
 	const res = await apiInstance.get<BaseResponse<unknown>>("/map/nearby", {
 		params: {
 			...viewport,
@@ -39,6 +49,7 @@ async function fetchNearbyRaw(
 				};
 			}
 
+			const marker = toStoreMarker(item);
 			const hasCategory = Object.hasOwn(item, "category");
 			const hasStoreCategory = Object.hasOwn(item, "storeCategory");
 
@@ -57,10 +68,33 @@ async function fetchNearbyRaw(
 					toStoreCategory(getString(item, ["category", "storeCategory"])) ??
 					null,
 				responseKeys: Object.keys(item),
+				rawPartnerFlags: {
+					hasPartner: item.hasPartner,
+					isPartner: item.isPartner,
+					partner: item.partner,
+					isPartnered: item.isPartnered,
+				},
+				marker: marker
+					? {
+							id: marker.id,
+							latitude: marker.latitude,
+							longitude: marker.longitude,
+							hasPartner: marker.hasPartner,
+						}
+					: null,
+				excludedAt: !marker
+					? "mapper"
+					: !marker.hasPartner
+						? "partner-filter"
+						: null,
 			};
 		});
 
 		console.log("[fetchNearbyRaw] 주변 매장 응답 진단:", {
+			status: res.status,
+			isSuccess: res.data?.isSuccess,
+			code: res.data?.code,
+			viewport,
 			filter: filter ?? null,
 			responseResultType: Array.isArray(responseResult)
 				? "array"

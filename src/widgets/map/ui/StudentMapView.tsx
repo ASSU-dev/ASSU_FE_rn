@@ -26,6 +26,7 @@ import {
 import { useNearbyStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import type { UsablePartnershipDTO } from "@/shared/api";
+import { ENV } from "@/shared/config/env";
 import type { LatLng } from "@/shared/types/map";
 import {
 	BottomSheetFlatList,
@@ -39,6 +40,7 @@ import {
 	type MapBounds,
 } from "@/shared/ui/kakao-map";
 import { toViewport } from "../model/toViewport";
+import { useClusterStores } from "../model/useClusterStores";
 import { useUserLocation } from "../model/useUserLocation";
 import { MapLocateButton } from "./MapLocateButton";
 import { StudentSelectedStoreCard } from "./StudentSelectedStoreCard";
@@ -185,7 +187,44 @@ export function StudentMapView({
 		}
 		return stores;
 	}, [markerStores, pinnedStore]);
+	const filterKey = JSON.stringify([storeCategory, adminId]);
+	const previousFilterKeyRef = useRef(filterKey);
+	const { clusterMarkerIds, openCluster, closeCluster } = useClusterStores(
+		partnerMarkerStores,
+		filterKey,
+	);
+	// 필터가 실제로 변경된 경우에만 이전 매장 강조와 상세 카드 제거
+	useEffect(() => {
+		if (previousFilterKeyRef.current === filterKey) return;
+		previousFilterKeyRef.current = filterKey;
+		setSelectedStoreId(null);
+	}, [filterKey]);
 	const partnerListStores = partnershipResponse?.result ?? [];
+	useEffect(() => {
+		if (!__DEV__) return;
+		console.log("[PartnershipDebug] screen data", {
+			baseURL: ENV.API_BASE_URL,
+			useMocks: ENV.USE_MOCKS,
+			storeCategory,
+			adminId,
+			admins,
+			markerCount: partnerMarkerStores.length,
+			markers: partnerMarkerStores.map(({ id, name }) => ({ id, name })),
+			listCount: partnershipResponse?.result?.length ?? 0,
+			list: partnershipResponse?.result?.map((item, index) => ({
+				key: String(item.partnershipId ?? item.storeId ?? index),
+				storeId: item.storeId,
+				name: item.partnerName,
+				adminName: item.adminName,
+			})),
+		});
+	}, [
+		adminId,
+		admins,
+		partnerMarkerStores,
+		partnershipResponse,
+		storeCategory,
+	]);
 	const selectedStore =
 		partnerMarkerStores.find((store) => store.id === selectedStoreId) ?? null;
 
@@ -197,13 +236,14 @@ export function StudentMapView({
 	// 검색 선택과 지도 칩 선택이 같은 카드/시트/지도 이동 흐름을 사용한다.
 	const selectStore = useCallback(
 		(store: StoreMarker, refreshBounds: boolean) => {
+			closeCluster();
 			setSelectedStoreId(store.id);
 			sheetRef.current?.snapToIndex(0);
 			suppressNextBoundsRef.current = !refreshBounds;
 			deliberatelyPannedRef.current = true;
 			kakaoRef.current?.panTo(store.latitude, store.longitude);
 		},
-		[],
+		[closeCluster],
 	);
 
 	useEffect(() => {
@@ -236,8 +276,11 @@ export function StudentMapView({
 	// 마지막 스냅은 화면 상단까지 펼친다.
 	const snapPoints = useMemo(() => [SNAP_MINI, SNAP_PEEK, "45%", "100%"], []);
 	const handleSheetChange = useCallback(
-		(index: number) => onSheetExpandedChange(index === snapPoints.length - 1),
-		[onSheetExpandedChange, snapPoints.length],
+		(index: number) => {
+			if (index > 0) closeCluster();
+			onSheetExpandedChange(index === snapPoints.length - 1);
+		},
+		[closeCluster, onSheetExpandedChange, snapPoints.length],
 	);
 	const headerOffset = Math.max(0, headerHeight - SHEET_HANDLE_HEIGHT);
 	// 목록 크기는 고정하고 위치만 이동해 드래그 중 레이아웃 재계산을 줄인다.
@@ -255,12 +298,26 @@ export function StudentMapView({
 	// panTo 후 발생하는 idle → onRegionChange는 억제해 불필요한 재조회를 막는다.
 	const handleMarkerPress = (markerId: string) => {
 		const store = partnerMarkerStores.find((s) => s.id === markerId);
-		if (store) selectStore(store, store.id === pinnedStore?.id);
+		if (!store) return;
+		if (clusterMarkerIds.includes(markerId)) {
+			// 그룹 안의 매장 선택은 목록과 지도 위치를 유지하고 하단 카드만 교체함
+			setSelectedStoreId(markerId);
+			sheetRef.current?.snapToIndex(0);
+			return;
+		}
+		selectStore(store, store.id === pinnedStore?.id);
 	};
 
-	// 지도 빈 곳 탭: 선택 카드만 닫고 시트 위치는 사용자가 둔 그대로 유지한다
+	// 지도 빈 곳 탭 시 선택 카드와 클러스터 목록을 닫고 시트 위치 유지
 	const handleMapPress = () => {
 		setSelectedStoreId(null);
+		closeCluster();
+	};
+
+	const handleClusterPress = (markerIds: string[]) => {
+		setSelectedStoreId(null);
+		openCluster(markerIds);
+		sheetRef.current?.snapToIndex(0);
 	};
 
 	const renderPartnershipCard = (partnership: UsablePartnershipDTO) => {
@@ -321,7 +378,10 @@ export function StudentMapView({
 				categoryMarkersEnabled
 				clusteringEnabled
 				selectedMarkerId={selectedStoreId}
+				activeClusterMarkerIds={clusterMarkerIds}
 				onMarkerPress={handleMarkerPress}
+				onClusterPress={handleClusterPress}
+				onClusterClose={handleMapPress}
 				onMapPress={handleMapPress}
 				onRegionChange={(bounds) => {
 					if (suppressNextBoundsRef.current) {
@@ -354,6 +414,7 @@ export function StudentMapView({
 					style={{ bottom: SNAP_MINI + SHEET_GAP }}
 				>
 					<StudentSelectedStoreCard
+						onClose={() => setSelectedStoreId(null)}
 						name={selectedStore?.name ?? initialStoreName ?? ""}
 						imageUri={selectedStore?.imageUri ?? initialStoreImageUri}
 						benefitLabel={

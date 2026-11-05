@@ -6,11 +6,40 @@ interface Tokens {
 	refreshToken?: string;
 }
 
+function getSafeReturnTo(returnTo?: string): string | null {
+	if (!returnTo) return null;
+
+	try {
+		const parsed = new URL(returnTo, "https://assu.local");
+		if (
+			parsed.origin !== "https://assu.local" ||
+			parsed.pathname !== "/verify"
+		) {
+			return null;
+		}
+
+		const storeId = Number(parsed.searchParams.get("storeId"));
+		if (!Number.isSafeInteger(storeId) || storeId <= 0) return null;
+
+		return `/verify?storeId=${storeId}`;
+	} catch {
+		return null;
+	}
+}
+
+export function getPostAuthRoute(
+	role?: string | null,
+	returnTo?: string,
+): string {
+	return getSafeReturnTo(returnTo) ?? getHomeRouteByRole(role ?? null);
+}
+
 export async function completeLogin(
 	tokens: Tokens,
 	role?: string | null,
 	basicInfo?: UserBasicInfo | null,
 	memberId?: number | null,
+	returnTo?: string,
 ): Promise<string> {
 	if (!tokens.accessToken || !tokens.refreshToken) {
 		throw new Error("로그인 토큰을 받지 못했습니다.");
@@ -26,5 +55,5 @@ export async function completeLogin(
 		basicInfo,
 		memberId,
 	);
-	return getHomeRouteByRole(role ?? null);
+	return getPostAuthRoute(role, returnTo);
 }

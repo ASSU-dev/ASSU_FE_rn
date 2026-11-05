@@ -4,8 +4,8 @@
 	"version": "1.0.0",
 	"scripts": {
 		"start": "expo start",
-		"android": "expo start --android",
-		"ios": "expo start --ios",
+		"android": "expo run:android",
+		"ios": "expo run:ios",
 		"web": "expo start --web",
 		"typecheck": "tsc --noEmit",
 		"biome:lint": "biome lint .",
@@ -13,6 +13,7 @@
 		"biome:format": "biome format . --write",
 		"icons": "node scripts/generate-icons.js",
 		"generate:api": "node scripts/generate-api.js",
+		"sync:skills": "node scripts/sync-skills.js",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage"

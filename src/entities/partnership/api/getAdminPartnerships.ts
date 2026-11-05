@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiInstance } from "@/shared/api/instance";
+import { ENV } from "@/shared/config/env";
 import type {
 	BaseResponse,
 	PagedResponse,
@@ -15,17 +16,26 @@ const ADMIN_PARTNERSHIP_LIST_PARAMS = {
 async function fetchAdminPartnerships(): Promise<
 	PagedResponse<WritePartnershipResponseDTO>
 > {
+	if (__DEV__) {
+		console.log("[PartnershipDebug] admin list request", {
+			baseURL: apiInstance.defaults.baseURL,
+			endpoint: "/partnership/admin",
+			params: ADMIN_PARTNERSHIP_LIST_PARAMS,
+			usingMocks: ENV.USE_MOCKS,
+		});
+	}
 	const res = await apiInstance.get<
 		BaseResponse<PagedResponse<WritePartnershipResponseDTO>>
 	>("/partnership/admin", {
 		params: ADMIN_PARTNERSHIP_LIST_PARAMS,
 	});
 
-	console.log("[fetchAdminPartnerships] 응답:", res.data);
-	console.log(
-		"[fetchAdminPartnerships] 첫 제휴업체:",
-		JSON.stringify(res.data.result.content[0] ?? null),
-	);
+	if (__DEV__) {
+		console.log("[PartnershipDebug] admin list response", {
+			status: res.status,
+			data: res.data,
+		});
+	}
 
 	return res.data.result;
 }

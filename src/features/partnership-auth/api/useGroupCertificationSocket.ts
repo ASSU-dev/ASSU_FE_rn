@@ -1,3 +1,4 @@
+import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Alert } from "react-native";
@@ -9,17 +10,26 @@ import type {
 } from "../model/types";
 import { usePartnershipAuthStore } from "../model/usePartnershipAuthStore";
 
+export const GROUP_CERTIFICATION_LINK_SCHEME = "assu-app";
+export const GROUP_CERTIFICATION_LINK_PATH =
+	"student/partnership-group-participant";
+
 export function buildGroupCertificationQrValue(
 	payload: Omit<GroupCertificationQrPayload, "type" | "version">,
 ): string {
-	return JSON.stringify({
+	const qrPayload = {
 		type: "ASSU_GROUP_CERTIFICATION",
 		version: 1,
 		...payload,
-	} satisfies GroupCertificationQrPayload);
+	} satisfies GroupCertificationQrPayload;
+
+	return Linking.createURL(GROUP_CERTIFICATION_LINK_PATH, {
+		scheme: GROUP_CERTIFICATION_LINK_SCHEME,
+		queryParams: { payload: JSON.stringify(qrPayload) },
+	});
 }
 
-export function parseGroupCertificationQr(
+function parseGroupCertificationPayload(
 	value: string,
 ): GroupCertificationQrPayload | null {
 	try {
@@ -52,13 +62,47 @@ export function parseGroupCertificationQr(
 	}
 }
 
-export function certifyGroupParticipant({
+export function parseGroupCertificationQr(
+	value: string,
+): GroupCertificationQrPayload | null {
+	try {
+		let payloadValue = value;
+		if (!value.trimStart().startsWith("{")) {
+			const parsedUrl = new URL(value);
+			const [linkHost, ...linkPathSegments] =
+				GROUP_CERTIFICATION_LINK_PATH.split("/");
+			if (
+				parsedUrl.protocol !== `${GROUP_CERTIFICATION_LINK_SCHEME}:` ||
+				parsedUrl.hostname !== linkHost ||
+				parsedUrl.pathname !== `/${linkPathSegments.join("/")}`
+			) {
+				return null;
+			}
+
+			const queryPayload = parsedUrl.searchParams.get("payload");
+			if (!queryPayload) return null;
+			payloadValue = queryPayload;
+		}
+		if (!payloadValue.trimStart().startsWith("{")) {
+			payloadValue = decodeURIComponent(payloadValue);
+		}
+
+		return parseGroupCertificationPayload(payloadValue);
+	} catch {
+		return null;
+	}
+}
+
+export async function certifyGroupParticipant({
 	adminId,
 	sessionId,
 }: {
 	adminId: number;
 	sessionId: number;
-}): boolean {
+}): Promise<boolean> {
+	const connected = await stompManager.waitForConnection();
+	if (!connected) return false;
+
 	const published = stompManager.publish(
 		"/app/certify",
 		JSON.stringify({ adminId, sessionId }),
@@ -139,8 +183,9 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 								{
 									text: "확인",
 									onPress: () => {
-										resetPartnershipAuth();
+										router.dismissAll();
 										router.replace("/(protected)/student/(tabs)/home");
+										resetPartnershipAuth();
 									},
 								},
 							],
