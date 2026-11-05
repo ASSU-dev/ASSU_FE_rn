@@ -14,6 +14,13 @@
 | 학생 로그인·회원가입 | 높음 | 훅 | LMS 인증 성공 시 학생 세션·원래 인증 화면 이동, 로그인 실패 안내, 인증 누락 시 가입 차단, 가입 성공·실패 처리 | `src/features/signup-user-flow/model/useStudentLoginAction.test.tsx`, `src/features/signup-user-flow/model/useStudentSignupAction.test.tsx` | ahcgnoej | 2026-11-01 |
 | 제휴업체·관리자 회원가입 | 높음 | 단위·훅 | 역할별 payload·파일 변환, multipart 가입 요청, 파일 누락·가입 실패 안내, 성공 단계 이동 | `src/features/signup-user-flow/model/signupPayloadAdapters.test.ts`, `src/features/signup-user-flow/model/usePartnerSignupAction.test.tsx`, `src/features/signup-user-flow/model/useAdminSignupAction.test.tsx` | ahcgnoej | 2026-11-01 |
 | 관리자 회원가입 | 중간 | 훅 | 이메일 중복확인 성공 및 중복 이메일 안내 | `src/features/signup-user-flow/model/useAdminEmailAvailabilityAction.test.tsx` | ahcgnoej | 2026-11-01 |
+| 학생 가게 상세 | 높음 | 컴포넌트 | 로딩·에러 상태 분기, EXTERNAL 가게 자동 리다이렉트, 혜택 미선택 시 제휴 인증 버튼 비활성, 선택 후 storeId·contentId 전달 | `src/widgets/store-detail/ui/StoreDetailWidget.test.tsx` | KimEunHye | 2026-10-31 |
+| 학생 가게 상세 데이터 훅 | 높음 | 훅 | store/papers 쿼리 로딩·에러 조합, 혜택 선택 시 selectedBenefit 참조 갱신, title fallback (storeName → fallbackName → "") | `src/widgets/store-detail/model/useStoreDetailData.test.ts` | KimEunHye | 2026-10-31 |
+| 학생 가게 리스트 | 높음 | 컴포넌트 | 빈 상태 메시지, 가게 상세 이동 파라미터, 혜택 라벨 포매팅 (HEADCOUNT/PRICE/note fallback) | `src/widgets/home/ui/StudentStoreListWidget.test.tsx` | KimEunHye | 2026-10-31 |
+| 학생 홈 탭 섹션 | 높음 | 컴포넌트 | 카테고리 10개 노출, 이벤트 탭 전환 시 스탬프 보드 노출, 카테고리 선택 시 store-list로 category 파라미터 전달 | `src/widgets/home/tab-section/ui/HomeTabSection.test.tsx` | KimEunHye | 2026-10-31 |
+| 학생 홈 메인 | 중간 | 컴포넌트 | 인사말 이름 노출, 큐레이션 로딩 전파, 큐레이션 2개 그룹 각각 올바른 섹션에 전달, 스탬프 카운트 전달 | `src/widgets/home/ui/StudentHomeWidget.test.tsx` | KimEunHye | 2026-10-31 |
+| 학생 홈 광고 리스트 | 중간 | 컴포넌트 | 광고 없을 때 섹션 숨김, 로딩 중 ActivityIndicator 유지, 광고 선택 시 storeName을 쿼리 문자열로 담아 상세 이동 | `src/widgets/home/ad-list/ui/HomeAdList.test.tsx` | KimEunHye | 2026-10-31 |
+| 학생 홈 큐레이션 섹션 | 중간 | 컴포넌트 | 로딩·빈 상태 분기, 큐레이션 가게 선택 시 상세 이동, curationTitle·groupTitle 조합 노출 | `src/widgets/home/curation-section/ui/HomeCurationSection.test.tsx` | KimEunHye | 2026-10-31 |
 | 학생 지도 | 높음 | 단위 | 주변 매장 응답의 지도 마커 변환, id·이름·좌표 누락 시 마커 제외, 미정의 카테고리·제휴 여부 누락 처리 | `src/features/map-search/lib/mapSearchMappers.test.ts` | taegeon2 | 2026-11-01 |
 | 학생 지도 | 높음 | 단위 | 매장 카드 대표 혜택·학생회, 추가 혜택 개수, 혜택 문구 조건·강조 분리, 거리 m/km 표기 | `src/entities/store/lib/mapDisplay.test.ts` | taegeon2 | 2026-11-01 |
 | 학생 지도 | 높음 | 훅 | 위치 권한 허용 시 현재 위치, 거부 시 숭실대 기본 위치, 재요청 불가 시 설정 안내 | `src/widgets/map/model/useUserLocation.test.tsx` | taegeon2 | 2026-11-01 |
