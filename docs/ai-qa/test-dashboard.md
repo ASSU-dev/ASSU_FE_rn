@@ -13,6 +13,11 @@
 | 단체 인증 QR·진행 구독 | 높음 | 단위·훅 | 단체 인증 딥링크 생성↔인식, 스킴·경로·필드 검증 실패 차단, 진행 인원 갱신·완료 처리, 정상 인증 사용자 목록에 본인이 없으면 1회 안내 후 홈 복귀 (EXPIRED 처리는 미구현으로 제외) | `src/features/partnership-auth/api/useGroupCertificationSocket.test.ts` | chunjaemin | 2026-10-31 |
 | QR 인증 화면 | 높음 | 컴포넌트 | 단체 QR은 참여자로 세션 합류, 매장 QR은 혜택 선택 이동, 잘못된 QR 안내 후 재스캔, 프레임 밖 QR 무시, 카메라 권한 거부 시 설정 안내 | `src/pages/student/partnership-qr-auth/ui/PartnershipQrAuthPage.test.tsx` | chunjaemin | 2026-10-31 |
 | 제휴 혜택 선택 | 높음 | 컴포넌트 | 개인 혜택은 개인 인증 후 확인 화면 이동, 단체 혜택은 인원 조건으로 세션 생성 후 대표자 QR 화면 이동, 인증 요청 실패 시 안내 후 이동 차단 | `src/pages/student/partnership-benefit-select/ui/PartnershipBenefitSelectPage.test.tsx` | chunjaemin | 2026-10-31 |
+| 공통 이메일 로그인 | 높음 | 단위 | 로그인 토큰·역할 저장 후 안전한 returnTo 또는 역할별 홈으로 이동, 토큰·역할 누락 시 로그인 완료 차단 | `src/features/signup-user-flow/lib/auth.test.ts` | ahcgnoej | 2026-11-01 |
+| 공통 이메일 로그인 | 높음 | 훅 | 성공 시 세션 저장·이동, 가입 승인 대기 안내, 일반 실패 안내, 진행 상태 전달 | `src/features/signup-user-flow/model/useCommonLoginAction.test.tsx` | ahcgnoej | 2026-11-01 |
+| 학생 로그인·회원가입 | 높음 | 훅 | LMS 인증 성공 시 학생 세션·원래 인증 화면 이동, 로그인 실패 안내, 인증 누락 시 가입 차단, 가입 성공·실패 처리 | `src/features/signup-user-flow/model/useStudentLoginAction.test.tsx`, `src/features/signup-user-flow/model/useStudentSignupAction.test.tsx` | ahcgnoej | 2026-11-01 |
+| 제휴업체·관리자 회원가입 | 높음 | 단위·훅 | 역할별 payload·파일 변환, multipart 가입 요청, 파일 누락·가입 실패 안내, 성공 단계 이동 | `src/features/signup-user-flow/model/signupPayloadAdapters.test.ts`, `src/features/signup-user-flow/model/usePartnerSignupAction.test.tsx`, `src/features/signup-user-flow/model/useAdminSignupAction.test.tsx` | ahcgnoej | 2026-11-01 |
+| 관리자 회원가입 | 중간 | 훅 | 이메일 중복확인 성공 및 중복 이메일 안내 | `src/features/signup-user-flow/model/useAdminEmailAvailabilityAction.test.tsx` | ahcgnoej | 2026-11-01 |
 | 학생 가게 상세 | 높음 | 컴포넌트 | 로딩·에러 상태 분기, EXTERNAL 가게 자동 리다이렉트, 혜택 미선택 시 제휴 인증 버튼 비활성, 선택 후 storeId·contentId 전달 | `src/widgets/store-detail/ui/StoreDetailWidget.test.tsx` | KimEunHye | 2026-10-31 |
 | 학생 가게 상세 데이터 훅 | 높음 | 훅 | store/papers 쿼리 로딩·에러 조합, 혜택 선택 시 selectedBenefit 참조 갱신, title fallback (storeName → fallbackName → "") | `src/widgets/store-detail/model/useStoreDetailData.test.ts` | KimEunHye | 2026-10-31 |
 | 학생 가게 리스트 | 높음 | 컴포넌트 | 빈 상태 메시지, 가게 상세 이동 파라미터, 혜택 라벨 포매팅 (HEADCOUNT/PRICE/note fallback) | `src/widgets/home/ui/StudentStoreListWidget.test.tsx` | KimEunHye | 2026-10-31 |
