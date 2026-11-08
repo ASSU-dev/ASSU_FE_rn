@@ -157,7 +157,12 @@ describe("개인·단체 제휴 인증 요청", () => {
 			.reply(200, { isSuccess: true, result: { sessionId: 321 } });
 
 		await expect(
-			createGroupCertificationSession({ people: 4, storeId: 7, adminId: 10 }),
+			createGroupCertificationSession({
+				people: 4,
+				storeId: 7,
+				adminId: 10,
+				contentId: 2,
+			}),
 		).resolves.toBe(321);
 	});
 
@@ -167,7 +172,12 @@ describe("개인·단체 제휴 인증 요청", () => {
 			.reply(200, { isSuccess: false, result: {} });
 
 		await expect(
-			createGroupCertificationSession({ people: 4, storeId: 7, adminId: 10 }),
+			createGroupCertificationSession({
+				people: 4,
+				storeId: 7,
+				adminId: 10,
+				contentId: 2,
+			}),
 		).rejects.toThrow("그룹 인증 세션을 만들지 못했습니다.");
 	});
 });
