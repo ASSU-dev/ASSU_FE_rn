@@ -19,7 +19,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
 	parseGroupCertificationQr,
 	parsePartnershipStoreId,
-	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
@@ -28,13 +27,6 @@ export function PartnershipQrAuthPage() {
 	const insets = useSafeAreaInsets();
 	const [permission, requestPermission, getPermission] = useCameraPermissions();
 	const [scannedValue, setScannedValue] = useState<string | null>(null);
-	const setStore = usePartnershipAuthStore((state) => state.setStore);
-	const setSelectedBenefit = usePartnershipAuthStore(
-		(state) => state.setSelectedBenefit,
-	);
-	const setGroupSession = usePartnershipAuthStore(
-		(state) => state.setGroupSession,
-	);
 	const isScanLockedRef = useRef(false);
 	const hasRequestedPermissionRef = useRef(false);
 	const cameraAreaRef = useRef<View>(null);
@@ -150,32 +142,14 @@ export function PartnershipQrAuthPage() {
 		}
 		const groupCertification = parseGroupCertificationQr(scannedValue);
 		if (groupCertification) {
-			const benefit = {
-				id: groupCertification.contentId,
-				adminId: groupCertification.adminId,
-				manager: groupCertification.adminName,
-				contents: groupCertification.partnershipContent,
-				goods: groupCertification.goods,
-				people: groupCertification.requiredPeople,
-				cost: null,
-				type: "GROUP",
-			} as const;
-			setStore({
-				storeId: groupCertification.storeId,
-				storeName: groupCertification.storeName,
-				benefits: [benefit],
-			});
-			setSelectedBenefit(benefit);
-			setGroupSession({
-				sessionId: groupCertification.sessionId,
-				requiredPeople: groupCertification.requiredPeople,
-				count: 0,
-				status: "WAITING",
-				userIds: [],
-				role: "PARTICIPANT",
-			});
 			router.dismissAll();
-			router.push("/(protected)/student/partnership-group-participant");
+			router.push({
+				pathname: "/verify",
+				params: {
+					sessionId: groupCertification.sessionId,
+					adminId: groupCertification.adminId,
+				},
+			});
 			return;
 		}
 

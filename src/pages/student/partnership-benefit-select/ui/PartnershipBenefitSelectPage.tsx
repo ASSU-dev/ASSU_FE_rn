@@ -66,6 +66,7 @@ export function PartnershipBenefitSelectPage() {
 					people: selectedBenefit.people,
 					storeId: store.storeId,
 					adminId: selectedBenefit.adminId,
+					contentId: selectedBenefit.id,
 				});
 				setGroupSession({
 					sessionId,

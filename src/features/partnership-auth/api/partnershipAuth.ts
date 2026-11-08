@@ -1,5 +1,7 @@
 import { apiInstance } from "@/shared/api/instance";
 import type {
+	GroupCertificationSessionDetail,
+	PartnershipBenefit,
 	PartnershipUsagePayload,
 	VerifiedPartnershipStore,
 } from "../model/types";
@@ -38,11 +40,57 @@ interface GroupCertificationPayload {
 	people: number;
 	storeId: number;
 	adminId: number;
+	contentId: number;
 	tableNumber: 99;
 }
 
 interface GroupCertificationResponseDTO {
 	sessionId?: number;
+}
+
+interface GroupCertificationSessionResponseDTO {
+	sessionId?: number;
+	storeId?: number;
+	storeName?: string;
+	peopleNumber?: number;
+	currentCount?: number;
+	partnershipContent?: PaperContentResponseDTO;
+}
+
+interface GroupCertificationSessionApiResponse
+	extends GroupCertificationSessionResponseDTO {
+	isSuccess?: boolean;
+	code?: string;
+	message?: string;
+	result?: GroupCertificationSessionResponseDTO;
+}
+
+function mapPartnershipContent(
+	content: PaperContentResponseDTO,
+): PartnershipBenefit | null {
+	if (
+		content.contentId === undefined ||
+		content.adminId === undefined ||
+		!content.adminName ||
+		!content.paperContent
+	) {
+		return null;
+	}
+
+	return {
+		id: content.contentId,
+		adminId: content.adminId,
+		manager: content.adminName,
+		contents: content.paperContent,
+		partnershipPeriod: content.partnershipPeriod ?? undefined,
+		goods: content.goods ?? [],
+		people: content.people ?? null,
+		cost: content.cost ?? null,
+		type:
+			typeof content.people === "number" && content.people > 1
+				? "GROUP"
+				: "INDIVIDUAL",
+	};
 }
 
 export async function getStorePartnerships(
@@ -63,31 +111,8 @@ export async function getStorePartnerships(
 		storeId: result.storeId,
 		storeName: result.storeName,
 		benefits: (result.partnershipContents ?? []).flatMap((content) => {
-			if (
-				content.contentId === undefined ||
-				content.adminId === undefined ||
-				!content.adminName ||
-				!content.paperContent
-			) {
-				return [];
-			}
-
-			return [
-				{
-					id: content.contentId,
-					adminId: content.adminId,
-					manager: content.adminName,
-					contents: content.paperContent,
-					partnershipPeriod: content.partnershipPeriod ?? undefined,
-					goods: content.goods ?? [],
-					people: content.people ?? null,
-					cost: content.cost ?? null,
-					type:
-						typeof content.people === "number" && content.people > 1
-							? "GROUP"
-							: "INDIVIDUAL",
-				} as const,
-			];
+			const benefit = mapPartnershipContent(content);
+			return benefit ? [benefit] : [];
 		}),
 	};
 }
@@ -114,6 +139,7 @@ export async function createGroupCertificationSession({
 	people,
 	storeId,
 	adminId,
+	contentId,
 }: Omit<GroupCertificationPayload, "tableNumber">): Promise<number> {
 	const response = await apiInstance.post<
 		BaseResponse<GroupCertificationResponseDTO>
@@ -121,6 +147,7 @@ export async function createGroupCertificationSession({
 		people,
 		storeId,
 		adminId,
+		contentId,
 		tableNumber: 99,
 	} satisfies GroupCertificationPayload);
 	const sessionId = response.data.result?.sessionId;
@@ -132,6 +159,64 @@ export async function createGroupCertificationSession({
 	}
 
 	return sessionId;
+}
+
+export async function getGroupCertificationSessionDetail(
+	sessionId: number,
+): Promise<GroupCertificationSessionDetail> {
+	const response = await apiInstance.get<GroupCertificationSessionApiResponse>(
+		`/certification/session/${sessionId}`,
+	);
+	const body = response.data;
+	if ("isSuccess" in body && body.isSuccess === false) {
+		throw new Error(body.message ?? "다인 인증 정보를 불러오지 못했습니다.");
+	}
+
+	const result = body.result ?? body;
+	const benefit = result.partnershipContent
+		? mapPartnershipContent(result.partnershipContent)
+		: null;
+	const peopleNumber = result.peopleNumber;
+	const currentCount = result.currentCount;
+
+	if (
+		result.sessionId !== sessionId ||
+		!result.storeId ||
+		!result.storeName ||
+		!Number.isSafeInteger(peopleNumber) ||
+		(peopleNumber ?? 0) <= 0 ||
+		!Number.isSafeInteger(currentCount) ||
+		(currentCount ?? -1) < 0 ||
+		!benefit
+	) {
+		throw new Error("다인 인증 정보가 올바르지 않습니다.");
+	}
+
+	const requiredPeople = peopleNumber as number;
+	const count = currentCount as number;
+	const groupBenefit: PartnershipBenefit = {
+		...benefit,
+		people: requiredPeople,
+		type: "GROUP",
+	};
+	const store: VerifiedPartnershipStore = {
+		storeId: result.storeId,
+		storeName: result.storeName,
+		benefits: [groupBenefit],
+	};
+
+	return {
+		store,
+		benefit: groupBenefit,
+		session: {
+			sessionId,
+			requiredPeople,
+			count,
+			status: count >= requiredPeople ? "COMPLETED" : "WAITING",
+			userIds: [],
+			role: "PARTICIPANT",
+		},
+	};
 }
 
 export async function recordPartnershipUsage(

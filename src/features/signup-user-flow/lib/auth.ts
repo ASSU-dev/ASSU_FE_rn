@@ -18,10 +18,25 @@ function getSafeReturnTo(returnTo?: string): string | null {
 			return null;
 		}
 
-		const storeId = Number(parsed.searchParams.get("storeId"));
-		if (!Number.isSafeInteger(storeId) || storeId <= 0) return null;
+		if (parsed.searchParams.has("storeId")) {
+			const storeId = Number(parsed.searchParams.get("storeId"));
+			if (!Number.isSafeInteger(storeId) || storeId <= 0) return null;
 
-		return `/verify?storeId=${storeId}`;
+			return `/verify?storeId=${storeId}`;
+		}
+
+		const sessionId = Number(parsed.searchParams.get("sessionId"));
+		const adminId = Number(parsed.searchParams.get("adminId"));
+		if (
+			!Number.isSafeInteger(sessionId) ||
+			!Number.isSafeInteger(adminId) ||
+			sessionId <= 0 ||
+			adminId <= 0
+		) {
+			return null;
+		}
+
+		return `/verify?sessionId=${sessionId}&adminId=${adminId}`;
 	} catch {
 		return null;
 	}

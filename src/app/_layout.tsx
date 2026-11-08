@@ -1,9 +1,6 @@
 import "@/shared/api";
 import { useForegroundMessage, useInitFcm } from "@/features/device-token";
-import {
-	GROUP_CERTIFICATION_LINK_PATH,
-	parseGroupCertificationQr,
-} from "@/features/partnership-auth";
+import { parseGroupCertificationQr } from "@/features/partnership-auth";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
@@ -24,36 +21,32 @@ initMocks();
 // 비로그인 상태의 진입 화면
 const REGISTER_ROUTE = "/(auth)/register";
 
-function getVerifyRoute(storeId: number) {
-	return `/verify?storeId=${storeId}`;
-}
-
 function getLoginRouteWithReturnTo(returnTo: string) {
 	return `${REGISTER_ROUTE}?returnTo=${encodeURIComponent(returnTo)}`;
 }
 
-function getVerifyStoreId(url: string | null): number | null {
+function getVerifyRoute(url: string | null): string | null {
 	if (!url) return null;
 	try {
 		const parsed = new URL(url);
 		const isVerify =
 			parsed.pathname === "/verify" || parsed.hostname === "verify";
 		if (!isVerify) return null;
-		const id = Number(parsed.searchParams.get("storeId"));
-		return Number.isSafeInteger(id) && id > 0 ? id : null;
+
+		if (parsed.searchParams.has("storeId")) {
+			const storeId = Number(parsed.searchParams.get("storeId"));
+			return Number.isSafeInteger(storeId) && storeId > 0
+				? `/verify?storeId=${storeId}`
+				: null;
+		}
+
+		const groupCertification = parseGroupCertificationQr(url);
+		if (!groupCertification) return null;
+
+		return `/verify?sessionId=${groupCertification.sessionId}&adminId=${groupCertification.adminId}`;
 	} catch {
 		return null;
 	}
-}
-
-function getGroupCertificationRoute(url: string | null): string | null {
-	if (!url) return null;
-	const payload = parseGroupCertificationQr(url);
-	if (!payload) return null;
-
-	return `/(protected)/${GROUP_CERTIFICATION_LINK_PATH}?payload=${encodeURIComponent(
-		JSON.stringify(payload),
-	)}`;
 }
 
 const queryClient = new QueryClient({
@@ -88,20 +81,14 @@ export default function RootLayout() {
 				Linking.getInitialURL(),
 			]);
 
-			if (isLoggedIn && role !== "ADMIN" && role !== "PARTNER") {
-				const groupCertificationRoute = getGroupCertificationRoute(url);
-				if (groupCertificationRoute) {
-					setInitialRoute(groupCertificationRoute);
-					setAuthReady(true);
-					return;
-				}
-			}
-
-			const storeId = getVerifyStoreId(url);
-			if (storeId) {
-				const verifyRoute = getVerifyRoute(storeId);
+			const verifyRoute = getVerifyRoute(url);
+			if (verifyRoute) {
 				setInitialRoute(
-					isLoggedIn ? verifyRoute : getLoginRouteWithReturnTo(verifyRoute),
+					!isLoggedIn
+						? getLoginRouteWithReturnTo(verifyRoute)
+						: role === "ADMIN" || role === "PARTNER"
+							? getHomeRouteByRole(role)
+							: verifyRoute,
 				);
 				setAuthReady(true);
 				return;

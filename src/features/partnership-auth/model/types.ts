@@ -39,6 +39,12 @@ export interface GroupCertificationSession {
 	role: "REPRESENTATIVE" | "PARTICIPANT";
 }
 
+export interface GroupCertificationSessionDetail {
+	store: VerifiedPartnershipStore;
+	benefit: PartnershipBenefit;
+	session: GroupCertificationSession;
+}
+
 export interface GroupCertificationProgressMessage {
 	type: string;
 	count: number;
@@ -47,15 +53,6 @@ export interface GroupCertificationProgressMessage {
 }
 
 export interface GroupCertificationQrPayload {
-	type: "ASSU_GROUP_CERTIFICATION";
-	version: 1;
-	adminId: number;
 	sessionId: number;
-	storeId: number;
-	storeName: string;
-	contentId: number;
-	adminName: string;
-	partnershipContent: string;
-	goods: string[];
-	requiredPeople: number;
+	adminId: number;
 }

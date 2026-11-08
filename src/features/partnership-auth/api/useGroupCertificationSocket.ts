@@ -1,4 +1,3 @@
-import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Alert } from "react-native";
@@ -11,52 +10,50 @@ import type {
 import { usePartnershipAuthStore } from "../model/usePartnershipAuthStore";
 
 export const GROUP_CERTIFICATION_LINK_SCHEME = "assu-app";
-export const GROUP_CERTIFICATION_LINK_PATH =
-	"student/partnership-group-participant";
+export const GROUP_CERTIFICATION_LINK_PATH = "verify";
+const GROUP_CERTIFICATION_VERIFY_URL = "https://prod.assu.site/verify";
 
 export function buildGroupCertificationQrValue(
-	payload: Omit<GroupCertificationQrPayload, "type" | "version">,
+	payload: GroupCertificationQrPayload,
 ): string {
-	const qrPayload = {
-		type: "ASSU_GROUP_CERTIFICATION",
-		version: 1,
-		...payload,
-	} satisfies GroupCertificationQrPayload;
-
-	return Linking.createURL(GROUP_CERTIFICATION_LINK_PATH, {
-		scheme: GROUP_CERTIFICATION_LINK_SCHEME,
-		queryParams: { payload: JSON.stringify(qrPayload) },
-	});
+	return `${GROUP_CERTIFICATION_VERIFY_URL}?sessionId=${payload.sessionId}&adminId=${payload.adminId}`;
 }
 
-function parseGroupCertificationPayload(
+function toGroupCertificationPayload(
+	sessionIdValue: string | number | null | undefined,
+	adminIdValue: string | number | null | undefined,
+): GroupCertificationQrPayload | null {
+	const sessionId = Number(sessionIdValue);
+	const adminId = Number(adminIdValue);
+	if (
+		!Number.isSafeInteger(sessionId) ||
+		!Number.isSafeInteger(adminId) ||
+		sessionId <= 0 ||
+		adminId <= 0
+	) {
+		return null;
+	}
+
+	return { sessionId, adminId };
+}
+
+function parseLegacyGroupCertificationPayload(
 	value: string,
 ): GroupCertificationQrPayload | null {
 	try {
-		const parsed = JSON.parse(value) as Partial<GroupCertificationQrPayload>;
+		const parsed = JSON.parse(value) as {
+			type?: unknown;
+			version?: unknown;
+			sessionId?: unknown;
+			adminId?: unknown;
+		};
 		if (
 			parsed.type !== "ASSU_GROUP_CERTIFICATION" ||
-			parsed.version !== 1 ||
-			!Number.isSafeInteger(parsed.adminId) ||
-			!Number.isSafeInteger(parsed.sessionId) ||
-			!Number.isSafeInteger(parsed.storeId) ||
-			!Number.isSafeInteger(parsed.contentId) ||
-			!Number.isSafeInteger(parsed.requiredPeople) ||
-			(parsed.adminId ?? 0) <= 0 ||
-			(parsed.sessionId ?? 0) <= 0 ||
-			(parsed.storeId ?? 0) <= 0 ||
-			(parsed.contentId ?? 0) <= 0 ||
-			(parsed.requiredPeople ?? 0) <= 0 ||
-			typeof parsed.storeName !== "string" ||
-			typeof parsed.adminName !== "string" ||
-			typeof parsed.partnershipContent !== "string" ||
-			!Array.isArray(parsed.goods) ||
-			!parsed.goods.every((goodsName) => typeof goodsName === "string")
+			parsed.version !== 1
 		) {
 			return null;
 		}
-
-		return parsed as GroupCertificationQrPayload;
+		return toGroupCertificationPayload(parsed.sessionId, parsed.adminId);
 	} catch {
 		return null;
 	}
@@ -66,28 +63,35 @@ export function parseGroupCertificationQr(
 	value: string,
 ): GroupCertificationQrPayload | null {
 	try {
-		let payloadValue = value;
-		if (!value.trimStart().startsWith("{")) {
-			const parsedUrl = new URL(value);
-			const [linkHost, ...linkPathSegments] =
-				GROUP_CERTIFICATION_LINK_PATH.split("/");
-			if (
-				parsedUrl.protocol !== `${GROUP_CERTIFICATION_LINK_SCHEME}:` ||
-				parsedUrl.hostname !== linkHost ||
-				parsedUrl.pathname !== `/${linkPathSegments.join("/")}`
-			) {
-				return null;
-			}
-
-			const queryPayload = parsedUrl.searchParams.get("payload");
-			if (!queryPayload) return null;
-			payloadValue = queryPayload;
-		}
-		if (!payloadValue.trimStart().startsWith("{")) {
-			payloadValue = decodeURIComponent(payloadValue);
+		const trimmed = value.trim();
+		if (trimmed.startsWith("{")) {
+			return parseLegacyGroupCertificationPayload(trimmed);
 		}
 
-		return parseGroupCertificationPayload(payloadValue);
+		const parsedUrl = new URL(trimmed);
+		if (
+			parsedUrl.protocol === `${GROUP_CERTIFICATION_LINK_SCHEME}:` &&
+			parsedUrl.hostname === "student" &&
+			parsedUrl.pathname === "/partnership-group-participant"
+		) {
+			const legacyPayload = parsedUrl.searchParams.get("payload");
+			return legacyPayload
+				? parseLegacyGroupCertificationPayload(legacyPayload)
+				: null;
+		}
+
+		const isVerifyLink =
+			(parsedUrl.protocol === "https:" &&
+				parsedUrl.hostname === "prod.assu.site" &&
+				parsedUrl.pathname === "/verify") ||
+			(parsedUrl.protocol === `${GROUP_CERTIFICATION_LINK_SCHEME}:` &&
+				parsedUrl.hostname === GROUP_CERTIFICATION_LINK_PATH);
+		if (!isVerifyLink || parsedUrl.searchParams.has("storeId")) return null;
+
+		return toGroupCertificationPayload(
+			parsedUrl.searchParams.get("sessionId"),
+			parsedUrl.searchParams.get("adminId"),
+		);
 	} catch {
 		return null;
 	}
