@@ -82,7 +82,9 @@ export default function VerifyScreen() {
 
 	return (
 		<Redirect
-			href={isLoggedIn ? (getHomeRouteByRole(role) as never) : "/(auth)/register"}
+			href={
+				isLoggedIn ? (getHomeRouteByRole(role) as never) : "/(auth)/register"
+			}
 		/>
 	);
 }

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import {
 	certifyGroupParticipant,
-	useGroupCertificationSessionDetailQuery,
 	useGroupCertificationProgress,
+	useGroupCertificationSessionDetailQuery,
 	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
 import { colorTokens } from "@/shared/styles/tokens";
@@ -17,11 +17,13 @@ export function PartnershipGroupParticipantPage() {
 		useLocalSearchParams<{
 			sessionId?: string | string[];
 			adminId?: string | string[];
-	}>();
+		}>();
 	const sessionIdValue = Array.isArray(sessionIdParam)
 		? sessionIdParam[0]
 		: sessionIdParam;
-	const adminIdValue = Array.isArray(adminIdParam) ? adminIdParam[0] : adminIdParam;
+	const adminIdValue = Array.isArray(adminIdParam)
+		? adminIdParam[0]
+		: adminIdParam;
 	const parsedSessionId = Number(sessionIdValue);
 	const parsedAdminId = Number(adminIdValue);
 	const hasValidDeepLink =
@@ -46,7 +48,7 @@ export function PartnershipGroupParticipantPage() {
 	const [hydratedSessionKey, setHydratedSessionKey] = useState<string | null>(
 		null,
 	);
-	const hasPublishedRef = useRef(false);
+	const publishedSessionKeyRef = useRef<string | null>(null);
 	const sessionKey = hasValidDeepLink
 		? `${parsedSessionId}:${parsedAdminId}`
 		: null;
@@ -59,20 +61,15 @@ export function PartnershipGroupParticipantPage() {
 		!isAdminMismatch &&
 		Boolean(
 			store &&
-			benefit?.adminId === parsedAdminId &&
-			groupSession?.sessionId === parsedSessionId &&
-			groupSession.role === "PARTICIPANT",
+				benefit?.adminId === parsedAdminId &&
+				groupSession?.sessionId === parsedSessionId &&
+				groupSession.role === "PARTICIPANT",
 		);
 	const progressSessionId =
-		groupSession?.role === "PARTICIPANT" &&
-		groupSession.sessionId === sessionId
+		groupSession?.role === "PARTICIPANT" && groupSession.sessionId === sessionId
 			? sessionId
 			: null;
 	useGroupCertificationProgress(progressSessionId);
-
-	useEffect(() => {
-		hasPublishedRef.current = false;
-	}, [sessionKey]);
 
 	useEffect(() => {
 		if (!sessionKey || !sessionDetail || isAdminMismatch) return;
@@ -91,16 +88,21 @@ export function PartnershipGroupParticipantPage() {
 	]);
 
 	useEffect(() => {
+		if (!sessionKey) {
+			publishedSessionKeyRef.current = null;
+			return;
+		}
+
 		if (
 			!isDeepLinkHydrated ||
 			!benefit ||
 			!groupSession ||
 			groupSession.status === "COMPLETED" ||
-			hasPublishedRef.current
+			publishedSessionKeyRef.current === sessionKey
 		)
 			return;
 
-		hasPublishedRef.current = true;
+		publishedSessionKeyRef.current = sessionKey;
 		let isMounted = true;
 		void certifyGroupParticipant({
 			adminId: benefit.adminId,
@@ -122,7 +124,7 @@ export function PartnershipGroupParticipantPage() {
 		return () => {
 			isMounted = false;
 		};
-	}, [benefit, groupSession, isDeepLinkHydrated]);
+	}, [benefit, groupSession, isDeepLinkHydrated, sessionKey]);
 
 	const handleSessionLookupRetry = () => {
 		if (hasValidDeepLink && !isAdminMismatch) {
@@ -138,7 +140,10 @@ export function PartnershipGroupParticipantPage() {
 			!hasValidDeepLink || sessionQuery.isError || isAdminMismatch;
 
 		return (
-			<PageLayout withBottomInset contentContainerClassName="flex-1 px-screen-m">
+			<PageLayout
+				withBottomInset
+				contentContainerClassName="flex-1 px-screen-m"
+			>
 				<View className="flex-1 items-center justify-center gap-gutter">
 					{hasLookupFailed ? null : (
 						<ActivityIndicator color={colorTokens.primary} />

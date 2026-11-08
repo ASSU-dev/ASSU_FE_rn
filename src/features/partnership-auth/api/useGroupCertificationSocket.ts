@@ -20,11 +20,17 @@ export function buildGroupCertificationQrValue(
 }
 
 function toGroupCertificationPayload(
-	sessionIdValue: string | number | null | undefined,
-	adminIdValue: string | number | null | undefined,
+	sessionIdValue: unknown,
+	adminIdValue: unknown,
 ): GroupCertificationQrPayload | null {
-	const sessionId = Number(sessionIdValue);
-	const adminId = Number(adminIdValue);
+	const sessionId =
+		typeof sessionIdValue === "string" || typeof sessionIdValue === "number"
+			? Number(sessionIdValue)
+			: Number.NaN;
+	const adminId =
+		typeof adminIdValue === "string" || typeof adminIdValue === "number"
+			? Number(adminIdValue)
+			: Number.NaN;
 	if (
 		!Number.isSafeInteger(sessionId) ||
 		!Number.isSafeInteger(adminId) ||
@@ -47,10 +53,7 @@ function parseLegacyGroupCertificationPayload(
 			sessionId?: unknown;
 			adminId?: unknown;
 		};
-		if (
-			parsed.type !== "ASSU_GROUP_CERTIFICATION" ||
-			parsed.version !== 1
-		) {
+		if (parsed.type !== "ASSU_GROUP_CERTIFICATION" || parsed.version !== 1) {
 			return null;
 		}
 		return toGroupCertificationPayload(parsed.sessionId, parsed.adminId);
