@@ -31,20 +31,15 @@ jest.mock("@/shared/lib/stomp/stompManager", () => ({
 	stompManager: { subscribeToTopic: jest.fn() },
 }));
 
-const QR_PAYLOAD: Omit<GroupCertificationQrPayload, "type" | "version"> = {
+const QR_PAYLOAD: GroupCertificationQrPayload = {
 	adminId: 10,
 	sessionId: 321,
-	storeId: 7,
-	storeName: "숭실 분식",
-	contentId: 2,
-	adminName: "총학생회",
-	partnershipContent: "4인 이상 10% 할인",
-	goods: ["떡볶이"],
-	requiredPeople: 4,
 };
 
 function toJsonPayload(
-	overrides: Partial<Record<keyof GroupCertificationQrPayload, unknown>> = {},
+	overrides: Partial<
+		Record<keyof GroupCertificationQrPayload | "type" | "version", unknown>
+	> = {},
 ): string {
 	return JSON.stringify({
 		type: "ASSU_GROUP_CERTIFICATION",
@@ -63,11 +58,10 @@ describe("단체 인증 QR 인식", () => {
 		const parsed = parseGroupCertificationQr(qrValue);
 
 		// Then
-		expect(parsed).toEqual({
-			type: "ASSU_GROUP_CERTIFICATION",
-			version: 1,
-			...QR_PAYLOAD,
-		});
+		expect(qrValue).toBe(
+			"https://prod.assu.site/verify?sessionId=321&adminId=10",
+		);
+		expect(parsed).toEqual(QR_PAYLOAD);
 	});
 
 	it("딥링크가 아닌 JSON 형식의 단체 인증 QR도 읽는다", () => {
@@ -96,13 +90,10 @@ describe("단체 인증 QR 인식", () => {
 	it.each([
 		{ label: "QR 타입이 다르면", overrides: { type: "OTHER" } },
 		{ label: "지원하지 않는 버전이면", overrides: { version: 2 } },
-		{ label: "인원 조건이 0명이면", overrides: { requiredPeople: 0 } },
 		{ label: "세션 번호가 정수가 아니면", overrides: { sessionId: 1.5 } },
-		{ label: "매장 번호가 문자열이면", overrides: { storeId: "7" } },
-		{
-			label: "상품 목록에 문자열이 아닌 값이 있으면",
-			overrides: { goods: [1] },
-		},
+		{ label: "세션 번호가 숫자가 아니면", overrides: { sessionId: "abc" } },
+		{ label: "학생회 번호가 0이면", overrides: { adminId: 0 } },
+		{ label: "학생회 번호가 없으면", overrides: { adminId: null } },
 	])("$label 단체 인증을 시작하지 않는다", ({ overrides }) => {
 		expect(parseGroupCertificationQr(toJsonPayload(overrides))).toBeNull();
 	});

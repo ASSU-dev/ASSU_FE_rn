@@ -8,6 +8,7 @@ export {
 	useGroupCertificationProgress,
 } from "./api/useGroupCertificationSocket";
 export {
+	useGroupCertificationSessionDetailQuery,
 	useGroupCertificationSessionMutation,
 	usePartnershipUsageMutation,
 	usePersonalCertificationMutation,
@@ -17,6 +18,7 @@ export type {
 	GroupCertificationProgressMessage,
 	GroupCertificationQrPayload,
 	GroupCertificationSession,
+	GroupCertificationSessionDetail,
 	PartnershipBenefit,
 	PartnershipUsagePayload,
 	VerifiedPartnershipStore,
