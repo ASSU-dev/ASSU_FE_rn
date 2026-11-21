@@ -1,4 +1,5 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Pressable, Text, View } from "react-native";
 
 import { CloseNoCircleIcon } from "@/shared/assets/icons";
 import { shadowNeutral } from "@/shared/styles/shadows";
@@ -49,8 +50,10 @@ export function StudentSelectedStoreCard({
 					{imageUri ? (
 						<Image
 							source={{ uri: imageUri }}
-							className="h-[110px] w-[110px] rounded-[8px]"
-							resizeMode="cover"
+							style={{ width: 110, height: 110, borderRadius: 8 }}
+							contentFit="cover"
+							cachePolicy="memory-disk"
+							recyclingKey={imageUri}
 						/>
 					) : (
 						<View className="h-[110px] w-[110px] rounded-[8px] bg-neutral" />
