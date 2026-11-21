@@ -81,6 +81,7 @@ export { default as MapMarkerRestaurant } from "./map-marker-restaurant.svg";
 export { default as MapMarkerRestaurantSelected } from "./map-marker-restaurant-selected.svg";
 export { default as MapMarkerSports } from "./map-marker-sports.svg";
 export { default as MapMarkerSportsSelected } from "./map-marker-sports-selected.svg";
+export { default as MapTargetIcon } from "./map-target-icon.svg";
 export { default as NotificationBellIcon } from "./notification-bell-icon.svg";
 export { default as Others } from "./others.svg";
 export { default as PartnershipGroupStatus } from "./partnership-group-status.svg";
