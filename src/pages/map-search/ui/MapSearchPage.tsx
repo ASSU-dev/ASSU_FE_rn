@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import type { PopularStore, SearchResultStore } from "@/entities/store";
+import type { SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
-import { usePopularStores, useSearchStores } from "@/features/map-search";
+import { useSearchStores } from "@/features/map-search";
 import {
 	AssuLogoFaded,
 	BackArrowIcon,
@@ -44,9 +44,7 @@ export function MapSearchPage({
 	const debouncedQuery = useDebounce(query, 300);
 
 	const isSearching = debouncedQuery.trim().length > 0;
-	const showPopular = !isSearching && role !== "partner";
 
-	const { data: popularStores = [] } = usePopularStores();
 	const { data: searchResults = [], isLoading: isSearchLoading } =
 		useSearchStores(debouncedQuery.trim());
 
@@ -109,8 +107,8 @@ export function MapSearchPage({
 				</View>
 			</View>
 
-			{isSearching ? (
-				!isSearchLoading && searchResults.length === 0 ? (
+			{isSearching &&
+				(!isSearchLoading && searchResults.length === 0 ? (
 					<View className="flex-1 items-center justify-center gap-[8px] pb-[150px]">
 						<AssuLogoFaded width={96} height={96} />
 						<Text className="text-center font-bold text-[12px] leading-[1.3] text-content-secondary">
@@ -145,40 +143,7 @@ export function MapSearchPage({
 						}
 						contentContainerStyle={{ paddingHorizontal: 14 }}
 					/>
-				) : null
-			) : (
-				showPopular &&
-				popularStores.length > 0 && (
-					<View className="px-screen-m pt-[17px]">
-						<View className="mb-[11px] flex-row items-start gap-2">
-							<Text
-								className="font-medium text-md leading-[1.3] text-content-primary"
-								style={{ includeFontPadding: false }}
-							>
-								🔥
-							</Text>
-							<Text
-								className="font-semibold text-md leading-[1.3] text-content-primary"
-								style={{ includeFontPadding: false }}
-							>
-								{"지금 많이 찾는 "}
-								<Text className="text-primary">제휴</Text>
-								{" 매장"}
-							</Text>
-						</View>
-						<View className="gap-5 px-[14px] py-4">
-							{popularStores.map((store, index) => (
-								<PopularStoreRow
-									key={store.id}
-									store={store}
-									rank={index + 1}
-									onPress={() => setQuery(store.name)}
-								/>
-							))}
-						</View>
-					</View>
-				)
-			)}
+				) : null)}
 		</Pressable>
 	);
 }
@@ -193,32 +158,5 @@ function SearchResultSeparator() {
 				}}
 			/>
 		</View>
-	);
-}
-
-function PopularStoreRow({
-	store,
-	rank,
-	onPress,
-}: {
-	store: PopularStore;
-	rank: number;
-	onPress: () => void;
-}) {
-	return (
-		<Pressable onPress={onPress} className="flex-row items-center gap-[8px]">
-			<Text
-				className={`w-[17px] font-regular text-[14px] leading-[1.3] tracking-[-0.126px] ${rank <= 3 ? "text-primary" : "text-content-secondary"}`}
-				style={{ includeFontPadding: false }}
-			>
-				{rank}
-			</Text>
-			<Text
-				className="font-regular text-[14px] leading-[1.3] text-content-primary"
-				style={{ includeFontPadding: false }}
-			>
-				{store.name}
-			</Text>
-		</Pressable>
 	);
 }
