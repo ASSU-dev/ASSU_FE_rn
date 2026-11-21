@@ -83,6 +83,7 @@ export { default as MapMarkerSports } from "./map-marker-sports.svg";
 export { default as MapMarkerSportsSelected } from "./map-marker-sports-selected.svg";
 export { default as NotificationBellIcon } from "./notification-bell-icon.svg";
 export { default as Others } from "./others.svg";
+export { default as PartnershipFolderIcon } from "./partnership-folder-icon.svg";
 export { default as PartnershipGroupStatus } from "./partnership-group-status.svg";
 export { default as PartnershipTicket } from "./partnership-ticket.svg";
 export { default as QrIcon } from "./qr-icon.svg";

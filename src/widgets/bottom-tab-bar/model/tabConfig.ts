@@ -6,7 +6,7 @@ import {
 	AccountManagementIcon,
 	HomeIcon,
 	Location,
-	SuggestionBoxIcon,
+	PartnershipFolderIcon,
 } from "@/shared/assets/icons";
 
 type IoniconName = ComponentProps<typeof Ionicons>["name"];
@@ -46,8 +46,8 @@ export const TAB_CONFIG: Record<UserType, TabItem[]> = {
 		},
 		{
 			route: "suggestion",
-			label: "제휴건의함",
-			Icon: SuggestionBoxIcon,
+			label: "제휴관리",
+			Icon: PartnershipFolderIcon,
 		},
 		{
 			route: "profile",
