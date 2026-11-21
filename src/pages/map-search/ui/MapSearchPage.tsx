@@ -16,14 +16,10 @@ import type { SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
 import { useRecentSearches, useSearchStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
-import {
-	AssuLogoFaded,
-	BackArrowIcon,
-	CloseIcon,
-	LocationIcon,
-} from "@/shared/assets/icons";
+import { BackArrowIcon, CloseIcon, LocationIcon } from "@/shared/assets/icons";
 import { useDebounce } from "@/shared/lib/hooks/useDebounce";
 import { colorTokens } from "@/shared/styles/tokens";
+import { EmptyResultView } from "@/shared/ui/empty-state";
 import { SearchResultCard } from "@/widgets/map";
 import { RecentSearchSection } from "./RecentSearchSection";
 
@@ -145,12 +141,7 @@ export function MapSearchPage({
 
 			{isSearching &&
 				(!isSearchLoading && searchResults.length === 0 ? (
-					<View className="flex-1 items-center justify-center gap-[8px] pb-[150px]">
-						<AssuLogoFaded width={96} height={96} />
-						<Text className="text-center font-bold text-[12px] leading-[1.3] text-content-secondary">
-							검색 결과가 없습니다
-						</Text>
-					</View>
+					<EmptyResultView />
 				) : !isSearchLoading && searchResults.length > 0 ? (
 					<FlatList
 						data={searchResults}
