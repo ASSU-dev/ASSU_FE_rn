@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
@@ -8,7 +9,24 @@ import { assertSuccess } from "../lib/assertSuccess";
 import { completeLogin } from "../lib/auth";
 import { getLoginErrorMessage } from "../lib/getLoginErrorMessage";
 
-export function useStudentLoginAction(returnTo?: string) {
+const SIGNUP_REQUIRED_ERROR_CODE = "MEMBER_4001";
+
+function isSignupRequiredError(error: unknown) {
+	if (!isAxiosError(error)) {
+		return false;
+	}
+
+	return (
+		error.response?.status === 404 &&
+		(error.response.data as { code?: string } | undefined)?.code ===
+			SIGNUP_REQUIRED_ERROR_CODE
+	);
+}
+
+export function useStudentLoginAction(
+	returnTo?: string,
+	onSignupRequired?: () => void,
+) {
 	const [isWebViewVisible, setWebViewVisible] = useState(false);
 	const mutation = useLoginStudentMutation();
 
@@ -49,6 +67,12 @@ export function useStudentLoginAction(returnTo?: string) {
 				router.replace(homeRoute as never);
 				if (__DEV__) console.log("[LMS LOGIN] navigation requested");
 			} catch (error) {
+				if (isSignupRequiredError(error)) {
+					setWebViewVisible(false);
+					onSignupRequired?.();
+					return;
+				}
+
 				if (__DEV__)
 					console.log("[LMS LOGIN] post-auth failure", {
 						name: error instanceof Error ? error.name : "UnknownError",
@@ -59,7 +83,7 @@ export function useStudentLoginAction(returnTo?: string) {
 				Alert.alert("로그인 실패", getLoginErrorMessage(error));
 			}
 		},
-		[mutation, returnTo],
+		[mutation, onSignupRequired, returnTo],
 	);
 
 	const handlePressLmsLogin = useCallback(async () => {
