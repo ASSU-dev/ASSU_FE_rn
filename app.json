@@ -96,7 +96,7 @@
 				{
 					"ios": {
 						"useFrameworks": "static",
-						"forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+						"forceStaticLinking": ["RNFBApp", "RNFBMessaging", "RNFBAnalytics"]
 					}
 				}
 			],

@@ -3,6 +3,8 @@ import { useForegroundMessage, useInitFcm } from "@/features/device-token";
 import { parseGroupCertificationQr } from "@/features/partnership-auth";
 import { getHomeRouteByRole, initAuth } from "@/shared/api/auth";
 import { initMocks } from "@/shared/api/mocks";
+import { initAnalytics } from "@/shared/lib/analytics/analytics";
+import { useScreenTracking } from "@/shared/lib/analytics/useScreenTracking";
 import { useLoadFonts } from "@/shared/lib/hooks/useLoadFonts";
 import { useStompLifecycle } from "@/shared/lib/stomp/useStompLifecycle";
 import "@/shared/styles/global.styles.css";
@@ -17,6 +19,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import "react-native-url-polyfill/auto";
 
 initMocks();
+initAnalytics();
 
 // 비로그인 상태의 진입 화면
 const REGISTER_ROUTE = "/(auth)/register";
@@ -64,6 +67,11 @@ export const unstable_settings = {
 function FcmInitializer() {
 	useInitFcm();
 	useForegroundMessage();
+	return null;
+}
+
+function AnalyticsScreenTracker() {
+	useScreenTracking();
 	return null;
 }
 
@@ -120,6 +128,7 @@ export default function RootLayout() {
 				<SafeAreaProvider>
 					<KeyboardProvider>
 						<FcmInitializer />
+						<AnalyticsScreenTracker />
 						<Stack>
 							<Stack.Screen name="index" options={{ headerShown: false }} />
 							<Stack.Screen name="verify" options={{ headerShown: false }} />
