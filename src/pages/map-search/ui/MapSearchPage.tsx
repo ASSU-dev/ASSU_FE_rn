@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
-import { useSearchStores } from "@/features/map-search";
+import { useRecentSearches, useSearchStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import {
 	AssuLogoFaded,
@@ -25,6 +25,7 @@ import {
 import { useDebounce } from "@/shared/lib/hooks/useDebounce";
 import { colorTokens } from "@/shared/styles/tokens";
 import { SearchResultCard } from "@/widgets/map";
+import { RecentSearchSection } from "./RecentSearchSection";
 
 type Role = "student" | "admin" | "partner";
 
@@ -45,6 +46,12 @@ export function MapSearchPage({
 	const debouncedQuery = useDebounce(query, 300);
 
 	const isSearching = debouncedQuery.trim().length > 0;
+	const {
+		recentSearches,
+		addRecentSearch,
+		removeRecentSearch,
+		clearRecentSearches,
+	} = useRecentSearches();
 
 	const { data: searchResults = [], isLoading: isSearchLoading } =
 		useSearchStores(debouncedQuery.trim());
@@ -65,6 +72,7 @@ export function MapSearchPage({
 
 	const handleActionPress = (store: SearchResultStore) => {
 		if (role === "student") return;
+		addRecentSearch(debouncedQuery);
 
 		if (store.isPartner && store.partnershipId) {
 			router.push(`/(protected)/partnership-contract/${store.partnershipId}`);
@@ -107,6 +115,7 @@ export function MapSearchPage({
 							placeholder="찾으시는 제휴 가게가 없나요?"
 							placeholderTextColor={colorTokens.contentSecondary}
 							returnKeyType="search"
+							onSubmitEditing={() => addRecentSearch(query)}
 							style={{
 								margin: 0,
 								padding: 0,
@@ -121,6 +130,18 @@ export function MapSearchPage({
 					)}
 				</View>
 			</View>
+
+			{!isSearching && (
+				<RecentSearchSection
+					keywords={recentSearches}
+					onSelect={(keyword) => {
+						setQuery(keyword);
+						addRecentSearch(keyword);
+					}}
+					onRemove={removeRecentSearch}
+					onClearAll={clearRecentSearches}
+				/>
+			)}
 
 			{isSearching &&
 				(!isSearchLoading && searchResults.length === 0 ? (
@@ -147,7 +168,10 @@ export function MapSearchPage({
 								}
 								onPress={
 									role === "student" && onStorePress && item.storeId
-										? () => onStorePress(item)
+										? () => {
+												addRecentSearch(debouncedQuery);
+												onStorePress(item);
+											}
 										: undefined
 								}
 								onActionPress={

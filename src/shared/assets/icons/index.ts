@@ -100,3 +100,4 @@ export { default as TransportIcon } from "./transport-icon.svg";
 export { default as UploadFilesIcon } from "./upload-files-icon.svg";
 export { default as UserIcon } from "./user-icon.svg";
 export { default as WritingIcon } from "./writing-icon.svg";
+export { default as XMarkIcon } from "./x-mark-icon.svg";
