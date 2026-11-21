@@ -227,6 +227,16 @@ export function StudentMapView({
 	]);
 	const selectedStore =
 		partnerMarkerStores.find((store) => store.id === selectedStoreId) ?? null;
+	const isSelectedCardVisible = Boolean(
+		selectedStore || (selectedStoreId === initialStoreId && initialStoreName),
+	);
+	const [selectedCardHeight, setSelectedCardHeight] = useState(0);
+	// 현재위치 버튼은 시트 최소 높이 바로 위에 고정하고, 시트가 올라오면 시트 뒤로 가려진다.
+	// 매장 카드가 떠 있으면 카드 위로 올린다.
+	const locateButtonBottom =
+		SNAP_MINI +
+		SHEET_GAP +
+		(isSelectedCardVisible ? selectedCardHeight + SHEET_GAP : 0);
 
 	useEffect(() => {
 		if (selectedStoreId && !selectedStore && selectedStoreId !== initialStoreId)
@@ -404,14 +414,16 @@ export function StudentMapView({
 				onPress={handleFocusToMyLocation}
 				disabled={!myLocation}
 				placement="bottom-left"
-				bottomOffset={SNAP_PEEK + SHEET_GAP}
+				bottomOffset={locateButtonBottom}
 			/>
-			{selectedStore ||
-			(selectedStoreId === initialStoreId && initialStoreName) ? (
+			{isSelectedCardVisible ? (
 				<Animated.View
 					entering={FadeInDown.duration(220)}
 					className="absolute left-card-p right-card-p"
 					style={{ bottom: SNAP_MINI + SHEET_GAP }}
+					onLayout={(event) =>
+						setSelectedCardHeight(event.nativeEvent.layout.height)
+					}
 				>
 					<StudentSelectedStoreCard
 						onClose={() => setSelectedStoreId(null)}
