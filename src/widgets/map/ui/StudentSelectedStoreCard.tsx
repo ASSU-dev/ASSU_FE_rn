@@ -1,4 +1,5 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Pressable, Text, View } from "react-native";
 
 import { CloseNoCircleIcon } from "@/shared/assets/icons";
 import { shadowNeutral } from "@/shared/styles/shadows";
@@ -9,7 +10,6 @@ interface StudentSelectedStoreCardProps {
 	benefitLabel?: string;
 	benefitHighlight?: string;
 	extraBenefitCount?: number;
-	distanceText?: string;
 	/** 썸네일 좌하단 오버레이 태그 (ex. "IT대 학생회") */
 	tag?: string;
 	/** 카드 본문 탭 (매장 상세 이동) */
@@ -27,17 +27,11 @@ export function StudentSelectedStoreCard({
 	benefitLabel,
 	benefitHighlight,
 	extraBenefitCount = 0,
-	distanceText,
 	tag,
 	onPress,
 	onCertifyPress,
 	onClose,
 }: StudentSelectedStoreCardProps) {
-	const metaParts = [
-		extraBenefitCount > 0 ? `외 ${extraBenefitCount}가지 제휴` : null,
-		distanceText ?? null,
-	].filter((part): part is string => part !== null);
-
 	return (
 		<View className="rounded-[10px] bg-canvas p-gutter" style={shadowNeutral}>
 			<Pressable
@@ -49,8 +43,10 @@ export function StudentSelectedStoreCard({
 					{imageUri ? (
 						<Image
 							source={{ uri: imageUri }}
-							className="h-[110px] w-[110px] rounded-[8px]"
-							resizeMode="cover"
+							style={{ width: 110, height: 110, borderRadius: 8 }}
+							contentFit="cover"
+							cachePolicy="memory-disk"
+							recyclingKey={imageUri}
 						/>
 					) : (
 						<View className="h-[110px] w-[110px] rounded-[8px] bg-neutral" />
@@ -88,12 +84,12 @@ export function StudentSelectedStoreCard({
 							</Text>
 						)}
 
-						{metaParts.length > 0 && (
+						{extraBenefitCount > 0 && (
 							<Text
 								className="font-regular text-[10px] leading-[12px] tracking-[-0.32px] text-content-secondary"
 								numberOfLines={1}
 							>
-								{metaParts.join(" • ")}
+								외 {extraBenefitCount}가지 제휴
 							</Text>
 						)}
 					</View>

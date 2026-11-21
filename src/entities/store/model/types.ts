@@ -75,6 +75,8 @@ export interface SearchResultStore {
 	// student view
 	tag?: string;
 	benefit?: string;
+	/** "외 N가지 제휴" 계산용 학생회별 혜택 목록 */
+	partnerships?: StorePartnership[];
 	// admin / partner view
 	address?: string;
 	rate?: number;

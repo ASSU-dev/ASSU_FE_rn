@@ -1,12 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { MapTargetIcon } from "@/shared/assets/icons";
 import { shadows } from "@/shared/styles/shadows";
-import { colorTokens } from "@/shared/styles/tokens";
 
 const TOP_OFFSET_BELOW_SEARCH_BAR = 80;
 const EDGE_MARGIN = 15;
+/** 피그마 현재위치 버튼: 46px 원 + 26px 타깃 아이콘 */
+const ICON_SIZE = 26;
 
 interface MapLocateButtonProps {
 	onPress: () => void;
@@ -33,7 +34,7 @@ export function MapLocateButton({
 		<Pressable
 			onPress={onPress}
 			disabled={disabled}
-			className="absolute flex-row items-center justify-center gap-gutter rounded-full bg-canvas p-gutter"
+			className="absolute h-[46px] w-[46px] items-center justify-center rounded-full bg-canvas"
 			style={{
 				...positionStyle,
 				opacity: disabled ? 0.5 : 1,
@@ -41,7 +42,7 @@ export function MapLocateButton({
 			}}
 			hitSlop={8}
 		>
-			<Ionicons name="locate" size={20} color={colorTokens.contentPrimary} />
+			<MapTargetIcon width={ICON_SIZE} height={ICON_SIZE} />
 		</Pressable>
 	);
 }

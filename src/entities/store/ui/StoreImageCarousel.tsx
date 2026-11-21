@@ -1,5 +1,6 @@
+import { Image } from "expo-image";
 import { useRef, useState } from "react";
-import { Dimensions, FlatList, Image, View } from "react-native";
+import { Dimensions, FlatList, View } from "react-native";
 import { DefaultImageMagazine } from "@/shared/assets/icons";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -45,7 +46,8 @@ export function StoreImageCarousel({ images = [] }: StoreImageCarouselProps) {
 							<Image
 								source={{ uri: item }}
 								style={{ width: SCREEN_WIDTH, height: CARD_HEIGHT }}
-								resizeMode="cover"
+								contentFit="cover"
+								cachePolicy="memory-disk"
 							/>
 						)}
 					</View>

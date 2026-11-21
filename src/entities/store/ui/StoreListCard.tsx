@@ -1,4 +1,5 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Pressable, Text, View } from "react-native";
 import { DefaultImageCircle } from "@/shared/assets/icons";
 
 interface StoreListCardProps {
@@ -44,8 +45,10 @@ export function StoreListCard({
 			{imageUri ? (
 				<Image
 					source={{ uri: imageUri }}
-					className="h-[81px] w-[81px] rounded-[7px]"
-					resizeMode="cover"
+					style={{ width: 81, height: 81, borderRadius: 7 }}
+					contentFit="cover"
+					cachePolicy="memory-disk"
+					recyclingKey={imageUri}
 				/>
 			) : (
 				<View className="h-[81px] w-[81px] items-center justify-center rounded-[7px] bg-neutral">
