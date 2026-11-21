@@ -8,9 +8,12 @@ import {
 	useGroupCertificationProgress,
 	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
+import { InfoIcon } from "@/shared/assets/icons";
+import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
 
 export function PartnershipGroupCertificationPage() {
+	const store = usePartnershipAuthStore((state) => state.store);
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
 	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
 	const sessionId = groupSession?.sessionId ?? null;
@@ -25,18 +28,25 @@ export function PartnershipGroupCertificationPage() {
 	}, [benefit, groupSession]);
 
 	useEffect(() => {
-		if (groupSession?.status === "COMPLETED") {
-			router.replace("/(protected)/student/partnership-verification");
-		}
-	}, [groupSession?.status]);
-
-	useEffect(() => {
 		if (!benefit || !groupSession) {
 			router.replace("/(protected)/student/partnership-auth");
 		}
 	}, [benefit, groupSession]);
 
 	if (!benefit || !groupSession || !qrValue) return null;
+
+	const displayedCount = Math.min(
+		groupSession.count,
+		groupSession.requiredPeople,
+	);
+	const isComplete =
+		groupSession.status === "COMPLETED" ||
+		displayedCount >= groupSession.requiredPeople;
+
+	const handleComplete = () => {
+		if (!isComplete) return;
+		router.replace("/(protected)/student/partnership-verification");
+	};
 
 	return (
 		<PageLayout withBottomInset contentContainerClassName="flex-1 px-screen-m">
@@ -48,36 +58,60 @@ export function PartnershipGroupCertificationPage() {
 				<Ionicons name="chevron-back" size={24} />
 			</Pressable>
 
-			<View className="mt-[45px] items-center gap-[12px]">
-				<Text className="text-lg font-semibold text-primary">다인용 혜택</Text>
-				<Text className="text-center text-[25px] font-semibold leading-[28px] text-content-primary">
-					함께 인증할 분들에게{"\n"}QR 코드를 보여주세요
+			<View className="mt-[45px] items-center gap-[6px]">
+				{store ? (
+					<Text className="text-center text-md font-medium leading-caption tracking-caption text-primary">
+						{store.storeName}
+					</Text>
+				) : null}
+				<Text className="text-center text-[25px] font-semibold leading-heading tracking-caption text-content-primary">
+					{benefit.contents}
 				</Text>
 			</View>
 
-			<View className="mt-[42px] items-center">
-				<View className="rounded-[12px] bg-canvas p-card-p">
+			<View className="mt-[45px] items-center">
+				<View className="items-center justify-center rounded-[16px] border-[3px] border-sub bg-canvas p-[24px]">
 					<QRCode value={qrValue} size={200} />
 				</View>
-				<Text className="mt-[20px] text-md font-semibold text-content-primary">
-					{groupSession.count}/{groupSession.requiredPeople}명 인증 완료
+			</View>
+
+			<View className="mt-[35px] w-full items-center justify-center gap-[12px] rounded-[12px] bg-neutral py-card-p">
+				<Text className="text-sm font-regular leading-caption tracking-caption text-primary">
+					제휴 인증 인원
 				</Text>
-				<View className="mt-[14px] flex-row gap-gutter">
-					{Array.from({ length: groupSession.requiredPeople }, (_, index) => (
-						<View
-							key={`participant-${index + 1}`}
-							className={`size-[12px] rounded-[999px] ${
-								index < groupSession.count ? "bg-primary" : "bg-neutral"
-							}`}
-						/>
-					))}
+				<View className="flex-row items-center justify-center gap-[34px]">
+					{Array.from({ length: groupSession.requiredPeople }, (_, index) => {
+						const isVerified = index < displayedCount;
+						return (
+							<View
+								key={`participant-progress-${index + 1}`}
+								className={`size-[21px] items-center justify-center rounded-[999px] ${
+									isVerified ? "bg-primary-tint" : "bg-neutral-variant"
+								}`}
+							>
+								<View
+									className={`size-[11px] rounded-[999px] ${
+										isVerified ? "bg-sub" : "bg-content-tertiary"
+									}`}
+								/>
+							</View>
+						);
+					})}
 				</View>
 			</View>
 
-			<View className="mt-auto rounded-[8px] bg-neutral p-card-p">
-				<Text className="text-center text-sm font-regular text-content-secondary">
-					필요한 인원이 모두 인증하면 자동으로 다음 화면으로 이동합니다
+			<View className="mt-[12px] flex-row items-center gap-[4px] px-[4px]">
+				<InfoIcon width={10} height={10} />
+				<Text className="flex-1 text-[11px] font-regular leading-caption tracking-caption text-content-secondary">
+					인원 조건이 있는 혜택으로, 모든 인원이 QR코드를 스캔해 인증해야
+					합니다.
 				</Text>
+			</View>
+
+			<View className="mt-auto items-center pb-[4px]">
+				<MediumButton disabled={!isComplete} onPress={handleComplete}>
+					인증완료
+				</MediumButton>
 			</View>
 		</PageLayout>
 	);

@@ -26,7 +26,7 @@ export function PartnershipSelectItem({
 	return (
 		<Pressable
 			onPress={onPress}
-			className={`min-h-[93px] flex-row items-center justify-between rounded-[8px] border bg-canvas px-3 ${
+			className={`flex-row items-center gap-[17px] rounded-[8px] border bg-canvas p-3 ${
 				isSelected ? "border-primary" : "border-neutral-variant"
 			}`}
 		>
@@ -35,21 +35,30 @@ export function PartnershipSelectItem({
 			) : (
 				<CheckCircleOff width={22} height={22} />
 			)}
-			<View className="shrink-0 flex-row items-center">
-				<View className="w-[221px] gap-1">
-					<Text className="w-full font-medium text-sm leading-normal tracking-[-0.32px] text-content-primary">
-						{benefit.paperContent}
+			<View className="min-w-0 flex-1 gap-[6px]">
+				<Text
+					numberOfLines={2}
+					ellipsizeMode="tail"
+					className="font-medium text-[12px] leading-normal tracking-[-0.32px] text-content-primary"
+				>
+					{benefit.paperContent}
+				</Text>
+				<View className="flex-row items-center justify-between gap-[8px]">
+					<Text
+						numberOfLines={1}
+						ellipsizeMode="tail"
+						className="min-w-0 flex-1 font-light text-[12px] leading-normal tracking-[-0.32px] text-content-secondary"
+					>
+						{benefit.partnershipPeriod
+							? formatPartnershipPeriod(benefit.partnershipPeriod)
+							: ""}
 					</Text>
-					{benefit.partnershipPeriod ? (
-						<Text className="w-full font-light text-xs leading-normal tracking-[-0.32px] text-content-secondary">
-							{formatPartnershipPeriod(benefit.partnershipPeriod)}
+					{/* 태그는 오른쪽 기준으로 이름 길이만큼 안쪽(왼쪽)으로 늘어난다. 공간이 부족하면 제휴기간이 줄어든다 */}
+					<View className="max-w-full shrink-0 items-center justify-center rounded-full bg-neutral px-[10px] py-[5px]">
+						<Text className="font-regular text-[10px] leading-normal tracking-[-0.32px] text-content-primary">
+							{benefit.adminName}
 						</Text>
-					) : null}
-				</View>
-				<View className="shrink-0 items-center justify-center rounded-full bg-neutral px-3.5 py-1">
-					<Text className="font-regular text-sm leading-[21px] tracking-[-0.32px] text-content-primary">
-						{benefit.adminName}
-					</Text>
+					</View>
 				</View>
 			</View>
 		</Pressable>
