@@ -26,7 +26,9 @@ export function getPrimaryBenefit(store: StoreMarker): string | undefined {
 }
 
 /** 대표 혜택을 제외한 나머지 혜택 개수 — "외 N가지 제휴" */
-export function countExtraBenefits(store: StoreMarker): number {
+export function countExtraBenefits(
+	store: Pick<StoreMarker, "partnerships" | "benefit">,
+): number {
 	const total = store.partnerships
 		? store.partnerships.reduce(
 				(sum, partnership) => sum + partnership.benefits.length,

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
 	Alert,
 	FlatList,
@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
 import { useSearchStores } from "@/features/map-search";
+import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import {
 	AssuLogoFaded,
 	BackArrowIcon,
@@ -47,6 +48,20 @@ export function MapSearchPage({
 
 	const { data: searchResults = [], isLoading: isSearchLoading } =
 		useSearchStores(debouncedQuery.trim());
+	// 검색 응답에 혜택 목록이 없으면 지도와 같은 제휴 목록의 extraCount로 "외 N가지 제휴"를 채운다.
+	const { data: usablePartnerships } = useGetUsablePartnershipQuery(
+		{ all: true },
+		{ enabled: role === "student" },
+	);
+	const extraCountByStoreId = useMemo(() => {
+		const map = new Map<string, number>();
+		for (const partnership of usablePartnerships?.result ?? []) {
+			if (partnership.storeId === undefined) continue;
+			const key = String(partnership.storeId);
+			if (!map.has(key)) map.set(key, partnership.extraCount ?? 0);
+		}
+		return map;
+	}, [usablePartnerships]);
 
 	const handleActionPress = (store: SearchResultStore) => {
 		if (role === "student") return;
@@ -125,6 +140,11 @@ export function MapSearchPage({
 							<SearchResultCard
 								store={item}
 								role={role}
+								fallbackExtraBenefitCount={
+									item.storeId
+										? extraCountByStoreId.get(item.storeId)
+										: undefined
+								}
 								onPress={
 									role === "student" && onStorePress && item.storeId
 										? () => onStorePress(item)

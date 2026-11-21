@@ -7,9 +7,11 @@ const { getUsablePartnership } = getGetUsablePartnershipApi();
 
 export function useGetUsablePartnershipQuery(
 	params?: GetUsablePartnershipParams,
+	options?: { enabled?: boolean },
 ) {
 	return useQuery({
 		queryKey: ["getUsablePartnership", params],
+		enabled: options?.enabled ?? true,
 		queryFn: async () => {
 			if (__DEV__) {
 				console.log("[PartnershipDebug] usable request", {
