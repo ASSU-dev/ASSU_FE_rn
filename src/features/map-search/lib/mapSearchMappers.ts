@@ -124,6 +124,7 @@ export function toSearchResultStore(value: unknown): SearchResultStore | null {
 			getString(value, ["tag", "adminName", "affiliation", "category"]) ??
 			getPartnershipAdminName(value.partnerships),
 		benefit: getStoreBenefit(value),
+		partnerships: toStorePartnerships(value.partnerships),
 		address: getString(value, ["address", "roadAddress", "storeAddress"]),
 		rate: getNumber(value, ["rate", "rating", "score"]),
 		latitude: getNumber(value, ["latitude", "lat", "y"]),

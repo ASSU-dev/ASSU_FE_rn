@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
 	Alert,
 	FlatList,
@@ -12,14 +12,21 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import type { PopularStore, SearchResultStore } from "@/entities/store";
+import type { SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
-import { usePopularStores, useSearchStores } from "@/features/map-search";
-import { BackArrowIcon, CloseIcon, LocationIcon } from "@/shared/assets/icons";
+import { usePopularStores, useRecentSearches, useSearchStores } from "@/features/map-search";
+import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
+import {
+	AssuLogoFaded,
+	BackArrowIcon,
+	CloseIcon,
+	LocationIcon,
+} from "@/shared/assets/icons";
 import { useDebounce } from "@/shared/lib/hooks/useDebounce";
 import { colorTokens } from "@/shared/styles/tokens";
 import { EmptyResultView } from "@/shared/ui/empty-state";
 import { SearchResultCard } from "@/widgets/map";
+import { RecentSearchSection } from "./RecentSearchSection";
 
 type Role = "student" | "admin" | "partner";
 
@@ -40,14 +47,33 @@ export function MapSearchPage({
 	const debouncedQuery = useDebounce(query, 300);
 
 	const isSearching = debouncedQuery.trim().length > 0;
-	const showPopular = !isSearching && role !== "partner";
+	const {
+		recentSearches,
+		addRecentSearch,
+		removeRecentSearch,
+		clearRecentSearches,
+	} = useRecentSearches();
 
-	const { data: popularStores = [] } = usePopularStores();
 	const { data: searchResults = [], isLoading: isSearchLoading } =
 		useSearchStores(debouncedQuery.trim());
+	// 검색 응답에 혜택 목록이 없으면 지도와 같은 제휴 목록의 extraCount로 "외 N가지 제휴"를 채운다.
+	const { data: usablePartnerships } = useGetUsablePartnershipQuery(
+		{ all: true },
+		{ enabled: role === "student" },
+	);
+	const extraCountByStoreId = useMemo(() => {
+		const map = new Map<string, number>();
+		for (const partnership of usablePartnerships?.result ?? []) {
+			if (partnership.storeId === undefined) continue;
+			const key = String(partnership.storeId);
+			if (!map.has(key)) map.set(key, partnership.extraCount ?? 0);
+		}
+		return map;
+	}, [usablePartnerships]);
 
 	const handleActionPress = (store: SearchResultStore) => {
 		if (role === "student") return;
+		addRecentSearch(debouncedQuery);
 
 		if (store.isPartner && store.partnershipId) {
 			router.push(`/(protected)/partnership-contract/${store.partnershipId}`);
@@ -90,6 +116,7 @@ export function MapSearchPage({
 							placeholder="찾으시는 제휴 가게가 없나요?"
 							placeholderTextColor={colorTokens.contentSecondary}
 							returnKeyType="search"
+							onSubmitEditing={() => addRecentSearch(query)}
 							style={{
 								margin: 0,
 								padding: 0,
@@ -118,9 +145,17 @@ export function MapSearchPage({
 							<SearchResultCard
 								store={item}
 								role={role}
+								fallbackExtraBenefitCount={
+									item.storeId
+										? extraCountByStoreId.get(item.storeId)
+										: undefined
+								}
 								onPress={
 									role === "student" && onStorePress && item.storeId
-										? () => onStorePress(item)
+										? () => {
+												addRecentSearch(debouncedQuery);
+												onStorePress(item);
+											}
 										: undefined
 								}
 								onActionPress={
@@ -136,40 +171,7 @@ export function MapSearchPage({
 						}
 						contentContainerStyle={{ paddingHorizontal: 14 }}
 					/>
-				) : null
-			) : (
-				showPopular &&
-				popularStores.length > 0 && (
-					<View className="px-screen-m pt-[17px]">
-						<View className="mb-[11px] flex-row items-start gap-2">
-							<Text
-								className="font-medium text-md leading-[1.3] text-content-primary"
-								style={{ includeFontPadding: false }}
-							>
-								🔥
-							</Text>
-							<Text
-								className="font-semibold text-md leading-[1.3] text-content-primary"
-								style={{ includeFontPadding: false }}
-							>
-								{"지금 많이 찾는 "}
-								<Text className="text-primary">제휴</Text>
-								{" 매장"}
-							</Text>
-						</View>
-						<View className="gap-5 px-[14px] py-4">
-							{popularStores.map((store, index) => (
-								<PopularStoreRow
-									key={store.id}
-									store={store}
-									rank={index + 1}
-									onPress={() => setQuery(store.name)}
-								/>
-							))}
-						</View>
-					</View>
-				)
-			)}
+				) : null)}
 		</Pressable>
 	);
 }
@@ -184,32 +186,5 @@ function SearchResultSeparator() {
 				}}
 			/>
 		</View>
-	);
-}
-
-function PopularStoreRow({
-	store,
-	rank,
-	onPress,
-}: {
-	store: PopularStore;
-	rank: number;
-	onPress: () => void;
-}) {
-	return (
-		<Pressable onPress={onPress} className="flex-row items-center gap-[8px]">
-			<Text
-				className={`w-[17px] font-regular text-[14px] leading-[1.3] tracking-[-0.126px] ${rank <= 3 ? "text-primary" : "text-content-secondary"}`}
-				style={{ includeFontPadding: false }}
-			>
-				{rank}
-			</Text>
-			<Text
-				className="font-regular text-[14px] leading-[1.3] text-content-primary"
-				style={{ includeFontPadding: false }}
-			>
-				{store.name}
-			</Text>
-		</Pressable>
 	);
 }

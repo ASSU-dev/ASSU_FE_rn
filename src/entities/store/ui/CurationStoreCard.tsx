@@ -1,5 +1,6 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { DefaultImageMagazine, SaleTag } from "@/shared/assets/icons";
+import { MarqueeText } from "@/shared/ui/marquee-text";
 
 interface CurationStoreCardProps {
 	profileImageUrl?: string;
@@ -33,14 +34,12 @@ export function CurationStoreCard({
 					</View>
 				)}
 				{discountContent && (
-					<View className="absolute bottom-0 left-0 flex-row items-center gap-1 rounded-tr-md rounded-b-md bg-primary px-2 py-1">
+					<View className="absolute bottom-0 left-0 max-w-full flex-row items-center gap-1 rounded-tr-md rounded-b-md bg-primary px-2 py-1">
 						<SaleTag width={12} height={10} />
-						<Text
+						<MarqueeText
+							text={discountContent}
 							className="font-semibold text-[11.5px] text-content-inverse"
-							numberOfLines={1}
-						>
-							{discountContent}
-						</Text>
+						/>
 					</View>
 				)}
 			</View>

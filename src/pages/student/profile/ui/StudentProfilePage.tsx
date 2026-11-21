@@ -1,10 +1,15 @@
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { formatProfileSubtitle } from "@/entities/user/lib/formatProfileSubtitle";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
-import { useAccountSessionActions } from "@/features/account-session-management";
+import {
+	LogoutConfirmDialog,
+	useAccountSessionActions,
+	WithdrawalConfirmDialog,
+} from "@/features/account-session-management";
 import {
 	ProfileImageActionSheet,
 	useProfileImageEditor,
@@ -22,22 +27,38 @@ export function StudentProfilePage() {
 	const { data: studentProfile } = useStudentProfileQuery();
 	const profileImageEditor = useProfileImageEditor();
 	const accountSession = useAccountSessionActions();
+	const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+	const [isWithdrawalOpen, setIsWithdrawalOpen] = useState(false);
+
+	function handleLogout() {
+		setIsLogoutOpen(false);
+		accountSession.executeLogout();
+	}
+
+	function handleWithdrawal() {
+		setIsWithdrawalOpen(false);
+		accountSession.executeWithdrawal();
+	}
 
 	const myAccountItems: AccountMenuItemProps[] = [
 		{
 			label: "로그아웃",
 			iconName: "exitRight",
-			onPress: accountSession.requestLogout,
+			onPress: () => setIsLogoutOpen(true),
 		},
 		{
 			label: "회원 탈퇴",
 			iconName: "user",
-			onPress: accountSession.requestWithdrawal,
+			onPress: () => setIsWithdrawalOpen(true),
 		},
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
-		{ label: "개인정보 처리방침 안내", iconName: "folder" },
+		{
+			label: "개인정보 처리방침 안내",
+			iconName: "folder",
+			onPress: () => router.push("../privacy-policy"),
+		},
 		{
 			label: "자주 묻는 질문",
 			iconName: "speechBubble",
@@ -73,6 +94,18 @@ export function StudentProfilePage() {
 				onSelectImage={profileImageEditor.selectImage}
 				onDeleteImage={profileImageEditor.removeImage}
 				onClose={profileImageEditor.close}
+			/>
+			<LogoutConfirmDialog
+				visible={isLogoutOpen}
+				isPending={accountSession.isPending}
+				onConfirm={handleLogout}
+				onClose={() => setIsLogoutOpen(false)}
+			/>
+			<WithdrawalConfirmDialog
+				visible={isWithdrawalOpen}
+				isPending={accountSession.isPending}
+				onConfirm={handleWithdrawal}
+				onClose={() => setIsWithdrawalOpen(false)}
 			/>
 		</PageLayout>
 	);

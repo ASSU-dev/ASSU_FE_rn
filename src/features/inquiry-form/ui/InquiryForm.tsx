@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Controller,
 	type SubmitHandler,
@@ -25,15 +25,22 @@ interface InquiryFormProps {
 		onSubmit: SubmitHandler<InquiryFormData>,
 	) => void;
 	onSuccess?: () => void;
+	/** 문의 등록 요청 진행 여부가 바뀔 때 호출 (작성하기 버튼 로딩 표시용) */
+	onPendingChange?: (isPending: boolean) => void;
 }
 
 export function InquiryForm({
 	userEmail,
 	onSubmitHandler,
 	onSuccess,
+	onPendingChange,
 }: InquiryFormProps) {
-	const { mutate } = useSubmitInquiry();
-	const [successMessage, setSuccessMessage] = useState("");
+	const { mutate, isPending } = useSubmitInquiry();
+
+	useEffect(() => {
+		onPendingChange?.(isPending);
+	}, [isPending, onPendingChange]);
+	const [errorMessage, setErrorMessage] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 
 	const {
@@ -53,14 +60,12 @@ export function InquiryForm({
 	const onSubmit: SubmitHandler<InquiryFormData> = (data) => {
 		mutate(data, {
 			onSuccess: () => {
-				setSuccessMessage("문의가 등록되었습니다.");
 				reset({ title: "", content: "", email: userEmail });
-				setTimeout(() => setSuccessMessage(""), 3000);
-				setTimeout(() => onSuccess?.(), 1000);
+				onSuccess?.();
 			},
 			onError: () => {
-				setSuccessMessage("문의 등록에 실패했습니다. 다시 시도해주세요.");
-				setTimeout(() => setSuccessMessage(""), 3000);
+				setErrorMessage("문의 등록에 실패했습니다. 다시 시도해주세요.");
+				setTimeout(() => setErrorMessage(""), 3000);
 			},
 		});
 	};
@@ -173,12 +178,10 @@ export function InquiryForm({
 				</Text>
 			</View>
 
-			{/* Success Message */}
-			{successMessage && (
-				<View className="bg-green-100 px-3 py-2 rounded">
-					<Text className="text-sm text-green-700">{successMessage}</Text>
-				</View>
-			)}
+			{/* Error Message */}
+			{errorMessage ? (
+				<Text className="text-sm text-danger">{errorMessage}</Text>
+			) : null}
 		</View>
 	);
 }

@@ -12,14 +12,13 @@ describe("StudentSelectedStoreCard 선택 매장 정보와 버튼", () => {
 		jest.clearAllMocks();
 	});
 
-	it("매장 이름·대표 혜택·추가 혜택 개수·거리를 함께 보여 준다", async () => {
+	it("매장 이름·대표 혜택·추가 혜택 개수를 함께 보여 준다", async () => {
 		await render(
 			<StudentSelectedStoreCard
 				name="카페 A"
 				benefitLabel="4인이상 식사시,"
 				benefitHighlight="음료제공"
 				extraBenefitCount={2}
-				distanceText="350m"
 				tag="IT대 학생회"
 				{...handlers}
 			/>,
@@ -28,11 +27,11 @@ describe("StudentSelectedStoreCard 선택 매장 정보와 버튼", () => {
 		expect(screen.getByText("카페 A")).toBeTruthy();
 		expect(screen.getByText("4인이상 식사시,")).toBeTruthy();
 		expect(screen.getByText("음료제공")).toBeTruthy();
-		expect(screen.getByText("외 2가지 제휴 • 350m")).toBeTruthy();
+		expect(screen.getByText("외 2가지 제휴")).toBeTruthy();
 		expect(screen.getByText("IT대 학생회")).toBeTruthy();
 	});
 
-	it("추가 혜택과 거리 정보가 없으면 부가 정보 줄을 표시하지 않는다", async () => {
+	it("추가 혜택이 없으면 부가 정보 줄을 표시하지 않는다", async () => {
 		await render(
 			<StudentSelectedStoreCard
 				name="카페 A"
