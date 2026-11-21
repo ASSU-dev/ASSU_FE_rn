@@ -119,7 +119,7 @@ export function toAdminSignupBody(form: SignupFormState) {
 	}
 
 	const request: AdminSignUpRequestDTO = {
-		phoneNumber: form.identity.phone || "01012345678",
+		phoneNumber: form.identity.phone.replace(/\D/g, "") || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
 		locationAgree: form.agreements.agreePrivacy,
 		commonAuth: {
@@ -156,7 +156,7 @@ export function toPartnerSignupBody(form: SignupFormState) {
 	}
 
 	const request: PartnerSignUpRequestDTO = {
-		phoneNumber: form.identity.phone || "01012345678",
+		phoneNumber: form.identity.phone.replace(/\D/g, "") || "01012345678",
 		marketingAgree: form.agreements.agreeMarketing,
 		locationAgree: form.agreements.agreePrivacy,
 		commonAuth: {
