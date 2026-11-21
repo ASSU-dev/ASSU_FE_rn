@@ -8,6 +8,7 @@ import { AdminChipRow, CategoryChipRow } from "@/features/map-filter";
 import type { UsablePartnershipDTO } from "@/shared/api";
 import { BackArrowIcon, LocationIcon } from "@/shared/assets/icons";
 import { shadows } from "@/shared/styles/shadows";
+import { EmptyResultView } from "@/shared/ui/empty-state";
 import { useStoreListData } from "../model/useStoreListData";
 
 interface StudentStoreListWidgetProps {
@@ -53,11 +54,7 @@ export function StudentStoreListWidget({
 
 			{/* 검색 결과 */}
 			{isLoading ? null : stores.length === 0 ? (
-				<View className="flex-1 items-center justify-center pb-[150px]">
-					<Text className="font-regular text-sm text-content-secondary">
-						이용 가능한 제휴 매장이 없습니다
-					</Text>
-				</View>
+				<EmptyResultView message="이용 가능한 제휴 매장이 없습니다" />
 			) : (
 				<FlatList
 					style={{ flex: 1 }}
