@@ -10,8 +10,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { StoreMarker } from "@/entities/store";
 import {
 	countExtraBenefits,
-	formatDistance,
-	getDistanceKm,
 	getPrimaryAdminName,
 	getPrimaryBenefit,
 	StoreListCard,
@@ -442,16 +440,6 @@ export function StudentMapView({
 						}
 						extraBenefitCount={
 							selectedStore ? countExtraBenefits(selectedStore) : 0
-						}
-						distanceText={
-							selectedStore && myLocation
-								? formatDistance(
-										getDistanceKm(myLocation, {
-											lat: selectedStore.latitude,
-											lng: selectedStore.longitude,
-										}),
-									)
-								: undefined
 						}
 						tag={selectedStore ? getPrimaryAdminName(selectedStore) : undefined}
 						onPress={
