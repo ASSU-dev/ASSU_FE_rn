@@ -27,6 +27,7 @@ import { useNearbyStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import type { UsablePartnershipDTO } from "@/shared/api";
 import { ENV } from "@/shared/config/env";
+import { shadows } from "@/shared/styles/shadows";
 import type { LatLng } from "@/shared/types/map";
 import {
 	BottomSheetFlatList,
@@ -477,7 +478,7 @@ export function StudentMapView({
 				backgroundStyle={
 					isSheetExpanded
 						? { borderTopLeftRadius: 0, borderTopRightRadius: 0 }
-						: undefined
+						: shadows.sheet
 				}
 			>
 				<Animated.View
