@@ -33,6 +33,7 @@ import {
 	SnapBottomSheet,
 	type SnapBottomSheetRef,
 } from "@/shared/ui/bottom-sheet";
+import { EmptyResultView } from "@/shared/ui/empty-state";
 import {
 	KakaoMap,
 	type KakaoMapHandle,
@@ -137,11 +138,12 @@ export function StudentMapView({
 		storeCategory: storeCategory ?? undefined,
 	});
 	// 시트 리스트는 지도 범위와 무관하게 카테고리·학생회 필터를 적용한다.
-	const { data: partnershipResponse } = useGetUsablePartnershipQuery({
-		all: true,
-		storeCategory: storeCategory ?? undefined,
-		adminId: adminId ? Number(adminId) : undefined,
-	});
+	const { data: partnershipResponse, isLoading: isPartnershipLoading } =
+		useGetUsablePartnershipQuery({
+			all: true,
+			storeCategory: storeCategory ?? undefined,
+			adminId: adminId ? Number(adminId) : undefined,
+		});
 	const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
 
 	const pinnedStore = useMemo<StoreMarker | null>(() => {
@@ -493,6 +495,14 @@ export function StudentMapView({
 						}}
 						ItemSeparatorComponent={StoreListSeparator}
 						renderItem={({ item }) => renderPartnershipCard(item)}
+						ListEmptyComponent={
+							isPartnershipLoading ? null : (
+								<EmptyResultView
+									message="이용 가능한 제휴 매장이 없습니다"
+									className="pt-[60px]"
+								/>
+							)
+						}
 					/>
 				</Animated.View>
 			</SnapBottomSheet>
