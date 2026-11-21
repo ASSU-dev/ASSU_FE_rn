@@ -9,6 +9,7 @@ export * from "./FormField";
 export * from "./info";
 export * from "./input";
 export * from "./layout";
+export * from "./marquee-text";
 export * from "./profile";
 export * from "./rank";
 export * from "./SearchBar";
