@@ -14,14 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { SearchResultStore } from "@/entities/store";
 import { useOpenChatRoom } from "@/features/chat";
-import { usePopularStores, useRecentSearches, useSearchStores } from "@/features/map-search";
+import { useRecentSearches, useSearchStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
-import {
-	AssuLogoFaded,
-	BackArrowIcon,
-	CloseIcon,
-	LocationIcon,
-} from "@/shared/assets/icons";
+import { BackArrowIcon, CloseIcon, LocationIcon } from "@/shared/assets/icons";
 import { useDebounce } from "@/shared/lib/hooks/useDebounce";
 import { colorTokens } from "@/shared/styles/tokens";
 import { EmptyResultView } from "@/shared/ui/empty-state";
@@ -132,8 +127,20 @@ export function MapSearchPage({
 				</View>
 			</View>
 
-			{isSearching ? (
-				!isSearchLoading && searchResults.length === 0 ? (
+			{!isSearching && (
+				<RecentSearchSection
+					keywords={recentSearches}
+					onSelect={(keyword) => {
+						setQuery(keyword);
+						addRecentSearch(keyword);
+					}}
+					onRemove={removeRecentSearch}
+					onClearAll={clearRecentSearches}
+				/>
+			)}
+
+			{isSearching &&
+				(!isSearchLoading && searchResults.length === 0 ? (
 					<EmptyResultView />
 				) : !isSearchLoading && searchResults.length > 0 ? (
 					<FlatList
