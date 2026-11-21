@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
+import { AxiosError, type AxiosResponse } from "axios";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 import { useLoginStudentMutation } from "../api/useLoginStudentMutation";
@@ -20,11 +21,16 @@ jest.mock("../lib/auth", () => ({ completeLogin: jest.fn() }));
 
 const mutateAsync = jest.fn();
 
-function renderStudentLogin() {
+function renderStudentLogin(onSignupRequired = jest.fn()) {
 	jest.mocked(useLoginStudentMutation).mockReturnValue({
 		mutateAsync,
 	} as unknown as ReturnType<typeof useLoginStudentMutation>);
-	return renderHook(() => useStudentLoginAction("/verify?storeId=12"));
+	return {
+		onSignupRequired,
+		...renderHook(() =>
+			useStudentLoginAction("/verify?storeId=12", onSignupRequired),
+		),
+	};
 }
 
 describe("useStudentLoginAction LMS 로그인", () => {
@@ -79,6 +85,35 @@ describe("useStudentLoginAction LMS 로그인", () => {
 		});
 
 		expect(alert).toHaveBeenCalledWith("로그인 실패", "로그인에 실패했습니다.");
+		expect(router.replace).not.toHaveBeenCalled();
+	});
+
+	it("미가입 학생은 회원가입 단계로 이동한다", async () => {
+		const response = {
+			status: 404,
+			data: { code: "MEMBER_4001", message: "회원 가입 필요" },
+		} as AxiosResponse;
+		mutateAsync.mockRejectedValue(
+			new AxiosError(
+				"Request failed with status code 404",
+				undefined,
+				undefined,
+				undefined,
+				response,
+			),
+		);
+		const alert = jest.spyOn(Alert, "alert");
+		const { result, onSignupRequired } = renderStudentLogin();
+
+		await act(async () => {
+			await result.current.loginWebView.onVerifySuccess({
+				sIdno: "20231234",
+				sToken: "lms-token",
+			});
+		});
+
+		expect(onSignupRequired).toHaveBeenCalledTimes(1);
+		expect(alert).not.toHaveBeenCalled();
 		expect(router.replace).not.toHaveBeenCalled();
 	});
 });

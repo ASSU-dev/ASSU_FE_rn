@@ -116,7 +116,14 @@ export function useSignupFlowController() {
 	});
 	const { checkEmailAvailability } = useAdminEmailAvailabilityAction();
 
-	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction(returnTo);
+	const handleStudentSignupRequired = useCallback(
+		() => goTo("identity"),
+		[goTo],
+	);
+	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction(
+		returnTo,
+		handleStudentSignupRequired,
+	);
 	const { handlePressLogin, isPending: isCommonLoginPending } =
 		useCommonLoginAction({
 			email: form.auth.email,
