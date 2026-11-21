@@ -37,7 +37,11 @@ export function StudentProfilePage() {
 	];
 
 	const customerServiceItems: AccountMenuItemProps[] = [
-		{ label: "개인정보 처리방침 안내", iconName: "folder" },
+		{
+			label: "개인정보 처리방침 안내",
+			iconName: "folder",
+			onPress: () => router.push("../privacy-policy"),
+		},
 		{
 			label: "자주 묻는 질문",
 			iconName: "speechBubble",
