@@ -14,6 +14,7 @@ export {
 	usePersonalCertificationMutation,
 	useStorePartnershipQuery,
 } from "./api/usePartnershipAuthMutations";
+export { isStampAlreadyAppliedError } from "./lib/isStampAlreadyAppliedError";
 export type {
 	GroupCertificationProgressMessage,
 	GroupCertificationQrPayload,
@@ -24,3 +25,4 @@ export type {
 	VerifiedPartnershipStore,
 } from "./model/types";
 export { usePartnershipAuthStore } from "./model/usePartnershipAuthStore";
+export { StampAlreadyAppliedDialog } from "./ui/StampAlreadyAppliedDialog";

@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { useProfileImageQuery } from "@/entities/user/api/useProfileImageQuery";
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import {
+	isStampAlreadyAppliedError,
+	StampAlreadyAppliedDialog,
 	usePartnershipAuthStore,
 	usePartnershipUsageMutation,
 } from "@/features/partnership-auth";
@@ -35,6 +38,7 @@ export function PartnershipVerificationPage() {
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
 	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
 	const recordUsage = usePartnershipUsageMutation();
+	const [isStampNoticeOpen, setIsStampNoticeOpen] = useState(false);
 	const studentDetails = [
 		["학번", studentProfile?.studentNumber],
 		["소속", studentProfile?.department ?? basicInfo?.department],
@@ -47,6 +51,19 @@ export function PartnershipVerificationPage() {
 		],
 		["학년/학기", studentProfile?.yearSemester],
 	] as const;
+
+	const goToComplete = () => {
+		if (!benefit) return;
+		router.replace({
+			pathname: "/(protected)/student/partnership-complete",
+			params: { benefit: benefit.contents },
+		});
+	};
+
+	const handleStampNoticeConfirm = () => {
+		setIsStampNoticeOpen(false);
+		goToComplete();
+	};
 
 	const handleComplete = async () => {
 		if (!store || !benefit) return;
@@ -65,11 +82,13 @@ export function PartnershipVerificationPage() {
 					userIds: benefit.type === "GROUP" ? groupSession?.userIds : undefined,
 				});
 			}
-			router.replace({
-				pathname: "/(protected)/student/partnership-complete",
-				params: { benefit: benefit.contents },
-			});
-		} catch {
+			goToComplete();
+		} catch (error) {
+			// 오늘 이미 스탬프 적립 — 제휴 인증은 정상이므로 안내 후 완료 화면으로 이동
+			if (isStampAlreadyAppliedError(error)) {
+				setIsStampNoticeOpen(true);
+				return;
+			}
 			Alert.alert("처리 실패", "제휴 사용내역을 기록하지 못했습니다.");
 		}
 	};
@@ -215,6 +234,10 @@ export function PartnershipVerificationPage() {
 					{recordUsage.isPending ? "처리 중" : "인증 완료"}
 				</MediumButton>
 			</View>
+			<StampAlreadyAppliedDialog
+				visible={isStampNoticeOpen}
+				onConfirm={handleStampNoticeConfirm}
+			/>
 		</PageLayout>
 	);
 }
