@@ -14,16 +14,18 @@ export interface BaseResponseListRecommendCarouselDTO {
 }
 
 export interface RecommendCarouselDTO {
-	category?: string;
-	belonging?: string;
 	partnerProfileUrl?: string;
 	partnerName?: string;
 	storeId?: number;
+	/** 대표 혜택 조건 */
+	benefitCondition?: string;
+	/** 대표 혜택 내용 */
+	benefit?: string;
 }
 
 export const getAssuApi = () => {
 	/**
- * # [v1.0 (2026-08-31)](https://clumsy-seeder-416.notion.site/3cd1197c19ed800b86f5ed255f91caf1?source=copy_link)
+ * # [v1.1 (2026-11-21)](https://clumsy-seeder-416.notion.site/3cd1197c19ed800b86f5ed255f91caf1?source=copy_link)
 - 현재 로그인한 사용자가 이용 가능한 제휴 중 최대 14개를 랜덤으로 반환합니다.
 - 활성 상태인 제휴만 포함됩니다.
 

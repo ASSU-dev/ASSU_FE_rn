@@ -58,11 +58,10 @@ function makePartnership(
 		isActivated: "ACTIVE",
 		options: [
 			{
-				optionType: "SERVICE",
-				criterionType: "PRICE",
-				anotherType: false,
-				note: `혜택 ${id}`,
-				goods: [],
+				benefitCondition: null,
+				benefit: `혜택 ${id}`,
+				caution: null,
+				minPeople: null,
 			},
 		],
 	};

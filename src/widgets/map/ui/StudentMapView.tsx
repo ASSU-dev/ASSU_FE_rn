@@ -14,6 +14,7 @@ import {
 	getPrimaryBenefit,
 	StoreListCard,
 	splitBenefitText,
+	toBenefitTextParts,
 } from "@/entities/store";
 import { useSuggestionAdmins } from "@/entities/suggestion";
 import {
@@ -332,30 +333,8 @@ export function StudentMapView({
 	};
 
 	const renderPartnershipCard = (partnership: UsablePartnershipDTO) => {
-		const hasCondition = partnership.people != null || partnership.cost != null;
-		let benefitLabel: string | undefined;
-		let benefitHighlight: string | undefined;
-
-		if (hasCondition) {
-			if (partnership.criterionType === "HEADCOUNT" && partnership.people) {
-				benefitLabel = `${partnership.people}인 이상 이용 시, `;
-			} else if (partnership.criterionType === "PRICE" && partnership.cost) {
-				benefitLabel = `${partnership.cost.toLocaleString()}원 이상 시, `;
-			}
-			if (
-				partnership.criterionType === "PRICE" ||
-				partnership.criterionType === "HEADCOUNT"
-			) {
-				benefitHighlight = partnership.category ?? " 혜택";
-			} else if (
-				partnership.optionType === "DISCOUNT" &&
-				partnership.discountRate
-			) {
-				benefitHighlight = `${partnership.discountRate}% 할인`;
-			}
-		} else {
-			benefitLabel = partnership.note ?? undefined;
-		}
+		const { label: benefitLabel, highlight: benefitHighlight } =
+			toBenefitTextParts(partnership.benefitCondition, partnership.benefit);
 
 		const store =
 			partnership.storeId !== undefined

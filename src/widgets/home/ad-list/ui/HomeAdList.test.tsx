@@ -60,7 +60,6 @@ describe("HomeAdList", () => {
 					{
 						storeId: 42,
 						partnerName: "추천 가게 & 바",
-						belonging: "IT대",
 					},
 				],
 			},

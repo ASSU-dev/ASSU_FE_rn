@@ -36,7 +36,6 @@ export function HomeAdList() {
 					const storeId = item.storeId;
 					return (
 						<AdBannerCard
-							badge={item.belonging}
 							storeName={item.partnerName ?? ""}
 							imageUri={item.partnerProfileUrl ?? undefined}
 							onPress={

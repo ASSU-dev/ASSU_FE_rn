@@ -192,8 +192,6 @@ export type {
 export {
 	GetUsablePartnershipStoreCategory,
 	getAssuApi as getGetUsablePartnershipApi,
-	UsablePartnershipDTOCriterionType,
-	UsablePartnershipDTOOptionType,
 } from "./_generated/student/getUsablePartnership";
 export { getApiErrorMessage } from "./apiErrorMessage";
 export { apiInstance } from "./instance";

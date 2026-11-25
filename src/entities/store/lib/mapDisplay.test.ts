@@ -5,6 +5,7 @@ import {
 	getPrimaryAdminName,
 	getPrimaryBenefit,
 	splitBenefitText,
+	toBenefitTextParts,
 } from "./mapDisplay";
 
 function makeStore(overrides: Partial<StoreMarker> = {}): StoreMarker {
@@ -86,11 +87,42 @@ describe("혜택 문구의 조건과 강조 분리", () => {
 		expect(splitBenefitText("10% 할인")).toEqual({ highlight: "10% 할인" });
 	});
 
+	it("금액의 천 단위 쉼표(30,000원)에서는 나누지 않는다", () => {
+		expect(splitBenefitText("30,000원 이상 주문 시, 음료 제공")).toEqual({
+			label: "30,000원 이상 주문 시,",
+			highlight: "음료 제공",
+		});
+		expect(splitBenefitText("30,000원 이상 주문 시 음료 1캔 제공")).toEqual({
+			highlight: "30,000원 이상 주문 시 음료 1캔 제공",
+		});
+	});
+
 	it.each([
 		{ benefit: undefined },
 		{ benefit: "" },
 	])("혜택 문구가 없으면($benefit) 아무것도 표시하지 않는다", ({ benefit }) => {
 		expect(splitBenefitText(benefit)).toEqual({});
+	});
+});
+
+describe("혜택 조건·내용 필드의 조건과 강조 분리", () => {
+	it("조건은 쉼표를 붙여 조건 문구로, 혜택 내용은 강조 문구로 사용한다", () => {
+		expect(
+			toBenefitTextParts("30,000원 이상 주문 시", "음료 1캔 제공"),
+		).toEqual({ label: "30,000원 이상 주문 시, ", highlight: "음료 1캔 제공" });
+	});
+
+	it.each([
+		{ condition: null },
+		{ condition: undefined },
+		{ condition: "  " },
+	])("조건이 없으면($condition) 혜택 내용만 강조 문구로 표시한다", ({
+		condition,
+	}) => {
+		expect(toBenefitTextParts(condition, "음료 제공")).toEqual({
+			label: undefined,
+			highlight: "음료 제공",
+		});
 	});
 });
 

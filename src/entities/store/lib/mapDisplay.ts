@@ -45,16 +45,32 @@ export function getPrimaryAdminName(store: StoreMarker): string | undefined {
 	return store.partnerships?.[0]?.adminName;
 }
 
+/** 숫자 사이 쉼표("30,000원")는 금액 구분자이므로 조건/혜택 구분자로 보지 않는다. */
+const BENEFIT_SEPARATOR = /,(?!\d)/;
+
 /** "4인이상 식사시, 음료제공" → 조건(label) + 파란 강조(highlight) 분리 */
 export function splitBenefitText(benefit?: string): {
 	label?: string;
 	highlight?: string;
 } {
 	if (!benefit) return {};
-	const commaIndex = benefit.indexOf(",");
-	if (commaIndex === -1) return { highlight: benefit };
+	const separator = BENEFIT_SEPARATOR.exec(benefit);
+	if (!separator) return { highlight: benefit };
 	return {
-		label: benefit.slice(0, commaIndex + 1),
-		highlight: benefit.slice(commaIndex + 1).trim(),
+		label: benefit.slice(0, separator.index + 1),
+		highlight: benefit.slice(separator.index + 1).trim(),
+	};
+}
+
+/** 혜택 조건(benefitCondition)·내용(benefit) 필드 → 조건(label) + 파란 강조(highlight) */
+export function toBenefitTextParts(
+	benefitCondition?: string | null,
+	benefit?: string | null,
+): { label?: string; highlight?: string } {
+	const condition = benefitCondition?.trim();
+	const content = benefit?.trim();
+	return {
+		label: condition ? `${condition}, ` : undefined,
+		highlight: content || undefined,
 	};
 }

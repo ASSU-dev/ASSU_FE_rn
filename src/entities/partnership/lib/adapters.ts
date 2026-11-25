@@ -7,14 +7,11 @@ import type {
 	WritePartnershipResponseDTO,
 } from "../model/api-types";
 import type {
-	BenefitItem,
-	DiscountBenefitItem,
-	EtcBenefitItem,
+	ContractBenefitItem,
 	Partnership,
 	PartnershipContract,
 	PendingContract,
 	ReviewableBenefit,
-	ServiceBenefitItem,
 } from "../model/types";
 
 export interface AdminAffiliationSummary {
@@ -37,7 +34,10 @@ function toPartnership(
 	storeName: string,
 ): Partnership {
 	const firstOption = dto.options[0];
-	const benefitContent = firstOption?.note ?? firstOption?.category ?? "";
+	const benefitContent = [firstOption?.benefitCondition, firstOption?.benefit]
+		.map((text) => text?.trim())
+		.filter(Boolean)
+		.join(" ");
 
 	return {
 		id: dto.partnershipId.toString(),
@@ -60,43 +60,20 @@ export function toPartnerPartnership(
 	return toPartnership(dto, dto.adminName);
 }
 
-function toBenefitItem(
+function toContractBenefitItem(
 	option: PartnershipDetailResponseDTO["options"][number],
 	index: number,
-): BenefitItem {
-	const id = `option-${index}`;
-
-	if (option.anotherType) {
-		const item: EtcBenefitItem = {
-			id,
-			serviceType: "기타 혜택",
-			content: option.note ?? "",
-		};
-		return item;
-	}
-
-	if (option.optionType === "DISCOUNT") {
-		const item: DiscountBenefitItem = {
-			id,
-			serviceType: "할인 혜택",
-			criteria: option.criterionType === "PRICE" ? "금액" : "인원수",
-			amount: option.cost?.toString() ?? "",
-			minCount: option.people?.toString() ?? "",
-			discountRate: option.discountRate?.toString() ?? "",
-		};
-		return item;
-	}
-
-	const item: ServiceBenefitItem = {
-		id,
-		serviceType: "서비스 제공",
-		criteria: option.criterionType === "PRICE" ? "금액" : "인원수",
-		amount: option.cost?.toString() ?? "",
-		minCount: option.people?.toString() ?? "",
-		categories: option.category ? [option.category] : [],
-		items: option.goods.map((g) => g.goodsName),
+): ContractBenefitItem {
+	return {
+		id:
+			option.contentId !== undefined
+				? String(option.contentId)
+				: `option-${index}`,
+		benefitCondition: option.benefitCondition?.trim() || undefined,
+		benefit: option.benefit?.trim() ?? "",
+		caution: option.caution?.trim() || undefined,
+		minPeople: option.minPeople ?? undefined,
 	};
-	return item;
 }
 
 export function toPartnershipContract(
@@ -106,7 +83,7 @@ export function toPartnershipContract(
 		id: dto.partnershipId.toString(),
 		companyName: "",
 		proposerName: "",
-		benefits: dto.options.map(toBenefitItem),
+		benefits: dto.options.map(toContractBenefitItem),
 		startDate: dto.partnershipPeriodStart,
 		endDate: dto.partnershipPeriodEnd,
 		contractDate: dto.updatedAt.substring(0, 10),

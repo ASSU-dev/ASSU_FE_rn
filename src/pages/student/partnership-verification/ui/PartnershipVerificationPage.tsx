@@ -148,10 +148,10 @@ export function PartnershipVerificationPage() {
 				<View className="mt-[6px] min-h-[84px] flex-row items-start rounded-[8px] border-2 border-primary bg-primary-tint px-[14px] py-[12px]">
 					<View className="min-w-0 flex-1 gap-[2px] pr-[10px]">
 						<Text className="text-sm font-medium text-content-primary">
-							{benefit?.contents ?? "선택한 제휴 혜택"}
+							{benefit?.benefitCondition || "선택한 제휴 혜택"}
 						</Text>
 						<Text className="text-[20px] font-semibold text-primary">
-							{benefit?.goods.join(", ") || "개인 혜택"}
+							{benefit?.benefit || "개인 혜택"}
 						</Text>
 					</View>
 					<Text className="max-w-[110px] shrink self-center rounded-[999px] bg-neutral px-gutter py-[6px] text-center text-[14px] font-semibold text-content-primary">

@@ -31,7 +31,8 @@ export function useGetUsablePartnershipQuery(
 						partnershipId: item.partnershipId,
 						name: item.partnerName,
 						adminName: item.adminName,
-						category: item.category,
+						benefitCondition: item.benefitCondition,
+						benefit: item.benefit,
 					})),
 				});
 			}

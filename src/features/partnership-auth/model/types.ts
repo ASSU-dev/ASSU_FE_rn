@@ -4,9 +4,11 @@ export interface PartnershipBenefit {
 	manager: string;
 	contents: string;
 	partnershipPeriod?: string;
-	goods: string[];
-	people: number | null;
-	cost: number | null;
+	benefitCondition: string | null;
+	benefit: string;
+	caution: string | null;
+	/** 그룹 인증 최소 인원 — 2명 이상이면 그룹 인증 혜택 */
+	minPeople: number | null;
 	type: "INDIVIDUAL" | "GROUP";
 	startDate?: string;
 	endDate?: string;

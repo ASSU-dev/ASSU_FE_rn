@@ -12,6 +12,7 @@ export {
 	getPrimaryAdminName,
 	getPrimaryBenefit,
 	splitBenefitText,
+	toBenefitTextParts,
 } from "./lib/mapDisplay";
 export type {
 	PaperContentResponseDto,

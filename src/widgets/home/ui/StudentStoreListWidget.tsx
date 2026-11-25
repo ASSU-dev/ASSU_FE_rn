@@ -3,7 +3,7 @@ import { FlatList, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { StoreCategory } from "@/entities/store";
-import { StoreListCard } from "@/entities/store";
+import { StoreListCard, toBenefitTextParts } from "@/entities/store";
 import { AdminChipRow, CategoryChipRow } from "@/features/map-filter";
 import type { UsablePartnershipDTO } from "@/shared/api";
 import { BackArrowIcon, LocationIcon } from "@/shared/assets/icons";
@@ -123,25 +123,8 @@ function PartnershipStoreCard({
 	item: UsablePartnershipDTO;
 	onPress?: () => void;
 }) {
-	const hasCondition = item.people != null || item.cost != null;
-
-	let benefitLabel: string | undefined;
-	let benefitHighlight: string | undefined;
-
-	if (hasCondition) {
-		if (item.criterionType === "HEADCOUNT" && item.people) {
-			benefitLabel = `${item.people}인 이상 이용 시, `;
-		} else if (item.criterionType === "PRICE" && item.cost) {
-			benefitLabel = `${item.cost.toLocaleString()}원 이상 시, `;
-		}
-		if (item.criterionType === "PRICE" || item.criterionType === "HEADCOUNT") {
-			benefitHighlight = item.category ?? " 혜택";
-		} else if (item.optionType === "DISCOUNT" && item.discountRate) {
-			benefitHighlight = `${item.discountRate}% 할인`;
-		}
-	} else {
-		benefitLabel = item.note ?? undefined;
-	}
+	const { label: benefitLabel, highlight: benefitHighlight } =
+		toBenefitTextParts(item.benefitCondition, item.benefit);
 
 	return (
 		<StoreListCard

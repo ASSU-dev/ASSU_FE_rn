@@ -58,19 +58,19 @@ export function PartnershipBenefitSelectPage() {
 		try {
 			setSelectedBenefit(selectedBenefit);
 			if (selectedBenefit.type === "GROUP") {
-				if (!selectedBenefit.people) {
+				if (!selectedBenefit.minPeople) {
 					throw new Error("그룹 인증 인원 정보가 없습니다.");
 				}
 
 				const sessionId = await groupCertification.mutateAsync({
-					people: selectedBenefit.people,
+					people: selectedBenefit.minPeople,
 					storeId: store.storeId,
 					adminId: selectedBenefit.adminId,
 					contentId: selectedBenefit.id,
 				});
 				setGroupSession({
 					sessionId,
-					requiredPeople: selectedBenefit.people,
+					requiredPeople: selectedBenefit.minPeople,
 					count: 1,
 					status: "WAITING",
 					userIds: [],

@@ -19,9 +19,10 @@ interface PaperContentResponseDTO {
 	paperContent?: string;
 	partnershipPeriod?: string | null;
 	contentId?: number;
-	goods?: string[];
-	people?: number | null;
-	cost?: number | null;
+	benefitCondition?: string | null;
+	benefit?: string | null;
+	caution?: string | null;
+	minPeople?: number | null;
 }
 
 interface PaperResponseDTO {
@@ -83,11 +84,12 @@ function mapPartnershipContent(
 		manager: content.adminName,
 		contents: content.paperContent,
 		partnershipPeriod: content.partnershipPeriod ?? undefined,
-		goods: content.goods ?? [],
-		people: content.people ?? null,
-		cost: content.cost ?? null,
+		benefitCondition: content.benefitCondition?.trim() || null,
+		benefit: content.benefit?.trim() || content.paperContent,
+		caution: content.caution?.trim() || null,
+		minPeople: content.minPeople ?? null,
 		type:
-			typeof content.people === "number" && content.people > 1
+			typeof content.minPeople === "number" && content.minPeople > 1
 				? "GROUP"
 				: "INDIVIDUAL",
 	};
@@ -196,7 +198,7 @@ export async function getGroupCertificationSessionDetail(
 	const count = currentCount as number;
 	const groupBenefit: PartnershipBenefit = {
 		...benefit,
-		people: requiredPeople,
+		minPeople: requiredPeople,
 		type: "GROUP",
 	};
 	const store: VerifiedPartnershipStore = {

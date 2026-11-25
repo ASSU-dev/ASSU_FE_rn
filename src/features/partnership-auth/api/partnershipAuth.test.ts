@@ -46,12 +46,12 @@ describe("매장 제휴 혜택 조회 응답 변환", () => {
 	});
 
 	it.each([
-		{ people: null, expected: "INDIVIDUAL" },
-		{ people: 1, expected: "INDIVIDUAL" },
-		{ people: 2, expected: "GROUP" },
-		{ people: 4, expected: "GROUP" },
-	])("인원 조건이 $people명이면 $expected 혜택으로 구분한다", async ({
-		people,
+		{ minPeople: null, expected: "INDIVIDUAL" },
+		{ minPeople: 1, expected: "INDIVIDUAL" },
+		{ minPeople: 2, expected: "GROUP" },
+		{ minPeople: 4, expected: "GROUP" },
+	])("그룹 인증 최소 인원이 $minPeople명이면 $expected 혜택으로 구분한다", async ({
+		minPeople,
 		expected,
 	}) => {
 		// Given
@@ -66,7 +66,7 @@ describe("매장 제휴 혜택 조회 응답 변환", () => {
 						adminId: 10,
 						adminName: "IT대학 학생회",
 						paperContent: "제휴 혜택",
-						people,
+						minPeople,
 					},
 				],
 			},

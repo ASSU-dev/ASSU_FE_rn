@@ -31,7 +31,7 @@ function makeBenefit(id: string, adminName = "학생회 A"): StoreBenefit {
 		adminId: 1,
 		adminName,
 		paperContent: `혜택 ${id}`,
-		goods: [],
+		benefit: `혜택 ${id}`,
 		type: "INDIVIDUAL",
 	};
 }

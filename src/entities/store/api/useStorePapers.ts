@@ -18,13 +18,9 @@ function toStoreBenefit(
 	item: PaperContentResponseDto,
 	index: number,
 ): StoreBenefit {
-	const goods = Array.isArray(item.goods)
-		? item.goods.filter(
-				(good): good is string =>
-					typeof good === "string" && good.trim().length > 0,
-			)
-		: [];
 	const paperContent = item.paperContent?.trim() ?? "";
+	const minPeople =
+		typeof item.minPeople === "number" ? item.minPeople : undefined;
 
 	return {
 		id:
@@ -35,10 +31,11 @@ function toStoreBenefit(
 		adminName: item.adminName?.trim() || "제휴 혜택",
 		paperContent,
 		partnershipPeriod: item.partnershipPeriod?.trim() || undefined,
-		goods,
-		people: typeof item.people === "number" ? item.people : undefined,
-		cost: typeof item.cost === "number" ? item.cost : undefined,
-		type: typeof item.people === "number" ? "GROUP" : "INDIVIDUAL",
+		benefitCondition: item.benefitCondition?.trim() || undefined,
+		benefit: item.benefit?.trim() || paperContent,
+		caution: item.caution?.trim() || undefined,
+		minPeople,
+		type: minPeople !== undefined && minPeople > 1 ? "GROUP" : "INDIVIDUAL",
 	};
 }
 

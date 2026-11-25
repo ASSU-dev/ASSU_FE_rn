@@ -1,13 +1,13 @@
 export interface PartnershipOptionDTO {
-	optionType: "SERVICE" | "DISCOUNT";
-	criterionType: "PRICE" | "HEADCOUNT";
-	anotherType: boolean;
-	people?: number;
-	cost?: number;
-	note?: string;
-	category?: string;
-	discountRate?: number;
-	goods: { goodsId: number; goodsName: string }[];
+	contentId?: number;
+	/** 혜택 조건 — 조건이 없는 혜택은 null */
+	benefitCondition?: string | null;
+	/** 혜택 내용 (필수) */
+	benefit: string;
+	/** 유의사항 */
+	caution?: string | null;
+	/** 그룹 인증 최소 인원 */
+	minPeople?: number | null;
 }
 
 export interface WritePartnershipResponseDTO {

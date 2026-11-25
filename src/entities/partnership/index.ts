@@ -35,6 +35,7 @@ export type {
 	Benefit,
 	BenefitCriteria,
 	BenefitItem,
+	ContractBenefitItem,
 	DiscountBenefitItem,
 	EtcBenefitItem,
 	Partnership,

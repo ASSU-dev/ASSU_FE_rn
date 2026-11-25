@@ -86,68 +86,48 @@ describe("StudentStoreListWidget", () => {
 	});
 
 	describe("혜택 라벨 포매팅", () => {
-		it("HEADCOUNT 조건이면 '{people}인 이상' 문구와 category 혜택을 함께 노출한다", () => {
+		it("혜택 조건이 있으면 조건 문구와 혜택 내용을 나눠 노출한다", () => {
 			mockStoreListData({
 				stores: [
 					makePartnership({
 						partnerName: "4인 가게",
-						criterionType: "HEADCOUNT",
-						people: 4,
-						category: "음료 1잔 서비스",
+						benefitCondition: "4인 이상 방문 시",
+						benefit: "음료 1잔 서비스",
+						minPeople: 4,
 					}),
 				],
 			});
 
 			renderWithProviders(<StudentStoreListWidget />);
 
-			expect(screen.getByText("4인 이상 이용 시, ")).toBeTruthy();
+			expect(screen.getByText("4인 이상 방문 시, ")).toBeTruthy();
 			expect(screen.getByText("음료 1잔 서비스")).toBeTruthy();
 		});
 
-		it("PRICE 조건이면 금액을 콤마 포맷으로 노출한다", () => {
+		it("금액 조건의 쉼표(30,000원)는 조건 문구에 그대로 유지한다", () => {
 			mockStoreListData({
 				stores: [
 					makePartnership({
 						partnerName: "금액 가게",
-						criterionType: "PRICE",
-						cost: 15000,
-						category: "사이드 메뉴 증정",
+						benefitCondition: "30,000원 이상 주문 시",
+						benefit: "사이드 메뉴 증정",
 					}),
 				],
 			});
 
 			renderWithProviders(<StudentStoreListWidget />);
 
-			expect(screen.getByText("15,000원 이상 시, ")).toBeTruthy();
+			expect(screen.getByText("30,000원 이상 주문 시, ")).toBeTruthy();
 			expect(screen.getByText("사이드 메뉴 증정")).toBeTruthy();
 		});
 
-		it("DISCOUNT 조건은 할인율 하이라이트는 노출하지 않는다", () => {
-			// 코드 분기: criterionType이 PRICE/HEADCOUNT가 아니면 benefitHighlight는 할인율
-			// 그러나 PRICE/HEADCOUNT 조건이 함께 있어야 benefitLabel이 조립됨
+		it("혜택 조건이 없으면 혜택 내용만 노출한다", () => {
 			mockStoreListData({
 				stores: [
 					makePartnership({
-						partnerName: "할인 가게",
-						optionType: "DISCOUNT",
-						discountRate: 20,
-						note: "20% 할인 전용",
-					}),
-				],
-			});
-
-			renderWithProviders(<StudentStoreListWidget />);
-
-			// 조건이 없으므로 note가 benefitLabel로 사용된다
-			expect(screen.getByText("20% 할인 전용")).toBeTruthy();
-		});
-
-		it("조건(people, cost)이 없으면 note를 그대로 혜택 라벨로 사용한다", () => {
-			mockStoreListData({
-				stores: [
-					makePartnership({
-						partnerName: "노트 가게",
-						note: "조건 없이 서비스 제공",
+						partnerName: "조건 없는 가게",
+						benefitCondition: undefined,
+						benefit: "조건 없이 서비스 제공",
 					}),
 				],
 			});

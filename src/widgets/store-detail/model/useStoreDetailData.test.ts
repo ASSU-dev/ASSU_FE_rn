@@ -49,7 +49,7 @@ function makeBenefit(id: string, adminName = "제휴 혜택"): StoreBenefit {
 		adminId: 1,
 		adminName,
 		paperContent: `혜택 ${id}`,
-		goods: [],
+		benefit: `혜택 ${id}`,
 		type: "INDIVIDUAL",
 	};
 }

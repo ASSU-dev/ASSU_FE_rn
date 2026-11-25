@@ -110,7 +110,11 @@ describe("PartnershipQrAuthPage QR 확인 후 인증 흐름 분기", () => {
 		const { store, selectedBenefit, groupSession } =
 			usePartnershipAuthStore.getState();
 		expect(store?.storeName).toBe("숭실 분식");
-		expect(selectedBenefit).toMatchObject({ id: 2, type: "GROUP", people: 4 });
+		expect(selectedBenefit).toMatchObject({
+			id: 2,
+			type: "GROUP",
+			minPeople: 4,
+		});
 		expect(groupSession).toMatchObject({
 			sessionId: 321,
 			requiredPeople: 4,
