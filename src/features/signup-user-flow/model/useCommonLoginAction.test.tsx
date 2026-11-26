@@ -1,7 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { isAxiosError } from "axios";
 import { router } from "expo-router";
-import { Alert } from "react-native";
 import { useLoginCommonMutation } from "../api/useLoginCommonMutation";
 import { completeLogin } from "../lib/auth";
 import { useCommonLoginAction } from "./useCommonLoginAction";
@@ -21,6 +20,7 @@ jest.mock("../lib/auth", () => ({
 }));
 
 const mutateAsync = jest.fn();
+const showNotice = jest.fn();
 
 function mockLoginMutation(isPending = false): void {
 	jest.mocked(useLoginCommonMutation).mockReturnValue({
@@ -51,6 +51,7 @@ describe("useCommonLoginAction 공통 이메일 로그인", () => {
 				email: "admin@assu.com",
 				password: "password",
 				returnTo: "/verify?storeId=12",
+				showNotice,
 			}),
 		);
 
@@ -70,6 +71,7 @@ describe("useCommonLoginAction 공통 이메일 로그인", () => {
 			"/verify?storeId=12",
 		);
 		expect(router.replace).toHaveBeenCalledWith("/verify?storeId=12");
+		expect(showNotice).not.toHaveBeenCalled();
 	});
 
 	it("승인 대기 응답이면 승인 안내만 표시하고 이동하지 않는다", async () => {
@@ -78,16 +80,20 @@ describe("useCommonLoginAction 공통 이메일 로그인", () => {
 		};
 		mutateAsync.mockRejectedValue(error);
 		jest.mocked(isAxiosError).mockReturnValue(true);
-		const alert = jest.spyOn(Alert, "alert");
 		const { result } = renderHook(() =>
-			useCommonLoginAction({ email: "partner@assu.com", password: "password" }),
+			useCommonLoginAction({
+				email: "partner@assu.com",
+				password: "password",
+				showNotice,
+			}),
 		);
 
 		await act(async () => {
 			await result.current.handlePressLogin();
 		});
 
-		expect(alert).toHaveBeenCalledWith(
+		expect(showNotice).toHaveBeenCalledTimes(1);
+		expect(showNotice).toHaveBeenCalledWith(
 			"가입 승인 대기 중",
 			"가입 승인 대기 중입니다. 백오피스 승인 후 로그인할 수 있습니다.",
 		);
@@ -97,16 +103,22 @@ describe("useCommonLoginAction 공통 이메일 로그인", () => {
 	it("일반 로그인 실패면 실패 안내를 표시하고 이동하지 않는다", async () => {
 		mutateAsync.mockRejectedValue(new Error("network failure"));
 		jest.mocked(isAxiosError).mockReturnValue(false);
-		const alert = jest.spyOn(Alert, "alert");
 		const { result } = renderHook(() =>
-			useCommonLoginAction({ email: "admin@assu.com", password: "password" }),
+			useCommonLoginAction({
+				email: "admin@assu.com",
+				password: "password",
+				showNotice,
+			}),
 		);
 
 		await act(async () => {
 			await result.current.handlePressLogin();
 		});
 
-		expect(alert).toHaveBeenCalledWith("로그인 실패", "로그인에 실패했습니다.");
+		expect(showNotice).toHaveBeenCalledWith(
+			"로그인 실패",
+			"로그인에 실패했습니다.",
+		);
 		expect(router.replace).not.toHaveBeenCalled();
 	});
 
@@ -114,7 +126,11 @@ describe("useCommonLoginAction 공통 이메일 로그인", () => {
 		mockLoginMutation(true);
 
 		const { result } = renderHook(() =>
-			useCommonLoginAction({ email: "admin@assu.com", password: "password" }),
+			useCommonLoginAction({
+				email: "admin@assu.com",
+				password: "password",
+				showNotice,
+			}),
 		);
 
 		expect(result.current.isPending).toBe(true);

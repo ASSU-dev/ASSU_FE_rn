@@ -1,7 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { AxiosError, type AxiosResponse } from "axios";
 import { router } from "expo-router";
-import { Alert } from "react-native";
 import { useLoginStudentMutation } from "../api/useLoginStudentMutation";
 import { completeLogin } from "../lib/auth";
 import { useStudentLoginAction } from "./useStudentLoginAction";
@@ -21,14 +20,18 @@ jest.mock("../lib/auth", () => ({ completeLogin: jest.fn() }));
 
 const mutateAsync = jest.fn();
 
-function renderStudentLogin(onSignupRequired = jest.fn()) {
+function renderStudentLogin(
+	onSignupRequired = jest.fn(),
+	showNotice = jest.fn(),
+) {
 	jest.mocked(useLoginStudentMutation).mockReturnValue({
 		mutateAsync,
 	} as unknown as ReturnType<typeof useLoginStudentMutation>);
 	return {
 		onSignupRequired,
+		showNotice,
 		...renderHook(() =>
-			useStudentLoginAction("/verify?storeId=12", onSignupRequired),
+			useStudentLoginAction("/verify?storeId=12", onSignupRequired, showNotice),
 		),
 	};
 }
@@ -72,10 +75,13 @@ describe("useStudentLoginAction LMS 로그인", () => {
 		expect(router.replace).toHaveBeenCalledWith("/verify?storeId=12");
 	});
 
-	it("LMS 로그인 실패 시 실패 안내를 표시하고 이동하지 않는다", async () => {
+	it("LMS 로그인 실패 시 웹뷰를 닫고 실패 안내를 표시하며 이동하지 않는다", async () => {
 		mutateAsync.mockRejectedValue(new Error("invalid token"));
-		const alert = jest.spyOn(Alert, "alert");
-		const { result } = renderStudentLogin();
+		const { result, showNotice } = renderStudentLogin();
+		await act(async () => {
+			await result.current.handlePressLmsLogin();
+		});
+		expect(result.current.loginWebView.visible).toBe(true);
 
 		await act(async () => {
 			await result.current.loginWebView.onVerifySuccess({
@@ -84,7 +90,11 @@ describe("useStudentLoginAction LMS 로그인", () => {
 			});
 		});
 
-		expect(alert).toHaveBeenCalledWith("로그인 실패", "로그인에 실패했습니다.");
+		expect(result.current.loginWebView.visible).toBe(false);
+		expect(showNotice).toHaveBeenCalledWith(
+			"로그인 실패",
+			"로그인에 실패했습니다.",
+		);
 		expect(router.replace).not.toHaveBeenCalled();
 	});
 
@@ -102,8 +112,7 @@ describe("useStudentLoginAction LMS 로그인", () => {
 				response,
 			),
 		);
-		const alert = jest.spyOn(Alert, "alert");
-		const { result, onSignupRequired } = renderStudentLogin();
+		const { result, onSignupRequired, showNotice } = renderStudentLogin();
 
 		await act(async () => {
 			await result.current.loginWebView.onVerifySuccess({
@@ -113,7 +122,7 @@ describe("useStudentLoginAction LMS 로그인", () => {
 		});
 
 		expect(onSignupRequired).toHaveBeenCalledTimes(1);
-		expect(alert).not.toHaveBeenCalled();
+		expect(showNotice).not.toHaveBeenCalled();
 		expect(router.replace).not.toHaveBeenCalled();
 	});
 });

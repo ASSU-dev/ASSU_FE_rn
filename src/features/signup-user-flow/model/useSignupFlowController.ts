@@ -3,6 +3,11 @@ import { useCallback, useMemo, useState } from "react";
 import { getPostAuthRoute } from "../lib/auth";
 import { pickUploadFile } from "../lib/pickUploadFile";
 import type { SignupFlowUiContextValue } from "./flowUiContext";
+import {
+	INITIAL_NOTICE_DIALOG_STATE,
+	type NoticeDialogState,
+	type ShowNotice,
+} from "./noticeDialog";
 import { useAdminEmailAvailabilityAction } from "./useAdminEmailAvailabilityAction";
 import { useAdminSignupAction } from "./useAdminSignupAction";
 import { useCommonLoginAction } from "./useCommonLoginAction";
@@ -116,6 +121,17 @@ export function useSignupFlowController() {
 	});
 	const { checkEmailAvailability } = useAdminEmailAvailabilityAction();
 
+	// 닫을 때 문구를 비우지 않고 visible만 꺼서, 사라지는 애니메이션 중에도 문구가 유지되게 한다
+	const [notice, setNotice] = useState<NoticeDialogState>(
+		INITIAL_NOTICE_DIALOG_STATE,
+	);
+	const showNotice = useCallback<ShowNotice>((title, message) => {
+		setNotice({ title, message, visible: true });
+	}, []);
+	const closeNotice = useCallback(() => {
+		setNotice((prev) => ({ ...prev, visible: false }));
+	}, []);
+
 	const handleStudentSignupRequired = useCallback(
 		() => goTo("identity"),
 		[goTo],
@@ -123,12 +139,14 @@ export function useSignupFlowController() {
 	const { handlePressLmsLogin, loginWebView } = useStudentLoginAction(
 		returnTo,
 		handleStudentSignupRequired,
+		showNotice,
 	);
 	const { handlePressLogin, isPending: isCommonLoginPending } =
 		useCommonLoginAction({
 			email: form.auth.email,
 			password: form.auth.password,
 			returnTo,
+			showNotice,
 		});
 
 	const { sendCode, verifyCode, isVerifying } = usePhoneVerificationAction({
@@ -306,5 +324,6 @@ export function useSignupFlowController() {
 		overlays,
 		studentAuthWebView,
 		loginWebView,
+		notice: { ...notice, close: closeNotice },
 	};
 }

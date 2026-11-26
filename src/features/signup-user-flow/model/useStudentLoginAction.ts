@@ -1,13 +1,13 @@
 import { isAxiosError } from "axios";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
-import { Alert } from "react-native";
 import { useLoginStudentMutation } from "@/features/signup-user-flow/api/useLoginStudentMutation";
 import { StudentTokenAuthPayloadDTOUniversity } from "@/shared/api";
 import { ENV } from "@/shared/config/env";
 import { assertSuccess } from "../lib/assertSuccess";
 import { completeLogin } from "../lib/auth";
 import { getLoginErrorMessage } from "../lib/getLoginErrorMessage";
+import type { ShowNotice } from "./noticeDialog";
 
 const SIGNUP_REQUIRED_ERROR_CODE = "MEMBER_4001";
 
@@ -24,8 +24,9 @@ function isSignupRequiredError(error: unknown) {
 }
 
 export function useStudentLoginAction(
-	returnTo?: string,
-	onSignupRequired?: () => void,
+	returnTo: string | undefined,
+	onSignupRequired: (() => void) | undefined,
+	showNotice: ShowNotice,
 ) {
 	const [isWebViewVisible, setWebViewVisible] = useState(false);
 	const mutation = useLoginStudentMutation();
@@ -80,10 +81,12 @@ export function useStudentLoginAction(
 							error instanceof Error ? error.message : "로그인에 실패했습니다.",
 					});
 
-				Alert.alert("로그인 실패", getLoginErrorMessage(error));
+				// 웹뷰 모달이 열린 채로는 안내 다이얼로그가 가려질 수 있어 먼저 닫는다
+				setWebViewVisible(false);
+				showNotice("로그인 실패", getLoginErrorMessage(error));
 			}
 		},
-		[mutation, onSignupRequired, returnTo],
+		[mutation, onSignupRequired, returnTo, showNotice],
 	);
 
 	const handlePressLmsLogin = useCallback(async () => {

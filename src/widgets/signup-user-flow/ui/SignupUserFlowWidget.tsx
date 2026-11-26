@@ -10,6 +10,7 @@ import {
 	SignupProgressBar,
 	SignupStepContent,
 } from "@/features/signup-user-flow/ui";
+import { NoticeDialog } from "@/features/signup-user-flow/ui/components/NoticeDialog";
 import { USaintAuthWebViewModal } from "@/features/signup-user-flow/ui/components/USaintAuthWebViewModal";
 import { AddressSearchDialog } from "@/shared/ui/address-search";
 import { BottomActionSheet } from "@/shared/ui/bottom-sheet";
@@ -30,6 +31,7 @@ export function SignupUserFlowWidget() {
 		overlays,
 		studentAuthWebView,
 		loginWebView,
+		notice,
 	} = useSignupFlowController();
 
 	if (flow.step === "login1") {
@@ -54,6 +56,13 @@ export function SignupUserFlowWidget() {
 					loginUrl={loginWebView.loginUrl}
 					onClose={loginWebView.close}
 					onVerifySuccess={loginWebView.onVerifySuccess}
+				/>
+				{/* 웹뷰 모달이 닫힌 뒤에 띄워 iOS에서 모달끼리 겹치지 않게 한다 */}
+				<NoticeDialog
+					visible={notice.visible && !loginWebView.visible}
+					title={notice.title}
+					message={notice.message}
+					onClose={notice.close}
 				/>
 			</>
 		);
