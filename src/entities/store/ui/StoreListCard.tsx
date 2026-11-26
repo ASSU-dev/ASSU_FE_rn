@@ -30,9 +30,7 @@ export function StoreListCard({
 	onPress,
 }: StoreListCardProps) {
 	const metaParts = [
-		extraBenefitCount > 0
-			? `총 ${extraBenefitCount + 1}가지 제휴`
-			: `총 1가지 제휴`,
+		extraBenefitCount > 0 ? `외 ${extraBenefitCount}가지 제휴` : null,
 		distanceText ?? null,
 	].filter((part): part is string => part !== null);
 
