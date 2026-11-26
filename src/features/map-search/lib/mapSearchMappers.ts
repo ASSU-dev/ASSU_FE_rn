@@ -159,19 +159,21 @@ function getBenefitText(value: unknown): string | undefined {
 	}
 	if (!isRecord(value)) return undefined;
 
+	const benefit = getString(value, ["benefit"])?.trim();
+	if (benefit) {
+		const condition = getString(value, ["benefitCondition"])?.trim();
+		return condition ? `${condition} ${benefit}` : benefit;
+	}
+
 	const direct = getString(value, [
+		"paperContent",
 		"benefitDescription",
 		"description",
 		"content",
-		"note",
-		"goodsName",
 	]);
 	if (direct) return direct;
 
-	const discountRate = getNumber(value, ["discountRate"]);
-	if (discountRate !== undefined) return `${discountRate}% 할인`;
-
-	return getBenefitText(value.benefits) ?? getBenefitText(value.goods);
+	return getBenefitText(value.benefits);
 }
 
 function getStoreBenefit(value: UnknownRecord): string | undefined {

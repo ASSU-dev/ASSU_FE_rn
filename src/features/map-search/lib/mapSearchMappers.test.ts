@@ -23,7 +23,15 @@ describe("주변 매장 응답의 지도 마커 변환", () => {
 				{
 					adminId: 3,
 					adminName: "IT대 학생회",
-					benefits: ["아메리카노 10% 할인", { discountRate: 20 }],
+					benefits: [
+						"아메리카노 10% 할인",
+						{
+							benefitCondition: "30,000원 이상 주문 시",
+							benefit: "음료 1캔 제공",
+						},
+						{ benefit: "쿠키 1개 제공" },
+						{ paperContent: "4인 이상 방문 시 사이드 제공" },
+					],
 				},
 			],
 		});
@@ -44,7 +52,12 @@ describe("주변 매장 응답의 지도 마커 변환", () => {
 				{
 					adminId: "3",
 					adminName: "IT대 학생회",
-					benefits: ["아메리카노 10% 할인", "20% 할인"],
+					benefits: [
+						"아메리카노 10% 할인",
+						"30,000원 이상 주문 시 음료 1캔 제공",
+						"쿠키 1개 제공",
+						"4인 이상 방문 시 사이드 제공",
+					],
 				},
 			],
 		});
