@@ -33,19 +33,16 @@ jest.mock("react-native-safe-area-context", () => ({
 // 카메라 영역과 스캔 프레임이 모두 (0,0)에서 시작하는 200x200 영역이라고 가정한다.
 const FRAME_SIZE = 200;
 
-const GROUP_QR = `assu-app://student/partnership-group-participant?payload=${encodeURIComponent(
+// 현재 QR 형식: 세션 ID와 학생회 ID만 담고, 혜택·인원 정보는 /verify 화면에서 세션 조회로 가져온다.
+const GROUP_QR = "https://prod.assu.site/verify?sessionId=321&adminId=10";
+
+// 이전 버전 앱이 만든 QR도 같은 값으로 해석되어야 한다.
+const LEGACY_GROUP_QR = `assu-app://student/partnership-group-participant?payload=${encodeURIComponent(
 	JSON.stringify({
 		type: "ASSU_GROUP_CERTIFICATION",
 		version: 1,
 		adminId: 10,
 		sessionId: 321,
-		storeId: 7,
-		storeName: "숭실 분식",
-		contentId: 2,
-		adminName: "총학생회",
-		partnershipContent: "4인 이상 10% 할인",
-		goods: ["떡볶이"],
-		requiredPeople: 4,
 	}),
 )}`;
 
@@ -98,32 +95,25 @@ describe("PartnershipQrAuthPage QR 확인 후 인증 흐름 분기", () => {
 		usePartnershipAuthStore.getState().reset();
 	});
 
-	it("단체 인증 QR을 확인하면 참여자로 세션에 합류하고 참여 화면으로 이동한다", () => {
+	it.each([
+		{ label: "현재 형식", qr: GROUP_QR },
+		{ label: "이전 버전 딥링크", qr: LEGACY_GROUP_QR },
+	])("단체 인증 QR($label)을 확인하면 세션·학생회 ID를 들고 인증 화면으로 이동한다", ({
+		qr,
+	}) => {
 		// Given
 		renderScannerWithCameraGranted();
-		scanQr(GROUP_QR);
+		scanQr(qr);
 
 		// When
 		fireEvent.press(screen.getByText("확인"));
 
 		// Then
-		const { store, selectedBenefit, groupSession } =
-			usePartnershipAuthStore.getState();
-		expect(store?.storeName).toBe("숭실 분식");
-		expect(selectedBenefit).toMatchObject({
-			id: 2,
-			type: "GROUP",
-			minPeople: 4,
+		expect(router.dismissAll).toHaveBeenCalled();
+		expect(router.push).toHaveBeenCalledWith({
+			pathname: "/verify",
+			params: { sessionId: 321, adminId: 10 },
 		});
-		expect(groupSession).toMatchObject({
-			sessionId: 321,
-			requiredPeople: 4,
-			role: "PARTICIPANT",
-			status: "WAITING",
-		});
-		expect(router.push).toHaveBeenCalledWith(
-			"/(protected)/student/partnership-group-participant",
-		);
 	});
 
 	it("매장 QR을 확인하면 해당 매장의 혜택 선택 화면으로 이동한다", () => {
