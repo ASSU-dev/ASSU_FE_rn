@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
 	ActivityIndicator,
 	Pressable,
@@ -7,6 +7,7 @@ import {
 	Text,
 	View,
 } from "react-native";
+import { logStoreView, STORE_LIST, type StoreList } from "@/entities/store";
 import { StoreImageCarousel } from "@/entities/store/ui/StoreImageCarousel";
 import { StorePartnershipList } from "@/features/store-detail/ui/StorePartnershipList";
 import { Location, MapIcon } from "@/shared/assets/icons";
@@ -18,12 +19,15 @@ import { useStoreDetailData } from "../model/useStoreDetailData";
 interface StoreDetailWidgetProps {
 	storeId: number;
 	storeName?: string;
+	/** 상세로 들어온 목록(유입 경로). 없으면 직접 진입으로 기록한다. */
+	entryList?: StoreList;
 	onBack?: () => void;
 }
 
 export function StoreDetailWidget({
 	storeId,
 	storeName: fallbackName,
+	entryList = STORE_LIST.direct,
 	onBack,
 }: StoreDetailWidgetProps) {
 	const {
@@ -40,6 +44,20 @@ export function StoreDetailWidget({
 	} = useStoreDetailData({ storeId, fallbackName });
 
 	const isExternal = store?.linkType === "EXTERNAL";
+
+	// 상세 정보 조회에 성공한 뒤 매장당 1회만 view_item 기록 (재조회·리렌더 시 재전송 X)
+	const loggedStoreIdRef = useRef<number | null>(null);
+	useEffect(() => {
+		const loadedStoreId = store?.storeId;
+		if (loadedStoreId === undefined) return;
+		if (loggedStoreIdRef.current === loadedStoreId) return;
+		loggedStoreIdRef.current = loadedStoreId;
+		logStoreView(entryList, {
+			storeId: loadedStoreId,
+			storeName: store?.storeName,
+			category: store?.storeCategory,
+		});
+	}, [store, entryList]);
 
 	useEffect(() => {
 		if (isExternal) {

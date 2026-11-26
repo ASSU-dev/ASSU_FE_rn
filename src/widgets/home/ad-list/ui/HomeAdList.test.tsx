@@ -71,7 +71,7 @@ describe("HomeAdList", () => {
 		fireEvent.press(screen.getByText("추천 가게 & 바"));
 
 		expect(router.push).toHaveBeenCalledWith(
-			"/(protected)/student/store/42/detail?storeName=%EC%B6%94%EC%B2%9C%20%EA%B0%80%EA%B2%8C%20%26%20%EB%B0%94",
+			"/(protected)/student/store/42/detail?storeName=%EC%B6%94%EC%B2%9C%20%EA%B0%80%EA%B2%8C%20%26%20%EB%B0%94&source=home_ad",
 		);
 	});
 });

@@ -67,7 +67,7 @@ describe("HomeCurationSection", () => {
 		fireEvent.press(screen.getByText("눌러본 가게"));
 
 		expect(router.push).toHaveBeenCalledWith(
-			"/(protected)/student/store/55/detail?storeName=%EB%88%8C%EB%9F%AC%EB%B3%B8%20%EA%B0%80%EA%B2%8C",
+			"/(protected)/student/store/55/detail?storeName=%EB%88%8C%EB%9F%AC%EB%B3%B8%20%EA%B0%80%EA%B2%8C&source=home_curation",
 		);
 	});
 

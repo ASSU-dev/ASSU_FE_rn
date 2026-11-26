@@ -7,13 +7,16 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import type { StoreMarker } from "@/entities/store";
+import type { StoreList, StoreMarker } from "@/entities/store";
 import {
 	countExtraBenefits,
 	getPrimaryAdminName,
 	getPrimaryBenefit,
+	logStoreSelect,
+	STORE_LIST,
 	StoreListCard,
 	splitBenefitText,
+	toStoreAnalyticsItems,
 } from "@/entities/store";
 import { useSuggestionAdmins } from "@/entities/suggestion";
 import {
@@ -25,6 +28,7 @@ import { useNearbyStores } from "@/features/map-search";
 import { useGetUsablePartnershipQuery } from "@/features/store-list/api/useGetUsablePartnershipQuery";
 import type { UsablePartnershipDTO } from "@/shared/api";
 import { ENV } from "@/shared/config/env";
+import { useViewItemListTracking } from "@/shared/lib/analytics";
 import { shadows } from "@/shared/styles/shadows";
 import type { LatLng } from "@/shared/types/map";
 import {
@@ -61,12 +65,18 @@ interface VisibleViewport {
 
 type StudentMapStoreTarget = Pick<StoreMarker, "id" | "name">;
 
+const toPartnershipAnalyticsSource = (item: UsablePartnershipDTO) => ({
+	storeId: item.storeId,
+	storeName: item.partnerName,
+});
+
 interface StudentMapViewProps {
 	sheetPosition: SharedValue<number>;
 	headerHeight: number;
 	isSheetExpanded: boolean;
 	onSheetExpandedChange: (expanded: boolean) => void;
-	onStorePress?: (store: StudentMapStoreTarget) => void;
+	/** list: 매장을 누른 위치(하단 목록/마커 카드). 상세 화면 유입 경로로 전달한다. */
+	onStorePress?: (store: StudentMapStoreTarget, list: StoreList) => void;
 	/** 매장 선택 카드의 "제휴 인증하기" 버튼 탭 */
 	onCertifyPress?: (store: StudentMapStoreTarget) => void;
 	/** 외부에서 지정한 초기 선택 매장 */
@@ -201,6 +211,21 @@ export function StudentMapView({
 		setSelectedStoreId(null);
 	}, [filterKey]);
 	const partnerListStores = partnershipResponse?.result ?? [];
+	// 하단 시트 목록: 필터 조합이 바뀌어 새 목록을 보여줄 때마다 1회 기록
+	const analyticsItems = useMemo(
+		() =>
+			toStoreAnalyticsItems(
+				partnershipResponse?.result ?? [],
+				toPartnershipAnalyticsSource,
+			),
+		[partnershipResponse],
+	);
+	useViewItemListTracking({
+		list: STORE_LIST.mapList,
+		items: analyticsItems,
+		ready: !isPartnershipLoading,
+		dedupeKey: filterKey,
+	});
 	useEffect(() => {
 		if (!__DEV__) return;
 		console.log("[PartnershipDebug] screen data", {
@@ -331,7 +356,29 @@ export function StudentMapView({
 		sheetRef.current?.snapToIndex(0);
 	};
 
-	const renderPartnershipCard = (partnership: UsablePartnershipDTO) => {
+	const handleSelectedCardPress = () => {
+		if (selectedStore && onStorePress) {
+			logStoreSelect(STORE_LIST.mapMarker, {
+				storeId: selectedStore.id,
+				storeName: selectedStore.name,
+				category: selectedStore.category,
+			});
+			onStorePress(selectedStore, STORE_LIST.mapMarker);
+			return;
+		}
+		if (onPinnedStorePress) {
+			logStoreSelect(STORE_LIST.mapMarker, {
+				storeId: initialStoreId,
+				storeName: initialStoreName,
+			});
+			onPinnedStorePress();
+		}
+	};
+
+	const renderPartnershipCard = (
+		partnership: UsablePartnershipDTO,
+		index: number,
+	) => {
 		const hasCondition = partnership.people != null || partnership.cost != null;
 		let benefitLabel: string | undefined;
 		let benefitHighlight: string | undefined;
@@ -373,7 +420,18 @@ export function StudentMapView({
 				benefitHighlight={benefitHighlight}
 				extraBenefitCount={partnership.extraCount}
 				tag={partnership.adminName}
-				onPress={store && onStorePress ? () => onStorePress(store) : undefined}
+				onPress={
+					store && onStorePress
+						? () => {
+								logStoreSelect(
+									STORE_LIST.mapList,
+									toPartnershipAnalyticsSource(partnership),
+									index,
+								);
+								onStorePress(store, STORE_LIST.mapList);
+							}
+						: undefined
+				}
 			/>
 		);
 	};
@@ -445,9 +503,9 @@ export function StudentMapView({
 						}
 						tag={selectedStore ? getPrimaryAdminName(selectedStore) : undefined}
 						onPress={
-							selectedStore && onStorePress
-								? () => onStorePress(selectedStore)
-								: onPinnedStorePress
+							(selectedStore && onStorePress) || onPinnedStorePress
+								? handleSelectedCardPress
+								: undefined
 						}
 						onCertifyPress={
 							selectedStore && onCertifyPress
@@ -495,7 +553,7 @@ export function StudentMapView({
 							paddingBottom: insets.bottom + 24,
 						}}
 						ItemSeparatorComponent={StoreListSeparator}
-						renderItem={({ item }) => renderPartnershipCard(item)}
+						renderItem={({ item, index }) => renderPartnershipCard(item, index)}
 						ListEmptyComponent={
 							isPartnershipLoading ? null : (
 								<EmptyResultView

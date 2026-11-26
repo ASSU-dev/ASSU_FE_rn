@@ -1,15 +1,27 @@
 import { useRouter } from "expo-router";
+import { useMemo } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { StoreCategory } from "@/entities/store";
-import { StoreListCard } from "@/entities/store";
+import {
+	logStoreSelect,
+	STORE_LIST,
+	StoreListCard,
+	toStoreAnalyticsItems,
+} from "@/entities/store";
 import { AdminChipRow, CategoryChipRow } from "@/features/map-filter";
 import type { UsablePartnershipDTO } from "@/shared/api";
 import { BackArrowIcon, LocationIcon } from "@/shared/assets/icons";
+import { useViewItemListTracking } from "@/shared/lib/analytics";
 import { shadows } from "@/shared/styles/shadows";
 import { EmptyResultView } from "@/shared/ui/empty-state";
 import { useStoreListData } from "../model/useStoreListData";
+
+const toPartnershipAnalyticsSource = (item: UsablePartnershipDTO) => ({
+	storeId: item.storeId,
+	storeName: item.partnerName,
+});
 
 interface StudentStoreListWidgetProps {
 	initialCategory?: StoreCategory;
@@ -29,6 +41,18 @@ export function StudentStoreListWidget({
 		stores,
 		isLoading,
 	} = useStoreListData({ initialCategory });
+
+	// 필터 조합이 바뀌어 새 목록을 보여줄 때마다 1회 기록
+	const analyticsItems = useMemo(
+		() => toStoreAnalyticsItems(stores, toPartnershipAnalyticsSource),
+		[stores],
+	);
+	useViewItemListTracking({
+		list: STORE_LIST.storeList,
+		items: analyticsItems,
+		ready: !isLoading,
+		dedupeKey: JSON.stringify([selectedCategory, selectedAdminId]),
+	});
 
 	return (
 		<View className="flex-1 bg-canvas">
@@ -60,22 +84,29 @@ export function StudentStoreListWidget({
 					style={{ flex: 1 }}
 					data={stores}
 					keyExtractor={(item) => String(item.partnershipId)}
-					renderItem={({ item }) => {
+					renderItem={({ item, index }) => {
 						const storeId = item.storeId;
 						return (
 							<PartnershipStoreCard
 								item={item}
 								onPress={
 									storeId !== undefined
-										? () =>
+										? () => {
+												logStoreSelect(
+													STORE_LIST.storeList,
+													toPartnershipAnalyticsSource(item),
+													index,
+												);
 												router.push({
 													pathname:
 														"/(protected)/student/store/[storeId]/detail",
 													params: {
 														storeId,
 														storeName: item.partnerName,
+														source: STORE_LIST.storeList.id,
 													},
-												})
+												});
+											}
 										: undefined
 								}
 							/>

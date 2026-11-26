@@ -7,6 +7,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { STORE_LIST } from "@/entities/store";
 import { CategoryChipRow, useMapFilterStore } from "@/features/map-filter";
 import { MapSearchBar, StudentMapView } from "@/widgets/map";
 
@@ -53,10 +54,14 @@ export function StudentMapPage() {
 				headerHeight={headerHeight}
 				isSheetExpanded={isSheetExpanded}
 				onSheetExpandedChange={setIsSheetExpanded}
-				onStorePress={(store) =>
+				onStorePress={(store, list) =>
 					router.push({
 						pathname: "/(protected)/student/store/[storeId]/detail",
-						params: { storeId: store.id, storeName: store.name },
+						params: {
+							storeId: store.id,
+							storeName: store.name,
+							source: list.id,
+						},
 					})
 				}
 				onCertifyPress={(store) =>
@@ -78,7 +83,11 @@ export function StudentMapPage() {
 						? () =>
 								router.push({
 									pathname: "/(protected)/student/store/[storeId]/detail",
-									params: { storeId: pinnedStoreId, storeName: preSelectName },
+									params: {
+										storeId: pinnedStoreId,
+										storeName: preSelectName,
+										source: STORE_LIST.mapMarker.id,
+									},
 								})
 						: undefined
 				}
