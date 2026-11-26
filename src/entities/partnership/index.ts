@@ -33,18 +33,11 @@ export type {
 } from "./model/api-types";
 export type {
 	Benefit,
-	BenefitCriteria,
-	BenefitItem,
 	ContractBenefitItem,
-	DiscountBenefitItem,
-	EtcBenefitItem,
 	Partnership,
 	PartnershipContract,
 	PendingContract,
 	ReviewableBenefit,
-	ServiceBenefitItem,
-	ServiceType,
 } from "./model/types";
-export { SERVICE_TYPES } from "./model/types";
 export { AffiliationSummaryCard } from "./ui/AffiliationSummaryCard";
 export { PartnershipCard } from "./ui/PartnershipCard";

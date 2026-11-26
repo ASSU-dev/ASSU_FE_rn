@@ -5,7 +5,7 @@ import { colorTokens } from "@/shared/styles/tokens";
 import { PageLayout } from "@/shared/ui/layout";
 
 interface Props {
-	// [TEST] 목 데이터 — API 연동 시 실제 생성된 계약서 ID가 주입됨
+	/** 수동 등록 응답의 partnership.partnershipId */
 	contractId: string;
 }
 

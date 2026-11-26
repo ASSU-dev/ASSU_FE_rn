@@ -7,8 +7,13 @@ import {
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
-import { DEFAULT_BENEFIT_ITEM, type ProposalFormData } from "../model";
+import {
+	DEFAULT_BENEFIT_ITEM,
+	isBenefitItemValid,
+	type ProposalFormData,
+} from "../model";
 import { BenefitCard } from "./BenefitCard";
+import { PlaceSearchField } from "./PlaceSearchField";
 import { UnderlineField } from "./UnderlineField";
 
 type Props = { onNext: () => void };
@@ -21,32 +26,22 @@ export function ProposalInfoStep({ onNext }: Props) {
 	});
 	const { bottom } = useSafeAreaInsets();
 
-	const companyName = useWatch({ control, name: "companyName" });
-	const proposerName = useWatch({ control, name: "proposerName" });
+	const selectedPlace = useWatch({ control, name: "selectedPlace" });
 	const benefits = useWatch({ control, name: "benefits" });
 
-	const isBenefitFilled = (b: (typeof benefits)[number]) => {
-		if (b.serviceType === "서비스 제공") return b.items.length > 0;
-		if (b.serviceType === "할인 혜택") return b.discountRate.trim() !== "";
-		if (b.serviceType === "기타 혜택") return b.content.trim() !== "";
-		return false;
-	};
-
 	const isNextEnabled =
-		companyName.length > 0 &&
-		proposerName.length > 0 &&
+		selectedPlace !== null &&
 		benefits.length > 0 &&
-		benefits.every(isBenefitFilled);
+		benefits.every(isBenefitItemValid);
 
 	const getGuideMessage = () => {
-		if (!companyName.length) return "제휴 제안업체를 입력해주세요";
-		if (!proposerName.length) return "제휴 제안인을 입력해주세요";
+		if (!selectedPlace) return "제휴 가게를 선택해주세요";
 		if (!benefits.length) return "혜택을 추가해주세요";
 		return "혜택 내용을 모두 입력해주세요";
 	};
 
 	const handleNext = async () => {
-		const valid = await trigger(["companyName", "proposerName"]);
+		const valid = await trigger(["selectedPlace", "benefits"]);
 		if (valid) onNext();
 	};
 
@@ -59,25 +54,24 @@ export function ProposalInfoStep({ onNext }: Props) {
 			>
 				<Controller
 					control={control}
-					name="companyName"
+					name="selectedPlace"
 					render={({ field: { value, onChange } }) => (
-						<UnderlineField
-							label="제휴 제안업체"
+						<PlaceSearchField
+							label="제휴 가게"
 							value={value}
-							onChangeText={onChange}
-							placeholder="역전할머니맥주"
+							onChange={onChange}
 						/>
 					)}
 				/>
 				<Controller
 					control={control}
-					name="proposerName"
+					name="storeDetailAddress"
 					render={({ field: { value, onChange } }) => (
 						<UnderlineField
-							label="제휴 제안인"
+							label="상세 주소 (선택)"
 							value={value}
 							onChangeText={onChange}
-							placeholder="숭실대학교 총학생회"
+							placeholder="예) 2층 201호"
 						/>
 					)}
 				/>

@@ -9,9 +9,12 @@ import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import type { ProposalFormData } from "../model";
 import { DateRangeField } from "./DateRangeField";
 
-type Props = { onComplete: () => void };
+type Props = { onComplete: () => void; isSubmitting?: boolean };
 
-export function ContractUploadStep({ onComplete }: Props) {
+export function ContractUploadStep({
+	onComplete,
+	isSubmitting = false,
+}: Props) {
 	const { control } = useFormContext<ProposalFormData>();
 	const { bottom } = useSafeAreaInsets();
 
@@ -47,6 +50,7 @@ export function ContractUploadStep({ onComplete }: Props) {
 			contractFileField.onChange({
 				uri: asset.uri,
 				name: asset.name ?? "파일",
+				mimeType: asset.mimeType,
 			});
 		} catch {
 			Alert.alert(
@@ -96,8 +100,8 @@ export function ContractUploadStep({ onComplete }: Props) {
 				className="items-center"
 				style={{ paddingBottom: Math.max(bottom, 16) }}
 			>
-				<MediumButton disabled={!isValid} onPress={onComplete}>
-					계약서 등록하기
+				<MediumButton disabled={!isValid || isSubmitting} onPress={onComplete}>
+					{isSubmitting ? "등록 중" : "계약서 등록하기"}
 				</MediumButton>
 			</View>
 		</View>

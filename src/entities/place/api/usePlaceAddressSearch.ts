@@ -28,6 +28,9 @@ function toAddressSearchItem(
 		label,
 		latitude: dto.latitude,
 		longitude: dto.longitude,
+		name: dto.name,
+		address: dto.address,
+		roadAddress: dto.roadAddress,
 	};
 }
 

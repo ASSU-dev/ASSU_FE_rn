@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, View } from "react-native";
+import { Alert, KeyboardAvoidingView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	ContractUploadStep,
@@ -10,20 +10,23 @@ import {
 	type ProposalFormData,
 	ProposalInfoStep,
 	proposalSchema,
+	toManualPartnershipRequest,
+	useCreateManualPartnership,
 } from "@/features/partnership-proposal";
+import { getApiErrorMessage } from "@/shared/api";
 import { AppTopBar } from "@/shared/ui/app-top-bar";
 
 type Step = "step1" | "step2" | "complete";
 
 export function PartnershipProposalPage() {
 	const [step, setStep] = useState<Step>("step1");
-	// [TEST] 목 데이터 — API 연동 시 제출 후 서버에서 받은 실제 계약서 ID로 교체
-	const [contractId, setContractId] = useState<string>("1");
+	const [contractId, setContractId] = useState<string | null>(null);
+	const createManualPartnership = useCreateManualPartnership();
 
 	const methods = useForm<ProposalFormData>({
 		defaultValues: {
-			companyName: "",
-			proposerName: "",
+			selectedPlace: null,
+			storeDetailAddress: "",
 			benefits: [],
 			startDate: null,
 			endDate: null,
@@ -33,13 +36,31 @@ export function PartnershipProposalPage() {
 	});
 
 	// 완료 화면은 자체 레이아웃(PageLayout + X버튼)을 가지므로 별도 렌더
-	if (step === "complete")
+	if (step === "complete" && contractId)
 		return <ProposalCompleteView contractId={contractId} />;
 
 	const handleBack = () => {
 		if (step === "step1") router.back();
 		else setStep("step1");
 	};
+
+	const handleSubmit = methods.handleSubmit(async (form) => {
+		if (!form.contractFile) return;
+
+		try {
+			const result = await createManualPartnership.mutateAsync({
+				request: toManualPartnershipRequest(form),
+				contractFile: form.contractFile,
+			});
+			setContractId(String(result.partnership.partnershipId));
+			setStep("complete");
+		} catch (error) {
+			Alert.alert(
+				"등록 실패",
+				getApiErrorMessage(error, "제휴 등록에 실패했습니다."),
+			);
+		}
+	});
 
 	return (
 		<FormProvider {...methods}>
@@ -58,11 +79,8 @@ export function PartnershipProposalPage() {
 					)}
 					{step === "step2" && (
 						<ContractUploadStep
-							onComplete={methods.handleSubmit(() => {
-								// [TEST] 목 데이터 — API 연동 시: setContractId(response.id)
-								setContractId("1");
-								setStep("complete");
-							})}
+							onComplete={handleSubmit}
+							isSubmitting={createManualPartnership.isPending}
 						/>
 					)}
 				</KeyboardAvoidingView>

@@ -189,6 +189,25 @@ const mockPartnershipDetails: Record<string, PartnershipDetailResponseDTO> = {
 			},
 		],
 	},
+	// 수동 등록(POST /partnership/passivity) 목 응답이 가리키는 상세
+	"6": {
+		partnershipId: 6,
+		updatedAt: "2026-11-25T00:00:00",
+		partnershipPeriodStart: "2026-12-01",
+		partnershipPeriodEnd: "2026-12-31",
+		adminId: 1,
+		partnerId: 6,
+		storeId: 6,
+		options: [
+			{
+				contentId: 112,
+				benefitCondition: "30,000원 이상 주문 시",
+				benefit: "음료 1캔 제공",
+				caution: "학생증 지참",
+				minPeople: null,
+			},
+		],
+	},
 	"5": {
 		partnershipId: 5,
 		updatedAt: "2024-12-15T00:00:00",
@@ -234,6 +253,31 @@ export function registerPartnershipHandlers(mock: MockAdapter) {
 		message: "OK",
 		result: pagedResponse(mockPartnerships),
 	} satisfies BaseResponse<PagedResponse<WritePartnershipResponseDTO>>);
+
+	mock.onPost("/partnership/passivity").reply(200, {
+		isSuccess: true,
+		code: "COMMON200",
+		message: "OK",
+		result: {
+			storeId: 6,
+			storeCreated: true,
+			storeActivated: false,
+			status: "SUSPEND",
+			contractImageUrl: "https://example.com/mock-contract.jpg",
+			partnership: {
+				partnershipId: 6,
+				storeName: "수동 등록 가게",
+				adminName: "숭실대학교 총학생회",
+				partnershipPeriodStart: "2026-12-01",
+				partnershipPeriodEnd: "2026-12-31",
+				adminId: 1,
+				partnerId: 6,
+				storeId: 6,
+				isActivated: "SUSPEND",
+				options: mockPartnershipDetails["6"]?.options ?? [],
+			},
+		},
+	});
 
 	mock.onGet(/^\/partnership\/(\d+)$/).reply((config) => {
 		const id = config.url?.split("/").pop() ?? "";
