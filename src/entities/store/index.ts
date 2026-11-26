@@ -13,6 +13,17 @@ export {
 	getPrimaryBenefit,
 	splitBenefitText,
 } from "./lib/mapDisplay";
+export {
+	findStoreListById,
+	logStoreSelect,
+	logStoreView,
+	STORE_CONTENT_TYPE,
+	STORE_LIST,
+	type StoreList,
+	type StoreListId,
+	toStoreAnalyticsItem,
+	toStoreAnalyticsItems,
+} from "./lib/storeAnalytics";
 export type {
 	PaperContentResponseDto,
 	StoreBenefit,
