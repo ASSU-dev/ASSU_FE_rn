@@ -75,26 +75,106 @@ describe("매장 카드 추가 혜택 개수", () => {
 	});
 });
 
+describe("마커 카드의 추가 혜택 개수 — benefits 배열 길이 기준", () => {
+	it("한 학생회의 혜택 2개면 대표 혜택을 뺀 1개를 센다", () => {
+		const store = makeStore({
+			partnerships: [
+				{
+					adminId: "183",
+					adminName: "it대학생회",
+					benefits: [
+						"게임비 15% 할인",
+						"계좌이체 주문 시 빙수 10% 할인 (카운터 결제 필요)",
+					],
+				},
+			],
+		});
+
+		expect(getPrimaryBenefit(store)).toBe("게임비 15% 할인");
+		expect(countExtraBenefits(store)).toBe(1);
+	});
+
+	it("혜택이 1개뿐이면 추가 혜택이 없다", () => {
+		const store = makeStore({
+			partnerships: [
+				{
+					adminId: "183",
+					adminName: "it대학생회",
+					benefits: ["전 메뉴 10% 할인"],
+				},
+			],
+		});
+
+		expect(countExtraBenefits(store)).toBe(0);
+	});
+});
+
 describe("혜택 문구의 조건과 강조 분리", () => {
-	it("쉼표 앞은 조건, 쉼표 뒤는 강조 문구로 나눈다", () => {
+	it.each([
+		{
+			text: "40,000원 이상 주문 시 현금 결제 또는 계좌이체 5% 할인",
+			label: "40,000원 이상 주문 시 ",
+			highlight: "현금 결제 또는 계좌이체 5% 할인",
+		},
+		{
+			text: "메인 메뉴 2개 이상 주문 시 현금 결제 또는 계좌이체 5% 할인",
+			label: "메인 메뉴 2개 이상 주문 시 ",
+			highlight: "현금 결제 또는 계좌이체 5% 할인",
+		},
+		{
+			text: "4명 이상 방문 시 군만두 제공",
+			label: "4명 이상 방문 시 ",
+			highlight: "군만두 제공",
+		},
+		{
+			text: "계좌이체 주문 시 빙수 10% 할인 (카운터 결제 필요)",
+			label: "계좌이체 주문 시 ",
+			highlight: "빙수 10% 할인 (카운터 결제 필요)",
+		},
+	])("'~ 시'까지는 조건, 뒤는 강조 문구로 나눈다: $text", ({
+		text,
+		label,
+		highlight,
+	}) => {
+		expect(splitBenefitText(text)).toEqual({ label, highlight });
+	});
+
+	it("'5시'처럼 숫자 뒤의 '시'는 시각이므로 건너뛰고 다음 '시'에서 나눈다", () => {
+		expect(splitBenefitText("오후 5시 이후 주문 시 10% 할인")).toEqual({
+			label: "오후 5시 이후 주문 시 ",
+			highlight: "10% 할인",
+		});
+	});
+
+	it("'시'가 없으면 전체를 강조 문구로 표시한다", () => {
+		expect(splitBenefitText("게임비 15% 할인")).toEqual({
+			highlight: "게임비 15% 할인",
+		});
+	});
+
+	it("조건만 있고 혜택이 비어 있으면 나누지 않는다", () => {
+		expect(splitBenefitText("4명 이상 방문 시")).toEqual({
+			highlight: "4명 이상 방문 시",
+		});
+	});
+
+	it("'시' 바로 뒤에 쉼표가 붙은 형식도 '시'까지를 조건으로 나눈다", () => {
 		expect(splitBenefitText("4인이상 식사시, 음료제공")).toEqual({
-			label: "4인이상 식사시,",
+			label: "4인이상 식사시, ",
 			highlight: "음료제공",
 		});
-	});
-
-	it("쉼표가 없으면 전체를 강조 문구로 표시한다", () => {
-		expect(splitBenefitText("10% 할인")).toEqual({ highlight: "10% 할인" });
-	});
-
-	it("금액의 천 단위 쉼표(30,000원)에서는 나누지 않는다", () => {
 		expect(splitBenefitText("30,000원 이상 주문 시, 음료 제공")).toEqual({
-			label: "30,000원 이상 주문 시,",
+			label: "30,000원 이상 주문 시, ",
 			highlight: "음료 제공",
 		});
-		expect(splitBenefitText("30,000원 이상 주문 시 음료 1캔 제공")).toEqual({
-			highlight: "30,000원 이상 주문 시 음료 1캔 제공",
-		});
+	});
+
+	it.each([
+		"10% 할인",
+		"4인 이상, 음료 제공",
+		"30,000원 이상 구매하면 10,000원 할인",
+	])("'~ 시'가 없으면 쉼표가 있어도 전체를 강조 문구로 표시한다: %s", (text) => {
+		expect(splitBenefitText(text)).toEqual({ highlight: text });
 	});
 
 	it.each([

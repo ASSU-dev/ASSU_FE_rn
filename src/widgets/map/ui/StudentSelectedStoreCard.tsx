@@ -60,8 +60,9 @@ export function StudentSelectedStoreCard({
 					) : null}
 				</View>
 
-				{/* 피그마 실측: 썸네일과 같은 110px 높이 + py 4px, 버튼은 justify-between으로 하단 고정 */}
-				<View className="h-[110px] flex-1 justify-between py-[4px]">
+				{/* 버튼은 마지막 글자 바로 아래에 일정한 간격으로 붙이고, 열 전체는 썸네일 기준 세로 중앙에 둔다.
+				    하단에 고정하면 "외 N가지 제휴"가 없거나 혜택이 1줄일 때 글자와 버튼 사이가 벌어진다 */}
+				<View className="flex-1 py-[4px]">
 					<View className="gap-[5px] pr-[34px]">
 						<Text
 							className="text-sm font-bold leading-[16px] text-content-primary"
@@ -73,7 +74,7 @@ export function StudentSelectedStoreCard({
 						{(benefitLabel || benefitHighlight) && (
 							<Text
 								className="text-md font-semibold leading-[19px] tracking-[-0.32px]"
-								numberOfLines={1}
+								numberOfLines={2}
 							>
 								{benefitLabel ? (
 									<Text className="text-content-primary">{benefitLabel}</Text>
@@ -95,7 +96,7 @@ export function StudentSelectedStoreCard({
 					</View>
 
 					<Pressable
-						className="items-center justify-center rounded-[7px] bg-primary py-[10px]"
+						className="mt-[8px] items-center justify-center rounded-[7px] bg-primary py-[10px]"
 						onPress={(event) => {
 							event.stopPropagation();
 							onCertifyPress();
