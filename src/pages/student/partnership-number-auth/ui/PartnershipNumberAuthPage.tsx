@@ -27,7 +27,7 @@ export function PartnershipNumberAuthPage() {
 
 		router.push({
 			pathname: "/(protected)/student/partnership-benefit-select",
-			params: { storeId },
+			params: { storeId, entryPoint: "scanner_button", authMethod: "number" },
 		});
 	};
 

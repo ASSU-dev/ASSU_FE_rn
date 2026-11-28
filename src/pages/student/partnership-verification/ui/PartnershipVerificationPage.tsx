@@ -5,6 +5,7 @@ import { useProfileImageQuery } from "@/entities/user/api/useProfileImageQuery";
 import { useStudentProfileQuery } from "@/entities/user/api/useStudentProfileQuery";
 import { useUserBasicInfo } from "@/entities/user/model/useUserBasicInfo";
 import {
+	buildGroupUsageParams,
 	usePartnershipAuthStore,
 	usePartnershipUsageMutation,
 } from "@/features/partnership-auth";
@@ -12,6 +13,7 @@ import {
 	PartnershipGroupStatus,
 	PartnershipTicket,
 } from "@/shared/assets/icons";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
@@ -34,6 +36,9 @@ export function PartnershipVerificationPage() {
 	const store = usePartnershipAuthStore((state) => state.store);
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
 	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
+	const analyticsContext = usePartnershipAuthStore(
+		(state) => state.analyticsContext,
+	);
 	const recordUsage = usePartnershipUsageMutation();
 	const studentDetails = [
 		["학번", studentProfile?.studentNumber],
@@ -64,12 +69,31 @@ export function PartnershipVerificationPage() {
 					contentId: benefit.id,
 					userIds: benefit.type === "GROUP" ? groupSession?.userIds : undefined,
 				});
+				// 이용 완료는 사용 내역이 기록되는 개인 인증과 단체 대표자만 보낸다.
+				trackEvent("partnership_usage_completed", {
+					store_id: store.storeId,
+					content_id: benefit.id,
+					benefit_type: benefit.type === "GROUP" ? "group" : "individual",
+					auth_method: analyticsContext?.authMethod ?? "direct",
+					...(benefit.type === "GROUP" && groupSession
+						? buildGroupUsageParams(
+								groupSession.requiredPeople,
+								groupSession.count,
+							)
+						: {}),
+				});
 			}
 			router.replace({
 				pathname: "/(protected)/student/partnership-complete",
 				params: { benefit: benefit.contents },
 			});
 		} catch {
+			trackEvent("partnership_auth_failed", {
+				fail_stage: "usage_record",
+				fail_reason: "request_failed",
+				store_id: store.storeId,
+				auth_method: analyticsContext?.authMethod,
+			});
 			Alert.alert("처리 실패", "제휴 사용내역을 기록하지 못했습니다.");
 		}
 	};

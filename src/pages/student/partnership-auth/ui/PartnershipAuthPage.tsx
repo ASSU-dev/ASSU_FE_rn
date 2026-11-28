@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { BackArrowIcon } from "@/shared/assets/icons";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
 
@@ -56,6 +57,7 @@ export function PartnershipAuthPage() {
 	const handleNext = () => {
 		if (!selectedMethod) return;
 
+		trackEvent("auth_method_selected", { auth_method: selectedMethod });
 		router.push(
 			selectedMethod === "qr"
 				? "/(protected)/student/partnership-qr-auth"

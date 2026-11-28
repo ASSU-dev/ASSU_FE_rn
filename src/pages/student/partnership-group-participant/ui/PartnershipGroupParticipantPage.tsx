@@ -8,6 +8,7 @@ import {
 	useGroupCertificationSessionDetailQuery,
 	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
@@ -49,6 +50,7 @@ export function PartnershipGroupParticipantPage() {
 		null,
 	);
 	const publishedSessionKeyRef = useRef<string | null>(null);
+	const trackedLookupFailureRef = useRef(false);
 	const sessionKey = hasValidDeepLink
 		? `${parsedSessionId}:${parsedAdminId}`
 		: null;
@@ -108,6 +110,21 @@ export function PartnershipGroupParticipantPage() {
 			adminId: benefit.adminId,
 			sessionId: groupSession.sessionId,
 		}).then((published) => {
+			if (published) {
+				// QR을 찍어 인증 신호를 보낸 참여자를 기록한다. "인증완료" 버튼 누름과는 무관하다.
+				trackEvent("group_participant_verified", {
+					store_id: usePartnershipAuthStore.getState().store?.storeId,
+					content_id: benefit.id,
+					group_size: groupSession.requiredPeople,
+				});
+			}
+			if (!published) {
+				trackEvent("partnership_auth_failed", {
+					fail_stage: "group_participant",
+					fail_reason: "connection_failed",
+					store_id: usePartnershipAuthStore.getState().store?.storeId,
+				});
+			}
 			if (isMounted && !published) {
 				Alert.alert(
 					"연결 확인",
@@ -125,6 +142,23 @@ export function PartnershipGroupParticipantPage() {
 			isMounted = false;
 		};
 	}, [benefit, groupSession, isDeepLinkHydrated, sessionKey]);
+
+	// 세션 조회 실패를 실패한 시도마다 1회 기록한다. 다시 성공하면 가드를 풀어 재시도 실패도 잡는다.
+	const isLookupFailed =
+		!hasValidDeepLink || sessionQuery.isError || isAdminMismatch;
+	useEffect(() => {
+		if (!isLookupFailed) {
+			trackedLookupFailureRef.current = false;
+			return;
+		}
+		if (trackedLookupFailureRef.current) return;
+		trackedLookupFailureRef.current = true;
+		trackEvent("partnership_auth_failed", {
+			fail_stage: "group_participant",
+			fail_reason: "session_lookup_failed",
+			store_id: sessionDetail?.store.storeId,
+		});
+	}, [isLookupFailed, sessionDetail]);
 
 	const handleSessionLookupRetry = () => {
 		if (hasValidDeepLink && !isAdminMismatch) {

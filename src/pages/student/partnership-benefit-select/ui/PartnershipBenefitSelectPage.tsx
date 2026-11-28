@@ -1,22 +1,39 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import {
+	parseAnalyticsContext,
 	useGroupCertificationSessionMutation,
 	usePartnershipAuthStore,
 	usePersonalCertificationMutation,
 	useStorePartnershipQuery,
 } from "@/features/partnership-auth";
 import { BackArrowIcon } from "@/shared/assets/icons";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { BenefitSelectButton } from "@/shared/ui/buttons/BenefitSelectButton";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
 
 export function PartnershipBenefitSelectPage() {
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-	const { storeId: storeIdParam, preSelectedContentId: preSelectedParam } =
-		useLocalSearchParams<{ storeId: string; preSelectedContentId?: string }>();
+	const {
+		storeId: storeIdParam,
+		preSelectedContentId: preSelectedParam,
+		entryPoint: entryPointParam,
+		authMethod: authMethodParam,
+	} = useLocalSearchParams<{
+		storeId: string;
+		preSelectedContentId?: string;
+		entryPoint?: string;
+		authMethod?: string;
+	}>();
 	const storeId = Number(storeIdParam);
+	const analyticsContext = parseAnalyticsContext(
+		entryPointParam,
+		authMethodParam,
+	);
+	const authMethod = analyticsContext.authMethod;
+	const trackedLoadErrorAtRef = useRef(0);
 	const preSelectedContentId = preSelectedParam
 		? Number(preSelectedParam)
 		: null;
@@ -27,6 +44,9 @@ export function PartnershipBenefitSelectPage() {
 	const setStore = usePartnershipAuthStore((state) => state.setStore);
 	const setSelectedBenefit = usePartnershipAuthStore(
 		(state) => state.setSelectedBenefit,
+	);
+	const setAnalyticsContext = usePartnershipAuthStore(
+		(state) => state.setAnalyticsContext,
 	);
 	const setGroupSession = usePartnershipAuthStore(
 		(state) => state.setGroupSession,
@@ -41,6 +61,30 @@ export function PartnershipBenefitSelectPage() {
 		if (storeQuery.data) setStore(storeQuery.data);
 	}, [setStore, storeQuery.data]);
 
+	// 혜택 목록 로드 실패를 실패한 시도마다 1회 기록한다. 번호 인증에서 없는 매장 번호를 넣으면 여기서 드러난다.
+	useEffect(() => {
+		if (
+			!storeQuery.isError ||
+			trackedLoadErrorAtRef.current === storeQuery.errorUpdatedAt
+		)
+			return;
+		trackedLoadErrorAtRef.current = storeQuery.errorUpdatedAt;
+		trackEvent("partnership_auth_failed", {
+			fail_stage: "benefit_load",
+			fail_reason: "request_failed",
+			store_id:
+				Number.isSafeInteger(storeId) && storeId > 0 ? storeId : undefined,
+			auth_method: authMethod,
+		});
+	}, [storeQuery.isError, storeQuery.errorUpdatedAt, storeId, authMethod]);
+
+	// 뒤 화면(단체 QR, 인증 확인)의 GA 이벤트가 진입 경로와 인증 방식을 알 수 있게 저장한다.
+	useEffect(() => {
+		setAnalyticsContext(
+			parseAnalyticsContext(entryPointParam, authMethodParam),
+		);
+	}, [setAnalyticsContext, entryPointParam, authMethodParam]);
+
 	useEffect(() => {
 		if (
 			preSelectedContentId == null ||
@@ -54,6 +98,14 @@ export function PartnershipBenefitSelectPage() {
 
 	const handleComplete = async () => {
 		if (!store || !selectedBenefit) return;
+
+		trackEvent("benefit_selected", {
+			store_id: store.storeId,
+			content_id: selectedBenefit.id,
+			benefit_type: selectedBenefit.type === "GROUP" ? "group" : "individual",
+			preselected: preSelectedContentId !== null ? 1 : 0,
+			auth_method: analyticsContext.authMethod,
+		});
 
 		try {
 			setSelectedBenefit(selectedBenefit);
@@ -84,8 +136,20 @@ export function PartnershipBenefitSelectPage() {
 				storeId: store.storeId,
 				adminId: selectedBenefit.adminId,
 			});
+			trackEvent("partnership_auth_succeeded", {
+				store_id: store.storeId,
+				content_id: selectedBenefit.id,
+				benefit_type: "individual",
+				auth_method: analyticsContext.authMethod,
+			});
 			router.push("/(protected)/student/partnership-verification");
 		} catch {
+			trackEvent("partnership_auth_failed", {
+				fail_stage: "benefit_certify",
+				fail_reason: "request_failed",
+				store_id: store.storeId,
+				auth_method: analyticsContext.authMethod,
+			});
 			Alert.alert("인증 실패", "제휴 인증을 시작하지 못했습니다.");
 		}
 	};

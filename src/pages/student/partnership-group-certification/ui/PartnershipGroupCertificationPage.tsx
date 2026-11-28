@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import {
@@ -9,6 +9,7 @@ import {
 	usePartnershipAuthStore,
 } from "@/features/partnership-auth";
 import { InfoIcon } from "@/shared/assets/icons";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout";
 
@@ -16,8 +17,36 @@ export function PartnershipGroupCertificationPage() {
 	const store = usePartnershipAuthStore((state) => state.store);
 	const benefit = usePartnershipAuthStore((state) => state.selectedBenefit);
 	const groupSession = usePartnershipAuthStore((state) => state.groupSession);
+	const analyticsContext = usePartnershipAuthStore(
+		(state) => state.analyticsContext,
+	);
 	const sessionId = groupSession?.sessionId ?? null;
+	const trackedSuccessSessionIdRef = useRef<number | null>(null);
 	useGroupCertificationProgress(sessionId);
+
+	const isGroupComplete =
+		groupSession !== null &&
+		(groupSession.status === "COMPLETED" ||
+			groupSession.count >= groupSession.requiredPeople);
+
+	// 인원이 처음 충족됐을 때 세션당 1회만 인증 성공을 기록한다.
+	useEffect(() => {
+		if (
+			!isGroupComplete ||
+			!store ||
+			!benefit ||
+			sessionId === null ||
+			trackedSuccessSessionIdRef.current === sessionId
+		)
+			return;
+		trackedSuccessSessionIdRef.current = sessionId;
+		trackEvent("partnership_auth_succeeded", {
+			store_id: store.storeId,
+			content_id: benefit.id,
+			benefit_type: "group",
+			auth_method: analyticsContext?.authMethod ?? "direct",
+		});
+	}, [isGroupComplete, store, benefit, sessionId, analyticsContext]);
 
 	const qrValue = useMemo(() => {
 		if (!benefit || !groupSession) return null;

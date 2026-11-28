@@ -129,6 +129,7 @@ describe("StoreDetailWidget", () => {
 			params: {
 				storeId: 10,
 				preSelectedContentId: 42,
+				entryPoint: "store_detail",
 			},
 		});
 	});

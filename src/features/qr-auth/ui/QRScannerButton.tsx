@@ -1,13 +1,19 @@
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { BackArrowIcon, QrIcon } from "@/shared/assets/icons";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { InfoLinkText } from "@/shared/ui/info";
 
 export const QRScannerButton = () => {
+	const handlePress = () => {
+		trackEvent("partnership_started", { entry_point: "scanner_button" });
+		router.push("/(protected)/student/partnership-auth");
+	};
+
 	return (
 		<Pressable
 			className="flex-row items-center rounded-2xl bg-neutral px-6 py-8"
-			onPress={() => router.push("/(protected)/student/partnership-auth")}
+			onPress={handlePress}
 		>
 			<View className="mr-4">
 				<QrIcon width={40} height={40} />
