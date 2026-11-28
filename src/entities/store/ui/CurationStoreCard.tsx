@@ -1,4 +1,5 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Pressable, Text, View } from "react-native";
 import { DefaultImageMagazine, SaleTag } from "@/shared/assets/icons";
 import { MarqueeText } from "@/shared/ui/marquee-text";
 
@@ -26,7 +27,9 @@ export function CurationStoreCard({
 					<Image
 						source={{ uri: profileImageUrl }}
 						className="absolute inset-0"
-						resizeMode="cover"
+						contentFit="cover"
+						cachePolicy="memory-disk"
+						recyclingKey={profileImageUrl}
 					/>
 				) : (
 					<View className="flex-1 items-center justify-center">

@@ -1,4 +1,5 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Pressable, Text, View } from "react-native";
 import { DefaultImageCircle } from "@/shared/assets/icons";
 
 interface AdBannerCardProps {
@@ -40,7 +41,9 @@ export function AdBannerCard({
 						<Image
 							source={{ uri: imageUri }}
 							style={{ width: 55, height: 55 }}
-							resizeMode="cover"
+							contentFit="cover"
+							cachePolicy="memory-disk"
+							recyclingKey={imageUri}
 						/>
 					) : (
 						<View className="flex-1 items-center justify-center">
