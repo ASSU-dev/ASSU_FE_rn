@@ -1,13 +1,16 @@
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback } from "react";
 import { BackHandler } from "react-native";
+import { findStoreListById, STORE_LIST } from "@/entities/store";
 import { StudentStoreDetailPage } from "@/pages/student/store-detail/ui/StudentStoreDetailPage";
 
 export default function StudentStoreDetailScreen() {
-	const { storeId, storeName, fromDeepLink } = useLocalSearchParams<{
+	const { storeId, storeName, fromDeepLink, source } = useLocalSearchParams<{
 		storeId: string;
 		storeName?: string;
 		fromDeepLink?: string;
+		/** 유입 목록 id (STORE_LIST). GA view_item의 유입 경로로 기록한다. */
+		source?: string;
 	}>();
 	const parsedStoreId = Number(storeId);
 	const validStoreId =
@@ -15,6 +18,9 @@ export default function StudentStoreDetailScreen() {
 			? parsedStoreId
 			: 0;
 	const isDeepLinkEntry = fromDeepLink === "true";
+	const entryList = isDeepLinkEntry
+		? STORE_LIST.deepLink
+		: (findStoreListById(source) ?? STORE_LIST.direct);
 
 	const handleDeepLinkBack = useCallback(() => {
 		router.replace("/(protected)/student/(tabs)/home");
@@ -40,6 +46,7 @@ export default function StudentStoreDetailScreen() {
 		<StudentStoreDetailPage
 			storeId={validStoreId}
 			storeName={storeName}
+			entryList={entryList}
 			onBack={isDeepLinkEntry ? handleDeepLinkBack : undefined}
 		/>
 	);

@@ -81,6 +81,7 @@ describe("StudentStoreListWidget", () => {
 			params: {
 				storeId: 777,
 				storeName: "눌러본 가게",
+				source: "store_list",
 			},
 		});
 	});

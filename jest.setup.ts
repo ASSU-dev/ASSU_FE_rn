@@ -5,6 +5,13 @@ jest.mock("react-native-reanimated", () =>
 	require("react-native-reanimated/mock"),
 );
 
+// Firebase는 import 시점에 네이티브 모듈을 찾으므로 Jest에서는 SDK 전체를 대체한다.
+jest.mock("@react-native-firebase/analytics", () => ({
+	getAnalytics: jest.fn(() => ({})),
+	logEvent: jest.fn(() => Promise.resolve()),
+	setAnalyticsCollectionEnabled: jest.fn(() => Promise.resolve()),
+}));
+
 jest.mock("react-native-safe-area-context", () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require("react");

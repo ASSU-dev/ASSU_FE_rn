@@ -1,7 +1,20 @@
 import { router } from "expo-router";
+import { useMemo } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import {
+	logStoreSelect,
+	STORE_LIST,
+	toStoreAnalyticsItems,
+} from "@/entities/store";
 import { CurationStoreCard } from "@/entities/store/ui/CurationStoreCard";
 import type { CurationStoreDTO } from "@/shared/api";
+import { useViewItemListTracking } from "@/shared/lib/analytics";
+
+const toCurationAnalyticsSource = (store: CurationStoreDTO) => ({
+	storeId: store.storeId,
+	storeName: store.storeName,
+	category: store.storeCategory,
+});
 
 interface HomeCurationSectionProps {
 	curationTitle?: string;
@@ -16,6 +29,16 @@ export function HomeCurationSection({
 	stores,
 	isLoading,
 }: HomeCurationSectionProps) {
+	const analyticsItems = useMemo(
+		() => toStoreAnalyticsItems(stores ?? [], toCurationAnalyticsSource),
+		[stores],
+	);
+	useViewItemListTracking({
+		list: STORE_LIST.homeCuration,
+		items: analyticsItems,
+		ready: !isLoading,
+	});
+
 	if (isLoading) {
 		return (
 			<View className="gap-4">
@@ -41,17 +64,22 @@ export function HomeCurationSection({
 				keyExtractor={(item) => String(item.storeId)}
 				contentContainerClassName="px-screen-m"
 				ItemSeparatorComponent={() => <View className="w-3" />}
-				renderItem={({ item }) => (
+				renderItem={({ item, index }) => (
 					<View style={{ width: 180 }}>
 						<CurationStoreCard
 							profileImageUrl={item.profileImageUrl}
 							discountContent={item.discountContent}
 							storeName={item.storeName}
-							onPress={() =>
+							onPress={() => {
+								logStoreSelect(
+									STORE_LIST.homeCuration,
+									toCurationAnalyticsSource(item),
+									index,
+								);
 								router.push(
-									`/(protected)/student/store/${item.storeId}/detail?storeName=${encodeURIComponent(item.storeName ?? "")}`,
-								)
-							}
+									`/(protected)/student/store/${item.storeId}/detail?storeName=${encodeURIComponent(item.storeName ?? "")}&source=${STORE_LIST.homeCuration.id}`,
+								);
+							}}
 						/>
 					</View>
 				)}
