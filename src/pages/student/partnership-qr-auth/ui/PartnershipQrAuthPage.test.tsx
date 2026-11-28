@@ -133,7 +133,7 @@ describe("PartnershipQrAuthPage QR 확인 후 인증 흐름 분기", () => {
 		// Then
 		expect(router.push).toHaveBeenCalledWith({
 			pathname: "/(protected)/student/partnership-benefit-select",
-			params: { storeId: 7 },
+			params: { storeId: 7, entryPoint: "scanner_button", authMethod: "qr" },
 		});
 	});
 

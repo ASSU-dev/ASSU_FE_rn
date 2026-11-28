@@ -8,6 +8,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CategoryChipRow, useMapFilterStore } from "@/features/map-filter";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { MapSearchBar, StudentMapView } from "@/widgets/map";
 
 /** MapSearchBar(insets.top + 12 + 44 + 12) 바로 아래 */
@@ -46,6 +47,19 @@ export function StudentMapPage() {
 
 	const pinnedStoreId = preSelectStoreId ? Number(preSelectStoreId) : undefined;
 
+	// 일반 카드와 고정 카드는 같은 카드·같은 이동이라 진입 경로를 map_card 하나로 기록한다.
+	const handleCertify = (storeId: string | number) => {
+		const numericStoreId = Number(storeId);
+		trackEvent("partnership_started", {
+			entry_point: "map_card",
+			store_id: Number.isFinite(numericStoreId) ? numericStoreId : undefined,
+		});
+		router.push({
+			pathname: "/(protected)/student/partnership-benefit-select",
+			params: { storeId, entryPoint: "map_card" },
+		});
+	};
+
 	return (
 		<View className="flex-1 bg-canvas">
 			<StudentMapView
@@ -59,12 +73,7 @@ export function StudentMapPage() {
 						params: { storeId: store.id, storeName: store.name },
 					})
 				}
-				onCertifyPress={(store) =>
-					router.push({
-						pathname: "/(protected)/student/partnership-benefit-select",
-						params: { storeId: store.id },
-					})
-				}
+				onCertifyPress={(store) => handleCertify(store.id)}
 				initialStoreId={preSelectStoreId}
 				initialLat={preSelectLat ? Number(preSelectLat) : undefined}
 				initialLng={preSelectLng ? Number(preSelectLng) : undefined}
@@ -83,13 +92,7 @@ export function StudentMapPage() {
 						: undefined
 				}
 				onPinnedStoreCertifyPress={
-					pinnedStoreId
-						? () =>
-								router.push({
-									pathname: "/(protected)/student/partnership-benefit-select",
-									params: { storeId: pinnedStoreId },
-								})
-						: undefined
+					pinnedStoreId ? () => handleCertify(pinnedStoreId) : undefined
 				}
 			/>
 			<Animated.View

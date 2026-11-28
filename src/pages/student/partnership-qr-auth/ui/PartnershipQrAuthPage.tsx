@@ -20,6 +20,7 @@ import {
 	parseGroupCertificationQr,
 	parsePartnershipStoreId,
 } from "@/features/partnership-auth";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { colorTokens } from "@/shared/styles/tokens";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 
@@ -155,6 +156,11 @@ export function PartnershipQrAuthPage() {
 
 		const storeId = parsePartnershipStoreId(scannedValue);
 		if (!storeId) {
+			trackEvent("partnership_auth_failed", {
+				fail_stage: "qr_scan",
+				fail_reason: "invalid_qr",
+				auth_method: "qr",
+			});
 			Alert.alert("QR 확인 실패", "올바른 제휴 QR 코드가 아닙니다.");
 			setScannedValue(null);
 			return;
@@ -162,7 +168,7 @@ export function PartnershipQrAuthPage() {
 
 		router.push({
 			pathname: "/(protected)/student/partnership-benefit-select",
-			params: { storeId },
+			params: { storeId, entryPoint: "scanner_button", authMethod: "qr" },
 		});
 	};
 

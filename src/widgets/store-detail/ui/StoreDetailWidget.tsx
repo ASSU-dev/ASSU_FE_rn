@@ -10,6 +10,7 @@ import {
 import { StoreImageCarousel } from "@/entities/store/ui/StoreImageCarousel";
 import { StorePartnershipList } from "@/features/store-detail/ui/StorePartnershipList";
 import { Location, MapIcon } from "@/shared/assets/icons";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { AppTopBar } from "@/shared/ui/app-top-bar/AppTopBar";
 import { MediumButton } from "@/shared/ui/buttons/SubmitButton";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
@@ -63,11 +64,16 @@ export function StoreDetailWidget({
 
 	const handleCertify = () => {
 		if (!selectedBenefit || !store) return;
+		trackEvent("partnership_started", {
+			entry_point: "store_detail",
+			store_id: store.storeId,
+		});
 		router.push({
 			pathname: "/(protected)/student/partnership-benefit-select",
 			params: {
 				storeId: store.storeId,
 				preSelectedContentId: Number(selectedBenefit.id),
+				entryPoint: "store_detail",
 			},
 		});
 	};
