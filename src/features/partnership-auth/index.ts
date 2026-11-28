@@ -14,11 +14,14 @@ export {
 	usePersonalCertificationMutation,
 	useStorePartnershipQuery,
 } from "./api/usePartnershipAuthMutations";
+export { buildGroupUsageParams } from "./lib/buildGroupUsageParams";
+export { parseAnalyticsContext } from "./lib/parseAnalyticsContext";
 export type {
 	GroupCertificationProgressMessage,
 	GroupCertificationQrPayload,
 	GroupCertificationSession,
 	GroupCertificationSessionDetail,
+	PartnershipAnalyticsContext,
 	PartnershipBenefit,
 	PartnershipUsagePayload,
 	VerifiedPartnershipStore,

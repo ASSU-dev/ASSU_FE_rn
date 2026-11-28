@@ -1,3 +1,5 @@
+import type { AuthMethod, EntryPoint } from "@/shared/lib/analytics/events";
+
 export interface PartnershipBenefit {
 	id: number;
 	adminId: number;
@@ -37,6 +39,12 @@ export interface GroupCertificationSession {
 	status: "WAITING" | "COMPLETED";
 	userIds: number[];
 	role: "REPRESENTATIVE" | "PARTICIPANT";
+}
+
+// GA 이벤트 파라미터를 혜택 선택 이후 화면까지 이어 주기 위해 보관한다.
+export interface PartnershipAnalyticsContext {
+	entryPoint?: EntryPoint;
+	authMethod: AuthMethod;
 }
 
 export interface GroupCertificationSessionDetail {
