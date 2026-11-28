@@ -2,6 +2,7 @@ import type { IMessage } from "@stomp/stompjs";
 import { act, renderHook } from "@testing-library/react-native";
 import { router } from "expo-router";
 import { Alert } from "react-native";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { stompManager } from "@/shared/lib/stomp/stompManager";
 import type { GroupCertificationQrPayload } from "../model/types";
@@ -29,6 +30,10 @@ jest.mock("expo-linking", () => ({
 
 jest.mock("@/shared/lib/stomp/stompManager", () => ({
 	stompManager: { subscribeToTopic: jest.fn() },
+}));
+
+jest.mock("@/shared/lib/analytics/trackEvent", () => ({
+	trackEvent: jest.fn(),
 }));
 
 const QR_PAYLOAD: GroupCertificationQrPayload = {
@@ -253,6 +258,73 @@ describe("useGroupCertificationProgress 진행 상태 구독", () => {
 
 		// Then
 		expect(Alert.alert).toHaveBeenCalledTimes(1);
+		expect(trackEvent).toHaveBeenCalledTimes(1);
+	});
+
+	it("정상 인증 사용자 목록에 본인이 없으면 대상자 불일치 실패를 기록한다", () => {
+		// Given
+		givenLoggedInMember(1);
+		givenWaitingGroupSession(1);
+		usePartnershipAuthStore.setState({
+			store: { storeId: 7, storeName: "숭실 분식", benefits: [] },
+			analyticsContext: { authMethod: "qr" },
+		});
+		renderHook(() => useGroupCertificationProgress(321));
+
+		// When
+		act(() =>
+			publishProgress(
+				JSON.stringify({ type: "MISMATCH", count: 2, userIds: [2, 3] }),
+			),
+		);
+
+		// Then
+		expect(trackEvent).toHaveBeenCalledWith("partnership_auth_failed", {
+			fail_stage: "group_participant",
+			fail_reason: "not_eligible",
+			store_id: 7,
+			auth_method: "qr",
+		});
+	});
+
+	it("정상 인증 사용자 목록에 본인이 있으면 실패를 기록하지 않는다", () => {
+		// Given
+		givenLoggedInMember(1);
+		givenWaitingGroupSession(1);
+		renderHook(() => useGroupCertificationProgress(321));
+
+		// When
+		act(() =>
+			publishProgress(
+				JSON.stringify({ type: "MISMATCH", count: 2, userIds: [1, 2] }),
+			),
+		);
+
+		// Then
+		expect(trackEvent).not.toHaveBeenCalled();
+	});
+
+	it("세션 만료 메시지가 반복돼도 만료 실패는 한 번만 기록한다", () => {
+		// Given
+		givenWaitingGroupSession(1);
+		renderHook(() => useGroupCertificationProgress(321));
+		const expired = JSON.stringify({ type: "EXPIRED", count: 1 });
+
+		// When
+		act(() => {
+			publishProgress(expired);
+			publishProgress(expired);
+		});
+
+		// Then
+		expect(trackEvent).toHaveBeenCalledTimes(1);
+		expect(trackEvent).toHaveBeenCalledWith(
+			"partnership_auth_failed",
+			expect.objectContaining({
+				fail_stage: "group_session",
+				fail_reason: "session_expired",
+			}),
+		);
 	});
 
 	it("형식이 깨진 메시지는 무시하고 기존 진행 상태를 유지한다", () => {

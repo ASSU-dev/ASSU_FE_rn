@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Alert } from "react-native";
+import { trackEvent } from "@/shared/lib/analytics/trackEvent";
 import { useAuthStore } from "@/shared/lib/auth/authStore";
 import { stompManager } from "@/shared/lib/stomp/stompManager";
 import type {
@@ -135,10 +136,12 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 	);
 	const resetPartnershipAuth = usePartnershipAuthStore((state) => state.reset);
 	const hasHandledMismatchRef = useRef(false);
+	const hasTrackedExpiredRef = useRef(false);
 
 	useEffect(() => {
 		if (sessionId === null) return;
 		hasHandledMismatchRef.current = false;
+		hasTrackedExpiredRef.current = false;
 
 		const destination = `/certification/progress/${sessionId}`;
 		if (__DEV__) {
@@ -162,6 +165,17 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 					typeof progress.type === "string" ? progress.type.toLowerCase() : "";
 
 				if (progressType === "expired") {
+					if (!hasTrackedExpiredRef.current) {
+						hasTrackedExpiredRef.current = true;
+						const { store, analyticsContext } =
+							usePartnershipAuthStore.getState();
+						trackEvent("partnership_auth_failed", {
+							fail_stage: "group_session",
+							fail_reason: "session_expired",
+							store_id: store?.storeId,
+							auth_method: analyticsContext?.authMethod,
+						});
+					}
 					if (__DEV__) {
 						console.log("[GROUP CERT EXPIRED]", {
 							sessionId,
@@ -183,6 +197,14 @@ export function useGroupCertificationProgress(sessionId: number | null) {
 						!hasHandledMismatchRef.current
 					) {
 						hasHandledMismatchRef.current = true;
+						const { store, analyticsContext } =
+							usePartnershipAuthStore.getState();
+						trackEvent("partnership_auth_failed", {
+							fail_stage: "group_participant",
+							fail_reason: "not_eligible",
+							store_id: store?.storeId,
+							auth_method: analyticsContext?.authMethod,
+						});
 						Alert.alert(
 							"인증 실패",
 							progress.message ?? "제휴 대상자 정보와 일치하지 않습니다.",
